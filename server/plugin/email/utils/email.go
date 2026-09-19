@@ -6,7 +6,7 @@ import (
 	"net/smtp"
 	"strings"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/plugin/email/global"
+	"tb_live_module/plugin/email/global"
 
 	"github.com/jordan-wright/email"
 )

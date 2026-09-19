@@ -3,7 +3,7 @@ package task
 import (
 	"errors"
 	"fmt"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/common"
+	"tb_live_module/model/common"
 	"time"
 
 	"gorm.io/gorm"

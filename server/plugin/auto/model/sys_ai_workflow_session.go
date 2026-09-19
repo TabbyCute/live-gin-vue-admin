@@ -1,8 +1,8 @@
 package model
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	common "github.com/flipped-aurora/gin-vue-admin/server/model/common"
+	"tb_live_module/global"
+	common "tb_live_module/model/common"
 )
 
 type AIWorkflowMessage struct {

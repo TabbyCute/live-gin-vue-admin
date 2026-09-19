@@ -3,9 +3,9 @@ package initialize
 import (
 	"context"
 	"fmt"
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/initialize/internal"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"tb_live_module/global"
+	"tb_live_module/initialize/internal"
+	"tb_live_module/utils"
 	"github.com/pkg/errors"
 	"github.com/qiniu/qmgo"
 	"github.com/qiniu/qmgo/options"

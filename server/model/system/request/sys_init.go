@@ -2,7 +2,7 @@ package request
 
 import (
 	"fmt"
-	"github.com/flipped-aurora/gin-vue-admin/server/config"
+	"tb_live_module/config"
 	"os"
 )
 

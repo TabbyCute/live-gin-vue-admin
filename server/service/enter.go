@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/service/example"
-	"github.com/flipped-aurora/gin-vue-admin/server/service/system"
+	"tb_live_module/service/example"
+	"tb_live_module/service/system"
 )
 
 var ServiceGroupApp = new(ServiceGroup)

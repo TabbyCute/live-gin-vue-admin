@@ -30,7 +30,7 @@
 | ------------ | ----------------------- | --------------------------- |
 | `api`        | api层                   | api层 |
 | `--v1`       | v1版本接口              | v1版本接口                  |
-| `config`     | 配置包                  | config.yaml对应的配置结构体 |
+| `config`     | 配置包                  | config.dev.yaml / config.prod.yaml 对应的配置结构体 |
 | `core`       | 核心文件                | 核心组件(zap, viper, server)的初始化 |
 | `docs`       | swagger文档目录         | swagger文档目录 |
 | `global`     | 全局对象                | 全局对象 |
@@ -51,4 +51,3 @@
 | `utils`      | 工具包                  | 工具函数封装            |
 | `--timer` | timer | 定时器接口封装 |
 | `--upload`      | oss                  | oss接口封装        |
-

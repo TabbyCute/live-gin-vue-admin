@@ -1,10 +1,10 @@
 package system
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	common "github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
-	request "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	"tb_live_module/global"
+	common "tb_live_module/model/common/request"
+	"tb_live_module/model/common/response"
+	request "tb_live_module/model/system/request"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

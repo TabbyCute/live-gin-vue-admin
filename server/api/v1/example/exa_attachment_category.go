@@ -1,10 +1,10 @@
 package example
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	common "github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/example"
+	"tb_live_module/global"
+	common "tb_live_module/model/common/request"
+	"tb_live_module/model/common/response"
+	"tb_live_module/model/example"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

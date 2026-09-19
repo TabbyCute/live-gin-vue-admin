@@ -18,8 +18,8 @@
 package service
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/service/example"
-	"github.com/flipped-aurora/gin-vue-admin/server/service/system"
+	"tb_live_module/service/example"
+	"tb_live_module/service/system"
 )
 
 var ServiceGroupApp = new(ServiceGroup)
@@ -35,7 +35,7 @@ type ServiceGroup struct {
 ```go
 package system
 
-import api "github.com/flipped-aurora/gin-vue-admin/server/api/v1"
+import api "tb_live_module/api/v1"
 
 type RouterGroup struct {
 	UserRouter

@@ -110,7 +110,8 @@ server/
 │   └──  example/         # 示例服务
 ├── source/               # 数据初始化
 ├── utils/                # 工具包
-├── config.yaml          # 配置文件
+├── config.dev.yaml      # 测试环境配置文件
+├── config.prod.yaml     # 正式环境配置文件
 └── main.go              # 程序入口
 ```
 

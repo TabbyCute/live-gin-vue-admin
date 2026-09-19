@@ -1,7 +1,7 @@
 package initialize
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/router"
+	"tb_live_module/router"
 	"github.com/gin-gonic/gin"
 )
 

@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
+	"tb_live_module/model/system"
 	"github.com/mark3labs/mcp-go/mcp"
 )
 

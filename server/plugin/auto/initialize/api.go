@@ -3,8 +3,8 @@ package initialize
 import (
 	"context"
 
-	model "github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/plugin/plugin-tool/utils"
+	model "tb_live_module/model/system"
+	"tb_live_module/plugin/plugin-tool/utils"
 )
 
 func Api(ctx context.Context) {

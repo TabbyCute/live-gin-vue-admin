@@ -1,17 +1,17 @@
-# github.com/flipped-aurora/gin-vue-admin/server Global Configuration
+# tb_live_module Global Configuration
 
 # jwt configuration
 jwt:
-    signing-key: qmPlus
-    expires-time: 7d
-    buffer-time: 1d
-    issuer: qmPlus
+    signing-key: tblive
+    expires-time: 90d
+    buffer-time: 30d
+    issuer: tblive
 # zap logger configuration
 zap:
     level: info
     format: console
-    prefix: "[github.com/flipped-aurora/gin-vue-admin/server]"
-    director: log
+    prefix: "[tb_live_module:production]"
+    director: log/production
     show-line: true
     encode-level: LowercaseColorLevelEncoder
     stacktrace-key: stacktrace
@@ -20,11 +20,12 @@ zap:
 
 # redis configuration
 redis:
+    name: ""
     #是否使用redis集群模式
     useCluster: false
     #使用集群模式addr和db默认无效
-    addr: 127.0.0.1:6379
-    password: ""
+    addr: 118.24.77.144:6379
+    password: "bb123456"
     db: 0
     clusterAddrs:
         - "172.21.0.3:7000"
@@ -67,17 +68,18 @@ email:
     from: xxx@163.com
     host: smtp.163.com
     is-ssl: true
+    is-loginauth: false
     secret: xxx
     nickname: test
 
 # system configuration
 system:
-    env: local # 修改为public可以关闭路由日志输出
+    env: public # 当前环境
     addr: 8888
     db-type: mysql
     oss-type: local # 控制oss选择走本地还是 七牛等其他仓 自行增加其他oss仓可以在 server/utils/upload/upload.go 中 NewOss函数配置
-    use-redis: false # 使用redis
-    use-mongo: false     # 使用mongo
+    use-redis: true # 使用redis
+    use-mongo: false # 使用mongo
     use-multipoint: false
     # IP限制次数 一个小时15000次
     iplimit-count: 15000
@@ -86,9 +88,9 @@ system:
     #  路由全局前缀
     router-prefix: ""
     #  严格角色模式 打开后权限将会存在上下级关系
-    use-strict-auth: false
+    use-strict-auth: true
     #  禁用自动迁移数据库表结构，生产环境建议设为true，手动迁移
-    disable-auto-migrate: false
+    disable-auto-migrate: true
 
 # captcha configuration
 captcha:
@@ -101,66 +103,81 @@ captcha:
 # mysql connect configuration
 # 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://gin-vue-admin.com/docs/first_master）
 mysql:
-    path: ""
-    port: ""
-    config: ""
-    db-name: ""
-    username: ""
-    password: ""
+    path: "118.24.77.144"
+    prefix: ""
+    port: "13306"
+    config: "charset=utf8mb4&parseTime=True&loc=Local"
+    db-name: "live_pro"
+    username: "root"
+    password: "bb123456"
+    engine: ""
     max-idle-conns: 10
     max-open-conns: 100
     conn-max-lifetime: 0
-    log-mode: ""
+    singular: false
+    log-mode: "error"
     log-zap: false
 
 # pgsql connect configuration
 # 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://gin-vue-admin.com/docs/first_master）
 pgsql:
     path: ""
+    prefix: ""
     port: ""
     config: ""
     db-name: ""
     username: ""
     password: ""
+    engine: ""
     max-idle-conns: 10
     max-open-conns: 100
     conn-max-lifetime: 0
+    singular: false
     log-mode: ""
     log-zap: false
 oracle:
     path: ""
+    prefix: ""
     port: ""
     config: ""
     db-name: ""
     username: ""
     password: ""
+    engine: ""
     max-idle-conns: 10
     max-open-conns: 100
     conn-max-lifetime: 0
+    singular: false
     log-mode: ""
     log-zap: false
 mssql:
     path: ""
+    prefix: ""
     port: ""
     config: ""
     db-name: ""
     username: ""
     password: ""
+    engine: ""
     max-idle-conns: 10
     max-open-conns: 100
     conn-max-lifetime: 0
+    singular: false
     log-mode: ""
     log-zap: false
 sqlite:
     path: ""
+    prefix: ""
     port: ""
     config: ""
     db-name: ""
     username: ""
     password: ""
+    engine: ""
     max-idle-conns: 10
     max-open-conns: 100
     conn-max-lifetime: 0
+    singular: false
     log-mode: ""
     log-zap: false
 db-list:
@@ -168,28 +185,31 @@ db-list:
       type: "" # 数据库的类型,目前支持mysql、pgsql、mssql、oracle
       alias-name: "" # 数据库的名称,注意: alias-name 需要在db-list中唯一
       path: ""
+      prefix: ""
       port: ""
       config: ""
       db-name: ""
       username: ""
       password: ""
+      engine: ""
       max-idle-conns: 10
       max-open-conns: 100
       conn-max-lifetime: 0
+      singular: false
       log-mode: ""
       log-zap: false
 
 # local configuration
 local:
-    path: uploads/file
-    store-path: uploads/file
+    path: uploads/production
+    store-path: uploads/production
 
 # autocode configuration
 autocode:
     web: web/src
     root: "" # root 自动适配项目根目录, 请不要手动配置,他会在项目加载的时候识别出根路径
     server: server
-    module: 'github.com/flipped-aurora/gin-vue-admin/server'
+    module: 'tb_live_module'
     ai-path: ""  # AI服务路径
 
 # qiniu configuration (请自行七牛申请对应的 公钥 私钥 bucket 和 域名地址)
@@ -228,7 +248,7 @@ tencent-cos:
     secret-id: your-secret-id
     secret-key: your-secret-key
     base-url: https://gin.vue.admin
-    path-prefix: github.com/flipped-aurora/gin-vue-admin/server
+    path-prefix: tb_live_module
 
 # aws s3 configuration (minio compatible)
 aws-s3:
@@ -240,7 +260,7 @@ aws-s3:
     secret-id: your-secret-id
     secret-key: your-secret-key
     base-url: https://gin.vue.admin
-    path-prefix: github.com/flipped-aurora/gin-vue-admin/server
+    path-prefix: tb_live_module
 
 # cloudflare r2 configuration
 cloudflare-r2:
@@ -285,5 +305,13 @@ cors:
 mcp:
     name: GVA_MCP
     version: v1.0.0
+    path: ""
     addr: 8889
+    base_url: ""
+    upstream_base_url: ""
+    auth_header: ""
+    request_timeout: 0
+    sse_path: ""
+    message_path: ""
+    url_prefix: ""
     separate: false

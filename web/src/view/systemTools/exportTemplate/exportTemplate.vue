@@ -201,7 +201,7 @@
         <el-form-item label="业务库" prop="dbName">
           <template #label>
             <el-tooltip
-              content="注：需要提前到db-list自行配置多数据库，如未配置需配置后重启服务方可使用。若无法选择，请到config.yaml中设置disabled:false，选择导入导出的目标库。"
+              content="注：需要提前到 db-list 自行配置多数据库，如未配置需配置后重启服务方可使用。若无法选择，请到当前环境配置文件（config.dev.yaml 或 config.prod.yaml）中设置 disabled:false，选择导入导出的目标库。"
               placement="bottom"
               effect="light"
             >

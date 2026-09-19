@@ -2,10 +2,10 @@ package system
 
 import (
 	"context"
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils/autocode"
+	"tb_live_module/global"
+	"tb_live_module/model/system/request"
+	"tb_live_module/utils"
+	"tb_live_module/utils/autocode"
 	"os"
 	"path/filepath"
 	"text/template"

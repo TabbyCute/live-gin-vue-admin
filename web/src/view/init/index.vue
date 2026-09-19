@@ -25,13 +25,13 @@
           <p class="text-gray-600 dark:text-gray-300 mb-2">
             2.请您确认是否已经阅读过<a
               class="text-blue-600 font-bold"
-              href="https://www.gin-vue-admin.com"
+              href=""
               target="_blank"
               >官方文档</a
             >
             <a
               class="text-blue-600 font-bold"
-              href="https://www.bilibili.com/video/BV1kv4y1g7nT?p=2"
+              href=""
               target="_blank"
               >初始化视频</a
             >

@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/config"
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"tb_live_module/config"
+	"tb_live_module/global"
 	"gopkg.in/yaml.v3"
 )
 

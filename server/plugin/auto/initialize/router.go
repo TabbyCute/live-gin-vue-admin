@@ -1,9 +1,9 @@
 package initialize
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/middleware"
-	"github.com/flipped-aurora/gin-vue-admin/server/plugin/auto/router"
+	"tb_live_module/global"
+	"tb_live_module/middleware"
+	"tb_live_module/plugin/auto/router"
 	"github.com/gin-gonic/gin"
 )
 

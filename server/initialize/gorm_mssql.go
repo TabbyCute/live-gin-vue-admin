@@ -12,9 +12,9 @@ package initialize
 import (
 	"time"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/config"
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/initialize/internal"
+	"tb_live_module/config"
+	"tb_live_module/global"
+	"tb_live_module/initialize/internal"
 
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"

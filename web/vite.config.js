@@ -1,4 +1,3 @@
-import { viteLogo } from './src/core/config'
 import Banner from 'vite-plugin-banner'
 import * as path from 'path'
 import { loadEnv } from 'vite'
@@ -14,7 +13,6 @@ import UnoCSS from '@unocss/vite'
 export default ({ mode }) => {
   AddSecret('')
   const env = loadEnv(mode, process.cwd())
-  viteLogo(env)
 
   const timestamp = Date.parse(new Date())
 
@@ -54,13 +52,6 @@ export default ({ mode }) => {
           changeOrigin: true,
           rewrite: (path) =>
             path.replace(new RegExp('^' + env.VITE_BASE_API), '')
-        },
-        '/plugin': {
-          // 需要代理的路径   例如 '/api'
-          target: `https://plugin.gin-vue-admin.com/api/`, // 代理到 目标路径
-          changeOrigin: true,
-          rewrite: (path) =>
-            path.replace(new RegExp('^/plugin'), '')
         }
       }
     },
@@ -82,7 +73,7 @@ export default ({ mode }) => {
       vueDevTools({ launchEditor: env.VITE_EDITOR }),
       vuePlugin(),
       svgBuilder(['./src/plugin/', './src/assets/icons/'], base, outDir, 'assets', mode),
-      [Banner(`\n Build based on gin-vue-admin \n Time : ${timestamp}`)],
+      [Banner(`\n Build based on admin \n Time : ${timestamp}`)],
       VueFilePathPlugin('./src/pathInfo.json'),
       UnoCSS(),
       vueRootValidator()

@@ -2,9 +2,10 @@ package system
 
 import (
 	"context"
-	sysModel "github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/service/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	sysModel "tb_live_module/model/system"
+	"tb_live_module/service/system"
+	"tb_live_module/utils"
+
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -59,21 +60,22 @@ func (i *initUser) InitializeData(ctx context.Context) (next context.Context, er
 			UUID:        uuid.New(),
 			Username:    "admin",
 			Password:    adminPassword,
-			NickName:    "Mr.奇淼",
-			HeaderImg:   "https://qmplusimg.henrongyi.top/gva_header.jpg",
+			NickName:    "admin",
+			HeaderImg:   "",
 			AuthorityId: 888,
-			Phone:       "17611111111",
-			Email:       "333333333@qq.com",
+			Phone:       "",
+			Email:       "",
 		},
 		{
 			UUID:        uuid.New(),
-			Username:    "a303176530",
+			Username:    "admin_2",
 			Password:    password,
-			NickName:    "用户1",
-			HeaderImg:   "https://qmplusimg.henrongyi.top/1572075907logo.png",
+			NickName:    "admin_2",
+			HeaderImg:   "",
 			AuthorityId: 9528,
-			Phone:       "17611111111",
-			Email:       "333333333@qq.com"},
+			Phone:       "",
+			Email:       "",
+		},
 	}
 	if err = db.Create(&entities).Error; err != nil {
 		return ctx, errors.Wrap(err, sysModel.SysUser{}.TableName()+"表数据初始化失败!")

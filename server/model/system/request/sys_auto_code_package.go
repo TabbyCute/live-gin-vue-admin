@@ -1,8 +1,8 @@
 package request
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	model "github.com/flipped-aurora/gin-vue-admin/server/model/system"
+	"tb_live_module/global"
+	model "tb_live_module/model/system"
 )
 
 type SysAutoCodePackageCreate struct {

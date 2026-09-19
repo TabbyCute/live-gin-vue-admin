@@ -19,7 +19,7 @@
           type="textarea"
           :rows="5"
           :maxlength="2000"
-          :placeholder="`现已完全免费\n试试复制一张图片然后按下ctrl+v或者commend+v\n试试描述你的表，让AI帮你完成。\n此功能需要到插件市场个人中心获取自己的AI-Path，把AI-Path填入config.yaml下的autocode-->ai-path，重启项目即可使用。\n按下 Ctrl+Enter 或 Cmd+Enter 直接生成`"
+          :placeholder="`现已完全免费\n试试复制一张图片然后按下ctrl+v或者commend+v\n试试描述你的表，让AI帮你完成。\n此功能需要到插件市场个人中心获取自己的AI-Path，把AI-Path填入当前环境配置文件（config.dev.yaml 或 config.prod.yaml）下的autocode-->ai-path，重启项目即可使用。\n按下 Ctrl+Enter 或 Cmd+Enter 直接生成`"
           resize="none"
           @focus="handleFocus"
           @blur="handleBlur"
@@ -34,7 +34,7 @@
                   href="https://plugin.gin-vue-admin.com/#/layout/userInfo/center"
                   target="_blank"
               >插件市场个人中心</a
-              >申请AIPath，填入config.yaml的ai-path属性即可使用。
+              >申请AIPath，填入当前环境配置文件的ai-path属性即可使用。
               </div>
             </template>
             <el-button
@@ -59,7 +59,7 @@
                   href="https://plugin.gin-vue-admin.com/#/layout/userInfo/center"
                   target="_blank"
                   >插件市场个人中心</a
-                >申请AIPath，填入config.yaml的ai-path属性即可使用。
+                >申请AIPath，填入当前环境配置文件的ai-path属性即可使用。
               </div>
             </template>
             <el-button

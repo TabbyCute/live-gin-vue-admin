@@ -3,10 +3,10 @@ package initialize
 import (
 	"context"
 	adapter "github.com/casbin/gorm-adapter/v3"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/example"
-	sysModel "github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/plugin/announcement/model"
-	"github.com/flipped-aurora/gin-vue-admin/server/service/system"
+	"tb_live_module/model/example"
+	sysModel "tb_live_module/model/system"
+	"tb_live_module/plugin/announcement/model"
+	"tb_live_module/service/system"
 	"gorm.io/gorm"
 )
 

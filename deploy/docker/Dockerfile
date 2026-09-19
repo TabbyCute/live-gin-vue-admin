@@ -3,7 +3,7 @@ WORKDIR /opt
 ENV LANG=en_US.utf8
 COPY deploy/docker/entrypoint.sh .
 COPY build/ /usr/share/nginx/html/
-COPY server/config.yaml /usr/share/nginx/html/config.yaml
+COPY server/config.prod.yaml /usr/share/nginx/html/config.prod.yaml
 COPY web/.docker-compose/nginx/conf.d/nginx.conf /etc/nginx/conf.d/nginx.conf
 RUN set -ex \
     && echo "LANG=en_US.utf8" > /etc/locale.conf \

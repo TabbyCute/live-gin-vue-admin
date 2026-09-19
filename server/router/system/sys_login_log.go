@@ -1,8 +1,8 @@
 package system
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/api/v1"
-	"github.com/flipped-aurora/gin-vue-admin/server/middleware"
+	"tb_live_module/api/v1"
+	"tb_live_module/middleware"
 	"github.com/gin-gonic/gin"
 )
 

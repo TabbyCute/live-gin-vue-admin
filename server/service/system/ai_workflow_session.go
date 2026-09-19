@@ -5,10 +5,10 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	system "github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
-	systemResp "github.com/flipped-aurora/gin-vue-admin/server/model/system/response"
+	"tb_live_module/global"
+	system "tb_live_module/model/system"
+	systemReq "tb_live_module/model/system/request"
+	systemResp "tb_live_module/model/system/response"
 	"gorm.io/gorm"
 )
 

@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
+	"tb_live_module/model/common/request"
 	"testing"
 )
 

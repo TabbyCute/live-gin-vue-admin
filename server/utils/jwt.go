@@ -5,8 +5,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	"tb_live_module/global"
+	"tb_live_module/model/system/request"
 	jwt "github.com/golang-jwt/jwt/v5"
 )
 

@@ -2,7 +2,7 @@ package ast
 
 import (
 	"fmt"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
+	"tb_live_module/model/system"
 	"go/ast"
 	"go/parser"
 	"go/token"

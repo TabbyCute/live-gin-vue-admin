@@ -1,6 +1,6 @@
 package router
 
-import api "github.com/flipped-aurora/gin-vue-admin/server/api/v1"
+import api "tb_live_module/api/v1"
 
 type RouterGroup struct {
 	AutoCodeRouter

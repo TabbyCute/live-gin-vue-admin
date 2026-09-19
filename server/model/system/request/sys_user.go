@@ -1,8 +1,8 @@
 package request
 
 import (
-	common "github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
+	common "tb_live_module/model/common/request"
+	"tb_live_module/model/system"
 )
 
 // Register User register structure

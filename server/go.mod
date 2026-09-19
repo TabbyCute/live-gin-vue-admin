@@ -1,4 +1,4 @@
-module github.com/flipped-aurora/gin-vue-admin/server
+module tb_live_module
 
 go 1.24.0
 

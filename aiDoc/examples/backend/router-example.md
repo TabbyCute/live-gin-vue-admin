@@ -16,7 +16,7 @@ Router 层负责路由分组、中间件挂载和处理函数绑定，不承载�
 package system
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/middleware"
+	"tb_live_module/middleware"
 	"github.com/gin-gonic/gin"
 )
 

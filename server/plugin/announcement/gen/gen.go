@@ -7,7 +7,7 @@ package main
 import (
 	"gorm.io/gen"
 	"path/filepath"
-	"github.com/flipped-aurora/gin-vue-admin/server/plugin/announcement/model"
+	"tb_live_module/plugin/announcement/model"
 )
 
 func main() {

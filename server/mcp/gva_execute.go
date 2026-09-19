@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"github.com/mark3labs/mcp-go/mcp"
+	"tb_live_module/global"
+	"tb_live_module/model/system"
+	"tb_live_module/model/system/request"
 )
 
 // 注册工具
@@ -157,7 +157,7 @@ func (g *GVAExecutor) New() mcp.Tool {
 										"primaryKey":      map[string]interface{}{"type": "boolean", "description": "是否主键（gvaModel=false时必须有一个字段为true）"},
 										"dataSource": map[string]interface{}{
 											"type":        "object",
-											"description": "数据源配置，用于配置字段的关联表信息。获取表名提示：可在 server/model 和 plugin/xxx/model 目录下查看对应模块的 TableName() 接口实现获取实际表名（如 SysUser 的表名为 sys_users）。获取数据库名提示：主数据库通常使用 gva（默认数据库标识），多数据库可在 config.yaml 的 db-list 配置中查看可用数据库的 alias-name 字段，如果用户未提及关联多数据库信息则使用默认数据库，默认数据库的情况下 dbName填写为空",
+											"description": "数据源配置，用于配置字段的关联表信息。获取表名提示：可在 server/model 和 plugin/xxx/model 目录下查看对应模块的 TableName() 接口实现获取实际表名（如 SysUser 的表名为 sys_users）。获取数据库名提示：主数据库通常使用 gva（默认数据库标识），多数据库可在当前环境配置文件（config.dev.yaml 或 config.prod.yaml）的 db-list 配置中查看可用数据库的 alias-name 字段，如果用户未提及关联多数据库信息则使用默认数据库，默认数据库的情况下 dbName填写为空",
 											"properties": map[string]interface{}{
 												"dbName":       map[string]interface{}{"type": "string", "description": "关联的数据库名称（默认数据库留空）"},
 												"table":        map[string]interface{}{"type": "string", "description": "关联的表名"},

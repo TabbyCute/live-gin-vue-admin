@@ -6,9 +6,9 @@ BUILD_IMAGE_SERVER  = golang:1.22
 #请选择node版本
 BUILD_IMAGE_WEB     = node:20
 #项目名称
-PROJECT_NAME        = github.com/flipped-aurora/gin-vue-admin/server
+PROJECT_NAME        = tb_live_module
 #配置文件目录
-CONFIG_FILE         = config.yaml
+CONFIG_FILE         = config.prod.yaml
 #镜像仓库命名空间
 IMAGE_NAME          = gva
 #镜像地址
@@ -16,6 +16,22 @@ REPOSITORY          = registry.cn-hangzhou.aliyuncs.com/${IMAGE_NAME}
 #镜像版本
 TAGS_OPT           ?= latest
 PLUGIN             ?= email
+
+# 测试环境后端（server/config.dev.yaml -> live_dev）
+run-server-test:
+	@cd server && GIN_MODE=debug go run . -c config.dev.yaml
+
+# 正式环境后端（server/config.prod.yaml -> live_pro）
+run-server-production:
+	@cd server && GIN_MODE=release go run . -c config.prod.yaml
+
+# 测试环境前端
+run-web-test:
+	@cd web && pnpm dev
+
+# 正式环境前端构建
+build-web-production:
+	@cd web && pnpm build
 
 #容器环境前后端共同打包
 build: build-web build-server

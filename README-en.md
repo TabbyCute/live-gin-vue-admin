@@ -241,7 +241,7 @@ swag init
 - Restful example: You can see sample APIs in user management module.
   - Front-end file reference: [web/src/view/superAdmin/api/api.vue](https://github.com/flipped-aurora/gin-vue-admin/blob/master/web/src/view/superAdmin/api/api.vue).
   - Stage reference: [server/router/sys_api.go](https://github.com/flipped-aurora/gin-vue-admin/blob/master/server/router/sys_api.go).
-- Multi-login restriction: Change `user-multipoint` to true in `system` in `config.yaml` (You need to configure redis and redis parameters yourself. During the test period, please report in time if there is a bug).
+- Multi-login restriction: Change `user-multipoint` to true in `system` in the active environment file (`config.dev.yaml` or `config.prod.yaml`; you need to configure Redis yourself).
 - Upload file by chunk：Provides examples of file upload and large file upload by chunk.
 - Form Builder：With the help of [@form-generator](https://github.com/JakHuang/form-generator).
 - Code generator: Providing backend with basic logic and simple curd code generator.
@@ -317,4 +317,3 @@ If you find this project useful, you can buy author a glass of juice :tropical_d
 ## 10. Commercial considerations
 
 This project is licensed under the Apache License 2.0. When using, modifying, or distributing it, follow the `LICENSE` file and retain all applicable notices required by the license.
-

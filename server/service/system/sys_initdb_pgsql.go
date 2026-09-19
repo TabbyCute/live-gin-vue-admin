@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/config"
+	"tb_live_module/config"
 	"github.com/gookit/color"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"tb_live_module/utils"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	"tb_live_module/global"
+	"tb_live_module/model/system/request"
 	"github.com/google/uuid"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

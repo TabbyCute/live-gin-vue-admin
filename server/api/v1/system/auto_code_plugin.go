@@ -5,11 +5,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
-	systemRes "github.com/flipped-aurora/gin-vue-admin/server/model/system/response"
-	"github.com/flipped-aurora/gin-vue-admin/server/plugin/plugin-tool/utils"
+	"tb_live_module/global"
+	"tb_live_module/model/common/response"
+	"tb_live_module/model/system/request"
+	systemRes "tb_live_module/model/system/response"
+	"tb_live_module/plugin/plugin-tool/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

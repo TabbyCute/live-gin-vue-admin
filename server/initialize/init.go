@@ -3,7 +3,7 @@
 package initialize
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"tb_live_module/utils"
 )
 
 // 初始化全局函数

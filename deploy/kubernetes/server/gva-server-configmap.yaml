@@ -11,7 +11,7 @@ metadata:
     version: gva-vue3
 data:
   config.yaml: |
-    # github.com/flipped-aurora/gin-vue-admin/server Global Configuration
+    # tb_live_module Global Configuration
 
     # jwt configuration
     jwt:
@@ -23,7 +23,7 @@ data:
     zap:
       level: 'info'
       format: 'console'
-      prefix: '[github.com/flipped-aurora/gin-vue-admin/server]'
+      prefix: '[tb_live_module]'
       director: 'log'
       link-name: 'latest_log'
       show-line: true
@@ -66,7 +66,7 @@ data:
       img-height: 80
 
     # mysql connect configuration
-    # 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://www.github.com/flipped-aurora/gin-vue-admin/server.com/docs/first）
+    # 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://gin-vue-admin.com/docs/first_master）
     mysql:
       path: ''
       config: ''
@@ -126,7 +126,7 @@ data:
       secret-id: 'xxxxxxxx'
       secret-key: 'xxxxxxxx'
       base-url: 'https://gin.vue.admin'
-      path-prefix: 'github.com/flipped-aurora/gin-vue-admin/server'
+      path-prefix: 'tb_live_module'
 
     # excel configuration
     excel:

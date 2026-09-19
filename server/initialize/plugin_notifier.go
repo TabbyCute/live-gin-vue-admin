@@ -3,7 +3,7 @@ package initialize
 import (
 	"sync"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/service/system"
+	"tb_live_module/service/system"
 	"github.com/gin-gonic/gin"
 )
 

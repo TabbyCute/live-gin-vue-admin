@@ -6,9 +6,9 @@ import (
 	"errors"
 	"fmt"
 
-	commonReq "github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	commonReq "tb_live_module/model/common/request"
+	"tb_live_module/model/system"
+	systemReq "tb_live_module/model/system/request"
 	"github.com/mark3labs/mcp-go/mcp"
 )
 

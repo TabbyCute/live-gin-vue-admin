@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"tb_live_module/global"
 	"go.uber.org/zap"
 )
 

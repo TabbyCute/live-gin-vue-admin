@@ -38,8 +38,8 @@ API 层负责接收 HTTP 请求、从合适的位置提取参数、调用 Servic
 package system
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
-	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	"tb_live_module/model/common/response"
+	systemReq "tb_live_module/model/system/request"
 	"github.com/gin-gonic/gin"
 )
 

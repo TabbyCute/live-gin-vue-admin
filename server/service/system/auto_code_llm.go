@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/common"
-	commonResp "github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils/request"
 	"github.com/goccy/go-json"
+	"tb_live_module/global"
+	"tb_live_module/model/common"
+	commonResp "tb_live_module/model/common/response"
+	"tb_live_module/utils/request"
 )
 
 func (s *AutoCodeService) LLMAuto(ctx context.Context, llm common.JSONMap) (interface{}, error) {
@@ -90,7 +90,7 @@ func (s *AutoCodeService) LLMAutoStream(ctx context.Context, llm common.JSONMap)
 
 func buildLLMAutoPath(llm common.JSONMap) (string, error) {
 	if global.GVA_CONFIG.AutoCode.AiPath == "" {
-		return "", errors.New("请先前往插件市场个人中心获取 AiPath 并填写到 config.yaml 中")
+		return "", errors.New("请先前往插件市场个人中心获取 AiPath，并填写到当前环境配置文件（config.dev.yaml 或 config.prod.yaml）中")
 	}
 
 	mode := strings.TrimSpace(fmt.Sprintf("%v", llm["mode"]))

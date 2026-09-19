@@ -3,7 +3,7 @@ package system
 import (
 	"context"
 	"encoding/json"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	"tb_live_module/model/system/request"
 	"reflect"
 	"testing"
 )

@@ -3,8 +3,8 @@ package initialize
 import (
 	"context"
 	"fmt"
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/plugin/announcement/model"
+	"tb_live_module/global"
+	"tb_live_module/plugin/announcement/model"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )

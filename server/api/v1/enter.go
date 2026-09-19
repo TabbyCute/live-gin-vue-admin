@@ -1,8 +1,8 @@
 package v1
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/example"
-	"github.com/flipped-aurora/gin-vue-admin/server/api/v1/system"
+	"tb_live_module/api/v1/example"
+	"tb_live_module/api/v1/system"
 )
 
 var ApiGroupApp = new(ApiGroup)

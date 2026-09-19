@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"tb_live_module/global"
 	mcpServer "github.com/mark3labs/mcp-go/server"
 )
 

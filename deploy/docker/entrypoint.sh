@@ -13,7 +13,7 @@ if [ "$1" = "actions" ]; then
     cd /opt/gva/web/ && yarn serve &
 else 
     /usr/sbin/nginx &
-    cd /usr/share/nginx/html/ && ./server &
+    cd /usr/share/nginx/html/ && GIN_MODE=release ./server -c config.prod.yaml &
 fi
 echo "gva ALL start!!!"
 tail -f /dev/null

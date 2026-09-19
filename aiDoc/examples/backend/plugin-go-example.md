@@ -18,8 +18,8 @@ package announcement
 import (
 	"context"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/plugin/announcement/initialize"
-	interfaces "github.com/flipped-aurora/gin-vue-admin/server/utils/plugin/v2"
+	"tb_live_module/plugin/announcement/initialize"
+	interfaces "tb_live_module/utils/plugin/v2"
 	"github.com/gin-gonic/gin"
 )
 

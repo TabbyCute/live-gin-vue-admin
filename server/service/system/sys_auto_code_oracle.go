@@ -1,8 +1,8 @@
 package system
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system/response"
+	"tb_live_module/global"
+	"tb_live_module/model/system/response"
 )
 
 var AutoCodeOracle = new(autoCodeOracle)

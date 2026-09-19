@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"tb_live_module/global"
 )
 
 const (
@@ -386,7 +386,8 @@ func resolveMCPServerRoot() string {
 func resolveMCPConfigPath(serverRoot string) (string, error) {
 	candidates := []string{
 		filepath.Join(serverRoot, "cmd", "mcp", "config.yaml"),
-		filepath.Join(serverRoot, "config.yaml"),
+		filepath.Join(serverRoot, "config.dev.yaml"),
+		filepath.Join(serverRoot, "config.prod.yaml"),
 	}
 
 	for _, candidate := range candidates {
@@ -395,7 +396,7 @@ func resolveMCPConfigPath(serverRoot string) (string, error) {
 		}
 	}
 
-	return "", errors.New("未找到 MCP 配置文件，请确认 cmd/mcp/config.yaml 或 server/config.yaml 存在")
+	return "", errors.New("未找到 MCP 配置文件，请确认 cmd/mcp/config.yaml、server/config.dev.yaml 或 server/config.prod.yaml 存在")
 }
 
 func ensureMCPRuntimeDir() (string, error) {

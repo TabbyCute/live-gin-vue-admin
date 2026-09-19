@@ -1,6 +1,6 @@
 package plugin
 
 import (
-	_ "github.com/flipped-aurora/gin-vue-admin/server/plugin/announcement"
-	_ "github.com/flipped-aurora/gin-vue-admin/server/plugin/auto"
+	_ "tb_live_module/plugin/announcement"
+	_ "tb_live_module/plugin/auto"
 )

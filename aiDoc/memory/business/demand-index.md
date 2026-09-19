@@ -3,7 +3,8 @@
 ## Active
 
 - [仓库许可证迁移到 BSL 1.1](active/license-migrate-to-bsl.md)
+- [管理后台品牌配置化](active/frontend-branding-customization.md)
 
 ## Done
 
-- 暂无
+- [正式与测试环境配置分离](done/environment-config-separation.md)

@@ -3,11 +3,11 @@ package system
 import (
 	"strings"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	mcpTool "github.com/flipped-aurora/gin-vue-admin/server/mcp"
-	"github.com/flipped-aurora/gin-vue-admin/server/mcp/client"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	"tb_live_module/global"
+	mcpTool "tb_live_module/mcp"
+	"tb_live_module/mcp/client"
+	"tb_live_module/model/common/response"
+	"tb_live_module/model/system/request"
 	"github.com/gin-gonic/gin"
 	"github.com/mark3labs/mcp-go/mcp"
 )

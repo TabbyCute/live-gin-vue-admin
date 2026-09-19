@@ -15,7 +15,7 @@ Model 负责定义数据库实体与持久化字段，是 Service 和数据库�
 ```go
 package system
 
-import "github.com/flipped-aurora/gin-vue-admin/server/global"
+import "tb_live_module/global"
 
 type Order struct {
 	global.GVA_MODEL

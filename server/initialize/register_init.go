@@ -1,8 +1,8 @@
 package initialize
 
 import (
-	_ "github.com/flipped-aurora/gin-vue-admin/server/source/example"
-	_ "github.com/flipped-aurora/gin-vue-admin/server/source/system"
+	_ "tb_live_module/source/example"
+	_ "tb_live_module/source/system"
 )
 
 func init() {
