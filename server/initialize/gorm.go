@@ -74,9 +74,20 @@ func RegisterTables() {
 		example.ExaAttachmentCategory{},
 
 		live.LiveAccount{},
+		live.LiveAnchor{},
+		live.LiveCategory{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))
+		os.Exit(1)
+	}
+
+	if err = syncLiveAnchorAdminMetadata(db); err != nil {
+		global.GVA_LOG.Error("sync live anchor admin metadata failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = syncLiveCategoryAdminMetadata(db); err != nil {
+		global.GVA_LOG.Error("sync live category admin metadata failed", zap.Error(err))
 		os.Exit(1)
 	}
 

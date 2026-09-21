@@ -60,6 +60,7 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		{MenuLevel: 0, Hidden: true, ParentId: 0, Path: "person", Name: "person", Component: "view/person/person.vue", Sort: 4, Meta: Meta{Title: "个人信息", Icon: "message"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "example", Name: "example", Component: "view/example/index.vue", Sort: 7, Meta: Meta{Title: "示例文件", Icon: "management"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "systemTools", Name: "systemTools", Component: "view/systemTools/index.vue", Sort: 5, Meta: Meta{Title: "编程辅助", Icon: "tools"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "liveManagement", Name: "liveManagement", Component: "view/routerHolder.vue", Sort: 4, Meta: Meta{Title: "直播管理", Icon: "video-camera"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "state", Name: "state", Component: "view/system/state.vue", Sort: 8, Meta: Meta{Title: "服务器状态", Icon: "cloudy"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "plugin", Name: "plugin", Component: "view/routerHolder.vue", Sort: 6, Meta: Meta{Title: "插件系统", Icon: "cherry"}},
 	}
@@ -90,6 +91,10 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["superAdmin"], Path: "loginLog", Name: "loginLog", Component: "view/systemTools/loginLog/index.vue", Sort: 10, Meta: Meta{Title: "登录日志", Icon: "monitor"}},
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["superAdmin"], Path: "sysVersion", Name: "sysVersion", Component: "view/systemTools/version/version.vue", Sort: 11, Meta: Meta{Title: "版本管理", Icon: "server"}},
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["superAdmin"], Path: "sysError", Name: "sysError", Component: "view/systemTools/sysError/sysError.vue", Sort: 12, Meta: Meta{Title: "错误日志", Icon: "warn"}},
+
+		// liveManagement 子菜单
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["liveManagement"], Path: "anchor", Name: "liveAnchor", Component: "view/live/anchor/index.vue", Sort: 1, Meta: Meta{Title: "主播管理", Icon: "user-filled", KeepAlive: true}},
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["liveManagement"], Path: "category", Name: "liveCategory", Component: "view/live/category/index.vue", Sort: 2, Meta: Meta{Title: "直播分类", Icon: "collection-tag", KeepAlive: true}},
 
 		// example子菜单
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["example"], Path: "upload", Name: "upload", Component: "view/example/upload/upload.vue", Sort: 5, Meta: Meta{Title: "媒体库（上传下载）", Icon: "upload"}},

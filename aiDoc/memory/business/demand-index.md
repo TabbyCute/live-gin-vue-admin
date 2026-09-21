@@ -9,3 +9,6 @@
 
 - [正式与测试环境配置分离](done/environment-config-separation.md)
 - [客户端账号注册登录与独立鉴权](done/live-account-authentication.md)
+- [LiveAnchor 第一版主播身份与管理模块](done/live-anchor-v1.md)
+- [LiveCategory 第一版直播分类与后台管理](done/live-category-v1.md)
+- [客户端账号与主播调试页](done/live-client-debug-pages.md)

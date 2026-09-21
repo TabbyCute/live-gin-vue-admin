@@ -4,9 +4,9 @@ import (
 	"context"
 
 	adapter "github.com/casbin/gorm-adapter/v3"
-	"tb_live_module/service/system"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+	"tb_live_module/service/system"
 )
 
 const initOrderCasbin = initOrderApiIgnore + 1
@@ -46,6 +46,24 @@ func (i *initCasbin) InitializeData(ctx context.Context) (context.Context, error
 	}
 	entities := []adapter.CasbinRule{
 		{Ptype: "p", V0: "888", V1: "/user/admin_register", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/live/anchor/list", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/live/anchor/detail", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/live/anchor/audit", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/live/anchor/status/update", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/live/anchor/permission/update", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/live/anchor/profile/update", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/live/anchor/recommend/update", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/live/anchor/signed/update", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/live/anchor/agency/update", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/live/anchor/risk/update", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/live/anchor/remark/update", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/live/anchor/cert/update", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/live/category/list", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/live/category/tree", V2: "GET"},
+		{Ptype: "p", V0: "888", V1: "/live/category/create", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/live/category/update", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/live/category/status/update", V2: "POST"},
+		{Ptype: "p", V0: "888", V1: "/live/category/delete", V2: "POST"},
 
 		{Ptype: "p", V0: "888", V1: "/sysLoginLog/deleteLoginLog", V2: "DELETE"},
 		{Ptype: "p", V0: "888", V1: "/sysLoginLog/deleteLoginLogByIds", V2: "DELETE"},

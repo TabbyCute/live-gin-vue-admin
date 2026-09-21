@@ -37,6 +37,7 @@
   "/src/view/layout/setting/modules/layout/index.vue": "LayoutSettings",
   "/src/view/layout/tabs/index.vue": "HistoryComponent",
   "/src/view/live/anchor/index.vue": "Index",
+  "/src/view/live/category/index.vue": "Index",
   "/src/view/live/history/index.vue": "Index",
   "/src/view/login/index.vue": "Login",
   "/src/view/person/person.vue": "Person",

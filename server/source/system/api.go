@@ -3,10 +3,10 @@ package system
 import (
 	"context"
 
-	sysModel "tb_live_module/model/system"
-	"tb_live_module/service/system"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+	sysModel "tb_live_module/model/system"
+	"tb_live_module/service/system"
 )
 
 type initApi struct{}
@@ -260,6 +260,27 @@ func (i *initApi) InitializeData(ctx context.Context) (context.Context, error) {
 		{ApiGroup: "版本控制", Method: "POST", Path: "/sysVersion/importVersion", Description: "同步版本"},
 		{ApiGroup: "版本控制", Method: "DELETE", Path: "/sysVersion/deleteSysVersion", Description: "删除版本"},
 		{ApiGroup: "版本控制", Method: "DELETE", Path: "/sysVersion/deleteSysVersionByIds", Description: "批量删除版本"},
+
+		// 主播后台 API 只注册进 sys_apis，具体角色权限仍由现有 Casbin 配置流程显式授予。
+		{ApiGroup: "主播管理", Method: "GET", Path: "/live/anchor/list", Description: "分页查询主播列表"},
+		{ApiGroup: "主播管理", Method: "GET", Path: "/live/anchor/detail", Description: "获取主播后台详情"},
+		{ApiGroup: "主播管理", Method: "POST", Path: "/live/anchor/audit", Description: "审核主播申请"},
+		{ApiGroup: "主播管理", Method: "POST", Path: "/live/anchor/status/update", Description: "修改主播账号状态"},
+		{ApiGroup: "主播管理", Method: "POST", Path: "/live/anchor/permission/update", Description: "修改主播功能权限"},
+		{ApiGroup: "主播管理", Method: "POST", Path: "/live/anchor/profile/update", Description: "后台修改主播资料"},
+		{ApiGroup: "主播管理", Method: "POST", Path: "/live/anchor/recommend/update", Description: "修改主播运营推荐属性"},
+		{ApiGroup: "主播管理", Method: "POST", Path: "/live/anchor/signed/update", Description: "修改主播签约状态"},
+		{ApiGroup: "主播管理", Method: "POST", Path: "/live/anchor/agency/update", Description: "修改主播公会归属"},
+		{ApiGroup: "主播管理", Method: "POST", Path: "/live/anchor/risk/update", Description: "修改主播风险等级"},
+		{ApiGroup: "主播管理", Method: "POST", Path: "/live/anchor/remark/update", Description: "修改主播后台备注"},
+		{ApiGroup: "主播管理", Method: "POST", Path: "/live/anchor/cert/update", Description: "修改主播认证状态"},
+
+		{ApiGroup: "直播分类", Method: "GET", Path: "/live/category/list", Description: "分页查询直播分类"},
+		{ApiGroup: "直播分类", Method: "GET", Path: "/live/category/tree", Description: "获取后台直播分类树"},
+		{ApiGroup: "直播分类", Method: "POST", Path: "/live/category/create", Description: "创建直播分类"},
+		{ApiGroup: "直播分类", Method: "POST", Path: "/live/category/update", Description: "修改直播分类资料"},
+		{ApiGroup: "直播分类", Method: "POST", Path: "/live/category/status/update", Description: "启用或停用直播分类"},
+		{ApiGroup: "直播分类", Method: "POST", Path: "/live/category/delete", Description: "删除直播分类"},
 	}
 	if err := db.Create(&entities).Error; err != nil {
 		return ctx, errors.Wrap(err, sysModel.SysApi{}.TableName()+"表数据初始化失败!")

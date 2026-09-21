@@ -16,7 +16,8 @@ func registerSystemRoutes(apiRoot *gin.RouterGroup, engine *gin.Engine) {
 func registerSystemRoutesV1(apiRoot *gin.RouterGroup, engine *gin.Engine) {
 	adminPublicGroup := apiRoot.Group(adminV1RoutePrefix)
 	adminPrivateGroup := apiRoot.Group(adminV1RoutePrefix)
-	adminPrivateGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
+	//adminPrivateGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
+	adminPrivateGroup.Use(middleware.JWTAuth())
 
 	systemRouter := router.RouterGroupApp.System
 	// 无需登录
@@ -47,6 +48,11 @@ func registerSystemRoutesV1(apiRoot *gin.RouterGroup, engine *gin.Engine) {
 	exampleRouter.InitCustomerRouter(adminPrivateGroup)                 // 客户路由
 	exampleRouter.InitFileUploadAndDownloadRouter(adminPrivateGroup)    // 文件上传下载功能路由
 	exampleRouter.InitAttachmentCategoryRouterRouter(adminPrivateGroup) // 文件上传下载分类
+
+	// 主播后台接口继承 adminPrivateGroup 的 JWT + Casbin，并由 live Router 继续区分读写操作日志。
+	liveRouter := router.RouterGroupApp.Live
+	liveRouter.InitAnchorAdminRouter(adminPrivateGroup)
+	liveRouter.InitCategoryAdminRouter(adminPrivateGroup)
 
 	//注册：插件路由安装
 	InstallPlugin(adminPrivateGroup, adminPublicGroup, engine)

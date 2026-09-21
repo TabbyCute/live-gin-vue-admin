@@ -257,17 +257,17 @@ audit_status = pending
 是否申请
 审核状态
 拒绝原因
-主播ID
+主播对外编号
 ```
 
 例如：
 
 ```json
 {
-  "applied": true,
-  "auditStatus": 1,
+  "isApplied": true,
+  "applyStatus": 1,
   "rejectReason": "",
-  "anchorId": 10001
+  "anchorNo": "1100001"
 }
 ```
 
@@ -1280,5 +1280,3 @@ Swagger
 不要根据这份需求重新造一套架构。
 
 所有命名、错误处理、权限、数据库访问、Swagger、目录结构都应该尽可能和现有项目保持一致。
-
-

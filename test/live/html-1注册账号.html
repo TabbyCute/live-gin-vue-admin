@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>客户端账号测试</title>
+  <style>
+    body { max-width: 760px; margin: 20px auto; padding: 0 12px; font: 14px/1.5 sans-serif; }
+    label { display: block; margin: 8px 0; }
+    input, textarea, button { box-sizing: border-box; padding: 6px; }
+    input, textarea { width: 100%; }
+    textarea { min-height: 72px; }
+    button { margin: 4px 4px 4px 0; }
+    pre { min-height: 180px; padding: 10px; overflow: auto; background: #eee; white-space: pre-wrap; }
+    .ok { color: green; }
+    .error { color: #c00; }
+  </style>
+</head>
+<body>
+  <h2>客户端账号</h2>
+
+  <label>API 基址
+    <input id="baseUrl" value="http://127.0.0.1:8888/api/v1">
+  </label>
+
+  <fieldset>
+    <legend>注册 / 登录</legend>
+    <label>用户名 <input id="username" value="user1"></label>
+    <label>密码 <input id="password" value="12345678"></label>
+    <label>昵称 <input id="nickname" value="user1nickname"></label>
+    <label>头像 URL <input id="avatar" placeholder="可选"></label>
+    <button id="register">注册</button>
+    <button id="login">登录</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>Bearer Token</legend>
+    <textarea id="token" placeholder="登录成功后自动保存，也可手动粘贴"></textarea>
+    <button id="saveToken">保存 Token</button>
+    <button id="clearToken">清空 Token</button>
+    <button id="info">当前账号</button>
+    <a href="html-2申请主播.html">进入主播测试页</a>
+  </fieldset>
+
+  <p id="status"></p>
+  <pre id="output">等待请求</pre>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const BASE_KEY = 'liveTest.baseUrl';
+    const TOKEN_KEY = 'liveTest.token';
+
+    $('baseUrl').value = localStorage.getItem(BASE_KEY) || $('baseUrl').value;
+    $('token').value = localStorage.getItem(TOKEN_KEY) || '';
+
+    function value(id) {
+      return $(id).value.trim();
+    }
+
+    function saveConfig() {
+      localStorage.setItem(BASE_KEY, value('baseUrl').replace(/\/$/, ''));
+      localStorage.setItem(TOKEN_KEY, value('token'));
+    }
+
+    async function request(path, options = {}) {
+      saveConfig();
+      const url = value('baseUrl').replace(/\/$/, '') + path;
+      const headers = { ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...options.headers };
+      if (options.auth) {
+        if (!value('token')) {
+          $('status').className = 'error';
+          $('output').textContent = '请先登录或粘贴 Token';
+          throw new Error('请先登录或粘贴 Token');
+        }
+        headers.Authorization = 'Bearer ' + value('token');
+      }
+      delete options.auth;
+      $('status').className = '';
+      $('status').textContent = `${options.method || 'GET'} ${url}`;
+      try {
+        const response = await fetch(url, { ...options, headers });
+        const text = await response.text();
+        let result;
+        try { result = JSON.parse(text); } catch { result = text; }
+        $('status').className = response.ok && result?.code === 0 ? 'ok' : 'error';
+        $('status').textContent += ` -> HTTP ${response.status}`;
+        $('output').textContent = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+        return result;
+      } catch (error) {
+        $('status').className = 'error';
+        $('output').textContent = error.stack || error.message;
+        throw error;
+      }
+    }
+
+    function credentials() {
+      return { username: value('username'), password: $('password').value };
+    }
+
+    $('register').onclick = () => request('/app/live/user/register', {
+      method: 'POST',
+      body: JSON.stringify({ ...credentials(), nickname: value('nickname'), avatar: value('avatar') })
+    }).catch(() => {});
+
+    $('login').onclick = async () => {
+      try {
+        const result = await request('/app/live/user/login', {
+          method: 'POST',
+          body: JSON.stringify(credentials())
+        });
+        if (result?.code === 0 && result.data?.token) {
+          $('token').value = result.data.token;
+          saveConfig();
+          $('output').textContent += '\n\nToken 已保存，可直接进入主播测页。';
+        }
+      } catch (_) {}
+    };
+
+    $('info').onclick = () => request('/app/live/user/info', { auth: true }).catch(() => {});
+    $('saveToken').onclick = () => {
+      saveConfig();
+      $('status').className = 'ok';
+      $('status').textContent = 'Token 已保存';
+    };
+    $('clearToken').onclick = () => {
+      $('token').value = '';
+      localStorage.removeItem(TOKEN_KEY);
+      $('status').className = '';
+      $('status').textContent = 'Token 已清空';
+    };
+  </script>
+</body>
+</html>

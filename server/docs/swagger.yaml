@@ -1,6 +1,6 @@
 definitions:
   common.JSONMap:
-    additionalProperties: true
+    additionalProperties: {}
     type: object
   config.AliyunOSS:
     properties:
@@ -85,7 +85,7 @@ definitions:
         description: 验证码长度
         type: integer
       open-captcha:
-        description: 防爆破验证码开启此数，0代表每次登录都需要验证码，其他数字代表错误密码此数，如3代表错误三次后出现验证码
+        description: 防爆破验证码开启此数，0代表每次登录都需要验证码，其他数字代表错误密码次数，如3代表错误三次后出现验证码
         type: integer
       open-captcha-timeout:
         description: 防爆破验证码超时时间，单位：s(秒)
@@ -144,6 +144,15 @@ definitions:
         description: jwt签名
         type: string
     type: object
+  config.JWTApp:
+    properties:
+      expires-time:
+        type: string
+      issuer:
+        type: string
+      signing-key:
+        type: string
+    type: object
   config.Local:
     properties:
       path:
@@ -151,6 +160,35 @@ definitions:
         type: string
       store-path:
         description: 本地文件存储路径
+        type: string
+    type: object
+  config.MCP:
+    properties:
+      addr:
+        type: integer
+      auth_header:
+        type: string
+      base_url:
+        type: string
+      message_path:
+        type: string
+      name:
+        type: string
+      path:
+        type: string
+      request_timeout:
+        type: integer
+      separate:
+        type: boolean
+      sse_path:
+        description: Deprecated fields kept for backward compatibility with older
+          configs.
+        type: string
+      upstream_base_url:
+        type: string
+      url_prefix:
+        type: string
+      version:
         type: string
     type: object
   config.Minio:
@@ -225,6 +263,9 @@ definitions:
       config:
         description: 高级配置
         type: string
+      conn-max-lifetime:
+        description: 连接最长复用时间,单位秒
+        type: integer
       db-name:
         description: 数据库名
         type: string
@@ -268,6 +309,9 @@ definitions:
       config:
         description: 高级配置
         type: string
+      conn-max-lifetime:
+        description: 连接最长复用时间,单位秒
+        type: integer
       db-name:
         description: 数据库名
         type: string
@@ -311,6 +355,9 @@ definitions:
       config:
         description: 高级配置
         type: string
+      conn-max-lifetime:
+        description: 连接最长复用时间,单位秒
+        type: integer
       db-name:
         description: 数据库名
         type: string
@@ -354,6 +401,9 @@ definitions:
       config:
         description: 高级配置
         type: string
+      conn-max-lifetime:
+        description: 连接最长复用时间,单位秒
+        type: integer
       db-name:
         description: 数据库名
         type: string
@@ -466,17 +516,23 @@ definitions:
           $ref: '#/definitions/config.DiskList'
         type: array
       email:
-        $ref: '#/definitions/github_com_flipped-aurora_gin-vue-admin_server_config.Email'
+        $ref: '#/definitions/tb_live_module_config.Email'
       excel:
         $ref: '#/definitions/config.Excel'
       hua-wei-obs:
         $ref: '#/definitions/config.HuaWeiObs'
       jwt:
         $ref: '#/definitions/config.JWT'
+      jwt-app:
+        $ref: '#/definitions/config.JWTApp'
       local:
         allOf:
         - $ref: '#/definitions/config.Local'
         description: oss
+      mcp:
+        allOf:
+        - $ref: '#/definitions/config.MCP'
+        description: MCP配置
       minio:
         $ref: '#/definitions/config.Minio'
       mongo:
@@ -515,6 +571,9 @@ definitions:
       config:
         description: 高级配置
         type: string
+      conn-max-lifetime:
+        description: 连接最长复用时间,单位秒
+        type: integer
       db-name:
         description: 数据库名
         type: string
@@ -562,6 +621,9 @@ definitions:
       config:
         description: 高级配置
         type: string
+      conn-max-lifetime:
+        description: 连接最长复用时间,单位秒
+        type: integer
       db-name:
         description: 数据库名
         type: string
@@ -608,6 +670,9 @@ definitions:
       db-type:
         description: 数据库类型:mysql(默认)|sqlite|sqlserver|postgresql
         type: string
+      disable-auto-migrate:
+        description: 自动迁移数据库表结构，生产环境建议设为false，手动迁移
+        type: boolean
       iplimit-count:
         type: integer
       iplimit-time:
@@ -794,30 +859,6 @@ definitions:
         description: 文件地址
         type: string
     type: object
-  github_com_flipped-aurora_gin-vue-admin_server_config.Email:
-    properties:
-      from:
-        description: 发件人  你自己要发邮件的邮箱
-        type: string
-      host:
-        description: 服务器地址 例如 smtp.qq.com  请前往QQ或者你要发邮件的邮箱查看其smtp协议
-        type: string
-      is-ssl:
-        description: 是否SSL   是否开启SSL
-        type: boolean
-      nickname:
-        description: 昵称    发件人昵称 通常为自己的邮箱
-        type: string
-      port:
-        description: 端口     请前往QQ或者你要发邮件的邮箱查看其smtp协议 大多为 465
-        type: integer
-      secret:
-        description: 密钥    用于登录的密钥 最好不要用邮箱密码 去邮箱smtp申请一个用于登录的密钥
-        type: string
-      to:
-        description: 收件人:多个以英文逗号分隔 例：a@qq.com b@qq.com 正式开发中请把此项目作为参数使用
-        type: string
-    type: object
   model.Info:
     properties:
       ID:
@@ -853,6 +894,330 @@ definitions:
         items:
           $ref: '#/definitions/system.SysBaseMenu'
         type: array
+    type: object
+  request.AnchorAdminProfileUpdateReq:
+    properties:
+      anchorId:
+        type: integer
+      anchorType:
+        enum:
+        - 0
+        - 1
+        - 2
+        type: integer
+      avatar:
+        maxLength: 500
+        type: string
+      birthday:
+        type: string
+      categoryId:
+        type: integer
+      cityCode:
+        maxLength: 32
+        type: string
+      countryCode:
+        type: string
+      cover:
+        maxLength: 500
+        type: string
+      gender:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+      language:
+        maxLength: 16
+        type: string
+      nickname:
+        maxLength: 64
+        type: string
+      regionCode:
+        maxLength: 32
+        type: string
+      signature:
+        maxLength: 255
+        type: string
+      tagIds:
+        items:
+          type: integer
+        maxItems: 100
+        type: array
+    required:
+    - anchorId
+    - nickname
+    type: object
+  request.AnchorAgencyUpdateReq:
+    properties:
+      agencyId:
+        type: integer
+      anchorId:
+        type: integer
+    required:
+    - anchorId
+    type: object
+  request.AnchorApplyReq:
+    properties:
+      avatar:
+        example: https://example.com/avatar.png
+        maxLength: 500
+        type: string
+      birthday:
+        example: "1998-01-01"
+        type: string
+      categoryId:
+        example: 1
+        type: integer
+      channelId:
+        example: 1
+        maximum: 999999
+        type: integer
+      cityCode:
+        example: "1001"
+        maxLength: 32
+        type: string
+      countryCode:
+        example: MY
+        type: string
+      cover:
+        example: https://example.com/cover.png
+        maxLength: 500
+        type: string
+      gender:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        example: 2
+        type: integer
+      language:
+        example: ms-MY
+        maxLength: 16
+        type: string
+      nickname:
+        example: Alice
+        maxLength: 64
+        type: string
+      regionCode:
+        example: "10"
+        maxLength: 32
+        type: string
+      signature:
+        example: 欢迎来到我的直播间
+        maxLength: 255
+        type: string
+      tagIds:
+        example:
+        - 1
+        - 3
+        - 8
+        items:
+          type: integer
+        maxItems: 100
+        type: array
+    required:
+    - channelId
+    - nickname
+    type: object
+  request.AnchorAuditReq:
+    properties:
+      anchorId:
+        type: integer
+      applyStatus:
+        enum:
+        - 2
+        - 3
+        example: 2
+        type: integer
+      rejectReason:
+        maxLength: 255
+        type: string
+    required:
+    - anchorId
+    - applyStatus
+    type: object
+  request.AnchorCertUpdateReq:
+    properties:
+      anchorId:
+        type: integer
+      certName:
+        maxLength: 64
+        type: string
+      certStatus:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+      certType:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+    required:
+    - anchorId
+    - certStatus
+    - certType
+    type: object
+  request.AnchorPermissionUpdateReq:
+    properties:
+      anchorId:
+        type: integer
+      livePermission:
+        enum:
+        - 0
+        - 1
+        type: integer
+      pkPermission:
+        enum:
+        - 0
+        - 1
+        type: integer
+      recommendPermission:
+        enum:
+        - 0
+        - 1
+        type: integer
+      withdrawPermission:
+        enum:
+        - 0
+        - 1
+        type: integer
+    required:
+    - anchorId
+    - livePermission
+    - pkPermission
+    - recommendPermission
+    - withdrawPermission
+    type: object
+  request.AnchorProfileUpdateReq:
+    properties:
+      avatar:
+        maxLength: 500
+        type: string
+      birthday:
+        example: "1998-01-01"
+        type: string
+      categoryId:
+        type: integer
+      cityCode:
+        maxLength: 32
+        type: string
+      countryCode:
+        type: string
+      cover:
+        maxLength: 500
+        type: string
+      gender:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+      language:
+        maxLength: 16
+        type: string
+      nickname:
+        example: Alice
+        maxLength: 64
+        type: string
+      regionCode:
+        maxLength: 32
+        type: string
+      signature:
+        maxLength: 255
+        type: string
+      tagIds:
+        items:
+          type: integer
+        maxItems: 100
+        type: array
+    required:
+    - nickname
+    type: object
+  request.AnchorRecommendUpdateReq:
+    properties:
+      anchorId:
+        type: integer
+      isRecommended:
+        enum:
+        - 0
+        - 1
+        type: integer
+      newcomerUntil:
+        type: integer
+      recommendWeight:
+        type: integer
+      sort:
+        type: integer
+    required:
+    - anchorId
+    - isRecommended
+    type: object
+  request.AnchorRemarkUpdateReq:
+    properties:
+      anchorId:
+        type: integer
+      remark:
+        maxLength: 500
+        type: string
+    required:
+    - anchorId
+    type: object
+  request.AnchorRiskUpdateReq:
+    properties:
+      anchorId:
+        type: integer
+      riskLevel:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+    required:
+    - anchorId
+    - riskLevel
+    type: object
+  request.AnchorSignedUpdateReq:
+    properties:
+      anchorId:
+        type: integer
+      isSigned:
+        enum:
+        - 0
+        - 1
+        type: integer
+    required:
+    - anchorId
+    - isSigned
+    type: object
+  request.AnchorStatusUpdateReq:
+    properties:
+      anchorId:
+        type: integer
+      banUntil:
+        example: 1790000000000
+        type: integer
+      status:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+      statusReason:
+        maxLength: 255
+        type: string
+    required:
+    - anchorId
+    - status
     type: object
   request.AutoCode:
     properties:
@@ -1074,6 +1439,36 @@ definitions:
         description: 每页大小
         type: integer
     type: object
+  request.ExportVersionRequest:
+    properties:
+      apiIds:
+        description: 选中的API ID列表
+        items:
+          type: integer
+        type: array
+      description:
+        description: 版本描述
+        type: string
+      dictIds:
+        description: 选中的字典ID列表
+        items:
+          type: integer
+        type: array
+      menuIds:
+        description: 选中的菜单ID列表
+        items:
+          type: integer
+        type: array
+      versionCode:
+        description: 版本号
+        type: string
+      versionName:
+        description: 版本名称
+        type: string
+    required:
+    - versionCode
+    - versionName
+    type: object
   request.GetAuthorityId:
     properties:
       authorityId:
@@ -1088,12 +1483,18 @@ definitions:
     type: object
   request.GetUserList:
     properties:
+      desc:
+        description: 排序方式:升序false(默认)|降序true
+        type: boolean
       email:
         type: string
       keyword:
         description: 关键字
         type: string
       nickName:
+        type: string
+      orderKey:
+        description: 排序
         type: string
       page:
         description: 页码
@@ -1112,6 +1513,38 @@ definitions:
         items:
           type: integer
         type: array
+    type: object
+  request.ImportSysDictionaryRequest:
+    properties:
+      json:
+        description: JSON字符串
+        type: string
+    required:
+    - json
+    type: object
+  request.ImportVersionRequest:
+    properties:
+      apis:
+        description: API数据，直接复用SysApi
+        items:
+          $ref: '#/definitions/system.SysApi'
+        type: array
+      dictionaries:
+        description: 字典数据，直接复用SysDictionary
+        items:
+          $ref: '#/definitions/system.SysDictionary'
+        type: array
+      menus:
+        description: 菜单数据，直接复用SysBaseMenu
+        items:
+          $ref: '#/definitions/system.SysBaseMenu'
+        type: array
+      version:
+        allOf:
+        - $ref: '#/definitions/request.VersionInfo'
+        description: 版本信息
+    required:
+    - version
     type: object
   request.InitDB:
     properties:
@@ -1145,20 +1578,71 @@ definitions:
     - adminPassword
     - dbName
     type: object
-  request.Login:
+  request.LiveCategoryCreateReq:
     properties:
-      captcha:
-        description: 验证码
+      code:
+        example: music
+        maxLength: 32
         type: string
-      captchaId:
-        description: 验证码ID
+      icon:
+        maxLength: 500
         type: string
-      password:
-        description: 密码
+      name:
+        example: 音乐
+        maxLength: 64
         type: string
-      username:
-        description: 用户名
+      parentId:
+        type: integer
+      sort:
+        type: integer
+      status:
+        enum:
+        - 0
+        - 1
+        type: integer
+    required:
+    - code
+    - name
+    - status
+    type: object
+  request.LiveCategoryDeleteReq:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  request.LiveCategoryStatusUpdateReq:
+    properties:
+      id:
+        type: integer
+      status:
+        enum:
+        - 0
+        - 1
+        type: integer
+    required:
+    - id
+    - status
+    type: object
+  request.LiveCategoryUpdateReq:
+    properties:
+      icon:
+        maxLength: 500
         type: string
+      id:
+        type: integer
+      name:
+        example: 音乐
+        maxLength: 64
+        type: string
+      parentId:
+        type: integer
+      sort:
+        type: integer
+    required:
+    - id
+    - name
     type: object
   request.PageInfo:
     properties:
@@ -1171,36 +1655,6 @@ definitions:
       pageSize:
         description: 每页大小
         type: integer
-    type: object
-  request.Register:
-    properties:
-      authorityId:
-        example: int 角色id
-        type: string
-      authorityIds:
-        example: '[]uint 角色id'
-        type: string
-      email:
-        example: 电子邮箱
-        type: string
-      enable:
-        example: int 是否启用
-        type: string
-      headerImg:
-        example: 头像链接
-        type: string
-      nickName:
-        example: 昵称
-        type: string
-      passWord:
-        example: 密码
-        type: string
-      phone:
-        example: 电话号码
-        type: string
-      userName:
-        example: 用户名
-        type: string
     type: object
   request.SearchApiParams:
     properties:
@@ -1240,6 +1694,42 @@ definitions:
       updatedAt:
         description: 更新时间
         type: string
+    type: object
+  request.SetApiAuthorities:
+    properties:
+      authorityIds:
+        description: 角色ID列表
+        items:
+          type: integer
+        type: array
+      method:
+        description: 请求方法
+        type: string
+      path:
+        description: API路径
+        type: string
+    type: object
+  request.SetMenuAuthorities:
+    properties:
+      authorityIds:
+        description: 角色ID列表
+        items:
+          type: integer
+        type: array
+      menuId:
+        description: 菜单ID
+        type: integer
+    type: object
+  request.SetRoleUsers:
+    properties:
+      authorityId:
+        description: 角色ID
+        type: integer
+      userIds:
+        description: 用户ID列表
+        items:
+          type: integer
+        type: array
     type: object
   request.SetUserAuth:
     properties:
@@ -1298,6 +1788,296 @@ definitions:
         description: 主键ID
         type: integer
     type: object
+  request.VersionInfo:
+    properties:
+      code:
+        description: 版本号
+        type: string
+      description:
+        description: 版本描述
+        type: string
+      exportTime:
+        description: 导出时间
+        type: string
+      name:
+        description: 版本名称
+        type: string
+    required:
+    - code
+    - name
+    type: object
+  response.Account:
+    properties:
+      avatar:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: integer
+      nickname:
+        type: string
+      status:
+        type: integer
+      username:
+        type: string
+    type: object
+  response.AccountResponse:
+    properties:
+      account:
+        $ref: '#/definitions/response.Account'
+    type: object
+  response.AnchorAdminDetailResp:
+    properties:
+      agencyId:
+        type: integer
+      agencyJoinAt:
+        type: integer
+      anchorNo:
+        type: string
+      anchorType:
+        type: integer
+      applyAt:
+        type: integer
+      applyStatus:
+        type: integer
+      auditAt:
+        type: integer
+      auditUserId:
+        type: integer
+      avatar:
+        type: string
+      banUntil:
+        type: integer
+      birthday:
+        type: string
+      categoryId:
+        type: integer
+      certName:
+        type: string
+      certStatus:
+        type: integer
+      certType:
+        type: integer
+      channelId:
+        type: integer
+      cityCode:
+        type: string
+      countryCode:
+        type: string
+      cover:
+        type: string
+      createdAt:
+        type: string
+      extra:
+        type: string
+      fansCount:
+        type: integer
+      gender:
+        type: integer
+      id:
+        type: integer
+      isRecommended:
+        type: integer
+      isSigned:
+        type: integer
+      language:
+        type: string
+      lastLiveAt:
+        type: integer
+      lastLiveEndAt:
+        type: integer
+      level:
+        type: integer
+      livePermission:
+        type: integer
+      maxOnlineCount:
+        type: integer
+      newcomerUntil:
+        type: integer
+      nickname:
+        type: string
+      pkPermission:
+        type: integer
+      recommendPermission:
+        type: integer
+      recommendWeight:
+        type: integer
+      regionCode:
+        type: string
+      rejectReason:
+        type: string
+      remark:
+        type: string
+      riskLevel:
+        type: integer
+      signature:
+        type: string
+      sort:
+        type: integer
+      source:
+        type: string
+      sourceId:
+        type: string
+      status:
+        type: integer
+      statusReason:
+        type: string
+      tagIds:
+        items:
+          type: integer
+        type: array
+      totalLiveCount:
+        type: integer
+      totalLiveDuration:
+        type: integer
+      totalViewCount:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+      withdrawPermission:
+        type: integer
+    type: object
+  response.AnchorAdminListItemResp:
+    properties:
+      agencyId:
+        type: integer
+      anchorNo:
+        type: string
+      anchorType:
+        type: integer
+      applyStatus:
+        type: integer
+      avatar:
+        type: string
+      categoryId:
+        type: integer
+      certStatus:
+        type: integer
+      channelId:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      isRecommended:
+        type: integer
+      isSigned:
+        type: integer
+      livePermission:
+        type: integer
+      nickname:
+        type: string
+      pkPermission:
+        type: integer
+      recommendPermission:
+        type: integer
+      riskLevel:
+        type: integer
+      source:
+        type: string
+      status:
+        type: integer
+      userId:
+        type: integer
+      withdrawPermission:
+        type: integer
+    type: object
+  response.AnchorAdminListResp:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.AnchorAdminListItemResp'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  response.AnchorApplyStatusResp:
+    properties:
+      anchorNo:
+        type: string
+      applyAt:
+        type: integer
+      applyStatus:
+        type: integer
+      auditAt:
+        type: integer
+      isApplied:
+        type: boolean
+      rejectReason:
+        type: string
+    type: object
+  response.AnchorPermissionCheckResp:
+    properties:
+      allow:
+        type: boolean
+      banUntil:
+        type: integer
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  response.AnchorPublicDetailResp:
+    properties:
+      anchorNo:
+        type: string
+      anchorType:
+        type: integer
+      avatar:
+        type: string
+      categoryId:
+        type: integer
+      certName:
+        type: string
+      certStatus:
+        type: integer
+      certType:
+        type: integer
+      cityCode:
+        type: string
+      countryCode:
+        type: string
+      cover:
+        type: string
+      fansCount:
+        type: integer
+      gender:
+        type: integer
+      isRecommended:
+        type: integer
+      isSigned:
+        type: integer
+      language:
+        type: string
+      lastLiveAt:
+        type: integer
+      level:
+        type: integer
+      maxOnlineCount:
+        type: integer
+      nickname:
+        type: string
+      regionCode:
+        type: string
+      signature:
+        type: string
+      tagIds:
+        items:
+          type: integer
+        type: array
+      totalLiveCount:
+        type: integer
+      totalLiveDuration:
+        type: integer
+      totalViewCount:
+        type: integer
+    type: object
   response.Email:
     properties:
       body:
@@ -1330,14 +2110,169 @@ definitions:
       file:
         $ref: '#/definitions/example.ExaFile'
     type: object
-  response.LoginResponse:
+  response.LiveCategoryAdminItem:
     properties:
-      expiresAt:
-        type: integer
-      token:
+      code:
         type: string
-      user:
-        $ref: '#/definitions/system.SysUser'
+      createdAt:
+        type: string
+      icon:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      parentId:
+        type: integer
+      parentName:
+        type: string
+      sort:
+        type: integer
+      status:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  response.LiveCategoryAdminListResp:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.LiveCategoryAdminItem'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  response.LiveCategoryAdminTreeItem:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/response.LiveCategoryAdminTreeItem'
+        type: array
+      code:
+        type: string
+      icon:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      parentId:
+        type: integer
+      sort:
+        type: integer
+      status:
+        type: integer
+    type: object
+  response.LiveCategoryPublicItem:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/response.LiveCategoryPublicItem'
+        type: array
+      code:
+        type: string
+      icon:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      parentId:
+        type: integer
+      sort:
+        type: integer
+    type: object
+  response.MyAnchorInfo:
+    properties:
+      agencyId:
+        type: integer
+      anchorNo:
+        type: string
+      anchorType:
+        type: integer
+      applyAt:
+        type: integer
+      applyStatus:
+        type: integer
+      auditAt:
+        type: integer
+      avatar:
+        type: string
+      banUntil:
+        type: integer
+      birthday:
+        type: string
+      categoryId:
+        type: integer
+      certName:
+        type: string
+      certStatus:
+        type: integer
+      certType:
+        type: integer
+      cityCode:
+        type: string
+      countryCode:
+        type: string
+      cover:
+        type: string
+      fansCount:
+        type: integer
+      gender:
+        type: integer
+      isSigned:
+        type: integer
+      language:
+        type: string
+      lastLiveAt:
+        type: integer
+      lastLiveEndAt:
+        type: integer
+      level:
+        type: integer
+      livePermission:
+        type: integer
+      maxOnlineCount:
+        type: integer
+      nickname:
+        type: string
+      pkPermission:
+        type: integer
+      recommendPermission:
+        type: integer
+      regionCode:
+        type: string
+      rejectReason:
+        type: string
+      signature:
+        type: string
+      status:
+        type: integer
+      statusReason:
+        type: string
+      tagIds:
+        items:
+          type: integer
+        type: array
+      totalLiveCount:
+        type: integer
+      totalLiveDuration:
+        type: integer
+      totalViewCount:
+        type: integer
+      withdrawPermission:
+        type: integer
+    type: object
+  response.MyAnchorInfoResp:
+    properties:
+      anchor:
+        $ref: '#/definitions/response.MyAnchorInfo'
+      isAnchor:
+        type: boolean
     type: object
   response.PageResult:
     properties:
@@ -1349,12 +2284,37 @@ definitions:
       total:
         type: integer
     type: object
+  response.PluginInfo:
+    properties:
+      apis:
+        items:
+          $ref: '#/definitions/system.SysApi'
+        type: array
+      dictionaries:
+        items:
+          $ref: '#/definitions/system.SysDictionary'
+        type: array
+      menus:
+        items:
+          $ref: '#/definitions/system.SysBaseMenu'
+        type: array
+      pluginName:
+        type: string
+      pluginType:
+        description: web, server, full
+        type: string
+    type: object
   response.PolicyPathResponse:
     properties:
       paths:
         items:
           $ref: '#/definitions/request.CasbinInfo'
         type: array
+    type: object
+  response.RegisterResponse:
+    properties:
+      account:
+        $ref: '#/definitions/response.Account'
     type: object
   response.Response:
     properties:
@@ -1494,6 +2454,9 @@ definitions:
         type: boolean
       title:
         description: 菜单名
+        type: string
+      transitionType:
+        description: 路由切换动画
         type: string
     type: object
   system.SysApi:
@@ -1651,6 +2614,11 @@ definitions:
       ID:
         description: 主键ID
         type: integer
+      children:
+        description: 子字典
+        items:
+          $ref: '#/definitions/system.SysDictionary'
+        type: array
       createdAt:
         description: 创建时间
         type: string
@@ -1660,6 +2628,9 @@ definitions:
       name:
         description: 字典名（中）
         type: string
+      parentID:
+        description: 父级字典ID
+        type: integer
       status:
         description: 状态
         type: boolean
@@ -1679,14 +2650,31 @@ definitions:
       ID:
         description: 主键ID
         type: integer
+      children:
+        description: 子字典详情
+        items:
+          $ref: '#/definitions/system.SysDictionaryDetail'
+        type: array
       createdAt:
         description: 创建时间
         type: string
+      disabled:
+        description: 禁用状态，根据status字段动态计算
+        type: boolean
       extend:
         description: 扩展值
         type: string
       label:
         description: 展示值
+        type: string
+      level:
+        description: 层级深度，从0开始
+        type: integer
+      parentID:
+        description: 父级字典详情ID
+        type: integer
+      path:
+        description: 层级路径，如 "1,2,3"
         type: string
       sort:
         description: 排序标记
@@ -1704,6 +2692,34 @@ definitions:
         description: 字典值
         type: string
     type: object
+  system.SysError:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      form:
+        description: 错误来源
+        type: string
+      info:
+        description: 错误内容
+        type: string
+      level:
+        type: string
+      solution:
+        description: 解决方案
+        type: string
+      status:
+        description: 处理状态：未处理/处理中/处理完成
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+    required:
+    - form
+    type: object
   system.SysExportTemplate:
     properties:
       ID:
@@ -1719,6 +2735,9 @@ definitions:
       dbName:
         description: 数据库名称
         type: string
+      importSql:
+        description: 自定义导入SQL
+        type: string
       joinTemplate:
         items:
           $ref: '#/definitions/system.JoinTemplate'
@@ -1729,6 +2748,9 @@ definitions:
         description: 模板名称
         type: string
       order:
+        type: string
+      sql:
+        description: 自定义导出SQL
         type: string
       tableName:
         description: 表名称
@@ -1920,16 +2942,173 @@ definitions:
         description: 用户UUID
         type: string
     type: object
+  system.SysVersion:
+    properties:
+      ID:
+        description: 主键ID
+        type: integer
+      createdAt:
+        description: 创建时间
+        type: string
+      description:
+        description: 版本描述
+        type: string
+      updatedAt:
+        description: 更新时间
+        type: string
+      versionCode:
+        description: 版本号
+        type: string
+      versionData:
+        description: 版本数据
+        type: string
+      versionName:
+        description: 版本名称
+        type: string
+    required:
+    - versionCode
+    - versionName
+    type: object
   system.System:
     properties:
       config:
         $ref: '#/definitions/config.Server'
     type: object
+  tb_live_module_config.Email:
+    properties:
+      from:
+        description: 发件人  你自己要发邮件的邮箱
+        type: string
+      host:
+        description: 服务器地址 例如 smtp.qq.com  请前往QQ或者你要发邮件的邮箱查看其smtp协议
+        type: string
+      is-loginauth:
+        description: 是否LoginAuth   是否使用LoginAuth认证方式（适用于IBM、微软邮箱服务器等）
+        type: boolean
+      is-ssl:
+        description: 是否SSL   是否开启SSL
+        type: boolean
+      nickname:
+        description: 昵称    发件人昵称 通常为自己的邮箱
+        type: string
+      port:
+        description: 端口     请前往QQ或者你要发邮件的邮箱查看其smtp协议 大多为 465
+        type: integer
+      secret:
+        description: 密钥    用于登录的密钥 最好不要用邮箱密码 去邮箱smtp申请一个用于登录的密钥
+        type: string
+      to:
+        description: 收件人:多个以英文逗号分隔 例：a@qq.com b@qq.com 正式开发中请把此项目作为参数使用
+        type: string
+    type: object
+  tb_live_module_model_live_request.Login:
+    properties:
+      password:
+        example: password123
+        maxLength: 72
+        minLength: 8
+        type: string
+      username:
+        example: demo_user
+        maxLength: 32
+        minLength: 3
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  tb_live_module_model_live_request.Register:
+    properties:
+      avatar:
+        example: https://example.com/avatar.png
+        maxLength: 500
+        type: string
+      nickname:
+        example: Demo
+        maxLength: 64
+        type: string
+      password:
+        example: password123
+        maxLength: 72
+        minLength: 8
+        type: string
+      username:
+        example: demo_user
+        maxLength: 32
+        minLength: 3
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  tb_live_module_model_live_response.LoginResponse:
+    properties:
+      account:
+        $ref: '#/definitions/response.Account'
+      expiresAt:
+        type: integer
+      token:
+        type: string
+    type: object
+  tb_live_module_model_system_request.Login:
+    properties:
+      captcha:
+        description: 验证码
+        type: string
+      captchaId:
+        description: 验证码ID
+        type: string
+      password:
+        description: 密码
+        type: string
+      username:
+        description: 用户名
+        type: string
+    type: object
+  tb_live_module_model_system_request.Register:
+    properties:
+      authorityId:
+        example: int 角色id
+        type: string
+      authorityIds:
+        example: '[]uint 角色id'
+        type: string
+      email:
+        example: 电子邮箱
+        type: string
+      enable:
+        example: int 是否启用
+        type: string
+      headerImg:
+        example: 头像链接
+        type: string
+      nickName:
+        example: 昵称
+        type: string
+      passWord:
+        example: 密码
+        type: string
+      phone:
+        example: 电话号码
+        type: string
+      userName:
+        example: 用户名
+        type: string
+    type: object
+  tb_live_module_model_system_response.LoginResponse:
+    properties:
+      expiresAt:
+        type: integer
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/system.SysUser'
+    type: object
 info:
   contact: {}
   description: 使用gin+vue进行极速开发的全栈开发基础平台
   title: Gin-Vue-Admin Swagger API接口文档
-  version: v2.7.9-beta
+  version: v2.9.2
 paths:
   /api/createApi:
     post:
@@ -2157,6 +3336,41 @@ paths:
       summary: 分页获取API列表
       tags:
       - SysApi
+  /api/getApiRoles:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: API路径
+        in: query
+        name: path
+        required: true
+        type: string
+      - description: 请求方法
+        in: query
+        name: method
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取拥有指定API权限的角色ID列表
+      tags:
+      - SysApi
   /api/ignoreApi:
     post:
       consumes:
@@ -2178,6 +3392,34 @@ paths:
       summary: 忽略API
       tags:
       - IgnoreApi
+  /api/setApiRoles:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: API路径、请求方法和角色ID列表
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.SetApiAuthorities'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 设置成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 全量覆盖某API关联的角色列表
+      tags:
+      - SysApi
   /api/syncApi:
     get:
       consumes:
@@ -2413,6 +3655,37 @@ paths:
       summary: 分页获取角色列表
       tags:
       - Authority
+  /authority/getUsersByAuthority:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 角色ID
+        in: query
+        name: authorityId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    type: integer
+                  type: array
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取拥有指定角色的用户ID列表
+      tags:
+      - Authority
   /authority/setDataAuthority:
     post:
       consumes:
@@ -2439,6 +3712,34 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 设置角色资源权限
+      tags:
+      - Authority
+  /authority/setRoleUsers:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 角色ID和用户ID列表
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.SetRoleUsers'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 设置成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 全量覆盖某角色关联的用户列表
       tags:
       - Authority
   /authority/updateAuthority:
@@ -2686,54 +3987,6 @@ paths:
       summary: 删除回滚记录
       tags:
       - AutoCode
-  /autoCode/getColumn:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 获取当前表所有字段
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  additionalProperties: true
-                  type: object
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 获取当前表所有字段
-      tags:
-      - AutoCode
-  /autoCode/getDB:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 获取当前所有数据库
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  additionalProperties: true
-                  type: object
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 获取当前所有数据库
-      tags:
-      - AutoCode
   /autoCode/getMeta:
     post:
       consumes:
@@ -2789,6 +4042,27 @@ paths:
       summary: 获取package
       tags:
       - AutoCodePackage
+  /autoCode/getPluginList:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取插件列表成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/response.PluginInfo'
+                  type: array
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取插件列表
+      tags:
+      - AutoCodePlugin
   /autoCode/getSysHistory:
     post:
       consumes:
@@ -2819,30 +4093,6 @@ paths:
       summary: 查询回滚记录
       tags:
       - AutoCode
-  /autoCode/getTables:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 获取当前数据库所有表
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  additionalProperties: true
-                  type: object
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 获取当前数据库所有表
-      tags:
-      - AutoCode
   /autoCode/getTemplates:
     get:
       consumes:
@@ -2868,6 +4118,30 @@ paths:
       tags:
       - AutoCodePackage
   /autoCode/initAPI:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 打包插件成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 打包插件
+      tags:
+      - AutoCodePlugin
+  /autoCode/initDictionary:
     post:
       consumes:
       - application/json
@@ -2935,8 +4209,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  items:
-                    type: object
+                  items: {}
                   type: array
                 msg:
                   type: string
@@ -3007,6 +4280,36 @@ paths:
       summary: 打包插件
       tags:
       - AutoCodePlugin
+  /autoCode/removePlugin:
+    post:
+      parameters:
+      - description: 插件名称
+        in: query
+        name: pluginName
+        required: true
+        type: string
+      - description: 插件类型
+        in: query
+        name: pluginType
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 删除插件成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 删除插件
+      tags:
+      - AutoCodePlugin
   /autoCode/rollback:
     post:
       consumes:
@@ -3066,7 +4369,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/request.Login'
+          $ref: '#/definitions/tb_live_module_model_system_request.Login'
       produces:
       - application/json
       responses:
@@ -3077,7 +4380,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.LoginResponse'
+                  $ref: '#/definitions/tb_live_module_model_system_response.LoginResponse'
                 msg:
                   type: string
               type: object
@@ -3889,6 +5192,631 @@ paths:
       summary: jwt加入黑名单
       tags:
       - Jwt
+  /live/anchor/agency/update:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        agencyId=0 表示移出公会并清空加入时间；加入或更换公会会把加入时间更新为当前毫秒时间戳。
+        当前代码库尚无 Agency 模型，本接口不创建虚假公会表或外键；接入公会模块后需补充存在性和状态校验。
+      parameters:
+      - description: 主播 ID 和目标公会 ID
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AnchorAgencyUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、无 RBAC 权限或主播不存在
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改主播公会归属
+      tags:
+      - LiveAnchorAdmin
+  /live/anchor/audit:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        只允许审核中的申请流转到通过(2)或拒绝(3)，不能重复审核或把已通过申请改为拒绝。
+        拒绝时 rejectReason 必填并关闭直播/PK 权限；通过时清空拒绝原因，但第一版审核与业务权限分离，不自动开启直播、PK、提现权限。
+        auditUserId 从当前管理后台 JWT 获取，审核时间使用毫秒时间戳。
+      parameters:
+      - description: 主播 ID、目标申请状态和拒绝原因
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AnchorAuditReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、无 RBAC 权限、状态流转非法或主播不存在
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 审核主播申请
+      tags:
+      - LiveAnchorAdmin
+  /live/anchor/cert/update:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        只修改认证状态、类型和展示名称；证件号、证件图片等认证资料不存入 LiveAnchor。
+        未认证(0)要求 certType=0 且 certName 为空；认证中(1)/已认证(2)要求类型非 0；已认证还要求展示名称非空。
+      parameters:
+      - description: 主播认证状态、类型和展示名
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AnchorCertUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、无 RBAC 权限、认证状态不一致或主播不存在
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改主播认证状态
+      tags:
+      - LiveAnchorAdmin
+  /live/anchor/detail:
+    get:
+      description: |-
+        根据 anchorId 返回资料、审核、认证、状态、权限、运营、统计、来源、风控、备注和扩展信息。
+        使用独立后台 Response DTO，不直接返回 GORM Model，避免模型新增字段后意外泄露。
+      parameters:
+      - description: 主播 ID
+        in: query
+        name: anchorId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、无 RBAC 权限或主播不存在
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取主播后台完整详情
+      tags:
+      - LiveAnchorAdmin
+  /live/anchor/list:
+    get:
+      description: |-
+        支持主播 ID/编号/用户 ID、昵称、类型、分类、公会、审核/认证/账号/权限/风控状态、来源、渠道和创建日期筛选。
+        仅主播编号和昵称使用 LIKE，不使用 CONCAT 或跨字段全模糊查询；默认按 id DESC 排序。
+        当前列表不关联查询用户或公会表，不产生 N+1 查询。
+      parameters:
+      - description: 页码，从 1 开始
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: 每页数量，最大 100
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 主播 ID
+        in: query
+        name: anchorId
+        type: integer
+      - description: 主播编号，模糊匹配
+        in: query
+        name: anchorNo
+        type: string
+      - description: 客户端用户 ID
+        in: query
+        name: userId
+        type: integer
+      - description: 主播昵称，模糊匹配
+        in: query
+        name: nickname
+        type: string
+      - description: 主播类型：0普通 1官方 2内部运营
+        in: query
+        name: anchorType
+        type: integer
+      - description: 直播分类 ID
+        in: query
+        name: categoryId
+        type: integer
+      - description: 公会 ID
+        in: query
+        name: agencyId
+        type: integer
+      - description: 申请状态：0未申请 1审核中 2通过 3拒绝
+        in: query
+        name: applyStatus
+        type: integer
+      - description: 认证状态：0未认证 1认证中 2已认证 3失败
+        in: query
+        name: certStatus
+        type: integer
+      - description: 账号状态：0禁用 1正常 2封禁 3注销
+        in: query
+        name: status
+        type: integer
+      - description: 开播权限：0禁止 1允许
+        in: query
+        name: livePermission
+        type: integer
+      - description: PK 权限：0禁止 1允许
+        in: query
+        name: pkPermission
+        type: integer
+      - description: 推荐准入权限：0禁止 1允许
+        in: query
+        name: recommendPermission
+        type: integer
+      - description: 运营提现权限：0禁止 1允许
+        in: query
+        name: withdrawPermission
+        type: integer
+      - description: 是否签约：0否 1是
+        in: query
+        name: isSigned
+        type: integer
+      - description: 是否人工推荐：0否 1是
+        in: query
+        name: isRecommended
+        type: integer
+      - description: 风险等级：0正常 1低 2中 3高
+        in: query
+        name: riskLevel
+        type: integer
+      - description: 来源
+        in: query
+        name: source
+        type: string
+      - description: 渠道 ID
+        in: query
+        name: channelId
+        type: integer
+      - description: 创建日期起，YYYY-MM-DD
+        in: query
+        name: createdAtStart
+        type: string
+      - description: 创建日期止，YYYY-MM-DD（含当天）
+        in: query
+        name: createdAtEnd
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、无 RBAC 权限或查询失败
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查询主播列表
+      tags:
+      - LiveAnchorAdmin
+  /live/anchor/permission/update:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        修改指定主播的直播、PK、推荐准入和运营提现权限，四个字段必须完整传入且只允许 0/1。
+        livePermission=0 时不得开启 pkPermission；接口校验失败而不会偷偷联动修改。
+        recommendPermission 表示是否允许进入推荐系统，与 isRecommended 人工推荐状态不同。
+        本接口不修改主播状态、审核状态、推荐运营属性或风控状态。
+      parameters:
+      - description: 四项主播权限
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AnchorPermissionUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、无 RBAC 权限、权限冲突或主播不存在
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改主播功能权限
+      tags:
+      - LiveAnchorAdmin
+  /live/anchor/profile/update:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        只允许修改公开资料以及 anchorType；level 第一版不开放人工调整。
+        空字符串、0、空标签和 null 生日均按合法零值显式更新，不使用 Save 或 struct Updates。
+        categoryId=0 表示清空分类；非 0 时必须来自当前启用的直播分类。
+        审核、认证、状态、权限、推荐、签约、公会、风控、统计和来源均由独立接口或系统维护。
+      parameters:
+      - description: 后台资料白名单
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AnchorAdminProfileUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、无 RBAC 权限或主播不存在
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 后台修改主播资料
+      tags:
+      - LiveAnchorAdmin
+  /live/anchor/recommend/update:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        只修改人工推荐、新人期截止毫秒时间戳、人工排序和推荐基础权重。
+        本接口不修改 recommendPermission；当推荐准入权限为 0 时，不能设置 isRecommended=1。
+      parameters:
+      - description: 运营推荐属性
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AnchorRecommendUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、无 RBAC 权限、推荐权限关闭或主播不存在
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改主播运营推荐属性
+      tags:
+      - LiveAnchorAdmin
+  /live/anchor/remark/update:
+    post:
+      consumes:
+      - application/json
+      description: 只修改后台可见的 remark，按 UTF-8 字符数限制为 500；APP 的任何 Response DTO 均不包含该字段。
+      parameters:
+      - description: 主播 ID 和后台备注
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AnchorRemarkUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、无 RBAC 权限或主播不存在
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改主播后台备注
+      tags:
+      - LiveAnchorAdmin
+  /live/anchor/risk/update:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        只修改 riskLevel（0正常、1低、2中、3高），不联动状态或任何权限字段。
+        实际能否开播由 live/check 实时综合判断；第一版高风险禁止开播，中风险不扩大限制。
+      parameters:
+      - description: 主播 ID 和风险等级
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AnchorRiskUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、无 RBAC 权限或主播不存在
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改主播风险等级
+      tags:
+      - LiveAnchorAdmin
+  /live/anchor/signed/update:
+    post:
+      consumes:
+      - application/json
+      description: 只修改 isSigned；签约状态不等同于 anchorType、agencyId 或认证状态，不做任何联动。
+      parameters:
+      - description: 主播 ID 和签约状态
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AnchorSignedUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、无 RBAC 权限或主播不存在
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改主播签约状态
+      tags:
+      - LiveAnchorAdmin
+  /live/anchor/status/update:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        状态包括禁用(0)、正常(1)、封禁(2)、注销(3)。禁用和封禁必须填写原因。
+        封禁时 banUntil=0 表示永久封禁，未来毫秒时间戳表示临时封禁；恢复正常会清空原因和 banUntil。
+        注销只改变状态、不删除数据，且注销后不能通过本接口恢复。
+      parameters:
+      - description: 账号状态、原因和封禁截止时间
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AnchorStatusUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、无 RBAC 权限、非法状态或主播不存在
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改主播账号状态
+      tags:
+      - LiveAnchorAdmin
+  /live/category/create:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        code 会转为小写且创建后不可修改；同一父分类下名称不能重复。
+        启用分类只能放在全部处于启用状态的父级链路下。
+      parameters:
+      - description: 分类资料
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.LiveCategoryCreateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、编码/名称重复或父分类非法
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 创建直播分类
+      tags:
+      - LiveCategoryAdmin
+  /live/category/delete:
+    post:
+      consumes:
+      - application/json
+      description: 仅允许软删除已停用、没有子分类且未被 live_anchor.category_id 引用的分类。
+      parameters:
+      - description: 分类 ID
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.LiveCategoryDeleteReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、分类启用中、有子分类或正在使用
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除直播分类
+      tags:
+      - LiveCategoryAdmin
+  /live/category/list:
+    get:
+      description: |-
+        支持按编码/名称关键字、父分类和状态筛选，默认按 sort DESC、id ASC 排序。
+        父分类名称批量查询，不产生 N+1 查询。
+      parameters:
+      - description: 页码，从 1 开始
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: 每页数量，最大 100
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 分类编码或名称，模糊匹配
+        in: query
+        name: keyword
+        type: string
+      - description: 父分类 ID；0 表示只查询顶级分类
+        in: query
+        name: parentId
+        type: integer
+      - description: 状态：0停用 1启用
+        in: query
+        name: status
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、无权限或查询失败
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查询直播分类
+      tags:
+      - LiveCategoryAdmin
+  /live/category/status/update:
+    post:
+      consumes:
+      - application/json
+      description: 停用父分类会在同一事务中级联停用全部子孙分类；启用子分类要求所有上级分类已启用。
+      parameters:
+      - description: 分类 ID 和状态
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.LiveCategoryStatusUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、分类不存在或上级未启用
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 启用或停用直播分类
+      tags:
+      - LiveCategoryAdmin
+  /live/category/tree:
+    get:
+      description: 返回全部未删除分类，包括停用分类，供父分类选择器和分类管理页面使用。
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 无权限或查询失败
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取后台直播分类树
+      tags:
+      - LiveCategoryAdmin
+  /live/category/update:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        允许修改父分类、名称、图标和排序；稳定编码 code 不允许修改。
+        修改父级时会检查父分类存在性、启用状态和循环引用。
+      parameters:
+      - description: 分类 ID 和资料
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.LiveCategoryUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、同级名称重复或分类层级非法
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或 token 无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改直播分类资料
+      tags:
+      - LiveCategoryAdmin
   /menu/addBaseMenu:
     post:
       consumes:
@@ -4120,6 +6048,64 @@ paths:
       summary: 分页获取基础menu列表
       tags:
       - Menu
+  /menu/getMenuRoles:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 菜单ID
+        in: query
+        name: menuId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取拥有指定菜单的角色ID列表
+      tags:
+      - AuthorityMenu
+  /menu/setMenuRoles:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 菜单ID和角色ID列表
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.SetMenuAuthorities'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 设置成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 全量覆盖某菜单关联的角色列表
+      tags:
+      - AuthorityMenu
   /menu/updateBaseMenu:
     post:
       consumes:
@@ -4204,6 +6190,63 @@ paths:
       summary: 删除SysDictionary
       tags:
       - SysDictionary
+  /sysDictionary/exportSysDictionary:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主键ID
+        in: query
+        name: ID
+        type: integer
+      - description: 创建时间
+        in: query
+        name: createdAt
+        type: string
+      - description: 描述
+        in: query
+        name: desc
+        type: string
+      - description: 字典名（中）
+        in: query
+        name: name
+        type: string
+      - description: 父级字典ID
+        in: query
+        name: parentID
+        type: integer
+      - description: 状态
+        in: query
+        name: status
+        type: boolean
+      - description: 字典名（英）
+        in: query
+        name: type
+        type: string
+      - description: 更新时间
+        in: query
+        name: updatedAt
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 导出字典JSON
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties: true
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 导出字典JSON（包含字典详情）
+      tags:
+      - SysDictionary
   /sysDictionary/findSysDictionary:
     get:
       consumes:
@@ -4225,6 +6268,10 @@ paths:
         in: query
         name: name
         type: string
+      - description: 父级字典ID
+        in: query
+        name: parentID
+        type: integer
       - description: 状态
         in: query
         name: status
@@ -4261,6 +6308,11 @@ paths:
     get:
       consumes:
       - application/json
+      parameters:
+      - description: 字典名（中）
+        in: query
+        name: name
+        type: string
       produces:
       - application/json
       responses:
@@ -4278,6 +6330,34 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 分页获取SysDictionary列表
+      tags:
+      - SysDictionary
+  /sysDictionary/importSysDictionary:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 字典JSON数据
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ImportSysDictionaryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 导入字典
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 导入字典JSON（包含字典详情）
       tags:
       - SysDictionary
   /sysDictionary/updateSysDictionary:
@@ -4377,6 +6457,10 @@ paths:
         in: query
         name: createdAt
         type: string
+      - description: 禁用状态，根据status字段动态计算
+        in: query
+        name: disabled
+        type: boolean
       - description: 扩展值
         in: query
         name: extend
@@ -4384,6 +6468,18 @@ paths:
       - description: 展示值
         in: query
         name: label
+        type: string
+      - description: 层级深度，从0开始
+        in: query
+        name: level
+        type: integer
+      - description: 父级字典详情ID
+        in: query
+        name: parentID
+        type: integer
+      - description: 层级路径，如 "1,2,3"
+        in: query
+        name: path
         type: string
       - description: 排序标记
         in: query
@@ -4425,6 +6521,138 @@ paths:
       summary: 用id查询SysDictionaryDetail
       tags:
       - SysDictionaryDetail
+  /sysDictionaryDetail/getDictionaryDetailsByParent:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 是否包含子级数据
+        in: query
+        name: includeChildren
+        type: boolean
+      - description: 父级字典详情ID，为空时获取顶级
+        in: query
+        name: parentID
+        type: integer
+      - description: 字典ID
+        in: query
+        name: sysDictionaryID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取字典详情列表
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/system.SysDictionaryDetail'
+                  type: array
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 根据父级ID获取字典详情
+      tags:
+      - SysDictionaryDetail
+  /sysDictionaryDetail/getDictionaryPath:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 字典详情ID
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取字典详情路径
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/system.SysDictionaryDetail'
+                  type: array
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取字典详情的完整路径
+      tags:
+      - SysDictionaryDetail
+  /sysDictionaryDetail/getDictionaryTreeList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 字典ID
+        in: query
+        name: sysDictionaryID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取字典详情树形结构
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/system.SysDictionaryDetail'
+                  type: array
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取字典详情树形结构
+      tags:
+      - SysDictionaryDetail
+  /sysDictionaryDetail/getDictionaryTreeListByType:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 字典类型
+        in: query
+        name: type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取字典详情树形结构
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/system.SysDictionaryDetail'
+                  type: array
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 根据字典类型获取字典详情树形结构
+      tags:
+      - SysDictionaryDetail
   /sysDictionaryDetail/getSysDictionaryDetailList:
     get:
       consumes:
@@ -4438,6 +6666,10 @@ paths:
         in: query
         name: createdAt
         type: string
+      - description: 禁用状态，根据status字段动态计算
+        in: query
+        name: disabled
+        type: boolean
       - description: 扩展值
         in: query
         name: extend
@@ -4450,6 +6682,10 @@ paths:
         in: query
         name: label
         type: string
+      - description: 层级深度，用于查询指定层级的数据
+        in: query
+        name: level
+        type: integer
       - description: 页码
         in: query
         name: page
@@ -4458,6 +6694,14 @@ paths:
         in: query
         name: pageSize
         type: integer
+      - description: 父级字典详情ID，用于查询指定父级下的子项
+        in: query
+        name: parentID
+        type: integer
+      - description: 层级路径，如 "1,2,3"
+        in: query
+        name: path
+        type: string
       - description: 排序标记
         in: query
         name: sort
@@ -4525,18 +6769,215 @@ paths:
       summary: 更新SysDictionaryDetail
       tags:
       - SysDictionaryDetail
-  /sysExportTemplate/ExportTemplate:
-    get:
+  /sysError/createSysError:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建错误日志
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/system.SysError'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 创建成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 创建错误日志
+      tags:
+      - SysError
+  /sysError/deleteSysError:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除错误日志
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/system.SysError'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 删除成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 删除错误日志
+      tags:
+      - SysError
+  /sysError/deleteSysErrorByIds:
+    delete:
       consumes:
       - application/json
       produces:
       - application/json
-      responses: {}
+      responses:
+        "200":
+          description: 批量删除成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
       security:
       - ApiKeyAuth: []
-      summary: 导出表格模板
+      summary: 批量删除错误日志
       tags:
-      - SysExportTemplate
+      - SysError
+  /sysError/findSysError:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用id查询错误日志
+        in: query
+        name: ID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/system.SysError'
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询错误日志
+      tags:
+      - SysError
+  /sysError/getSysErrorList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - collectionFormat: csv
+        in: query
+        items:
+          type: string
+        name: createdAtRange
+        type: array
+      - in: query
+        name: form
+        type: string
+      - in: query
+        name: info
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PageResult'
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取错误日志列表
+      tags:
+      - SysError
+  /sysError/getSysErrorSolution:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 错误日志ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 处理已提交
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 根据ID触发处理：标记为处理中，1分钟后自动改为处理完成
+      tags:
+      - SysError
+  /sysError/updateSysError:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: 更新错误日志
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/system.SysError'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 更新成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 更新错误日志
+      tags:
+      - SysError
   /sysExportTemplate/createSysExportTemplate:
     post:
       consumes:
@@ -4618,6 +7059,42 @@ paths:
       summary: 导出表格
       tags:
       - SysExportTemplate
+  /sysExportTemplate/exportExcelByToken:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: 导出表格
+      tags:
+      - ExportExcelByToken
+  /sysExportTemplate/exportTemplate:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: 导出表格模板
+      tags:
+      - SysExportTemplate
+  /sysExportTemplate/exportTemplateByToken:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: 通过token导出表格模板
+      tags:
+      - ExportTemplateByToken
   /sysExportTemplate/findSysExportTemplate:
     get:
       consumes:
@@ -4635,6 +7112,10 @@ paths:
         in: query
         name: dbName
         type: string
+      - description: 自定义导入SQL
+        in: query
+        name: importSql
+        type: string
       - in: query
         name: limit
         type: integer
@@ -4644,6 +7125,10 @@ paths:
         type: string
       - in: query
         name: order
+        type: string
+      - description: 自定义导出SQL
+        in: query
+        name: sql
         type: string
       - description: 表名称
         in: query
@@ -4693,6 +7178,10 @@ paths:
       - in: query
         name: endCreatedAt
         type: string
+      - description: 自定义导入SQL
+        in: query
+        name: importSql
+        type: string
       - description: 关键字
         in: query
         name: keyword
@@ -4715,6 +7204,10 @@ paths:
         in: query
         name: pageSize
         type: integer
+      - description: 自定义导出SQL
+        in: query
+        name: sql
+        type: string
       - in: query
         name: startCreatedAt
         type: string
@@ -4758,6 +7251,39 @@ paths:
       summary: 导入表格
       tags:
       - SysImportTemplate
+  /sysExportTemplate/previewSQL:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 导出模板ID
+        in: query
+        name: templateID
+        required: true
+        type: string
+      - description: 查询参数编码字符串，参考 ExportExcel 组件
+        in: query
+        name: params
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties:
+                    type: string
+                  type: object
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 预览最终生成的SQL（不执行查询，仅返回SQL字符串）
+      tags:
+      - SysExportTemplate
   /sysExportTemplate/updateSysExportTemplate:
     put:
       consumes:
@@ -4781,34 +7307,6 @@ paths:
       summary: 更新导出模板
       tags:
       - SysExportTemplate
-  /sysOperationRecord/createSysOperationRecord:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: 创建SysOperationRecord
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/system.SysOperationRecord'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 创建SysOperationRecord
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 创建SysOperationRecord
-      tags:
-      - SysOperationRecord
   /sysOperationRecord/deleteSysOperationRecord:
     delete:
       consumes:
@@ -5267,6 +7765,238 @@ paths:
       summary: 更新参数
       tags:
       - SysParams
+  /sysVersion/deleteSysVersion:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 删除版本管理
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/system.SysVersion'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 删除成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 删除版本管理
+      tags:
+      - SysVersion
+  /sysVersion/deleteSysVersionByIds:
+    delete:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 批量删除成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 批量删除版本管理
+      tags:
+      - SysVersion
+  /sysVersion/downloadVersionJson:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 版本ID
+        in: query
+        name: ID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 下载成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 下载版本JSON数据
+      tags:
+      - SysVersion
+  /sysVersion/exportVersion:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 创建发版数据
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ExportVersionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 创建成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 创建发版数据
+      tags:
+      - SysVersion
+  /sysVersion/findSysVersion:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用id查询版本管理
+        in: query
+        name: ID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/system.SysVersion'
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 用id查询版本管理
+      tags:
+      - SysVersion
+  /sysVersion/getSysVersionList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - collectionFormat: csv
+        in: query
+        items:
+          type: string
+        name: createdAtRange
+        type: array
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: versionCode
+        type: string
+      - in: query
+        name: versionName
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PageResult'
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页获取版本管理列表
+      tags:
+      - SysVersion
+  /sysVersion/getSysVersionPublic:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+                msg:
+                  type: string
+              type: object
+      summary: 不需要鉴权的版本管理接口
+      tags:
+      - SysVersion
+  /sysVersion/importVersion:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 版本JSON数据
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ImportVersionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 导入成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 导入版本数据
+      tags:
+      - SysVersion
   /system/getServerInfo:
     post:
       produces:
@@ -5316,7 +8046,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: 重启系统
+          description: 重载系统
           schema:
             allOf:
             - $ref: '#/definitions/response.Response'
@@ -5326,7 +8056,7 @@ paths:
               type: object
       security:
       - ApiKeyAuth: []
-      summary: 重启系统
+      summary: 重载系统
       tags:
       - System
   /system/setSystemConfig:
@@ -5426,7 +8156,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/request.Register'
+          $ref: '#/definitions/tb_live_module_model_system_request.Register'
       produces:
       - application/json
       responses:
@@ -5665,10 +8395,266 @@ paths:
       summary: 设置用户信息
       tags:
       - SysUser
+  /v1/app/live/anchor/apply:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        当前客户端账号首次申请时创建唯一主播记录；主播编号按“渠道号 + 六位序列”生成。
+        审核中和已通过的申请不能重复提交；被拒后复用原记录和主播编号，清空上一轮审核结果后重新进入审核中。
+        userId 始终取自客户端 JWT；channelId 只在首次申请时写入，重新申请不能改写来源渠道。
+        categoryId=0 表示未分类；非 0 时必须来自当前启用的直播分类。
+      parameters:
+      - description: 主播申请资料，不包含 userId
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AnchorApplyReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、正在审核或已经是主播
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 客户端 token 缺失、无效或账号禁用
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 申请成为主播
+      tags:
+      - LiveAnchorApp
+  /v1/app/live/anchor/apply/status:
+    get:
+      description: userId 只从客户端 JWT 获取。未创建主播记录时返回 isApplied=false、applyStatus=0。
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询失败
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 客户端 token 缺失、无效或账号禁用
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 获取当前用户的主播申请状态
+      tags:
+      - LiveAnchorApp
+  /v1/app/live/anchor/detail:
+    get:
+      description: |-
+        根据唯一对外编号 anchorNo 查询已审核通过且状态正常的主播，只返回公开资料。
+        客户端请求和响应均不暴露 LiveAnchor 数据库主键；同时不返回完整生日、userId、审核信息、封禁原因、提现权限、风控、备注、来源 ID 或扩展字段。
+      parameters:
+      - description: 主播对外编号
+        in: query
+        name: anchorNo
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、主播不存在或不可公开
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 获取主播公共主页资料
+      tags:
+      - LiveAnchorApp
+  /v1/app/live/anchor/info:
+    get:
+      description: |-
+        从客户端 JWT 获取当前账号 ID，并实时查询主播记录；客户端不能传 userId。
+        尚未创建主播记录时返回 isAnchor=false、anchor=null，不把 record not found 当成接口错误。
+        响应使用独立 DTO，不返回审核管理员、风控、后台备注、来源 ID 或扩展字段。
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询失败
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 客户端 token 缺失、无效或账号禁用
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 获取当前用户的主播身份
+      tags:
+      - LiveAnchorApp
+  /v1/app/live/anchor/live/check:
+    get:
+      description: |-
+        实时检查主播存在、申请通过、账号状态、封禁、风险等级、直播权限和当前认证策略。
+        高风险主播禁止开播；中风险第一版不扩大限制；认证第一版不是开播硬条件。
+        临时封禁已到期但 status 尚未恢复时仍拒绝，本 GET 接口不会隐式修改数据库。
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 检查失败
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 客户端 token 缺失、无效或账号禁用
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 检查当前主播开播资格
+      tags:
+      - LiveAnchorApp
+  /v1/app/live/anchor/pk/check:
+    get:
+      description: |-
+        PK 资格严格建立在完整开播资格之上；通过直播检查后再判断 pkPermission。
+        本接口只判断资格，不创建直播间、LiveKit room 或 PK session。
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 检查失败
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 客户端 token 缺失、无效或账号禁用
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 检查当前主播 PK 资格
+      tags:
+      - LiveAnchorApp
+  /v1/app/live/anchor/profile/update:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        只允许修改昵称、头像、封面、签名、性别、生日、地区、语言、分类和标签。
+        userId 从 JWT 获取；请求中的空字符串、0、空标签和 null 生日均按合法零值显式更新。
+        categoryId=0 表示清空分类；非 0 时必须来自当前启用的直播分类。
+        本接口不能修改主播编号、审核、状态、权限、认证、运营、统计、来源、风控和后台备注字段。
+      parameters:
+      - description: 公开资料白名单
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AnchorProfileUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、主播不存在或修改失败
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 客户端 token 缺失、无效或账号禁用
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 修改当前主播公开资料
+      tags:
+      - LiveAnchorApp
+  /v1/app/live/category/list:
+    get:
+      description: |-
+        公开接口，只返回启用分类；父分类停用后，其子分类不会出现在客户端分类树中。
+        分类 id 是主播 categoryId 的公开合法取值，不属于需要隐藏的主播数据库主键。
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询失败
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 获取启用的直播分类树
+      tags:
+      - LiveCategoryApp
+  /v1/app/live/user/info:
+    get:
+      description: 从客户端 JWT 上下文获取账号 ID，并返回安全账号信息
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.AccountResponse'
+              type: object
+        "401":
+          description: 客户端 token 缺失、无效或账号禁用
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 获取当前客户端账号
+      tags:
+      - LiveAccount
+  /v1/app/live/user/login:
+    post:
+      consumes:
+      - application/json
+      description: 校验客户端账号密码并签发客户端专用 JWT
+      parameters:
+      - description: 用户名和密码
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/tb_live_module_model_live_request.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误、凭证错误或账号禁用
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 客户端账号登录
+      tags:
+      - LiveAccount
+  /v1/app/live/user/register:
+    post:
+      consumes:
+      - application/json
+      description: 创建独立于管理后台账号体系的客户端账号；用户名不区分大小写
+      parameters:
+      - description: 用户名、密码、昵称和头像
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/tb_live_module_model_live_request.Register'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误或用户名已注册
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 客户端账号注册
+      tags:
+      - LiveAccount
 securityDefinitions:
   ApiKeyAuth:
     in: header
     name: x-token
+    type: apiKey
+  AppBearerAuth:
+    in: header
+    name: Authorization
     type: apiKey
 swagger: "2.0"
 tags:
