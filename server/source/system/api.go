@@ -67,31 +67,13 @@ func (i *initApi) InitializeData(ctx context.Context) (context.Context, error) {
 		{ApiGroup: "系统用户", Method: "POST", Path: "/user/resetPassword", Description: "重置用户密码"},
 		{ApiGroup: "系统用户", Method: "PUT", Path: "/user/setSelfSetting", Description: "用户界面配置"},
 
-		{ApiGroup: "api", Method: "POST", Path: "/api/createApi", Description: "创建api"},
-		{ApiGroup: "api", Method: "POST", Path: "/api/deleteApi", Description: "删除Api"},
-		{ApiGroup: "api", Method: "POST", Path: "/api/updateApi", Description: "更新Api"},
-		{ApiGroup: "api", Method: "POST", Path: "/api/getApiList", Description: "获取api列表"},
-		{ApiGroup: "api", Method: "POST", Path: "/api/getAllApis", Description: "获取所有api"},
-		{ApiGroup: "api", Method: "POST", Path: "/api/getApiById", Description: "获取api详细信息"},
-		{ApiGroup: "api", Method: "DELETE", Path: "/api/deleteApisByIds", Description: "批量删除api"},
-		{ApiGroup: "api", Method: "GET", Path: "/api/syncApi", Description: "获取待同步API"},
-		{ApiGroup: "api", Method: "GET", Path: "/api/getApiGroups", Description: "获取路由组"},
-		{ApiGroup: "api", Method: "POST", Path: "/api/enterSyncApi", Description: "确认同步API"},
-		{ApiGroup: "api", Method: "POST", Path: "/api/ignoreApi", Description: "忽略API"},
-		{ApiGroup: "api", Method: "GET", Path: "/api/getApiRoles", Description: "获取指定API关联角色列表"},
-		{ApiGroup: "api", Method: "POST", Path: "/api/setApiRoles", Description: "全量覆盖API关联角色列表"},
-
 		{ApiGroup: "角色", Method: "POST", Path: "/authority/copyAuthority", Description: "拷贝角色"},
 		{ApiGroup: "角色", Method: "POST", Path: "/authority/createAuthority", Description: "创建角色"},
 		{ApiGroup: "角色", Method: "POST", Path: "/authority/deleteAuthority", Description: "删除角色"},
 		{ApiGroup: "角色", Method: "PUT", Path: "/authority/updateAuthority", Description: "更新角色信息"},
 		{ApiGroup: "角色", Method: "POST", Path: "/authority/getAuthorityList", Description: "获取角色列表"},
-		{ApiGroup: "角色", Method: "POST", Path: "/authority/setDataAuthority", Description: "设置角色资源权限"},
 		{ApiGroup: "角色", Method: "GET", Path: "/authority/getUsersByAuthority", Description: "获取角色关联用户ID列表"},
 		{ApiGroup: "角色", Method: "POST", Path: "/authority/setRoleUsers", Description: "全量覆盖角色关联用户"},
-
-		{ApiGroup: "casbin", Method: "POST", Path: "/casbin/updateCasbin", Description: "更改角色api权限"},
-		{ApiGroup: "casbin", Method: "POST", Path: "/casbin/getPolicyPathByAuthorityId", Description: "获取权限列表"},
 
 		{ApiGroup: "菜单", Method: "POST", Path: "/menu/addBaseMenu", Description: "新增菜单"},
 		{ApiGroup: "菜单", Method: "POST", Path: "/menu/getMenu", Description: "获取菜单树(必选)"},
@@ -212,10 +194,6 @@ func (i *initApi) InitializeData(ctx context.Context) (context.Context, error) {
 		{ApiGroup: "email", Method: "POST", Path: "/email/emailTest", Description: "发送测试邮件"},
 		{ApiGroup: "email", Method: "POST", Path: "/email/sendEmail", Description: "发送邮件"},
 
-		{ApiGroup: "按钮权限", Method: "POST", Path: "/authorityBtn/setAuthorityBtn", Description: "设置按钮权限"},
-		{ApiGroup: "按钮权限", Method: "POST", Path: "/authorityBtn/getAuthorityBtn", Description: "获取已有按钮权限"},
-		{ApiGroup: "按钮权限", Method: "POST", Path: "/authorityBtn/canRemoveAuthorityBtn", Description: "删除按钮"},
-
 		{ApiGroup: "导出模板", Method: "POST", Path: "/sysExportTemplate/createSysExportTemplate", Description: "新增导出模板"},
 		{ApiGroup: "导出模板", Method: "DELETE", Path: "/sysExportTemplate/deleteSysExportTemplate", Description: "删除导出模板"},
 		{ApiGroup: "导出模板", Method: "DELETE", Path: "/sysExportTemplate/deleteSysExportTemplateByIds", Description: "批量删除导出模板"},
@@ -261,7 +239,7 @@ func (i *initApi) InitializeData(ctx context.Context) (context.Context, error) {
 		{ApiGroup: "版本控制", Method: "DELETE", Path: "/sysVersion/deleteSysVersion", Description: "删除版本"},
 		{ApiGroup: "版本控制", Method: "DELETE", Path: "/sysVersion/deleteSysVersionByIds", Description: "批量删除版本"},
 
-		// 主播后台 API 只注册进 sys_apis，具体角色权限仍由现有 Casbin 配置流程显式授予。
+		// sys_apis 只作为内部接口元数据使用，后台访问统一由 JWT 校验。
 		{ApiGroup: "主播管理", Method: "GET", Path: "/live/anchor/list", Description: "分页查询主播列表"},
 		{ApiGroup: "主播管理", Method: "GET", Path: "/live/anchor/detail", Description: "获取主播后台详情"},
 		{ApiGroup: "主播管理", Method: "POST", Path: "/live/anchor/audit", Description: "审核主播申请"},
@@ -294,7 +272,7 @@ func (i *initApi) DataInserted(ctx context.Context) bool {
 	if !ok {
 		return false
 	}
-	if errors.Is(db.Where("path = ? AND method = ?", "/authorityBtn/canRemoveAuthorityBtn", "POST").
+	if errors.Is(db.Where("path = ? AND method = ?", "/user/getUserInfo", "GET").
 		First(&sysModel.SysApi{}).Error, gorm.ErrRecordNotFound) {
 		return false
 	}

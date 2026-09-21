@@ -45,7 +45,6 @@ func RegisterTables() {
 	err := db.AutoMigrate(
 
 		system.SysApi{},
-		system.SysIgnoreApi{},
 		system.SysUser{},
 		system.SysBaseMenu{},
 		system.JwtBlacklist{},
@@ -56,7 +55,6 @@ func RegisterTables() {
 		system.SysDictionaryDetail{},
 		system.SysBaseMenuParameter{},
 		system.SysBaseMenuBtn{},
-		system.SysAuthorityBtn{},
 		system.SysAutoCodePackage{},
 		system.SysExportTemplate{},
 		system.Condition{},
@@ -79,6 +77,15 @@ func RegisterTables() {
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))
+		os.Exit(1)
+	}
+
+	if err = removeAPIManagement(db); err != nil {
+		global.GVA_LOG.Error("remove api management failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = removeLegacyRolePermissions(db); err != nil {
+		global.GVA_LOG.Error("remove legacy role permissions failed", zap.Error(err))
 		os.Exit(1)
 	}
 

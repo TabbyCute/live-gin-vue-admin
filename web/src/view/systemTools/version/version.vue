@@ -140,35 +140,6 @@
               </div>
             </div>
 
-            <!-- API选择 -->
-            <div class="card-col card-vertical">
-              <div class="card-header">
-                <span class="card-title">选择API</span>
-              </div>
-              <div class="card-filter">
-                <el-input v-model="apiFilterTextName" placeholder="按名称过滤" clearable size="small"
-                  style="margin-bottom: 8px" />
-                <el-input v-model="apiFilterTextPath" placeholder="按路径过滤" clearable size="small" />
-              </div>
-              <div class="card-body">
-                <el-tree ref="apiTreeRef" :data="apiTreeData" :default-checked-keys="selectedApiIds"
-                  :props="apiTreeProps" default-expand-all highlight-current node-key="onlyId" show-checkbox
-                  :filter-node-method="filterApiNode" @check="onApiCheck" class="api-tree">
-                  <template #default="{ data }">
-                    <div class="flex items-center justify-between w-full pr-1">
-                      <span>{{ data.description }}</span>
-                      <el-tooltip :content="data.path">
-                        <span
-                          class="max-w-[240px] break-all overflow-ellipsis overflow-hidden text-gray-500 dark:text-gray-400">
-                          {{ data.path }}
-                        </span>
-                      </el-tooltip>
-                    </div>
-                  </template>
-                </el-tree>
-              </div>
-            </div>
-
             <!-- 字典选择 -->
             <div class="card-col card-vertical">
               <div class="card-header">
@@ -256,26 +227,6 @@
               <div class="card-col">
                 <div class="card-vertical">
                   <div class="card-header">
-                    <h3 class="card-title">API ({{ importPreviewData.apis?.length || 0 }}项)</h3>
-                  </div>
-                  <div class="card-body">
-                    <el-tree :data="previewApiTreeData" :props="apiTreeProps" node-key="ID"
-                      :expand-on-click-node="false" :check-on-click-node="false" :show-checkbox="false"
-                      default-expand-all>
-                      <template #default="{ data }">
-                        <div class="flex-1 flex items-center justify-between text-sm pr-2">
-                          <span>{{ data.description }}</span>
-                          <span class="text-gray-500 dark:text-gray-400 text-xs ml-2">{{ data.path }} [{{ data.method
-                            }}]</span>
-                        </div>
-                      </template>
-                    </el-tree>
-                  </div>
-                </div>
-              </div>
-              <div class="card-col">
-                <div class="card-vertical">
-                  <div class="card-header">
                     <h3 class="card-title">字典 ({{ importPreviewData.dictionaries?.length || 0 }}项)</h3>
                   </div>
                   <div class="card-body">
@@ -314,9 +265,8 @@ import {
   downloadVersionJson
 } from '@/api/version'
 
-// 导入菜单和API相关接口
+// 导入菜单和字典相关接口
 import { getMenuList } from '@/api/menu'
-import { getApiList } from '@/api/api'
 import { getSysDictionaryList } from '@/api/sysDictionary'
 
 // 全量引入格式化工具 请按需保留
@@ -343,25 +293,19 @@ const exportForm = ref({
   versionCode: '',
   description: '',
   menuIds: [],
-  apiIds: [],
   dictIds: []
 })
 
 // 树形结构相关数据
 const menuTreeData = ref([])
-const apiTreeData = ref([])
 const dictTreeData = ref([])
 const selectedMenuIds = ref([])
-const selectedApiIds = ref([])
 const selectedDictIds = ref([])
 const menuFilterText = ref('')
-const apiFilterTextName = ref('')
-const apiFilterTextPath = ref('')
 const dictFilterText = ref('')
 
 // 树形组件引用
 const menuTreeRef = ref(null)
-const apiTreeRef = ref(null)
 const dictTreeRef = ref(null)
 
 // 树形属性配置
@@ -370,11 +314,6 @@ const menuTreeProps = ref({
   label: function (data) {
     return data.meta?.title || data.title
   }
-})
-
-const apiTreeProps = ref({
-  children: 'children',
-  label: 'description'
 })
 
 const dictTreeProps = ref({
@@ -399,7 +338,6 @@ const importJsonContent = ref('')
 const importPreviewData = ref(null)
 const uploadRef = ref(null)
 const previewMenuTreeData = ref([])
-const previewApiTreeData = ref([])
 const previewDictTreeData = ref([])
 
 
@@ -551,25 +489,17 @@ const closeDetailShow = () => {
 
 
 
-// 获取菜单和API列表
-const getMenuAndApiList = async () => {
+// 获取菜单列表
+const getMenuListData = async () => {
   try {
     // 获取菜单列表
     const menuRes = await getMenuList()
     if (menuRes.code === 0) {
       menuTreeData.value = menuRes.data || []
     }
-
-    // 获取API列表
-    const apiRes = await getApiList({ page: 1, pageSize: 9999 })
-    if (apiRes.code === 0) {
-      console.log('原始API数据:', apiRes.data)
-      const apis = apiRes.data.list || []
-      apiTreeData.value = buildApiTree(apis)
-    }
   } catch (error) {
     console.error('获取数据失败:', error)
-    ElMessage.error('获取菜单或API数据失败')
+    ElMessage.error('获取菜单数据失败')
   }
 }
 
@@ -586,50 +516,11 @@ const getDictList = async () => {
   }
 }
 
-// 构建API树形结构
-const buildApiTree = (apis) => {
-  const apiObj = {}
-  apis.forEach((item) => {
-    item.onlyId = 'p:' + item.path + 'm:' + item.method
-    if (Object.prototype.hasOwnProperty.call(apiObj, item.apiGroup)) {
-      apiObj[item.apiGroup].push(item)
-    } else {
-      Object.assign(apiObj, { [item.apiGroup]: [item] })
-    }
-  })
-  const apiTree = []
-  for (const key in apiObj) {
-    const treeNode = {
-      ID: key,
-      description: key + '组',
-      children: apiObj[key]
-    }
-    apiTree.push(treeNode)
-  }
-  return apiTree
-}
-
 // 树形组件事件处理方法
 const filterMenuNode = (value, data) => {
   if (!value) return true
   const title = data.meta?.title || data.title || ''
   return title.indexOf(value) !== -1
-}
-
-const filterApiNode = (value, data) => {
-  if (!apiFilterTextName.value && !apiFilterTextPath.value) return true
-  let matchesName, matchesPath
-  if (!apiFilterTextName.value) {
-    matchesName = true
-  } else {
-    matchesName = data.description && data.description.includes(apiFilterTextName.value)
-  }
-  if (!apiFilterTextPath.value) {
-    matchesPath = true
-  } else {
-    matchesPath = data.path && data.path.includes(apiFilterTextPath.value)
-  }
-  return matchesName && matchesPath
 }
 
 const filterDictNode = (value, data) => {
@@ -652,12 +543,6 @@ const onMenuCheck = (data, checked) => {
   }
 }
 
-const onApiCheck = (data, checked) => {
-  if (checked.checkedKeys) {
-    selectedApiIds.value = checked.checkedKeys
-  }
-}
-
 const onDictCheck = (data, checked) => {
   if (checked.checkedKeys) {
     selectedDictIds.value = checked.checkedKeys
@@ -671,12 +556,6 @@ watch(menuFilterText, (val) => {
   }
 })
 
-watch([apiFilterTextName, apiFilterTextPath], () => {
-  if (apiTreeRef.value) {
-    apiTreeRef.value.filter('')
-  }
-})
-
 watch(dictFilterText, (val) => {
   if (dictTreeRef.value) {
     dictTreeRef.value.filter(val)
@@ -686,7 +565,7 @@ watch(dictFilterText, (val) => {
 // 导出相关方法
 const openExportDialog = async () => {
   exportDialogVisible.value = true
-  await getMenuAndApiList()
+  await getMenuListData()
   await getDictList()
 }
 
@@ -697,15 +576,11 @@ const closeExportDialog = () => {
     versionCode: '',
     description: '',
     menuIds: [],
-    apiIds: [],
     dictIds: []
   }
   selectedMenuIds.value = []
-  selectedApiIds.value = []
   selectedDictIds.value = []
   menuFilterText.value = ''
-  apiFilterTextName.value = ''
-  apiFilterTextPath.value = ''
   dictFilterText.value = ''
 }
 
@@ -717,17 +592,14 @@ const handleExport = async () => {
 
   exportLoading.value = true
   try {
-    // 获取选中的菜单、API和字典
+    // 获取选中的菜单和字典
     const checkedMenus = menuTreeRef.value ? menuTreeRef.value.getCheckedNodes(false, true) : []
-    const checkedApis = apiTreeRef.value ? apiTreeRef.value.getCheckedNodes(true) : []
     const checkedDicts = dictTreeRef.value ? dictTreeRef.value.getCheckedNodes(true) : []
 
     const menuIds = checkedMenus.map(menu => menu.ID)
-    const apiIds = checkedApis.map(api => api.ID)
     const dictIds = checkedDicts.map(dict => dict.ID)
 
     exportForm.value.menuIds = menuIds
-    exportForm.value.apiIds = apiIds
     exportForm.value.dictIds = dictIds
 
     const res = await exportVersion(exportForm.value)
@@ -757,7 +629,6 @@ const closeImportDialog = () => {
   importJsonContent.value = ''
   importPreviewData.value = null
   previewMenuTreeData.value = []
-  previewApiTreeData.value = []
   // 清理上传文件
   if (uploadRef.value) {
     uploadRef.value.clearFiles()
@@ -797,7 +668,6 @@ const handleFileRemove = () => {
   importJsonContent.value = ''
   importPreviewData.value = null
   previewMenuTreeData.value = []
-  previewApiTreeData.value = []
 }
 
 // 计算菜单总数（递归计算所有菜单项）
@@ -824,7 +694,6 @@ const handleJsonContentChange = () => {
   if (!importJsonContent.value.trim()) {
     importPreviewData.value = null
     previewMenuTreeData.value = []
-    previewApiTreeData.value = []
     previewDictTreeData.value = []
     return
   }
@@ -835,7 +704,6 @@ const handleJsonContentChange = () => {
     // 构建预览数据
     importPreviewData.value = {
       menus: data.menus || [],
-      apis: data.apis || [],
       dictionaries: data.dictionaries || []
     }
 
@@ -844,27 +712,6 @@ const handleJsonContentChange = () => {
       previewMenuTreeData.value = data.menus
     } else {
       previewMenuTreeData.value = []
-    }
-
-    // 构建API树形数据（按分组组织）
-    if (data.apis && data.apis.length > 0) {
-      const apiGroups = {}
-      data.apis.forEach(api => {
-        const group = api.apiGroup || '未分组'
-        if (!apiGroups[group]) {
-          apiGroups[group] = {
-            ID: `group_${group}`,
-            description: group,
-            path: '',
-            method: '',
-            children: []
-          }
-        }
-        apiGroups[group].children.push(api)
-      })
-      previewApiTreeData.value = Object.values(apiGroups)
-    } else {
-      previewApiTreeData.value = []
     }
 
     // 处理字典数据
@@ -877,7 +724,6 @@ const handleJsonContentChange = () => {
     console.error('JSON解析失败:', error)
     importPreviewData.value = null
     previewMenuTreeData.value = []
-    previewApiTreeData.value = []
     previewDictTreeData.value = []
   }
 }

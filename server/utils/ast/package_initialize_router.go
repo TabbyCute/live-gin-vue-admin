@@ -61,7 +61,7 @@ func (a *PackageInitializeRouter) Rollback(file *ast.File) error {
 					if !ok {
 						continue
 					}
-					// 检查调用的函数是否为 systemRouter.InitApiRouter
+					// 检查调用是否匹配当前模块和目标初始化函数
 					ident, ok := selExpr.X.(*ast.Ident)
 					//只要存在调用则+1
 					if ok && ident.Name == a.ModuleName {

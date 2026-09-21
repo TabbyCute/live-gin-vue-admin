@@ -2,11 +2,11 @@ package system
 
 import (
 	"errors"
+	"gorm.io/gorm"
+	"strconv"
 	"tb_live_module/global"
 	"tb_live_module/model/common/request"
 	"tb_live_module/model/system"
-	"gorm.io/gorm"
-	"strconv"
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)
@@ -22,7 +22,6 @@ var MenuServiceApp = new(MenuService)
 func (menuService *MenuService) getMenuTreeMap(authorityId uint) (treeMap map[uint][]system.SysMenu, err error) {
 	var allMenus []system.SysMenu
 	var baseMenu []system.SysBaseMenu
-	var btns []system.SysAuthorityBtn
 	treeMap = make(map[uint][]system.SysMenu)
 
 	var SysAuthorityMenus []system.SysAuthorityMenu
@@ -37,7 +36,7 @@ func (menuService *MenuService) getMenuTreeMap(authorityId uint) (treeMap map[ui
 		MenuIds = append(MenuIds, SysAuthorityMenus[i].MenuId)
 	}
 
-	err = global.GVA_DB.Where("id in (?)", MenuIds).Order("sort").Preload("Parameters").Find(&baseMenu).Error
+	err = global.GVA_DB.Where("id in (?)", MenuIds).Order("sort").Preload("Parameters").Preload("MenuBtn").Find(&baseMenu).Error
 	if err != nil {
 		return
 	}
@@ -51,20 +50,18 @@ func (menuService *MenuService) getMenuTreeMap(authorityId uint) (treeMap map[ui
 		})
 	}
 
-	err = global.GVA_DB.Where("authority_id = ?", authorityId).Preload("SysBaseMenuBtn").Find(&btns).Error
-	if err != nil {
-		return
-	}
 	var btnMap = make(map[uint]map[string]uint)
-	for _, v := range btns {
-		if btnMap[v.SysMenuID] == nil {
-			btnMap[v.SysMenuID] = make(map[string]uint)
+	for _, menu := range baseMenu {
+		for _, btn := range menu.MenuBtn {
+			if btnMap[menu.ID] == nil {
+				btnMap[menu.ID] = make(map[string]uint)
+			}
+			btnMap[menu.ID][btn.Name] = authorityId
 		}
-		btnMap[v.SysMenuID][v.SysBaseMenuBtn.Name] = authorityId
 	}
-	for _, v := range allMenus {
-		v.Btns = btnMap[v.SysBaseMenu.ID]
-		treeMap[v.ParentId] = append(treeMap[v.ParentId], v)
+	for i := range allMenus {
+		allMenus[i].Btns = btnMap[allMenus[i].SysBaseMenu.ID]
+		treeMap[allMenus[i].ParentId] = append(treeMap[allMenus[i].ParentId], allMenus[i])
 	}
 	return treeMap, err
 }

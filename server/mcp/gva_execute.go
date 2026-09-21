@@ -64,7 +64,7 @@ func (g *GVAExecutor) New() mcp.Tool {
 在gva_analyze获取了当前的包信息和字典信息之后，如果已经包含了可以使用的包和模块，那就不要调用本mcp。根据分析结果直接生成代码，适用于自动化代码生成流程。
 
 **重要提示：**
-- 当needCreatedModules=true时，模块创建会自动生成API和菜单，不应再调用api_creator和menu_creator工具
+- 当needCreatedModules=true时，模块创建会自动生成API权限元数据和菜单，不应再调用menu_creator工具
 - 字段使用字典类型时，系统会自动检查并创建字典
 - 字典创建会在模块创建之前执行
 - 当字段配置了dataSource且association=2（一对多关联）时，系统会自动将fieldType修改为'array'`),
@@ -499,10 +499,9 @@ func (g *GVAExecutor) executeCreation(ctx context.Context, plan *ExecutionPlan) 
 
 		// 添加重要提醒：不要使用其他MCP工具
 		result.Message += "\n\n⚠️ 重要提醒：\n"
-		result.Message += "模块创建已完成，API和菜单已自动生成。请不要再调用以下MCP工具：\n"
-		result.Message += "- api_creator：API权限已在模块创建时自动生成\n"
+		result.Message += "模块创建已完成，API权限元数据和菜单已自动生成。请不要再调用以下MCP工具：\n"
 		result.Message += "- menu_creator：前端菜单已在模块创建时自动生成\n"
-		result.Message += "如需修改API或菜单，请直接在系统管理界面中进行配置。\n"
+		result.Message += "如需修改API权限元数据，请在对应模块初始化代码中维护。\n"
 	}
 
 	result.Message += "已构建目录结构信息; "

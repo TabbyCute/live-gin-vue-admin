@@ -8,7 +8,7 @@ import (
 
 type AnchorAdminRouter struct{}
 
-// InitAnchorAdminRouter 接收已经挂载后台 JWT + Casbin 的父路由。
+// InitAnchorAdminRouter 接收已经挂载后台 JWT 的父路由。
 // 写接口额外挂操作日志；读接口不记录操作日志，保持与现有 GVA Router 风格一致。
 func (r *AnchorAdminRouter) InitAnchorAdminRouter(privateGroup *gin.RouterGroup) {
 	anchorWriteRouter := privateGroup.Group("live/anchor").Use(middleware.OperationRecord())

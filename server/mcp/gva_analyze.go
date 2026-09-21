@@ -1,4 +1,4 @@
-﻿package mcpTool
+package mcpTool
 
 import (
 	"context"
@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"tb_live_module/global"
 	"github.com/mark3labs/mcp-go/mcp"
+	"tb_live_module/global"
 )
 
 // 注册工具
@@ -29,7 +29,7 @@ type AnalyzeRequest struct {
 // AnalyzeResponse 分析响应结构体
 type AnalyzeResponse struct {
 	ExistingPackages   []PackageInfo           `json:"existingPackages"`   // 现有包信息
-PredesignedModules []PredesignedModuleInfo `json:"predesignedModules"` // 预设计模块信息
+	PredesignedModules []PredesignedModuleInfo `json:"predesignedModules"` // 预设计模块信息
 	Dictionaries       []DictionaryPre         `json:"dictionaries"`       // 字典信息
 	CleanupInfo        *CleanupInfo            `json:"cleanupInfo"`        // 清理信息（如果有）
 }
@@ -42,13 +42,13 @@ type ModuleInfo struct {
 	StructName  string   `json:"structName"`  // 结构体名称
 	TableName   string   `json:"tableName"`   // 表名
 	Description string   `json:"description"` // 描述
-FilePaths   []string `json:"filePaths"`   // 相关文件路径
+	FilePaths   []string `json:"filePaths"`   // 相关文件路径
 }
 
 // PackageInfo 包信息
 type PackageInfo struct {
 	PackageName string `json:"packageName"` // 包名
-Template    string `json:"template"`    // 模板类型
+	Template    string `json:"template"`    // 模板类型
 	Label       string `json:"label"`       // 标签
 	Desc        string `json:"desc"`        // 描述
 	Module      string `json:"module"`      // 模块
@@ -59,7 +59,7 @@ Template    string `json:"template"`    // 模板类型
 type PredesignedModuleInfo struct {
 	ModuleName  string   `json:"moduleName"`  // 模块名称
 	PackageName string   `json:"packageName"` // 包名
-Template    string   `json:"template"`    // 模板类型
+	Template    string   `json:"template"`    // 模板类型
 	FilePaths   []string `json:"filePaths"`   // 文件路径列表
 	Description string   `json:"description"` // 描述
 }
@@ -139,7 +139,7 @@ func (g *GVAAnalyzer) performAnalysis(ctx context.Context, req AnalyzeRequest) (
 	for _, pkg := range packages {
 		isEmpty, err := g.isPackageFolderEmpty(pkg.PackageName, pkg.Template)
 		if err != nil {
-global.GVA_LOG.Warn(fmt.Sprintf("检查包 %s 是否为空时出错: %v", pkg.PackageName, err))
+			global.GVA_LOG.Warn(fmt.Sprintf("检查包 %s 是否为空时出错: %v", pkg.PackageName, err))
 			continue
 		}
 
@@ -239,10 +239,10 @@ global.GVA_LOG.Warn(fmt.Sprintf("检查包 %s 是否为空时出错: %v", pkg.Pa
 		var message strings.Builder
 		message.WriteString("**系统清理完成**\n\n")
 		if len(cleanupInfo.DeletedPackages) > 0 {
-message.WriteString(fmt.Sprintf("- 删除了 %d 个空包: %s\n", len(cleanupInfo.DeletedPackages), strings.Join(cleanupInfo.DeletedPackages, ", ")))
+			message.WriteString(fmt.Sprintf("- 删除了 %d 个空包: %s\n", len(cleanupInfo.DeletedPackages), strings.Join(cleanupInfo.DeletedPackages, ", ")))
 		}
 		if len(cleanupInfo.DeletedModules) > 0 {
-message.WriteString(fmt.Sprintf("- 删除了 %d 个相关模块: %s\n", len(cleanupInfo.DeletedModules), strings.Join(cleanupInfo.DeletedModules, ", ")))
+			message.WriteString(fmt.Sprintf("- 删除了 %d 个相关模块: %s\n", len(cleanupInfo.DeletedModules), strings.Join(cleanupInfo.DeletedModules, ", ")))
 		}
 		cleanupInfo.CleanupMessage = message.String()
 		cleanupResult = cleanupInfo
@@ -363,8 +363,7 @@ func (g *GVAAnalyzer) cleanupRelatedApiAndMenus(historyIDs []uint) error {
 	// 由于涉及到具体的业务逻辑，这里只做日志记录
 	global.GVA_LOG.Info(fmt.Sprintf("清理历史记录ID %v 相关的API和菜单记录", historyIDs))
 
-	// 可以调用service层的相关方法进行清理
-	// 例如：service.ServiceGroupApp.SystemApiService.DeleteApisByIds(historyIDs)
+	// 可以调用对应模块的内部元数据清理方法
 	// 例如：service.ServiceGroupApp.MenuService.DeleteMenusByIds(historyIDs)
 
 	return nil

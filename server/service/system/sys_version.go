@@ -2,10 +2,10 @@ package system
 
 import (
 	"context"
+	"gorm.io/gorm"
 	"tb_live_module/global"
 	"tb_live_module/model/system"
 	systemReq "tb_live_module/model/system/request"
-	"gorm.io/gorm"
 )
 
 type SysVersionService struct{}
@@ -77,12 +77,6 @@ func (sysVersionService *SysVersionService) GetSysVersionPublic(ctx context.Cont
 // GetMenusByIds 根据ID列表获取菜单数据
 func (sysVersionService *SysVersionService) GetMenusByIds(ctx context.Context, ids []uint) (menus []system.SysBaseMenu, err error) {
 	err = global.GVA_DB.Where("id in ?", ids).Preload("Parameters").Preload("MenuBtn").Find(&menus).Error
-	return
-}
-
-// GetApisByIds 根据ID列表获取API数据
-func (sysVersionService *SysVersionService) GetApisByIds(ctx context.Context, ids []uint) (apis []system.SysApi, err error) {
-	err = global.GVA_DB.Where("id in ?", ids).Find(&apis).Error
 	return
 }
 
@@ -172,33 +166,6 @@ func (sysVersionService *SysVersionService) createMenusRecursively(tx *gorm.DB, 
 		}
 	}
 	return nil
-}
-
-// ImportApis 导入API数据
-func (sysVersionService *SysVersionService) ImportApis(apis []system.SysApi) error {
-	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
-		for _, api := range apis {
-			// 检查API是否已存在
-			var existingApi system.SysApi
-			if err := tx.Where("path = ? AND method = ?", api.Path, api.Method).First(&existingApi).Error; err == nil {
-				// API已存在，跳过
-				continue
-			}
-
-			// 创建新API
-			newApi := system.SysApi{
-				Path:        api.Path,
-				Description: api.Description,
-				ApiGroup:    api.ApiGroup,
-				Method:      api.Method,
-			}
-
-			if err := tx.Create(&newApi).Error; err != nil {
-				return err
-			}
-		}
-		return nil
-	})
 }
 
 // ImportDictionaries 导入字典数据

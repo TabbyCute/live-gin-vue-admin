@@ -2,7 +2,6 @@ package initialize
 
 import (
 	"context"
-	adapter "github.com/casbin/gorm-adapter/v3"
 	"gorm.io/gorm"
 	"tb_live_module/model/example"
 	liveModel "tb_live_module/model/live"
@@ -49,7 +48,6 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 		sysModel.SysDictionaryDetail{},
 		sysModel.SysBaseMenuParameter{},
 		sysModel.SysBaseMenuBtn{},
-		sysModel.SysAuthorityBtn{},
 		sysModel.SysAutoCodePackage{},
 		sysModel.SysExportTemplate{},
 		sysModel.Condition{},
@@ -59,8 +57,6 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 		sysModel.SysError{},
 		sysModel.SysLoginLog{},
 		sysModel.SysApiToken{},
-		adapter.CasbinRule{},
-
 		example.ExaFile{},
 		example.ExaCustomer{},
 		example.ExaFileChunk{},
@@ -97,13 +93,10 @@ func (e *ensureTables) TableCreated(ctx context.Context) bool {
 		sysModel.SysDictionaryDetail{},
 		sysModel.SysBaseMenuParameter{},
 		sysModel.SysBaseMenuBtn{},
-		sysModel.SysAuthorityBtn{},
 		sysModel.SysAutoCodePackage{},
 		sysModel.SysExportTemplate{},
 		sysModel.Condition{},
 		sysModel.JoinTemplate{},
-
-		adapter.CasbinRule{},
 
 		example.ExaFile{},
 		example.ExaCustomer{},

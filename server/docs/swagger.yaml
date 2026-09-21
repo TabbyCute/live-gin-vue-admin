@@ -1656,59 +1656,6 @@ definitions:
         description: 每页大小
         type: integer
     type: object
-  request.SearchApiParams:
-    properties:
-      ID:
-        description: 主键ID
-        type: integer
-      apiGroup:
-        description: api组
-        type: string
-      createdAt:
-        description: 创建时间
-        type: string
-      desc:
-        description: 排序方式:升序false(默认)|降序true
-        type: boolean
-      description:
-        description: api中文描述
-        type: string
-      keyword:
-        description: 关键字
-        type: string
-      method:
-        description: 方法:创建POST(默认)|查看GET|更新PUT|删除DELETE
-        type: string
-      orderKey:
-        description: 排序
-        type: string
-      page:
-        description: 页码
-        type: integer
-      pageSize:
-        description: 每页大小
-        type: integer
-      path:
-        description: api路径
-        type: string
-      updatedAt:
-        description: 更新时间
-        type: string
-    type: object
-  request.SetApiAuthorities:
-    properties:
-      authorityIds:
-        description: 角色ID列表
-        items:
-          type: integer
-        type: array
-      method:
-        description: 请求方法
-        type: string
-      path:
-        description: API路径
-        type: string
-    type: object
   request.SetMenuAuthorities:
     properties:
       authorityIds:
@@ -2284,6 +2231,13 @@ definitions:
       total:
         type: integer
     type: object
+  response.PermissionAPIListResponse:
+    properties:
+      apis:
+        items:
+          $ref: '#/definitions/system.SysApi'
+        type: array
+    type: object
   response.PluginInfo:
     properties:
       apis:
@@ -2323,18 +2277,6 @@ definitions:
       data: {}
       msg:
         type: string
-    type: object
-  response.SysAPIListResponse:
-    properties:
-      apis:
-        items:
-          $ref: '#/definitions/system.SysApi'
-        type: array
-    type: object
-  response.SysAPIResponse:
-    properties:
-      api:
-        $ref: '#/definitions/system.SysApi'
     type: object
   response.SysAuthorityBtnRes:
     properties:
@@ -3110,365 +3052,6 @@ info:
   title: Gin-Vue-Admin Swagger API接口文档
   version: v2.9.2
 paths:
-  /api/createApi:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: api路径, api中文描述, api组, 方法
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/system.SysApi'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 创建基础api
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 创建基础api
-      tags:
-      - SysApi
-  /api/deleteApi:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/system.SysApi'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 删除api
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 删除api
-      tags:
-      - SysApi
-  /api/deleteApisByIds:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.IdsReq'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 删除选中Api
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 删除选中Api
-      tags:
-      - SysApi
-  /api/enterSyncApi:
-    post:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 确认同步API
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 确认同步API
-      tags:
-      - SysApi
-  /api/freshCasbin:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 刷新成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                msg:
-                  type: string
-              type: object
-      summary: 刷新casbin缓存
-      tags:
-      - SysApi
-  /api/getAllApis:
-    post:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 获取所有的Api 不分页,返回包括api列表
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/response.SysAPIListResponse'
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 获取所有的Api 不分页
-      tags:
-      - SysApi
-  /api/getApiById:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: 根据id获取api
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.GetById'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 根据id获取api,返回包括api详情
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/response.SysAPIResponse'
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 根据id获取api
-      tags:
-      - SysApi
-  /api/getApiGroups:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 获取API分组
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 获取API分组
-      tags:
-      - SysApi
-  /api/getApiList:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: 分页获取API列表
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.SearchApiParams'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 分页获取API列表,返回包括列表,总数,页码,每页数量
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/response.PageResult'
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 分页获取API列表
-      tags:
-      - SysApi
-  /api/getApiRoles:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: API路径
-        in: query
-        name: path
-        required: true
-        type: string
-      - description: 请求方法
-        in: query
-        name: method
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 获取成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  additionalProperties: true
-                  type: object
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 获取拥有指定API权限的角色ID列表
-      tags:
-      - SysApi
-  /api/ignoreApi:
-    post:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 同步API
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 忽略API
-      tags:
-      - IgnoreApi
-  /api/setApiRoles:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: API路径、请求方法和角色ID列表
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.SetApiAuthorities'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 设置成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 全量覆盖某API关联的角色列表
-      tags:
-      - SysApi
-  /api/syncApi:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 同步API
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 同步API
-      tags:
-      - SysApi
-  /api/updateApi:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: api路径, api中文描述, api组, 方法
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/system.SysApi'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 修改基础api
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                msg:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      summary: 修改基础api
-      tags:
-      - SysApi
   /attachmentCategory/addCategory:
     post:
       consumes:
@@ -4413,6 +3996,29 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 更新角色api权限
+      tags:
+      - Casbin
+  /casbin/getAllApis:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PermissionAPIListResponse'
+                msg:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 获取当前管理员可分配的API权限列表
       tags:
       - Casbin
   /casbin/getPolicyPathByAuthorityId:

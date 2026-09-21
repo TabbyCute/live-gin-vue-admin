@@ -9,8 +9,8 @@ import (
 type CategoryAdminRouter struct{}
 
 func (r *CategoryAdminRouter) InitCategoryAdminRouter(privateGroup *gin.RouterGroup) {
-	categoryWriteRouter := privateGroup.Group("live/category").Use(middleware.CasbinHandler()).Use(middleware.OperationRecord())
-	categoryReadRouter := privateGroup.Group("live/category").Use(middleware.CasbinHandler())
+	categoryWriteRouter := privateGroup.Group("live/category").Use(middleware.OperationRecord())
+	categoryReadRouter := privateGroup.Group("live/category")
 	{
 		categoryReadRouter.GET("list", categoryAdminApi.List)
 		categoryReadRouter.GET("tree", categoryAdminApi.Tree)

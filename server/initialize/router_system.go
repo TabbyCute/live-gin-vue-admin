@@ -16,7 +16,6 @@ func registerSystemRoutes(apiRoot *gin.RouterGroup, engine *gin.Engine) {
 func registerSystemRoutesV1(apiRoot *gin.RouterGroup, engine *gin.Engine) {
 	adminPublicGroup := apiRoot.Group(adminV1RoutePrefix)
 	adminPrivateGroup := apiRoot.Group(adminV1RoutePrefix)
-	//adminPrivateGroup.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
 	adminPrivateGroup.Use(middleware.JWTAuth())
 
 	systemRouter := router.RouterGroupApp.System
@@ -24,19 +23,16 @@ func registerSystemRoutesV1(apiRoot *gin.RouterGroup, engine *gin.Engine) {
 	systemRouter.InitBaseRouter(adminPublicGroup)
 	systemRouter.InitInitRouter(adminPublicGroup)
 
-	// 需要管理员登录和权限
-	systemRouter.InitApiRouter(adminPrivateGroup, adminPublicGroup)
+	// 后台接口只校验管理员登录；角色可见范围由动态菜单分配控制。
 	systemRouter.InitJwtRouter(adminPrivateGroup)
 	systemRouter.InitUserRouter(adminPrivateGroup)
 	systemRouter.InitMenuRouter(adminPrivateGroup)
 	systemRouter.InitSystemRouter(adminPrivateGroup)
 	systemRouter.InitSysVersionRouter(adminPrivateGroup)
-	systemRouter.InitCasbinRouter(adminPrivateGroup)
 	systemRouter.InitAuthorityRouter(adminPrivateGroup)
 	systemRouter.InitSysDictionaryRouter(adminPrivateGroup)
 	systemRouter.InitSysOperationRecordRouter(adminPrivateGroup)
 	systemRouter.InitSysDictionaryDetailRouter(adminPrivateGroup)
-	systemRouter.InitAuthorityBtnRouterRouter(adminPrivateGroup)
 	systemRouter.InitSysExportTemplateRouter(adminPrivateGroup, adminPublicGroup)
 	systemRouter.InitSysParamsRouter(adminPrivateGroup, adminPublicGroup)
 	systemRouter.InitSysErrorRouter(adminPrivateGroup, adminPublicGroup)
@@ -49,7 +45,7 @@ func registerSystemRoutesV1(apiRoot *gin.RouterGroup, engine *gin.Engine) {
 	exampleRouter.InitFileUploadAndDownloadRouter(adminPrivateGroup)    // 文件上传下载功能路由
 	exampleRouter.InitAttachmentCategoryRouterRouter(adminPrivateGroup) // 文件上传下载分类
 
-	// 主播后台接口继承 adminPrivateGroup 的 JWT + Casbin，并由 live Router 继续区分读写操作日志。
+	// 直播后台接口继承 adminPrivateGroup 的 JWT，并由 live Router 继续区分读写操作日志。
 	liveRouter := router.RouterGroupApp.Live
 	liveRouter.InitAnchorAdminRouter(adminPrivateGroup)
 	liveRouter.InitCategoryAdminRouter(adminPrivateGroup)

@@ -246,7 +246,7 @@ system:
     use-redis: true
     use-mongo: false
     use-strict-auth: true
-    disable-auto-migrate: true
+    disable-auto-migrate: false
 tencent-cos:
     bucket: xxxxx-10005608
     region: ap-shanghai

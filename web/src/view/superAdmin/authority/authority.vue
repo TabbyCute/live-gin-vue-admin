@@ -27,7 +27,7 @@
               type="primary"
               link
               @click="openDrawer(scope.row)"
-              >设置权限</el-button
+              >分配菜单</el-button
             >
             <el-button
               icon="user"
@@ -122,24 +122,9 @@
       v-if="drawer"
       v-model="drawer"
       :size="appStore.drawerSize"
-      title="角色配置"
+      title="角色菜单分配"
     >
-      <el-tabs :before-leave="autoEnter" type="border-card">
-        <el-tab-pane label="角色菜单">
-          <Menus ref="menus" :row="activeRow" @changeRow="changeRow" />
-        </el-tab-pane>
-        <el-tab-pane label="角色api">
-          <Apis ref="apis" :row="activeRow" @changeRow="changeRow" />
-        </el-tab-pane>
-        <el-tab-pane label="资源权限">
-          <Datas
-            ref="datas"
-            :authority="tableData"
-            :row="activeRow"
-            @changeRow="changeRow"
-          />
-        </el-tab-pane>
-      </el-tabs>
+      <Menus :row="activeRow" @changeRow="changeRow" />
     </el-drawer>
 
     <!-- 分配给用户抽屉 -->
@@ -216,8 +201,6 @@
   import { getUserList } from '@/api/user'
 
   import Menus from '@/view/superAdmin/authority/components/menus.vue'
-  import Apis from '@/view/superAdmin/authority/components/apis.vue'
-  import Datas from '@/view/superAdmin/authority/components/datas.vue'
   import WarningBar from '@/components/warningBar/warningBar.vue'
 
   import { ref, nextTick } from 'vue'
@@ -249,7 +232,6 @@
 
   const authorityTitleForm = ref('新增角色')
   const authorityFormVisible = ref(false)
-  const apiDialogFlag = ref(false)
   const copyForm = ref({})
 
   const form = ref({
@@ -282,18 +264,6 @@
 
   const changeRow = (key, value) => {
     activeRow.value[key] = value
-  }
-  const menus = ref(null)
-  const apis = ref(null)
-  const datas = ref(null)
-  const autoEnter = (activeName, oldActiveName) => {
-    const paneArr = [menus, apis, datas]
-    if (oldActiveName) {
-      if (paneArr[oldActiveName].value.needConfirm) {
-        paneArr[oldActiveName].value.enterAndNext()
-        paneArr[oldActiveName].value.needConfirm = false
-      }
-    }
   }
   // 拷贝角色
   const copyAuthorityFunc = (row) => {
@@ -351,7 +321,6 @@
   const closeAuthorityForm = () => {
     initForm()
     authorityFormVisible.value = false
-    apiDialogFlag.value = false
   }
   // 确定弹窗
 
@@ -391,7 +360,6 @@
               authority: {
                 authorityId: 0,
                 authorityName: '',
-                datauthorityId: [],
                 parentId: 0
               },
               oldAuthorityId: 0
@@ -399,7 +367,6 @@
             data.authority.authorityId = form.value.authorityId
             data.authority.authorityName = form.value.authorityName
             data.authority.parentId = form.value.parentId
-            data.authority.dataAuthorityId = copyForm.value.dataAuthorityId
             data.oldAuthorityId = copyForm.value.authorityId
             const res = await copyAuthority(data)
             if (res.code === 0) {

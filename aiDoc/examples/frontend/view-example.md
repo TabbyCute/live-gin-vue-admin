@@ -78,4 +78,4 @@ getTableData()
 ## 真实参考文件
 
 - `web/src/view/systemTools/apiToken/index.vue`
-- `web/src/view/superAdmin/api/api.vue`
+- `web/src/view/superAdmin/menu/menu.vue`

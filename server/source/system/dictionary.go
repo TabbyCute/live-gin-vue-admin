@@ -2,13 +2,13 @@ package system
 
 import (
 	"context"
-	sysModel "tb_live_module/model/system"
-	"tb_live_module/service/system"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
+	sysModel "tb_live_module/model/system"
+	"tb_live_module/service/system"
 )
 
-const initOrderDict = initOrderCasbin + 1
+const initOrderDict = initOrderApi + 1
 
 type initDict struct{}
 

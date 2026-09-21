@@ -72,7 +72,7 @@
           min-width="360"
           prop="component"
         />
-        <el-table-column min-width="360" align="left" fixed="right" label="操作" :min-width="appStore.operateMinWith">
+        <el-table-column align="left" fixed="right" label="操作" :min-width="appStore.operateMinWith">
           <template #default="scope">
             <el-button
               type="primary"
@@ -561,7 +561,6 @@
   import { getAuthorityList } from '@/api/authority'
   import icon from '@/view/superAdmin/menu/icon.vue'
   import WarningBar from '@/components/warningBar/warningBar.vue'
-  import { canRemoveAuthorityBtnApi } from '@/api/authorityBtn'
   import { reactive, ref, nextTick } from 'vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
   import { QuestionFilled, InfoFilled, Delete } from '@element-plus/icons-vue'
@@ -631,16 +630,8 @@
     })
   }
   // 删除可控按钮
-  const deleteBtn = async (btns, index) => {
-    const btn = btns[index]
-    if (btn.ID === 0) {
-      btns.splice(index, 1)
-      return
-    }
-    const res = await canRemoveAuthorityBtnApi({ id: btn.ID })
-    if (res.code === 0) {
-      btns.splice(index, 1)
-    }
+  const deleteBtn = (btns, index) => {
+    btns.splice(index, 1)
   }
 
   const form = ref({

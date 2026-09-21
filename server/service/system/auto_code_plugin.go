@@ -14,16 +14,16 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/mholt/archives"
+	cp "github.com/otiai10/copy"
+	"github.com/pkg/errors"
+	"go.uber.org/zap"
 	"tb_live_module/global"
 	"tb_live_module/model/system"
 	"tb_live_module/model/system/request"
 	pluginUtils "tb_live_module/plugin/plugin-tool/utils"
 	"tb_live_module/utils"
 	ast "tb_live_module/utils/ast"
-	"github.com/mholt/archives"
-	cp "github.com/otiai10/copy"
-	"github.com/pkg/errors"
-	"go.uber.org/zap"
 )
 
 var AutoCodePlugin = new(autoCodePlugin)
@@ -416,7 +416,7 @@ func (s *autoCodePlugin) Remove(pluginName string, pluginType string) (err error
 		for _, api := range apis {
 			var dbApi system.SysApi
 			if err := global.GVA_DB.Where("path = ? AND method = ?", api.Path, api.Method).First(&dbApi).Error; err == nil {
-				err := ApiServiceApp.DeleteApi(dbApi)
+				err := removeAPIMetadata(dbApi)
 				if err != nil {
 					zap.L().Error("删除API失败", zap.String("path", api.Path), zap.Error(err))
 				}
@@ -445,7 +445,7 @@ func GetMenuIds(menu system.SysBaseMenu, ids *[]int) {
 	var children []system.SysBaseMenu
 	global.GVA_DB.Where("parent_id = ?", menu.ID).Find(&children)
 	for _, child := range children {
-        // 先递归收集子菜单
+		// 先递归收集子菜单
 		GetMenuIds(child, ids)
 	}
 }
@@ -471,9 +471,9 @@ func removePluginRegisterImport(packageName string) error {
 	}
 
 	importPath := fmt.Sprintf("%s/plugin/%s", module, packageName)
-    importLit := fmt.Sprintf("%q", importPath)
+	importLit := fmt.Sprintf("%q", importPath)
 
-    // 移除 import
+	// 移除 import
 	var newDecls []goast.Decl
 	for _, decl := range astFile.Decls {
 		genDecl, ok := decl.(*goast.GenDecl)
@@ -493,7 +493,7 @@ func removePluginRegisterImport(packageName string) error {
 					newSpecs = append(newSpecs, spec)
 				}
 			}
-            // 如果还有其他import，保留该 decl
+			// 如果还有其他import，保留该 decl
 			if len(newSpecs) > 0 {
 				genDecl.Specs = newSpecs
 				newDecls = append(newDecls, genDecl)

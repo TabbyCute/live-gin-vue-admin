@@ -4,8 +4,6 @@ import (
 	"tb_live_module/global"
 	"tb_live_module/model/common/request"
 	"tb_live_module/model/example"
-	"tb_live_module/model/system"
-	systemService "tb_live_module/service/system"
 )
 
 type CustomerService struct{}
@@ -66,22 +64,12 @@ func (exa *CustomerService) GetCustomerInfoList(sysUserAuthorityID uint, info re
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	db := global.GVA_DB.Model(&example.ExaCustomer{})
-	var a system.SysAuthority
-	a.AuthorityId = sysUserAuthorityID
-	auth, err := systemService.AuthorityServiceApp.GetAuthorityInfo(a)
-	if err != nil {
-		return
-	}
-	var dataId []uint
-	for _, v := range auth.DataAuthorityId {
-		dataId = append(dataId, v.AuthorityId)
-	}
 	var CustomerList []example.ExaCustomer
-	err = db.Where("sys_user_authority_id in ?", dataId).Count(&total).Error
+	err = db.Where("sys_user_authority_id = ?", sysUserAuthorityID).Count(&total).Error
 	if err != nil {
 		return CustomerList, total, err
 	} else {
-		err = db.Limit(limit).Offset(offset).Preload("SysUser").Where("sys_user_authority_id in ?", dataId).Find(&CustomerList).Error
+		err = db.Limit(limit).Offset(offset).Preload("SysUser").Where("sys_user_authority_id = ?", sysUserAuthorityID).Find(&CustomerList).Error
 	}
 	return CustomerList, total, err
 }

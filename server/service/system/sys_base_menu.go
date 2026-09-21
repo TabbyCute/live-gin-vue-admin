@@ -3,9 +3,9 @@ package system
 import (
 	"errors"
 
+	"gorm.io/gorm"
 	"tb_live_module/global"
 	"tb_live_module/model/system"
-	"gorm.io/gorm"
 )
 
 type BaseMenuService struct{}
@@ -48,11 +48,6 @@ func (baseMenuService *BaseMenuService) DeleteBaseMenu(id int) (err error) {
 		if err != nil {
 			return err
 		}
-		err = tx.Delete(&system.SysAuthorityBtn{}, "sys_menu_id = ?", id).Error
-		if err != nil {
-			return err
-		}
-
 		err = tx.Delete(&system.SysAuthorityMenu{}, "sys_base_menu_id = ?", id).Error
 		if err != nil {
 			return err

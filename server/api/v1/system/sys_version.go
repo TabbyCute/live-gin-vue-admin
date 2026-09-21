@@ -8,14 +8,14 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"tb_live_module/global"
 	"tb_live_module/model/common/response"
 	"tb_live_module/model/system"
 	systemReq "tb_live_module/model/system/request"
 	systemRes "tb_live_module/model/system/response"
 	"tb_live_module/utils"
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 )
 
 type SysVersionApi struct{}
@@ -256,17 +256,6 @@ func (sysVersionApi *SysVersionApi) ExportVersion(c *gin.Context) {
 		}
 	}
 
-	// 获取选中的API数据
-	var apiData []system.SysApi
-	if len(req.ApiIds) > 0 {
-		apiData, err = sysVersionService.GetApisByIds(ctx, req.ApiIds)
-		if err != nil {
-			global.GVA_LOG.Error("获取API数据失败!", zap.Error(err))
-			response.FailWithMessage("获取API数据失败:"+err.Error(), c)
-			return
-		}
-	}
-
 	// 获取选中的字典数据
 	var dictData []system.SysDictionary
 	if len(req.DictIds) > 0 {
@@ -281,18 +270,6 @@ func (sysVersionApi *SysVersionApi) ExportVersion(c *gin.Context) {
 	// 处理菜单数据，构建递归的children结构
 	processedMenus := buildMenuTree(menuData)
 
-	// 处理API数据，清除ID和时间戳字段
-	processedApis := make([]system.SysApi, 0, len(apiData))
-	for _, api := range apiData {
-		cleanApi := system.SysApi{
-			Path:        api.Path,
-			Description: api.Description,
-			ApiGroup:    api.ApiGroup,
-			Method:      api.Method,
-		}
-		processedApis = append(processedApis, cleanApi)
-	}
-
 	// 处理字典数据，清除ID和时间戳字段，包含字典详情
 	processedDicts := make([]system.SysDictionary, 0, len(dictData))
 	for _, dict := range dictData {
@@ -302,7 +279,7 @@ func (sysVersionApi *SysVersionApi) ExportVersion(c *gin.Context) {
 			Status: dict.Status,
 			Desc:   dict.Desc,
 		}
-		
+
 		// 处理字典详情数据，清除ID和时间戳字段
 		cleanDetails := make([]system.SysDictionaryDetail, 0, len(dict.SysDictionaryDetails))
 		for _, detail := range dict.SysDictionaryDetails {
@@ -317,7 +294,7 @@ func (sysVersionApi *SysVersionApi) ExportVersion(c *gin.Context) {
 			cleanDetails = append(cleanDetails, cleanDetail)
 		}
 		cleanDict.SysDictionaryDetails = cleanDetails
-		
+
 		processedDicts = append(processedDicts, cleanDict)
 	}
 
@@ -330,7 +307,6 @@ func (sysVersionApi *SysVersionApi) ExportVersion(c *gin.Context) {
 			ExportTime:  time.Now().Format("2006-01-02 15:04:05"),
 		},
 		Menus:        processedMenus,
-		Apis:         processedApis,
 		Dictionaries: processedDicts,
 	}
 
@@ -400,7 +376,6 @@ func (sysVersionApi *SysVersionApi) DownloadVersionJson(c *gin.Context) {
 				ExportTime:  version.CreatedAt.Format("2006-01-02 15:04:05"),
 			},
 			Menus: []system.SysBaseMenu{},
-			Apis:  []system.SysApi{},
 		}
 		jsonData, _ = json.MarshalIndent(basicData, "", "  ")
 	}
@@ -445,15 +420,6 @@ func (sysVersionApi *SysVersionApi) ImportVersion(c *gin.Context) {
 		if err := sysVersionService.ImportMenus(ctx, importData.ExportMenu); err != nil {
 			global.GVA_LOG.Error("导入菜单失败!", zap.Error(err))
 			response.FailWithMessage("导入菜单失败: "+err.Error(), c)
-			return
-		}
-	}
-
-	// 导入API数据
-	if len(importData.ExportApi) > 0 {
-		if err := sysVersionService.ImportApis(importData.ExportApi); err != nil {
-			global.GVA_LOG.Error("导入API失败!", zap.Error(err))
-			response.FailWithMessage("导入API失败: "+err.Error(), c)
 			return
 		}
 	}

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"strconv"
 
-	adapter "github.com/casbin/gorm-adapter/v3"
 	"gorm.io/gorm"
 
 	"tb_live_module/model/system"
@@ -82,12 +81,6 @@ func syncLiveCategoryAdminMetadata(db *gorm.DB) error {
 				relation.MenuId,
 				relation.AuthorityId,
 			).FirstOrCreate(&relation).Error; err != nil {
-				return err
-			}
-		}
-		for _, api := range apis {
-			policy := adapter.CasbinRule{Ptype: "p", V0: "888", V1: api.Path, V2: api.Method}
-			if err := tx.Where(&policy).FirstOrCreate(&policy).Error; err != nil {
 				return err
 			}
 		}

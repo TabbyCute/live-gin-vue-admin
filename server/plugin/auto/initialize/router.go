@@ -1,10 +1,10 @@
 package initialize
 
 import (
+	"github.com/gin-gonic/gin"
 	"tb_live_module/global"
 	"tb_live_module/middleware"
 	"tb_live_module/plugin/auto/router"
-	"github.com/gin-gonic/gin"
 )
 
 func Router(engine *gin.Engine) {
@@ -14,7 +14,7 @@ func Router(engine *gin.Engine) {
 func InitializeRouter(engine *gin.Engine) {
 	public := engine.Group(global.GVA_CONFIG.System.RouterPrefix).Group("")
 	private := engine.Group(global.GVA_CONFIG.System.RouterPrefix).Group("")
-	private.Use(middleware.JWTAuth()).Use(middleware.CasbinHandler())
+	private.Use(middleware.JWTAuth())
 
 	router.RouterGroupApp.InitAutoCodeRouter(private, public)
 	router.RouterGroupApp.InitAutoCodeHistoryRouter(private)

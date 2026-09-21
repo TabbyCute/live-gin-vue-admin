@@ -12,3 +12,4 @@
 - [LiveAnchor 第一版主播身份与管理模块](done/live-anchor-v1.md)
 - [LiveCategory 第一版直播分类与后台管理](done/live-category-v1.md)
 - [客户端账号与主播调试页](done/live-client-debug-pages.md)
+- [删除独立 API 管理功能](done/remove-api-management.md)

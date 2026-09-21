@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"tb_live_module/utils/ast"
 	"github.com/pkg/errors"
 	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"tb_live_module/utils/ast"
 	"time"
 
 	"tb_live_module/global"
@@ -75,7 +75,7 @@ func (s *autoCodeHistory) RollBack(ctx context.Context, info request.SysAutoHist
 	}
 	if info.DeleteApi {
 		ids := info.ApiIds(history)
-		err = ApiServiceApp.DeleteApisByIds(ids)
+		err = removeAPIMetadataByIDs(ids.Ids)
 		if err != nil {
 			global.GVA_LOG.Error("ClearTag DeleteApiByIds:", zap.Error(err))
 		}

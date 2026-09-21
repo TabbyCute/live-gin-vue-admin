@@ -4,14 +4,13 @@ import (
 	"errors"
 	"strconv"
 
-	adapter "github.com/casbin/gorm-adapter/v3"
 	"gorm.io/gorm"
 
 	"tb_live_module/model/system"
 )
 
 // syncLiveAnchorAdminMetadata 为已经完成过 InitDB 的存量数据库补齐主播管理元数据。
-// 只有本次新建菜单时才给超级管理员追加菜单和 Casbin 权限，避免后续启动覆盖人工调整。
+// 只有本次新建菜单时才给超级管理员追加菜单，避免后续启动覆盖人工调整。
 func syncLiveAnchorAdminMetadata(db *gorm.DB) error {
 	return db.Transaction(func(tx *gorm.DB) error {
 		parent := system.SysBaseMenu{}
@@ -102,12 +101,6 @@ func syncLiveAnchorAdminMetadata(db *gorm.DB) error {
 			}
 		}
 
-		for _, api := range apis {
-			policy := adapter.CasbinRule{Ptype: "p", V0: "888", V1: api.Path, V2: api.Method}
-			if err := tx.Where(&policy).FirstOrCreate(&policy).Error; err != nil {
-				return err
-			}
-		}
 		return nil
 	})
 }
