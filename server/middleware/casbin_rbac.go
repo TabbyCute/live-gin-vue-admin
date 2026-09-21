@@ -1,12 +1,11 @@
 package middleware
 
 import (
-	"tb_live_module/global"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
 	"tb_live_module/model/common/response"
 	"tb_live_module/utils"
-	"github.com/gin-gonic/gin"
-	"strconv"
-	"strings"
 )
 
 // CasbinHandler 拦截器
@@ -14,8 +13,7 @@ func CasbinHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		waitUse, _ := utils.GetClaims(c)
 		//获取请求的PATH
-		path := c.Request.URL.Path
-		obj := strings.TrimPrefix(path, global.GVA_CONFIG.System.RouterPrefix)
+		obj := utils.NormalizeAdminRoutePath(c.Request.URL.Path)
 		// 获取请求方法
 		act := c.Request.Method
 		// 获取用户的角色

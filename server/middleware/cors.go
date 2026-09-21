@@ -1,10 +1,10 @@
 package middleware
 
 import (
-	"tb_live_module/config"
-	"tb_live_module/global"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"tb_live_module/config"
+	"tb_live_module/global"
 )
 
 // Cors 直接放行所有跨域请求并放行所有 OPTIONS 方法
@@ -14,7 +14,7 @@ func Cors() gin.HandlerFunc {
 		origin := c.Request.Header.Get("Origin")
 		c.Header("Access-Control-Allow-Origin", origin)
 		c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id")
-		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS,DELETE,PUT")
+		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT, PATCH, HEAD")
 		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At")
 		c.Header("Access-Control-Allow-Credentials", "true")
 
@@ -48,7 +48,8 @@ func CorsByRules() gin.HandlerFunc {
 		}
 
 		// 严格白名单模式且未通过检查，直接拒绝处理请求
-		if whitelist == nil && global.GVA_CONFIG.Cors.Mode == "strict-whitelist" && !(c.Request.Method == "GET" && c.Request.URL.Path == "/health") {
+		healthPath := global.GVA_CONFIG.System.RouterPrefix + "/health"
+		if whitelist == nil && global.GVA_CONFIG.Cors.Mode == "strict-whitelist" && !(c.Request.Method == http.MethodGet && c.Request.URL.Path == healthPath) {
 			c.AbortWithStatus(http.StatusForbidden)
 		} else {
 			// 非严格白名单模式，无论是否通过检查均放行所有 OPTIONS 方法

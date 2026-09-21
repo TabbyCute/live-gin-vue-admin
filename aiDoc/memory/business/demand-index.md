@@ -8,3 +8,4 @@
 ## Done
 
 - [正式与测试环境配置分离](done/environment-config-separation.md)
+- [客户端账号注册登录与独立鉴权](done/live-account-authentication.md)

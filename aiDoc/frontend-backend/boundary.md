@@ -29,3 +29,12 @@
 1. 后端响应结构仍然满足前端预期
 2. 前端仍在使用正确的字段名和数据类型
 3. 若契约发生了长期变化，对应说明已经补到 `aiDoc/`
+
+## 客户端账号鉴权契约
+
+- 客户端账号接口前缀为 `/api/v1/app/live/user`，兼容版本前缀为 `/api/v2/app/live/user`。
+- 注册、登录使用 JSON body；登录成功后在统一响应的 `data.token` 中返回客户端 access token。
+- 客户端不使用 Cookie，只通过 `Authorization: Bearer <token>` 访问受保护接口。
+- 客户端 token 不得写入或复用管理后台的 `x-token` Header/Cookie。
+- 客户端账号、JWT 密钥、签发者、Claims 和鉴权中间件均与管理后台独立。
+- 登录响应的 `expiresAt` 是毫秒时间戳；账号响应字段为 `id`、`username`、`nickname`、`avatar`、`status`、`createdAt`。

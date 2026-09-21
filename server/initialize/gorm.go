@@ -5,6 +5,7 @@ import (
 
 	"tb_live_module/global"
 	"tb_live_module/model/example"
+	"tb_live_module/model/live"
 	"tb_live_module/model/system"
 
 	"go.uber.org/zap"
@@ -71,6 +72,8 @@ func RegisterTables() {
 		example.ExaFileChunk{},
 		example.ExaFileUploadAndDownload{},
 		example.ExaAttachmentCategory{},
+
+		live.LiveAccount{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))

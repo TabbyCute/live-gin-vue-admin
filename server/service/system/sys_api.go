@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"strings"
 
+	"gorm.io/gorm"
 	"tb_live_module/global"
 	"tb_live_module/model/common/request"
 	"tb_live_module/model/system"
 	systemRes "tb_live_module/model/system/response"
-	"gorm.io/gorm"
+	"tb_live_module/utils"
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)
@@ -78,15 +79,16 @@ func (apiService *ApiService) SyncApi() (newApis, deleteApis, ignoreApis []syste
 
 	var cacheApis []system.SysApi
 	for i := range global.GVA_ROUTERS {
+		routePath := utils.NormalizeAdminRoutePath(global.GVA_ROUTERS[i].Path)
 		ignoresFlag := false
 		for j := range ignores {
-			if ignores[j].Path == global.GVA_ROUTERS[i].Path && ignores[j].Method == global.GVA_ROUTERS[i].Method {
+			if ignores[j].Path == routePath && ignores[j].Method == global.GVA_ROUTERS[i].Method {
 				ignoresFlag = true
 			}
 		}
 		if !ignoresFlag {
 			cacheApis = append(cacheApis, system.SysApi{
-				Path:   global.GVA_ROUTERS[i].Path,
+				Path:   routePath,
 				Method: global.GVA_ROUTERS[i].Method,
 			})
 		}

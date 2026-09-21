@@ -3,11 +3,12 @@ package initialize
 import (
 	"context"
 	adapter "github.com/casbin/gorm-adapter/v3"
+	"gorm.io/gorm"
 	"tb_live_module/model/example"
+	liveModel "tb_live_module/model/live"
 	sysModel "tb_live_module/model/system"
 	"tb_live_module/plugin/announcement/model"
 	"tb_live_module/service/system"
-	"gorm.io/gorm"
 )
 
 const initOrderEnsureTables = system.InitOrderExternal - 1
@@ -66,6 +67,8 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 		example.ExaFileUploadAndDownload{},
 		example.ExaAttachmentCategory{},
 
+		liveModel.LiveAccount{},
+
 		model.Info{},
 	}
 	for _, t := range tables {
@@ -107,6 +110,8 @@ func (e *ensureTables) TableCreated(ctx context.Context) bool {
 		example.ExaFileChunk{},
 		example.ExaFileUploadAndDownload{},
 		example.ExaAttachmentCategory{},
+
+		liveModel.LiveAccount{},
 
 		model.Info{},
 	}

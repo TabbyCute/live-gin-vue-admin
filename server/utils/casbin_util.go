@@ -1,20 +1,44 @@
 package utils
 
 import (
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/casbin/casbin/v3"
 	"github.com/casbin/casbin/v3/model"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
-	"tb_live_module/global"
 	"go.uber.org/zap"
+	"tb_live_module/global"
 )
+
+const adminV1RoutePrefix = "/v1/admin"
 
 var (
 	syncedCachedEnforcer *casbin.SyncedCachedEnforcer
 	once                 sync.Once
 )
+
+// NormalizeAdminRoutePath 将实际的 admin URL 还原为 API 和 Casbin 中保存的相对路径。
+// 例如 /api/v1/admin/user/getUserInfo 会转换为 /user/getUserInfo。
+func NormalizeAdminRoutePath(routePath string) string {
+	routePath = trimRoutePrefix(routePath, global.GVA_CONFIG.System.RouterPrefix)
+	return trimRoutePrefix(routePath, adminV1RoutePrefix)
+}
+
+func trimRoutePrefix(routePath, prefix string) string {
+	prefix = strings.TrimSuffix(prefix, "/")
+	if prefix == "" || prefix == "/" {
+		return routePath
+	}
+	if routePath == prefix {
+		return "/"
+	}
+	if strings.HasPrefix(routePath, prefix+"/") {
+		return strings.TrimPrefix(routePath, prefix)
+	}
+	return routePath
+}
 
 // GetCasbin 获取casbin实例
 func GetCasbin() *casbin.SyncedCachedEnforcer {

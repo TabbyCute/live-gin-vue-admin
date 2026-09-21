@@ -26,6 +26,9 @@ import (
 // @securityDefinitions.apikey  ApiKeyAuth
 // @in                          header
 // @name                        x-token
+// @securityDefinitions.apikey  AppBearerAuth
+// @in                          header
+// @name                        Authorization
 // @BasePath                    /
 func main() {
 	// 初始化系统

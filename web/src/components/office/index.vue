@@ -27,7 +27,7 @@
   import Pdf from '@/components/office/pdf.vue'
   import Excel from '@/components/office/excel.vue'
 
-  const path = ref(import.meta.env.VITE_BASE_API)
+  const path = ref(import.meta.env.VITE_FILE_API)
 
   const model = defineModel({ type: String })
 

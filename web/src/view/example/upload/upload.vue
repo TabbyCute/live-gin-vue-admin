@@ -234,7 +234,7 @@
   })
 
   const fullscreenLoading = ref(false)
-  const path = ref(import.meta.env.VITE_BASE_API)
+  const path = ref(import.meta.env.VITE_FILE_API)
 
   const imageUrl = ref('')
   const imageCommon = ref('')
