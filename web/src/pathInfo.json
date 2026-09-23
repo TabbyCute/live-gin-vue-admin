@@ -39,6 +39,8 @@
   "/src/view/live/anchor/index.vue": "Index",
   "/src/view/live/category/index.vue": "Index",
   "/src/view/live/history/index.vue": "Index",
+  "/src/view/live/room/index.vue": "Index",
+  "/src/view/live/session/index.vue": "Index",
   "/src/view/login/index.vue": "Login",
   "/src/view/person/person.vue": "Person",
   "/src/view/routerHolder.vue": "RouterHolder",

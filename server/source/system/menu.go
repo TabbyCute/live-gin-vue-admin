@@ -94,6 +94,8 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		// liveManagement 子菜单
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["liveManagement"], Path: "anchor", Name: "liveAnchor", Component: "view/live/anchor/index.vue", Sort: 1, Meta: Meta{Title: "主播管理", Icon: "user-filled", KeepAlive: true}},
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["liveManagement"], Path: "category", Name: "liveCategory", Component: "view/live/category/index.vue", Sort: 2, Meta: Meta{Title: "直播分类", Icon: "collection-tag", KeepAlive: true}},
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["liveManagement"], Path: "room", Name: "liveRoom", Component: "view/live/room/index.vue", Sort: 3, Meta: Meta{Title: "直播间管理", Icon: "video-play", KeepAlive: true}},
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["liveManagement"], Path: "session", Name: "liveSession", Component: "view/live/session/index.vue", Sort: 4, Meta: Meta{Title: "直播场次", Icon: "data-analysis", KeepAlive: true}},
 
 		// example子菜单
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["example"], Path: "upload", Name: "upload", Component: "view/example/upload/upload.vue", Sort: 5, Meta: Meta{Title: "媒体库（上传下载）", Icon: "upload"}},

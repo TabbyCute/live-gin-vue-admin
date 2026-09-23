@@ -141,8 +141,8 @@ CREATE TABLE `live_anchor` (
                                `total_live_count` BIGINT UNSIGNED NOT NULL DEFAULT 0
         COMMENT '累计开播场次',
 
-                               `total_live_duration` BIGINT UNSIGNED NOT NULL DEFAULT 0
-        COMMENT '累计直播时长，单位秒',
+                               `total_live_duration_ms` BIGINT UNSIGNED NOT NULL DEFAULT 0
+        COMMENT '累计逻辑直播时长，单位毫秒',
 
                                `max_online_count` INT UNSIGNED NOT NULL DEFAULT 0
         COMMENT '历史最高在线人数',
@@ -292,7 +292,7 @@ type LiveAnchor struct {
 	FansCount        uint64 `gorm:"column:fans_count;type:bigint unsigned;not null;default:0;comment:粉丝数量缓存"`
 	FollowCount      uint64 `gorm:"column:follow_count;type:bigint unsigned;not null;default:0;comment:主播关注其他用户数量缓存"`
 	TotalLiveCount   uint64 `gorm:"column:total_live_count;type:bigint unsigned;not null;default:0;comment:累计开播场次"`
-	TotalLiveDuration uint64 `gorm:"column:total_live_duration;type:bigint unsigned;not null;default:0;comment:累计直播时长，单位秒"`
+	TotalLiveDurationMs uint64 `gorm:"column:total_live_duration_ms;type:bigint unsigned;not null;default:0;comment:累计逻辑直播时长，单位毫秒"`
 	MaxOnlineCount   uint32 `gorm:"column:max_online_count;type:int unsigned;not null;default:0;comment:历史最高在线人数"`
 	TotalViewCount   uint64 `gorm:"column:total_view_count;type:bigint unsigned;not null;default:0;comment:累计观看人次快照"`
 	LastLiveAt       int64  `gorm:"column:last_live_at;type:bigint;not null;default:0;index:idx_last_live_at;comment:最近一次开播时间，毫秒时间戳"`
@@ -371,6 +371,5 @@ CountryCode 标准化；
 package model
 
 import "time"
-
 
 

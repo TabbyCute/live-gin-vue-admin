@@ -25,7 +25,7 @@ var (
 	ErrLiveCategoryParentDisabled = errors.New("启用分类的所有上级分类必须处于启用状态")
 	ErrLiveCategoryCycle          = errors.New("分类层级不能形成循环")
 	ErrLiveCategoryHasChildren    = errors.New("请先删除子分类")
-	ErrLiveCategoryInUse          = errors.New("分类已被主播使用，不能删除")
+	ErrLiveCategoryInUse          = errors.New("分类已被主播或直播间使用，不能删除")
 	ErrLiveCategoryDeleteEnabled  = errors.New("启用中的分类不能删除，请先停用")
 )
 
@@ -273,6 +273,15 @@ func (s *CategoryService) DeleteCategory(categoryID uint) error {
 		}
 		if anchorCount > 0 {
 			return ErrLiveCategoryInUse
+		}
+		if tx.Migrator().HasTable(&liveModel.LiveRoom{}) {
+			var roomCount int64
+			if err = tx.Model(&liveModel.LiveRoom{}).Where("category_id = ?", category.ID).Count(&roomCount).Error; err != nil {
+				return err
+			}
+			if roomCount > 0 {
+				return ErrLiveCategoryInUse
+			}
 		}
 		return tx.Delete(&liveModel.LiveCategory{}, category.ID).Error
 	})

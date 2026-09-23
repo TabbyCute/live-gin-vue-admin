@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>主播开播测试</title>
+  <style>
+    body { max-width: 900px; margin: 20px auto; padding: 0 12px; font: 14px/1.5 sans-serif; }
+    label { display: block; margin: 8px 0; }
+    input, textarea, select, button { box-sizing: border-box; padding: 6px; }
+    input, textarea, select { width: 100%; }
+    textarea { min-height: 74px; }
+    button { margin: 4px 4px 4px 0; }
+    pre { min-height: 220px; padding: 10px; overflow: auto; background: #eee; white-space: pre-wrap; }
+    .ok { color: green; }
+    .error { color: #c00; }
+  </style>
+</head>
+<body>
+  <h2>主播开播与直播间</h2>
+  <p><a href="html-2申请主播.html">返回主播申请页</a>　<a href="html-1注册账号.html">返回账号页</a></p>
+  <p>主播申请审核通过后会自动创建直播间，默认 <code>roomNo = anchorNo</code>；开播权限仍需由管理员单独开启。</p>
+
+  <label>API 基址
+    <input id="baseUrl" value="http://127.0.0.1:8888/api/v1">
+  </label>
+  <label>Bearer Token
+    <textarea id="token" placeholder="会读取账号页保存的 Token，也可手动粘贴"></textarea>
+  </label>
+  <button id="saveConfig">保存配置</button>
+
+  <fieldset>
+    <legend>开播资格</legend>
+    <button id="applyStatus">申请状态</button>
+    <button id="anchorInfo">我的主播资料</button>
+    <button id="liveCheck">开播资格</button>
+    <button id="pkCheck">PK 资格</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>直播间资料</legend>
+    <label>直播分类
+      <select id="categorySelect">
+        <option value="0">未分类</option>
+      </select>
+    </label>
+    <button id="loadCategories">加载启用分类</button>
+    <label>直播标题 <input id="roomTitle" value="Alice 的第一场直播"></label>
+    <label>直播封面 <input id="roomCover" value="https://example.com/live-cover.png"></label>
+    <label>直播公告 <textarea id="roomNotice">欢迎进入直播间</textarea></label>
+    <label>可见范围
+      <select id="visibility">
+        <option value="1">公开</option>
+        <option value="2">仅关注者</option>
+        <option value="0">私密</option>
+      </select>
+    </label>
+    <button id="roomInfo">我的直播间</button>
+    <button id="saveRoom">保存直播间资料</button>
+    <button id="closeRoom">主播关闭直播间</button>
+    <button id="openRoom">主播恢复直播间</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>开播场次</legend>
+    <button id="prepareSession">准备开播</button>
+    <button id="currentSession">当前场次</button>
+    <button id="sessionHistory">场次历史</button>
+    <button id="endSession">主播结束场次</button>
+    <label>roomNo <input id="roomNo" placeholder="审核通过后默认为主播编号，接口响应会自动填充"></label>
+    <label>sessionNo <input id="sessionNo" placeholder="准备开播后自动填充"></label>
+    <label>streamName <input id="streamName" placeholder="准备开播后自动填充"></label>
+    <label>publishToken <input id="publishToken" placeholder="仅在准备开播时返回一次"></label>
+    <label>pushUrl <input id="pushUrl" placeholder="准备开播后自动填充"></label>
+    <label>playUrl <input id="playUrl" placeholder="准备开播后自动填充"></label>
+    <button id="publicRoomDetail">公开房间详情</button>
+    <button id="publicRoomList">公开直播列表</button>
+    <small>客户端只使用 roomNo、sessionNo、anchorNo，不应收到数据库内部主键。</small>
+  </fieldset>
+
+  <fieldset>
+    <legend>SRS 回调模拟（仅本地联调）</legend>
+    <label>X-Live-Hook-Token <input id="hookToken" placeholder="对应服务端 live.srs-hook-token"></label>
+    <button id="hookPublish">模拟 on_publish</button>
+    <button id="hookUnpublish">模拟 on_unpublish</button>
+    <small>正式环境由 SRS 调用，不应把 Hook Token 放入客户端。</small>
+  </fieldset>
+
+  <p id="status"></p>
+  <pre id="output">等待请求</pre>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const BASE_KEY = 'liveTest.baseUrl';
+    const TOKEN_KEY = 'liveTest.token';
+
+    $('baseUrl').value = localStorage.getItem(BASE_KEY) || $('baseUrl').value;
+    $('token').value = localStorage.getItem(TOKEN_KEY) || '';
+
+    function value(id) {
+      return $(id).value.trim();
+    }
+
+    function saveConfig() {
+      localStorage.setItem(BASE_KEY, value('baseUrl').replace(/\/$/, ''));
+      localStorage.setItem(TOKEN_KEY, value('token'));
+    }
+
+    function fillLiveFields(result) {
+      const data = result?.data || {};
+      const room = data.room || data;
+      const current = room.currentSession || data.currentSession || {};
+      if (room.roomNo) $('roomNo').value = room.roomNo;
+      if (data.sessionNo) $('sessionNo').value = data.sessionNo;
+      if (current.sessionNo) $('sessionNo').value = current.sessionNo;
+      if (data.streamName) $('streamName').value = data.streamName;
+      if (room.streamName) $('streamName').value = room.streamName;
+      if (data.publishToken) $('publishToken').value = data.publishToken;
+      if (data.pushUrl) $('pushUrl').value = data.pushUrl;
+      if (data.playUrl) $('playUrl').value = data.playUrl;
+      if (room.categoryId !== undefined) $('categorySelect').value = String(room.categoryId);
+      if (room.title) $('roomTitle').value = room.title;
+      if (room.coverUrl) $('roomCover').value = room.coverUrl;
+      if (room.notice !== undefined) $('roomNotice').value = room.notice;
+      if (room.visibility !== undefined) $('visibility').value = String(room.visibility);
+    }
+
+    function flattenCategories(items, depth = 0) {
+      return (items || []).flatMap(item => [
+        { id: item.id, label: '　'.repeat(depth) + item.name + ' (' + item.code + ')' },
+        ...flattenCategories(item.children, depth + 1)
+      ]);
+    }
+
+    function fillCategoryOptions(result) {
+      const select = $('categorySelect');
+      const currentId = select.value || '0';
+      select.innerHTML = '<option value="0">未分类</option>';
+      for (const item of flattenCategories(result?.data)) {
+        const option = document.createElement('option');
+        option.value = String(item.id);
+        option.textContent = item.label;
+        select.appendChild(option);
+      }
+      select.value = currentId;
+    }
+
+    async function request(path, options = {}) {
+      saveConfig();
+      const url = value('baseUrl').replace(/\/$/, '') + path;
+      const headers = { ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...options.headers };
+      if (options.auth !== false) {
+        if (!value('token')) throw new Error('请先在账号页登录，或手动粘贴 Token');
+        headers.Authorization = 'Bearer ' + value('token');
+      }
+      delete options.auth;
+      $('status').className = '';
+      $('status').textContent = `${options.method || 'GET'} ${url}`;
+      try {
+        const response = await fetch(url, { ...options, headers });
+        const text = await response.text();
+        let result;
+        try { result = JSON.parse(text); } catch { result = text; }
+        $('status').className = response.ok && result?.code === 0 ? 'ok' : 'error';
+        $('status').textContent += ` -> HTTP ${response.status}`;
+        $('output').textContent = typeof result === 'string' ? result : JSON.stringify(result, null, 2);
+        fillLiveFields(result);
+        return result;
+      } catch (error) {
+        $('status').className = 'error';
+        $('output').textContent = error.stack || error.message;
+        throw error;
+      }
+    }
+
+    function run(action) {
+      Promise.resolve().then(action).catch(error => {
+        $('status').className = 'error';
+        $('output').textContent = error.stack || error.message;
+      });
+    }
+
+    function roomPayload() {
+      return {
+        categoryId: Number(value('categorySelect') || 0),
+        title: value('roomTitle'),
+        coverUrl: value('roomCover'),
+        visibility: Number(value('visibility'))
+      };
+    }
+
+    $('saveConfig').onclick = () => {
+      saveConfig();
+      $('status').className = 'ok';
+      $('status').textContent = '配置已保存';
+    };
+    $('applyStatus').onclick = () => run(() => request('/app/live/anchor/apply/status'));
+    $('anchorInfo').onclick = () => run(() => request('/app/live/anchor/info'));
+    $('liveCheck').onclick = () => run(() => request('/app/live/anchor/live/check'));
+    $('pkCheck').onclick = () => run(() => request('/app/live/anchor/pk/check'));
+    $('loadCategories').onclick = () => run(async () => {
+      const result = await request('/app/live/category/list', { auth: false });
+      if (result?.code === 0) fillCategoryOptions(result);
+      return result;
+    });
+    $('roomInfo').onclick = () => run(() => request('/app/live/room/info'));
+    $('saveRoom').onclick = () => run(() => request('/app/live/room/save', {
+      method: 'POST', body: JSON.stringify({ ...roomPayload(), notice: value('roomNotice') })
+    }));
+    $('closeRoom').onclick = () => run(() => request('/app/live/room/status/update', {
+      method: 'POST', body: JSON.stringify({ status: 2 })
+    }));
+    $('openRoom').onclick = () => run(() => request('/app/live/room/status/update', {
+      method: 'POST', body: JSON.stringify({ status: 1 })
+    }));
+    $('prepareSession').onclick = () => run(() => request('/app/live/room/session/prepare', {
+      method: 'POST', body: JSON.stringify(roomPayload())
+    }));
+    $('currentSession').onclick = () => run(() => request('/app/live/room/session/current'));
+    $('sessionHistory').onclick = () => run(() => request('/app/live/room/session/history?page=1&pageSize=20'));
+    $('endSession').onclick = () => run(() => {
+      if (!value('sessionNo')) throw new Error('请先准备场次或填写 sessionNo');
+      return request('/app/live/room/session/end', {
+        method: 'POST', body: JSON.stringify({ sessionNo: value('sessionNo') })
+      });
+    });
+    $('publicRoomDetail').onclick = () => run(() => {
+      if (!value('roomNo')) throw new Error('请先取得或填写 roomNo');
+      return request('/app/live/room/detail?roomNo=' + encodeURIComponent(value('roomNo')), { auth: false });
+    });
+    $('publicRoomList').onclick = () => run(() => request('/app/live/room/list?page=1&pageSize=20', { auth: false }));
+
+    function hookRequest(path) {
+      if (!value('hookToken')) throw new Error('请填写本地 Hook Token');
+      if (!value('streamName')) throw new Error('请先准备场次或填写 streamName');
+      return request(path, {
+        auth: false,
+        method: 'POST',
+        headers: { 'X-Live-Hook-Token': value('hookToken') },
+        body: JSON.stringify({
+          action: path.endsWith('unpublish') ? 'on_unpublish' : 'on_publish',
+          stream: value('streamName'),
+          param: '?token=' + encodeURIComponent(value('publishToken'))
+        })
+      });
+    }
+    $('hookPublish').onclick = () => run(() => hookRequest('/app/live/hook/publish'));
+    $('hookUnpublish').onclick = () => run(() => hookRequest('/app/live/hook/unpublish'));
+  </script>
+
+</body>
+</html>

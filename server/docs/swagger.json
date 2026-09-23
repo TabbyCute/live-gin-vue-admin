@@ -390,56 +390,6 @@
                 }
             }
         },
-        "/authority/setDataAuthority": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Authority"
-                ],
-                "summary": "设置角色资源权限",
-                "parameters": [
-                    {
-                        "description": "设置角色资源权限",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/system.SysAuthority"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "设置角色资源权限",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "msg": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/authority/setRoleUsers": {
             "post": {
                 "security": [
@@ -532,148 +482,6 @@
                                         "data": {
                                             "$ref": "#/definitions/response.SysAuthorityResponse"
                                         },
-                                        "msg": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/authorityBtn/canRemoveAuthorityBtn": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AuthorityBtn"
-                ],
-                "summary": "设置权限按钮",
-                "responses": {
-                    "200": {
-                        "description": "删除成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "msg": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/authorityBtn/getAuthorityBtn": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AuthorityBtn"
-                ],
-                "summary": "获取权限按钮",
-                "parameters": [
-                    {
-                        "description": "菜单id, 角色id, 选中的按钮id",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.SysAuthorityBtnReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "返回列表成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.SysAuthorityBtnRes"
-                                        },
-                                        "msg": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/authorityBtn/setAuthorityBtn": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AuthorityBtn"
-                ],
-                "summary": "设置权限按钮",
-                "parameters": [
-                    {
-                        "description": "菜单id, 角色id, 选中的按钮id",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.SysAuthorityBtnReq"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "返回列表成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
                                         "msg": {
                                             "type": "string"
                                         }
@@ -1615,151 +1423,6 @@
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/tb_live_module_model_system_response.LoginResponse"
-                                        },
-                                        "msg": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/casbin/UpdateCasbin": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Casbin"
-                ],
-                "summary": "更新角色api权限",
-                "parameters": [
-                    {
-                        "description": "权限id, 权限模型列表",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.CasbinInReceive"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "更新角色api权限",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "msg": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/casbin/getAllApis": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Casbin"
-                ],
-                "summary": "获取当前管理员可分配的API权限列表",
-                "responses": {
-                    "200": {
-                        "description": "获取成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.PermissionAPIListResponse"
-                                        },
-                                        "msg": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/casbin/getPolicyPathByAuthorityId": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Casbin"
-                ],
-                "summary": "获取权限列表",
-                "parameters": [
-                    {
-                        "description": "权限id, 权限模型列表",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.CasbinInReceive"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "获取权限列表,返回包括casbin详情列表",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.PolicyPathResponse"
                                         },
                                         "msg": {
                                             "type": "string"
@@ -4012,6 +3675,393 @@
                         "description": "未登录或 token 无效",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/live/room/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveRoomAdmin"
+                ],
+                "summary": "获取直播间后台详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "直播间内部ID",
+                        "name": "roomId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.LiveRoomAdminItem"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/live/room/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveRoomAdmin"
+                ],
+                "summary": "分页查询直播间",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "直播间编号",
+                        "name": "roomNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "主播编号",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "标题",
+                        "name": "title",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分类ID",
+                        "name": "categoryId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "房间状态：0禁用 1正常 2关闭",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "直播状态：0未开播 1准备中 2直播中 3结束中",
+                        "name": "liveStatus",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.LiveRoomAdminListResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/live/room/status/update": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "禁用必须填写原因；活动直播间被禁用或关闭时，当前场次会进入结束中。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveRoomAdmin"
+                ],
+                "summary": "修改直播间状态",
+                "parameters": [
+                    {
+                        "description": "状态和原因",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.LiveRoomAdminStatusReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/live/room/update": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveRoomAdmin"
+                ],
+                "summary": "后台修改直播间编号和资料",
+                "parameters": [
+                    {
+                        "description": "直播间资料",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.LiveRoomAdminUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/live/session/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveSessionAdmin"
+                ],
+                "summary": "获取直播场次后台详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "场次内部ID",
+                        "name": "sessionId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.LiveSessionAdminItem"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/live/session/end": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveSessionAdmin"
+                ],
+                "summary": "后台强制结束直播场次",
+                "parameters": [
+                    {
+                        "description": "场次ID和原因",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.LiveSessionAdminEndReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/live/session/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveSessionAdmin"
+                ],
+                "summary": "分页查询直播场次",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "场次编号",
+                        "name": "sessionNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "直播间编号",
+                        "name": "roomNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "主播编号",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分类ID",
+                        "name": "categoryId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "场次状态",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "开播时间起，毫秒时间戳",
+                        "name": "startedAtStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "开播时间止，毫秒时间戳",
+                        "name": "startedAtEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.LiveSessionAdminListResp"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -8716,6 +8766,534 @@
                 }
             }
         },
+        "/v1/app/live/hook/publish": {
+            "post": {
+                "description": "必须携带 X-Live-Hook-Token；param 中必须包含 prepare 接口签发的 token。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveHook"
+                ],
+                "summary": "SRS发布流回调",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SRS回调密钥",
+                        "name": "X-Live-Hook-Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "SRS回调",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.SRSHookReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/hook/session/stats": {
+            "post": {
+                "description": "供可信统计服务写入；礼物流水仍应由独立账本保存，本接口只更新场次汇总。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveHook"
+                ],
+                "summary": "写入直播场次实时统计快照",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "内部回调密钥",
+                        "name": "X-Live-Hook-Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "场次统计",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.LiveSessionStatsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/hook/unpublish": {
+            "post": {
+                "description": "不直接结束场次，而是记录断流并开启可配置的重连窗口。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveHook"
+                ],
+                "summary": "SRS停止发布流回调",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SRS回调密钥",
+                        "name": "X-Live-Hook-Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "SRS回调",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.SRSHookReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/room/detail": {
+            "get": {
+                "description": "只返回正常、公开、正在直播且主播状态正常的房间，不暴露任何内部主键。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveRoomApp"
+                ],
+                "summary": "获取正在直播的公开直播间",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "直播间对外编号",
+                        "name": "roomNo",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.LiveRoomPublicItem"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/room/info": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份从客户端 JWT 获取；审核通过时系统通常已自动创建直播间，存量异常数据没有房间时返回 hasRoom=false。响应不包含数据库主键和推流密钥哈希。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveRoomApp"
+                ],
+                "summary": "获取当前主播的直播间",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.LiveRoomOwnerInfoResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/room/list": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveRoomApp"
+                ],
+                "summary": "分页获取公开直播列表",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分类ID",
+                        "name": "categoryId",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.LiveRoomPublicListResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/room/save": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "每名主播只有一个直播间；房间通常在审核通过时创建，首次保存仍会为存量异常数据补建，对外只返回 roomNo。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveRoomApp"
+                ],
+                "summary": "修改当前主播的直播间资料",
+                "parameters": [
+                    {
+                        "description": "直播间资料",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.LiveRoomSaveReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.LiveRoomInfo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/room/session/current": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveRoomApp"
+                ],
+                "summary": "获取当前活动直播场次",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.LiveSessionInfo"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/room/session/end": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "准备中的场次会取消；直播中的场次进入结束中，由后台任务幂等结算后变为已结束。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveRoomApp"
+                ],
+                "summary": "主播结束直播场次",
+                "parameters": [
+                    {
+                        "description": "场次对外编号",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.LiveSessionEndReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/room/session/history": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveRoomApp"
+                ],
+                "summary": "分页获取当前主播的直播场次历史",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "场次状态：0准备中 1直播中 2结束中 3已结束 4已取消 5失败",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.LiveSessionHistoryResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/room/session/prepare": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "实时校验主播开播资格和直播间状态；返回一次性推流凭证，数据库仅保存其哈希。\n同一直播间在准备中、直播中、结束中最多只能有一个场次，由数据库唯一约束兜底。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveRoomApp"
+                ],
+                "summary": "创建一场待推流的直播场次",
+                "parameters": [
+                    {
+                        "description": "本场标题、封面、分类和可见范围",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.LiveSessionPrepareReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.LiveSessionPrepareResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/room/status/update": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "主播只允许在正常(1)和关闭(2)之间切换；活动场次存在时不能关闭。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveRoomApp"
+                ],
+                "summary": "主播关闭或重新开启直播间",
+                "parameters": [
+                    {
+                        "description": "目标状态",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.LiveRoomOwnerStatusReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/app/live/user/info": {
             "get": {
                 "security": [
@@ -9057,6 +9635,23 @@
                     "type": "string"
                 },
                 "signing-key": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.Live": {
+            "type": "object",
+            "properties": {
+                "play-base-url": {
+                    "type": "string"
+                },
+                "push-base-url": {
+                    "type": "string"
+                },
+                "reconnect-window-seconds": {
+                    "type": "integer"
+                },
+                "srs-hook-token": {
                     "type": "string"
                 }
             }
@@ -9581,6 +10176,9 @@
                 },
                 "jwt-app": {
                     "$ref": "#/definitions/config.JWTApp"
+                },
+                "live": {
+                    "$ref": "#/definitions/config.Live"
                 },
                 "local": {
                     "description": "oss",
@@ -10772,34 +11370,6 @@
                 }
             }
         },
-        "request.CasbinInReceive": {
-            "type": "object",
-            "properties": {
-                "authorityId": {
-                    "description": "权限id",
-                    "type": "integer"
-                },
-                "casbinInfos": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/request.CasbinInfo"
-                    }
-                }
-            }
-        },
-        "request.CasbinInfo": {
-            "type": "object",
-            "properties": {
-                "method": {
-                    "description": "方法",
-                    "type": "string"
-                },
-                "path": {
-                    "description": "路径",
-                    "type": "string"
-                }
-            }
-        },
         "request.ChangePasswordReq": {
             "type": "object",
             "properties": {
@@ -10867,13 +11437,6 @@
                 "versionName"
             ],
             "properties": {
-                "apiIds": {
-                    "description": "选中的API ID列表",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
                 "description": {
                     "description": "版本描述",
                     "type": "string"
@@ -10986,13 +11549,6 @@
                 "version"
             ],
             "properties": {
-                "apis": {
-                    "description": "API数据，直接复用SysApi",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/system.SysApi"
-                    }
-                },
                 "dictionaries": {
                     "description": "字典数据，直接复用SysDictionary",
                     "type": "array",
@@ -11155,6 +11711,210 @@
                 }
             }
         },
+        "request.LiveRoomAdminStatusReq": {
+            "type": "object",
+            "required": [
+                "roomId",
+                "status"
+            ],
+            "properties": {
+                "roomId": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1,
+                        2
+                    ]
+                },
+                "statusReason": {
+                    "type": "string",
+                    "maxLength": 255
+                }
+            }
+        },
+        "request.LiveRoomAdminUpdateReq": {
+            "type": "object",
+            "required": [
+                "roomId",
+                "roomNo",
+                "title",
+                "visibility"
+            ],
+            "properties": {
+                "categoryId": {
+                    "type": "integer"
+                },
+                "coverUrl": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "notice": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "recommendWeight": {
+                    "type": "integer"
+                },
+                "roomId": {
+                    "type": "integer"
+                },
+                "roomNo": {
+                    "type": "string",
+                    "maxLength": 32
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 128
+                },
+                "visibility": {
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1,
+                        2
+                    ]
+                }
+            }
+        },
+        "request.LiveRoomOwnerStatusReq": {
+            "type": "object",
+            "required": [
+                "status"
+            ],
+            "properties": {
+                "status": {
+                    "type": "integer",
+                    "enum": [
+                        1,
+                        2
+                    ]
+                }
+            }
+        },
+        "request.LiveRoomSaveReq": {
+            "type": "object",
+            "required": [
+                "title",
+                "visibility"
+            ],
+            "properties": {
+                "categoryId": {
+                    "type": "integer"
+                },
+                "coverUrl": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "notice": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 128
+                },
+                "visibility": {
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1,
+                        2
+                    ]
+                }
+            }
+        },
+        "request.LiveSessionAdminEndReq": {
+            "type": "object",
+            "required": [
+                "reason",
+                "sessionId"
+            ],
+            "properties": {
+                "reason": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "sessionId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "request.LiveSessionEndReq": {
+            "type": "object",
+            "required": [
+                "sessionNo"
+            ],
+            "properties": {
+                "sessionNo": {
+                    "type": "string",
+                    "maxLength": 32
+                }
+            }
+        },
+        "request.LiveSessionPrepareReq": {
+            "type": "object",
+            "required": [
+                "title",
+                "visibility"
+            ],
+            "properties": {
+                "categoryId": {
+                    "type": "integer"
+                },
+                "coverUrl": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 128
+                },
+                "visibility": {
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1,
+                        2
+                    ]
+                }
+            }
+        },
+        "request.LiveSessionStatsReq": {
+            "type": "object",
+            "required": [
+                "sessionNo"
+            ],
+            "properties": {
+                "giftCoinAmount": {
+                    "type": "integer"
+                },
+                "giftCount": {
+                    "type": "integer"
+                },
+                "giftUserCount": {
+                    "type": "integer"
+                },
+                "likeCount": {
+                    "type": "integer"
+                },
+                "peakOnlineCount": {
+                    "type": "integer"
+                },
+                "sessionNo": {
+                    "type": "string",
+                    "maxLength": 32
+                },
+                "viewCount": {
+                    "type": "integer"
+                },
+                "viewerCount": {
+                    "type": "integer"
+                }
+            }
+        },
         "request.PageInfo": {
             "type": "object",
             "properties": {
@@ -11169,6 +11929,36 @@
                 "pageSize": {
                     "description": "每页大小",
                     "type": "integer"
+                }
+            }
+        },
+        "request.SRSHookReq": {
+            "type": "object",
+            "required": [
+                "stream"
+            ],
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "app": {
+                    "type": "string"
+                },
+                "client_id": {
+                    "type": "string"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "param": {
+                    "type": "string"
+                },
+                "stream": {
+                    "type": "string",
+                    "maxLength": 64
+                },
+                "vhost": {
+                    "type": "string"
                 }
             }
         },
@@ -11225,23 +12015,6 @@
                 },
                 "id": {
                     "type": "integer"
-                }
-            }
-        },
-        "request.SysAuthorityBtnReq": {
-            "type": "object",
-            "properties": {
-                "authorityId": {
-                    "type": "integer"
-                },
-                "menuID": {
-                    "type": "integer"
-                },
-                "selected": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
                 }
             }
         },
@@ -11496,7 +12269,7 @@
                 "totalLiveCount": {
                     "type": "integer"
                 },
-                "totalLiveDuration": {
+                "totalLiveDurationMs": {
                     "type": "integer"
                 },
                 "totalViewCount": {
@@ -11716,7 +12489,7 @@
                 "totalLiveCount": {
                     "type": "integer"
                 },
-                "totalLiveDuration": {
+                "totalLiveDurationMs": {
                     "type": "integer"
                 },
                 "totalViewCount": {
@@ -11889,6 +12662,436 @@
                 }
             }
         },
+        "response.LiveRoomAdminItem": {
+            "type": "object",
+            "properties": {
+                "anchorId": {
+                    "type": "integer"
+                },
+                "anchorNickname": {
+                    "type": "string"
+                },
+                "anchorNo": {
+                    "type": "string"
+                },
+                "categoryId": {
+                    "type": "integer"
+                },
+                "coverUrl": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "currentSessionId": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "liveStartedAt": {
+                    "type": "integer"
+                },
+                "liveStatus": {
+                    "type": "integer"
+                },
+                "notice": {
+                    "type": "string"
+                },
+                "recommendWeight": {
+                    "type": "integer"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "statusChangedAt": {
+                    "type": "integer"
+                },
+                "statusReason": {
+                    "type": "string"
+                },
+                "streamKeyVersion": {
+                    "type": "integer"
+                },
+                "streamName": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "visibility": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.LiveRoomAdminListResp": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.LiveRoomAdminItem"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.LiveRoomInfo": {
+            "type": "object",
+            "properties": {
+                "anchorNo": {
+                    "type": "string"
+                },
+                "categoryId": {
+                    "type": "integer"
+                },
+                "coverUrl": {
+                    "type": "string"
+                },
+                "currentSession": {
+                    "$ref": "#/definitions/response.LiveSessionInfo"
+                },
+                "liveStartedAt": {
+                    "type": "integer"
+                },
+                "liveStatus": {
+                    "type": "integer"
+                },
+                "notice": {
+                    "type": "string"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "statusReason": {
+                    "type": "string"
+                },
+                "streamKeyVersion": {
+                    "type": "integer"
+                },
+                "streamName": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "visibility": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.LiveRoomOwnerInfoResp": {
+            "type": "object",
+            "properties": {
+                "hasRoom": {
+                    "type": "boolean"
+                },
+                "room": {
+                    "$ref": "#/definitions/response.LiveRoomInfo"
+                }
+            }
+        },
+        "response.LiveRoomPublicItem": {
+            "type": "object",
+            "properties": {
+                "anchorAvatar": {
+                    "type": "string"
+                },
+                "anchorNickname": {
+                    "type": "string"
+                },
+                "anchorNo": {
+                    "type": "string"
+                },
+                "categoryId": {
+                    "type": "integer"
+                },
+                "coverUrl": {
+                    "type": "string"
+                },
+                "likeCount": {
+                    "type": "integer"
+                },
+                "liveStartedAt": {
+                    "type": "integer"
+                },
+                "notice": {
+                    "type": "string"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "sessionNo": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "viewCount": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.LiveRoomPublicListResp": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.LiveRoomPublicItem"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.LiveSessionAdminItem": {
+            "type": "object",
+            "properties": {
+                "anchorId": {
+                    "type": "integer"
+                },
+                "anchorNo": {
+                    "type": "string"
+                },
+                "categoryId": {
+                    "type": "integer"
+                },
+                "coverUrl": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "disconnectCount": {
+                    "type": "integer"
+                },
+                "durationMs": {
+                    "type": "integer"
+                },
+                "endReason": {
+                    "type": "integer"
+                },
+                "endedAt": {
+                    "type": "integer"
+                },
+                "failureReason": {
+                    "type": "string"
+                },
+                "giftCoinAmount": {
+                    "type": "integer"
+                },
+                "giftCount": {
+                    "type": "integer"
+                },
+                "giftUserCount": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lastUnpublishAt": {
+                    "type": "integer"
+                },
+                "likeCount": {
+                    "type": "integer"
+                },
+                "peakOnlineCount": {
+                    "type": "integer"
+                },
+                "reconnectDeadlineAt": {
+                    "type": "integer"
+                },
+                "roomId": {
+                    "type": "integer"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "sessionNo": {
+                    "type": "string"
+                },
+                "startedAt": {
+                    "type": "integer"
+                },
+                "statsFinalizedAt": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "viewCount": {
+                    "type": "integer"
+                },
+                "viewerCount": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.LiveSessionAdminListResp": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.LiveSessionAdminItem"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.LiveSessionHistoryResp": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.LiveSessionInfo"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.LiveSessionInfo": {
+            "type": "object",
+            "properties": {
+                "anchorNo": {
+                    "type": "string"
+                },
+                "categoryId": {
+                    "type": "integer"
+                },
+                "coverUrl": {
+                    "type": "string"
+                },
+                "disconnectCount": {
+                    "type": "integer"
+                },
+                "durationMs": {
+                    "type": "integer"
+                },
+                "endReason": {
+                    "type": "integer"
+                },
+                "endedAt": {
+                    "type": "integer"
+                },
+                "failureReason": {
+                    "type": "string"
+                },
+                "giftCoinAmount": {
+                    "type": "integer"
+                },
+                "giftCount": {
+                    "type": "integer"
+                },
+                "giftUserCount": {
+                    "type": "integer"
+                },
+                "lastUnpublishAt": {
+                    "type": "integer"
+                },
+                "likeCount": {
+                    "type": "integer"
+                },
+                "peakOnlineCount": {
+                    "type": "integer"
+                },
+                "reconnectDeadlineAt": {
+                    "type": "integer"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "sessionNo": {
+                    "type": "string"
+                },
+                "startedAt": {
+                    "type": "integer"
+                },
+                "statsFinalizedAt": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "viewCount": {
+                    "type": "integer"
+                },
+                "viewerCount": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.LiveSessionPrepareResp": {
+            "type": "object",
+            "properties": {
+                "playUrl": {
+                    "type": "string"
+                },
+                "publishToken": {
+                    "type": "string"
+                },
+                "pushUrl": {
+                    "type": "string"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "sessionNo": {
+                    "type": "string"
+                },
+                "streamName": {
+                    "type": "string"
+                }
+            }
+        },
         "response.MyAnchorInfo": {
             "type": "object",
             "properties": {
@@ -12000,7 +13203,7 @@
                 "totalLiveCount": {
                     "type": "integer"
                 },
-                "totalLiveDuration": {
+                "totalLiveDurationMs": {
                     "type": "integer"
                 },
                 "totalViewCount": {
@@ -12037,17 +13240,6 @@
                 }
             }
         },
-        "response.PermissionAPIListResponse": {
-            "type": "object",
-            "properties": {
-                "apis": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/system.SysApi"
-                    }
-                }
-            }
-        },
         "response.PluginInfo": {
             "type": "object",
             "properties": {
@@ -12078,17 +13270,6 @@
                 }
             }
         },
-        "response.PolicyPathResponse": {
-            "type": "object",
-            "properties": {
-                "paths": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/request.CasbinInfo"
-                    }
-                }
-            }
-        },
         "response.RegisterResponse": {
             "type": "object",
             "properties": {
@@ -12106,17 +13287,6 @@
                 "data": {},
                 "msg": {
                     "type": "string"
-                }
-            }
-        },
-        "response.SysAuthorityBtnRes": {
-            "type": "object",
-            "properties": {
-                "selected": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
                 }
             }
         },
@@ -12346,12 +13516,6 @@
                 "createdAt": {
                     "description": "创建时间",
                     "type": "string"
-                },
-                "dataAuthorityId": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/system.SysAuthority"
-                    }
                 },
                 "defaultRouter": {
                     "description": "默认菜单(默认dashboard)",

@@ -442,7 +442,16 @@ func (s *AnchorService) AuditAnchor(adminID uint64, req liveReq.AnchorAuditReq) 
 			updates["live_permission"] = liveModel.AnchorPermissionDisabled
 			updates["pk_permission"] = liveModel.AnchorPermissionDisabled
 		}
-		return tx.Model(&liveModel.LiveAnchor{}).Where("id = ?", anchor.ID).Updates(updates).Error
+		if err = tx.Model(&liveModel.LiveAnchor{}).Where("id = ?", anchor.ID).Updates(updates).Error; err != nil {
+			return err
+		}
+		if req.ApplyStatus == liveModel.AnchorApplyStatusApproved {
+			// 通过审核和创建唯一直播间属于同一个事务，避免出现“审核已通过但没有直播间”的半状态。
+			// 开播权限仍由后台单独开启，此处不创建场次，也不签发推流凭证。
+			_, err = ensureRoomForAnchor(tx, *anchor)
+			return err
+		}
+		return nil
 	})
 }
 
@@ -485,6 +494,11 @@ func (s *AnchorService) UpdateAnchorStatus(req liveReq.AnchorStatusUpdateReq) er
 		default:
 			return errors.New("无效的主播状态")
 		}
+		if status != liveModel.AnchorStatusNormal {
+			if err = endActiveSessionForAnchor(tx, anchor.ID, reason); err != nil {
+				return err
+			}
+		}
 		return tx.Model(&liveModel.LiveAnchor{}).Where("id = ?", anchor.ID).Updates(updates).Error
 	})
 }
@@ -496,15 +510,23 @@ func (s *AnchorService) UpdateAnchorPermission(req liveReq.AnchorPermissionUpdat
 	if *req.LivePermission == liveModel.AnchorPermissionDisabled && *req.PkPermission == liveModel.AnchorPermissionEnabled {
 		return ErrInvalidPermission
 	}
-	if _, err := s.getAnchorByID(global.GVA_DB, req.AnchorId); err != nil {
-		return normalizeAnchorLookupError(err)
-	}
-	return global.GVA_DB.Model(&liveModel.LiveAnchor{}).Where("id = ?", req.AnchorId).Updates(map[string]interface{}{
-		"live_permission":      *req.LivePermission,
-		"pk_permission":        *req.PkPermission,
-		"recommend_permission": *req.RecommendPermission,
-		"withdraw_permission":  *req.WithdrawPermission,
-	}).Error
+	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		anchor, err := s.getAnchorByIDForUpdate(tx, req.AnchorId)
+		if err != nil {
+			return normalizeAnchorLookupError(err)
+		}
+		if *req.LivePermission == liveModel.AnchorPermissionDisabled {
+			if err = endActiveSessionForAnchor(tx, anchor.ID, "后台关闭主播开播权限"); err != nil {
+				return err
+			}
+		}
+		return tx.Model(&liveModel.LiveAnchor{}).Where("id = ?", req.AnchorId).Updates(map[string]interface{}{
+			"live_permission":      *req.LivePermission,
+			"pk_permission":        *req.PkPermission,
+			"recommend_permission": *req.RecommendPermission,
+			"withdraw_permission":  *req.WithdrawPermission,
+		}).Error
+	})
 }
 
 func (s *AnchorService) UpdateAnchorProfile(req liveReq.AnchorAdminProfileUpdateReq) error {
@@ -586,11 +608,20 @@ func (s *AnchorService) UpdateAnchorRisk(req liveReq.AnchorRiskUpdateReq) error 
 	if req.RiskLevel == nil {
 		return errors.New("风险等级不能为空")
 	}
-	if _, err := s.getAnchorByID(global.GVA_DB, req.AnchorId); err != nil {
-		return normalizeAnchorLookupError(err)
-	}
-	// 风险等级记录风险事实，不在这里偷偷改直播、PK 或提现权限；实时资格由 check 统一计算。
-	return global.GVA_DB.Model(&liveModel.LiveAnchor{}).Where("id = ?", req.AnchorId).Update("risk_level", *req.RiskLevel).Error
+	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		anchor, err := s.getAnchorByIDForUpdate(tx, req.AnchorId)
+		if err != nil {
+			return normalizeAnchorLookupError(err)
+		}
+		// 风险等级记录风险事实，不改写直播、PK 或提现权限；高风险会实时阻止新开播，
+		// 已存在的活动场次也必须立即进入统一结束链路。
+		if *req.RiskLevel == liveModel.AnchorRiskHigh {
+			if err = endActiveSessionForAnchor(tx, anchor.ID, "主播风险等级调整为高风险"); err != nil {
+				return err
+			}
+		}
+		return tx.Model(&liveModel.LiveAnchor{}).Where("id = ?", anchor.ID).Update("risk_level", *req.RiskLevel).Error
+	})
 }
 
 func (s *AnchorService) UpdateAnchorRemark(req liveReq.AnchorRemarkUpdateReq) error {
@@ -777,7 +808,7 @@ func toMyAnchorInfo(anchor liveModel.LiveAnchor) liveRes.MyAnchorInfo {
 		LivePermission: anchor.LivePermission, PkPermission: anchor.PkPermission,
 		RecommendPermission: anchor.RecommendPermission, WithdrawPermission: anchor.WithdrawPermission,
 		IsSigned: anchor.IsSigned, FansCount: anchor.FansCount, TotalLiveCount: anchor.TotalLiveCount,
-		TotalLiveDuration: anchor.TotalLiveDuration, MaxOnlineCount: anchor.MaxOnlineCount, TotalViewCount: anchor.TotalViewCount,
+		TotalLiveDurationMs: anchor.TotalLiveDurationMs, MaxOnlineCount: anchor.MaxOnlineCount, TotalViewCount: anchor.TotalViewCount,
 		LastLiveAt: anchor.LastLiveAt, LastLiveEndAt: anchor.LastLiveEndAt,
 	}
 }
@@ -789,7 +820,7 @@ func toAnchorPublicDetail(anchor liveModel.LiveAnchor) liveRes.AnchorPublicDetai
 		CityCode: anchor.CityCode, Language: anchor.Language, AnchorType: anchor.AnchorType, CategoryId: anchor.CategoryId,
 		Level: anchor.Level, TagIds: cloneUint64s(anchor.TagIds), CertStatus: anchor.CertStatus, CertType: anchor.CertType,
 		CertName: anchor.CertName, IsSigned: anchor.IsSigned, FansCount: anchor.FansCount,
-		TotalLiveCount: anchor.TotalLiveCount, TotalLiveDuration: anchor.TotalLiveDuration,
+		TotalLiveCount: anchor.TotalLiveCount, TotalLiveDurationMs: anchor.TotalLiveDurationMs,
 		MaxOnlineCount: anchor.MaxOnlineCount, TotalViewCount: anchor.TotalViewCount,
 		LastLiveAt: anchor.LastLiveAt, IsRecommended: anchor.IsRecommended,
 	}
@@ -821,7 +852,7 @@ func toAnchorAdminDetail(anchor liveModel.LiveAnchor) liveRes.AnchorAdminDetailR
 		RecommendPermission: anchor.RecommendPermission, WithdrawPermission: anchor.WithdrawPermission,
 		IsSigned: anchor.IsSigned, IsRecommended: anchor.IsRecommended, NewcomerUntil: anchor.NewcomerUntil,
 		Sort: anchor.Sort, RecommendWeight: anchor.RecommendWeight, FansCount: anchor.FansCount,
-		TotalLiveCount: anchor.TotalLiveCount, TotalLiveDuration: anchor.TotalLiveDuration,
+		TotalLiveCount: anchor.TotalLiveCount, TotalLiveDurationMs: anchor.TotalLiveDurationMs,
 		MaxOnlineCount: anchor.MaxOnlineCount, TotalViewCount: anchor.TotalViewCount,
 		LastLiveAt: anchor.LastLiveAt, LastLiveEndAt: anchor.LastLiveEndAt,
 		Source: anchor.Source, SourceId: anchor.SourceId, ChannelId: anchor.ChannelId,

@@ -336,7 +336,7 @@
           <div class="stat-grid">
             <div class="stat-card"><strong>{{ detail.fansCount }}</strong><span>粉丝数</span></div>
             <div class="stat-card"><strong>{{ detail.totalLiveCount }}</strong><span>累计场次</span></div>
-            <div class="stat-card"><strong>{{ durationText(detail.totalLiveDuration) }}</strong><span>累计时长</span></div>
+            <div class="stat-card"><strong>{{ durationText(detail.totalLiveDurationMs) }}</strong><span>累计时长</span></div>
             <div class="stat-card"><strong>{{ detail.maxOnlineCount }}</strong><span>最高在线</span></div>
             <div class="stat-card"><strong>{{ detail.totalViewCount }}</strong><span>累计观看</span></div>
           </div>
@@ -615,8 +615,8 @@ const pageMetrics = computed(() => ({
 const statusMeta = (map, value) => map[value] || { label: `未知(${value})`, type: 'info' }
 const formatDateTime = (value) => value ? (formatDate(value) || '-') : '-'
 const formatTimestamp = (value) => Number(value) ? (formatDate(Number(value)) || '-') : '-'
-const durationText = (seconds) => {
-  const value = Number(seconds || 0)
+const durationText = (milliseconds) => {
+  const value = Math.floor(Number(milliseconds || 0) / 1000)
   if (value < 60) return `${value} 秒`
   if (value < 3600) return `${Math.floor(value / 60)} 分钟`
   return `${Math.floor(value / 3600)} 小时 ${Math.floor((value % 3600) / 60)} 分钟`

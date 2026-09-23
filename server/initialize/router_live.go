@@ -19,4 +19,6 @@ func registerLiveRoutesV1(publicRoot *gin.RouterGroup) {
 	liveRouter.InitUserRouter(publicGroup, privateGroup)
 	liveRouter.InitAnchorRouter(publicGroup, privateGroup)
 	liveRouter.InitCategoryRouter(publicGroup)
+	liveRouter.InitRoomRouter(publicGroup, privateGroup)
+	liveRouter.InitHookRouter(publicGroup)
 }

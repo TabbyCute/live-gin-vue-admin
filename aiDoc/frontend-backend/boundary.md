@@ -38,3 +38,15 @@
 - 客户端 token 不得写入或复用管理后台的 `x-token` Header/Cookie。
 - 客户端账号、JWT 密钥、签发者、Claims 和鉴权中间件均与管理后台独立。
 - 登录响应的 `expiresAt` 是毫秒时间戳；账号响应字段为 `id`、`username`、`nickname`、`avatar`、`status`、`createdAt`。
+
+## 直播间与场次契约
+
+- 客户端直播接口前缀为 `/api/v1/app/live/room`；本人操作使用 APP Bearer Token，公开直播列表和详情不要求登录。
+- 客户端不得接收或提交直播间、场次、主播的数据库主键，只使用 `roomNo`、`sessionNo`、`anchorNo`。
+- 后台直播间和场次接口前缀分别为 `/api/v1/admin/live/room`、`/api/v1/admin/live/session`，后台可以使用内部主键执行精确操作。
+- SRS/可信统计接口前缀为 `/api/v1/app/live/hook`，必须使用 `X-Live-Hook-Token`，不使用 APP 或后台 JWT。
+- 所有直播业务时间戳均为毫秒；直播时长字段为 `durationMs` / `totalLiveDurationMs`。
+- 场次状态值固定为：`0`准备中、`1`直播中、`2`结束中、`3`已结束、`4`已取消、`5`失败。
+- 房间状态与直播状态是两个独立字段：`status` 表示是否允许使用房间，`liveStatus` 表示当前运行阶段。
+- `publishToken` 只在准备开播响应中返回一次，前端不得持久化展示；服务端只保存哈希。
+- 礼物统计字段 `giftCount`、`giftCoinAmount`、`giftUserCount` 是汇总快照，不代替礼物和钱包流水。

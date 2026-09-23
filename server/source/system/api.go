@@ -259,6 +259,14 @@ func (i *initApi) InitializeData(ctx context.Context) (context.Context, error) {
 		{ApiGroup: "直播分类", Method: "POST", Path: "/live/category/update", Description: "修改直播分类资料"},
 		{ApiGroup: "直播分类", Method: "POST", Path: "/live/category/status/update", Description: "启用或停用直播分类"},
 		{ApiGroup: "直播分类", Method: "POST", Path: "/live/category/delete", Description: "删除直播分类"},
+
+		{ApiGroup: "直播间管理", Method: "GET", Path: "/live/room/list", Description: "分页查询直播间"},
+		{ApiGroup: "直播间管理", Method: "GET", Path: "/live/room/detail", Description: "获取直播间后台详情"},
+		{ApiGroup: "直播间管理", Method: "POST", Path: "/live/room/update", Description: "修改直播间资料"},
+		{ApiGroup: "直播间管理", Method: "POST", Path: "/live/room/status/update", Description: "修改直播间状态"},
+		{ApiGroup: "直播场次", Method: "GET", Path: "/live/session/list", Description: "分页查询直播场次"},
+		{ApiGroup: "直播场次", Method: "GET", Path: "/live/session/detail", Description: "获取直播场次后台详情"},
+		{ApiGroup: "直播场次", Method: "POST", Path: "/live/session/end", Description: "后台强制结束直播场次"},
 	}
 	if err := db.Create(&entities).Error; err != nil {
 		return ctx, errors.Wrap(err, sysModel.SysApi{}.TableName()+"表数据初始化失败!")

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>主播客户端测试</title>
+  <title>主播申请测试</title>
   <style>
     body { max-width: 900px; margin: 20px auto; padding: 0 12px; font: 14px/1.5 sans-serif; }
     label { display: block; margin: 8px 0; }
@@ -18,8 +18,8 @@
   </style>
 </head>
 <body>
-  <h2>主播客户端</h2>
-  <p><a href="html-1注册账号.html">返回账号页</a>（先登录获取客户端 Token）</p>
+  <h2>主播申请与资料</h2>
+  <p><a href="html-1注册账号.html">返回账号页</a>　<a href="html-3主播开播.html">进入主播开播页</a>（先登录获取客户端 Token）</p>
 
   <label>API 基址
     <input id="baseUrl" value="http://127.0.0.1:8888/api/v1">
@@ -66,8 +66,6 @@
     <legend>当前主播</legend>
     <button id="applyStatus">申请状态</button>
     <button id="info">我的主播资料</button>
-    <button id="liveCheck">开播资格</button>
-    <button id="pkCheck">PK 资格</button>
   </fieldset>
 
   <fieldset>
@@ -193,8 +191,6 @@
     });
     $('applyStatus').onclick = () => run(() => request('/app/live/anchor/apply/status'));
     $('info').onclick = () => run(() => request('/app/live/anchor/info'));
-    $('liveCheck').onclick = () => run(() => request('/app/live/anchor/live/check'));
-    $('pkCheck').onclick = () => run(() => request('/app/live/anchor/pk/check'));
     $('detail').onclick = () => run(() => {
       if (!value('anchorNo')) throw new Error('请输入 anchorNo');
       return request('/app/live/anchor/detail?anchorNo=' + encodeURIComponent(value('anchorNo')), { auth: false });

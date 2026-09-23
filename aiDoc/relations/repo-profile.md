@@ -21,7 +21,7 @@
 - Go
 - Gin
 - GORM
-- Casbin
+- 角色菜单分配（后台接口统一由 JWT 保护）
 - Viper
 - Zap
 - Redis

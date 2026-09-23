@@ -19,7 +19,7 @@ func setupAnchorTestDB(t *testing.T) {
 	t.Helper()
 	db, err := gorm.Open(sqlite.Open("file:"+t.Name()+"?mode=memory&cache=shared"), &gorm.Config{})
 	require.NoError(t, err)
-	require.NoError(t, db.AutoMigrate(&liveModel.LiveAnchor{}, &liveModel.LiveCategory{}))
+	require.NoError(t, db.AutoMigrate(&liveModel.LiveAnchor{}, &liveModel.LiveCategory{}, &liveModel.LiveRoom{}))
 	previousDB := global.GVA_DB
 	global.GVA_DB = db
 	t.Cleanup(func() { global.GVA_DB = previousDB })
@@ -135,9 +135,48 @@ func TestAnchorAuditStateMachineAndPermissionSeparation(t *testing.T) {
 	require.Equal(t, liveModel.AnchorApplyStatusApproved, refreshed.ApplyStatus)
 	require.Equal(t, uint64(888), refreshed.AuditUserId)
 	require.Equal(t, liveModel.AnchorPermissionDisabled, refreshed.LivePermission, "审核与直播权限保持分离")
+	var room liveModel.LiveRoom
+	require.NoError(t, global.GVA_DB.Where("anchor_id = ?", anchor.ID).First(&room).Error)
+	require.Equal(t, refreshed.AnchorNo, room.RoomNo, "审核通过创建的房间号默认使用主播编号")
+	require.Equal(t, refreshed.AnchorNo, room.StreamName)
+	require.Equal(t, liveModel.LiveRoomStatusNormal, room.Status)
+	require.Equal(t, liveModel.LiveRoomOffline, room.LiveStatus)
+	require.Zero(t, room.CurrentSessionId)
 
 	err = service.AuditAnchor(888, liveReq.AnchorAuditReq{AnchorId: anchor.ID, ApplyStatus: liveModel.AnchorApplyStatusRejected, RejectReason: "late"})
 	require.ErrorIs(t, err, ErrInvalidApplyStatus)
+}
+
+func TestAnchorAuditRejectedDoesNotCreateRoom(t *testing.T) {
+	setupAnchorTestDB(t)
+	service := AnchorService{}
+	anchor, err := service.ApplyAnchor(131, liveReq.AnchorApplyReq{Nickname: "Rejected", ChannelId: 1})
+	require.NoError(t, err)
+	require.NoError(t, service.AuditAnchor(888, liveReq.AnchorAuditReq{
+		AnchorId: anchor.ID, ApplyStatus: liveModel.AnchorApplyStatusRejected, RejectReason: "资料不完整",
+	}))
+	var count int64
+	require.NoError(t, global.GVA_DB.Model(&liveModel.LiveRoom{}).Where("anchor_id = ?", anchor.ID).Count(&count).Error)
+	require.Zero(t, count)
+}
+
+func TestAnchorAuditRollsBackWhenRoomCreationFails(t *testing.T) {
+	setupAnchorTestDB(t)
+	service := AnchorService{}
+	anchor, err := service.ApplyAnchor(132, liveReq.AnchorApplyReq{Nickname: "Conflict", ChannelId: 1})
+	require.NoError(t, err)
+	require.NoError(t, global.GVA_DB.Create(&liveModel.LiveRoom{
+		RoomNo: anchor.AnchorNo, AnchorId: 9999, StreamName: "occupied-stream",
+		Status: liveModel.LiveRoomStatusNormal, LiveStatus: liveModel.LiveRoomOffline,
+	}).Error)
+
+	err = service.AuditAnchor(888, liveReq.AnchorAuditReq{AnchorId: anchor.ID, ApplyStatus: liveModel.AnchorApplyStatusApproved})
+	require.ErrorIs(t, err, ErrLiveRoomNoExists)
+	var refreshed liveModel.LiveAnchor
+	require.NoError(t, global.GVA_DB.First(&refreshed, anchor.ID).Error)
+	require.Equal(t, liveModel.AnchorApplyStatusPending, refreshed.ApplyStatus, "房间创建失败时审核结果必须回滚")
+	require.Zero(t, refreshed.AuditAt)
+	require.Zero(t, refreshed.AuditUserId)
 }
 
 func TestAnchorLiveAndPkChecks(t *testing.T) {

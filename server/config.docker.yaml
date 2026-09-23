@@ -11,6 +11,13 @@ jwt-app:
     signing-key: qmPlus-live-app-key
     expires-time: 30d
     issuer: qmPlus-live-app
+# live room and SRS callback configuration
+live:
+    reconnect-window-seconds: 20
+    srs-hook-token: ""
+    push-base-url: ""
+    play-base-url: ""
+
 # zap logger configuration
 zap:
     level: info

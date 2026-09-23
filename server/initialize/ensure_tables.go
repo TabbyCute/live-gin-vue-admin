@@ -64,6 +64,10 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 		example.ExaAttachmentCategory{},
 
 		liveModel.LiveAccount{},
+		liveModel.LiveAnchor{},
+		liveModel.LiveCategory{},
+		liveModel.LiveRoom{},
+		liveModel.LiveSession{},
 
 		model.Info{},
 	}
@@ -105,6 +109,10 @@ func (e *ensureTables) TableCreated(ctx context.Context) bool {
 		example.ExaAttachmentCategory{},
 
 		liveModel.LiveAccount{},
+		liveModel.LiveAnchor{},
+		liveModel.LiveCategory{},
+		liveModel.LiveRoom{},
+		liveModel.LiveSession{},
 
 		model.Info{},
 	}

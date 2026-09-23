@@ -237,7 +237,7 @@ func isAnchorBusinessError(err error) bool {
 		liveService.ErrRecommendPermissionClosed, liveService.ErrInvalidCertState,
 		liveService.ErrInvalidBirthday, liveService.ErrInvalidDateRange,
 		liveService.ErrAnchorNoTooLong, liveService.ErrInvalidChannel,
-		liveService.ErrLiveCategoryNotFound,
+		liveService.ErrLiveCategoryNotFound, liveService.ErrLiveRoomNoExists,
 	}
 	for _, target := range known {
 		if errors.Is(err, target) {

@@ -7,6 +7,7 @@ import (
 	"tb_live_module/model/example"
 	"tb_live_module/model/live"
 	"tb_live_module/model/system"
+	liveService "tb_live_module/service/live"
 
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -74,9 +75,19 @@ func RegisterTables() {
 		live.LiveAccount{},
 		live.LiveAnchor{},
 		live.LiveCategory{},
+		live.LiveRoom{},
+		live.LiveSession{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = migrateLiveDurationColumn(db); err != nil {
+		global.GVA_LOG.Error("migrate live duration column failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = (&liveService.RoomService{}).BackfillApprovedAnchorRooms(db); err != nil {
+		global.GVA_LOG.Error("backfill approved anchor rooms failed", zap.Error(err))
 		os.Exit(1)
 	}
 
@@ -95,6 +106,10 @@ func RegisterTables() {
 	}
 	if err = syncLiveCategoryAdminMetadata(db); err != nil {
 		global.GVA_LOG.Error("sync live category admin metadata failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = syncLiveRoomAdminMetadata(db); err != nil {
+		global.GVA_LOG.Error("sync live room admin metadata failed", zap.Error(err))
 		os.Exit(1)
 	}
 

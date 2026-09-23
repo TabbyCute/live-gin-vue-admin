@@ -42,7 +42,7 @@ type MyAnchorInfo struct {
 	IsSigned            uint8    `json:"isSigned"`
 	FansCount           uint64   `json:"fansCount"`
 	TotalLiveCount      uint64   `json:"totalLiveCount"`
-	TotalLiveDuration   uint64   `json:"totalLiveDuration"`
+	TotalLiveDurationMs uint64   `json:"totalLiveDurationMs"`
 	MaxOnlineCount      uint32   `json:"maxOnlineCount"`
 	TotalViewCount      uint64   `json:"totalViewCount"`
 	LastLiveAt          int64    `json:"lastLiveAt"`
@@ -59,31 +59,31 @@ type AnchorApplyStatusResp struct {
 }
 
 type AnchorPublicDetailResp struct {
-	AnchorNo          string   `json:"anchorNo"`
-	Nickname          string   `json:"nickname"`
-	Avatar            string   `json:"avatar"`
-	Cover             string   `json:"cover"`
-	Signature         string   `json:"signature"`
-	Gender            uint8    `json:"gender"`
-	CountryCode       string   `json:"countryCode"`
-	RegionCode        string   `json:"regionCode"`
-	CityCode          string   `json:"cityCode"`
-	Language          string   `json:"language"`
-	AnchorType        uint8    `json:"anchorType"`
-	CategoryId        uint64   `json:"categoryId"`
-	Level             uint32   `json:"level"`
-	TagIds            []uint64 `json:"tagIds"`
-	CertStatus        uint8    `json:"certStatus"`
-	CertType          uint8    `json:"certType"`
-	CertName          string   `json:"certName"`
-	IsSigned          uint8    `json:"isSigned"`
-	FansCount         uint64   `json:"fansCount"`
-	TotalLiveCount    uint64   `json:"totalLiveCount"`
-	TotalLiveDuration uint64   `json:"totalLiveDuration"`
-	MaxOnlineCount    uint32   `json:"maxOnlineCount"`
-	TotalViewCount    uint64   `json:"totalViewCount"`
-	LastLiveAt        int64    `json:"lastLiveAt"`
-	IsRecommended     uint8    `json:"isRecommended"`
+	AnchorNo            string   `json:"anchorNo"`
+	Nickname            string   `json:"nickname"`
+	Avatar              string   `json:"avatar"`
+	Cover               string   `json:"cover"`
+	Signature           string   `json:"signature"`
+	Gender              uint8    `json:"gender"`
+	CountryCode         string   `json:"countryCode"`
+	RegionCode          string   `json:"regionCode"`
+	CityCode            string   `json:"cityCode"`
+	Language            string   `json:"language"`
+	AnchorType          uint8    `json:"anchorType"`
+	CategoryId          uint64   `json:"categoryId"`
+	Level               uint32   `json:"level"`
+	TagIds              []uint64 `json:"tagIds"`
+	CertStatus          uint8    `json:"certStatus"`
+	CertType            uint8    `json:"certType"`
+	CertName            string   `json:"certName"`
+	IsSigned            uint8    `json:"isSigned"`
+	FansCount           uint64   `json:"fansCount"`
+	TotalLiveCount      uint64   `json:"totalLiveCount"`
+	TotalLiveDurationMs uint64   `json:"totalLiveDurationMs"`
+	MaxOnlineCount      uint32   `json:"maxOnlineCount"`
+	TotalViewCount      uint64   `json:"totalViewCount"`
+	LastLiveAt          int64    `json:"lastLiveAt"`
+	IsRecommended       uint8    `json:"isRecommended"`
 }
 
 type AnchorPermissionCheckResp struct {
@@ -169,7 +169,7 @@ type AnchorAdminDetailResp struct {
 	RecommendWeight     int32     `json:"recommendWeight"`
 	FansCount           uint64    `json:"fansCount"`
 	TotalLiveCount      uint64    `json:"totalLiveCount"`
-	TotalLiveDuration   uint64    `json:"totalLiveDuration"`
+	TotalLiveDurationMs uint64    `json:"totalLiveDurationMs"`
 	MaxOnlineCount      uint32    `json:"maxOnlineCount"`
 	TotalViewCount      uint64    `json:"totalViewCount"`
 	LastLiveAt          int64     `json:"lastLiveAt"`

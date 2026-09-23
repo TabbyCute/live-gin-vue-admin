@@ -105,13 +105,13 @@ type LiveAnchor struct {
 	Sort            int32 `json:"sort" gorm:"column:sort;type:int;not null;default:0;index:idx_recommend,priority:5,sort:desc;comment:人工排序权重，数值越大越靠前"`
 	RecommendWeight int32 `json:"recommendWeight" gorm:"column:recommend_weight;type:int;not null;default:0;comment:推荐基础权重，后续推荐算法可使用"`
 
-	FansCount         uint64 `json:"fansCount" gorm:"column:fans_count;type:bigint unsigned;not null;default:0;comment:粉丝数量缓存"`
-	TotalLiveCount    uint64 `json:"totalLiveCount" gorm:"column:total_live_count;type:bigint unsigned;not null;default:0;comment:累计开播场次"`
-	TotalLiveDuration uint64 `json:"totalLiveDuration" gorm:"column:total_live_duration;type:bigint unsigned;not null;default:0;comment:累计直播时长，单位秒"`
-	MaxOnlineCount    uint32 `json:"maxOnlineCount" gorm:"column:max_online_count;type:int unsigned;not null;default:0;comment:历史最高在线人数"`
-	TotalViewCount    uint64 `json:"totalViewCount" gorm:"column:total_view_count;type:bigint unsigned;not null;default:0;comment:累计观看人次快照"`
-	LastLiveAt        int64  `json:"lastLiveAt" gorm:"column:last_live_at;type:bigint;not null;default:0;index:idx_last_live_at,sort:desc;comment:最近一次开播时间，毫秒时间戳"`
-	LastLiveEndAt     int64  `json:"lastLiveEndAt" gorm:"column:last_live_end_at;type:bigint;not null;default:0;comment:最近一次下播时间，毫秒时间戳"`
+	FansCount           uint64 `json:"fansCount" gorm:"column:fans_count;type:bigint unsigned;not null;default:0;comment:粉丝数量缓存"`
+	TotalLiveCount      uint64 `json:"totalLiveCount" gorm:"column:total_live_count;type:bigint unsigned;not null;default:0;comment:累计开播场次"`
+	TotalLiveDurationMs uint64 `json:"totalLiveDurationMs" gorm:"column:total_live_duration_ms;type:bigint unsigned;not null;default:0;comment:累计逻辑直播时长，单位毫秒"`
+	MaxOnlineCount      uint32 `json:"maxOnlineCount" gorm:"column:max_online_count;type:int unsigned;not null;default:0;comment:历史最高在线人数"`
+	TotalViewCount      uint64 `json:"totalViewCount" gorm:"column:total_view_count;type:bigint unsigned;not null;default:0;comment:累计观看人次快照"`
+	LastLiveAt          int64  `json:"lastLiveAt" gorm:"column:last_live_at;type:bigint;not null;default:0;index:idx_last_live_at,sort:desc;comment:最近一次开播时间，毫秒时间戳"`
+	LastLiveEndAt       int64  `json:"lastLiveEndAt" gorm:"column:last_live_end_at;type:bigint;not null;default:0;comment:最近一次下播时间，毫秒时间戳"`
 
 	Source    string `json:"source" gorm:"column:source;type:varchar(32);not null;default:'';index:idx_source_ref,priority:1;comment:主播来源，例如app/admin/import/old_platform"`
 	SourceId  string `json:"sourceId" gorm:"column:source_id;type:varchar(64);not null;default:'';index:idx_source_ref,priority:2;comment:第三方或老系统主播ID"`
