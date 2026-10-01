@@ -3,7 +3,9 @@ package live
 import "tb_live_module/global"
 
 const (
+	// LiveCategoryStatusDisabled（0）表示直播分类已停用，不能再被主播资料或新直播场次选择。
 	LiveCategoryStatusDisabled uint8 = iota
+	// LiveCategoryStatusEnabled（1）表示直播分类已启用，可以被主播和直播间选择。
 	LiveCategoryStatusEnabled
 )
 

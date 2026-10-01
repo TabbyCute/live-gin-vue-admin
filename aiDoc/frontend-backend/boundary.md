@@ -44,9 +44,12 @@
 - 客户端直播接口前缀为 `/api/v1/app/live/room`；本人操作使用 APP Bearer Token，公开直播列表和详情不要求登录。
 - 客户端不得接收或提交直播间、场次、主播的数据库主键，只使用 `roomNo`、`sessionNo`、`anchorNo`。
 - 后台直播间和场次接口前缀分别为 `/api/v1/admin/live/room`、`/api/v1/admin/live/session`，后台可以使用内部主键执行精确操作。
-- SRS/可信统计接口前缀为 `/api/v1/app/live/hook`，必须使用 `X-Live-Hook-Token`，不使用 APP 或后台 JWT。
+- SRS/可信统计接口前缀为 `/api/v1/app/live/hook`，由部署层真实来源 IP/CIDR 白名单保护，不使用 APP 或后台 JWT；`publish` 还会解密并完整校验 pt。
 - 所有直播业务时间戳均为毫秒；直播时长字段为 `durationMs` / `totalLiveDurationMs`。
 - 场次状态值固定为：`0`准备中、`1`直播中、`2`结束中、`3`已结束、`4`已取消、`5`失败。
 - 房间状态与直播状态是两个独立字段：`status` 表示是否允许使用房间，`liveStatus` 表示当前运行阶段。
-- `publishToken` 只在准备开播响应中返回一次，前端不得持久化展示；服务端只保存哈希。
+- `publishToken` 是 `v1_` 开头的加密 pt，只在准备开播响应中返回一次，前端不得持久化展示；服务端只保存最终 Token 的哈希。
+- 主播端 `POST /api/v1/app/live/room/session/end` 不传请求体或 `sessionNo`；服务端根据 APP JWT 结束当前登录主播的活动场次。
 - 礼物统计字段 `giftCount`、`giftCoinAmount`、`giftUserCount` 是汇总快照，不代替礼物和钱包流水。
+- 公开详情 `GET /api/v1/app/live/room/detail` 始终返回房间资料和完整 `anchorInfo`；`latestSession` 有活动场次时表示当前场次，否则表示最近一次已结束直播，从未完成直播时固定返回空对象 `{}`。
+- 公开详情不返回房间/场次内部主键、房间状态原因、断流重连控制字段、失败原因、结算时间或礼物金额。

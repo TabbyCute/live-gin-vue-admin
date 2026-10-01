@@ -1,11 +1,11 @@
 package main
 
 import (
+	_ "go.uber.org/automaxprocs"
+	"go.uber.org/zap"
 	"tb_live_module/core"
 	"tb_live_module/global"
 	"tb_live_module/initialize"
-	_ "go.uber.org/automaxprocs"
-	"go.uber.org/zap"
 )
 
 //go:generate go env -w GO111MODULE=on
@@ -45,10 +45,10 @@ func initializeSystem() {
 	global.GVA_LOG = core.Zap() // 初始化zap日志库
 	zap.ReplaceGlobals(global.GVA_LOG)
 	global.GVA_DB = initialize.Gorm() // gorm连接数据库
-	initialize.Timer()
 	initialize.DBList()
 	initialize.SetupHandlers() // 注册全局函数
 	if global.GVA_DB != nil {
 		initialize.RegisterTables() // 初始化表
+		initialize.Timer()          // 表结构就绪后注册任务并立即执行一次直播生命周期扫描
 	}
 }

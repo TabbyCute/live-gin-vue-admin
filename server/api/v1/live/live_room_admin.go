@@ -45,10 +45,11 @@ func (a *RoomAdminApi) RoomList(c *gin.Context) {
 // RoomDetail
 // @Tags LiveRoomAdmin
 // @Summary 获取直播间后台详情
+// @Description 直播间有当前活动场次时，currentSession 返回该场次的内容、状态、时间和统计快照。
 // @Security ApiKeyAuth
 // @Produce application/json
 // @Param roomId query uint true "直播间内部ID"
-// @Success 200 {object} response.Response{data=liveRes.LiveRoomAdminItem}
+// @Success 200 {object} response.Response{data=liveRes.LiveRoomAdminDetailResp}
 // @Router /live/room/detail [get]
 func (a *RoomAdminApi) RoomDetail(c *gin.Context) {
 	var req liveReq.LiveRoomAdminDetailReq
@@ -164,6 +165,7 @@ func (a *RoomAdminApi) SessionDetail(c *gin.Context) {
 // EndSession
 // @Tags LiveSessionAdmin
 // @Summary 后台强制结束直播场次
+// @Description 准备中的场次直接取消；直播中的场次先进入结束中并同步尝试SRS断流，成功后立即结算，失败由定时任务重试。接口具有幂等语义。
 // @Security ApiKeyAuth
 // @Accept application/json
 // @Produce application/json
@@ -180,5 +182,5 @@ func (a *RoomAdminApi) EndSession(c *gin.Context) {
 		respondLiveRoomError(c, "强制结束直播失败", err)
 		return
 	}
-	response.OkWithMessage("直播正在结束", c)
+	response.OkWithMessage("直播结束请求已处理", c)
 }

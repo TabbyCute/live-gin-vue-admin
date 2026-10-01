@@ -155,14 +155,24 @@ definitions:
     type: object
   config.Live:
     properties:
-      play-base-url:
+      end-retry-base-seconds:
+        type: integer
+      end-retry-max-seconds:
+        type: integer
+      end-scan-batch-size:
+        type: integer
+      end-scan-interval-seconds:
+        type: integer
+      prepare-timeout-seconds:
+        type: integer
+      publish-token-key:
         type: string
-      push-base-url:
-        type: string
+      push-token-seconds:
+        type: integer
       reconnect-window-seconds:
         type: integer
-      srs-hook-token:
-        type: string
+      srs:
+        $ref: '#/definitions/config.SRS'
     type: object
   config.Local:
     properties:
@@ -499,6 +509,23 @@ definitions:
       useCluster:
         description: 是否使用集群模式
         type: boolean
+    type: object
+  config.SRS:
+    properties:
+      api-password:
+        type: string
+      api-request-timeout-seconds:
+        type: integer
+      api-username:
+        type: string
+      app:
+        type: string
+      http_apis:
+        type: string
+      play-base-url:
+        type: string
+      push-base-url:
+        type: string
     type: object
   config.Server:
     properties:
@@ -1721,14 +1748,6 @@ definitions:
     - reason
     - sessionId
     type: object
-  request.LiveSessionEndReq:
-    properties:
-      sessionNo:
-        maxLength: 32
-        type: string
-    required:
-    - sessionNo
-    type: object
   request.LiveSessionPrepareReq:
     properties:
       categoryId:
@@ -1762,7 +1781,7 @@ definitions:
       peakOnlineCount:
         type: integer
       sessionNo:
-        maxLength: 32
+        maxLength: 96
         type: string
       viewCount:
         type: integer
@@ -1786,21 +1805,45 @@ definitions:
   request.SRSHookReq:
     properties:
       action:
+        enum:
+        - on_publish
+        - on_unpublish
         type: string
       app:
+        maxLength: 128
         type: string
       client_id:
+        maxLength: 128
         type: string
       ip:
+        maxLength: 64
         type: string
       param:
+        maxLength: 8192
+        type: string
+      server_id:
+        maxLength: 128
+        type: string
+      service_id:
+        maxLength: 128
         type: string
       stream:
         maxLength: 64
         type: string
+      stream_id:
+        maxLength: 128
+        type: string
+      stream_url:
+        maxLength: 2048
+        type: string
+      tcUrl:
+        maxLength: 2048
+        type: string
       vhost:
+        maxLength: 255
         type: string
     required:
+    - action
     - stream
     type: object
   request.SetMenuAuthorities:
@@ -2269,6 +2312,53 @@ definitions:
       sort:
         type: integer
     type: object
+  response.LiveRoomAdminDetailResp:
+    properties:
+      anchorId:
+        type: integer
+      anchorNickname:
+        type: string
+      anchorNo:
+        type: string
+      categoryId:
+        type: integer
+      coverUrl:
+        type: string
+      createdAt:
+        type: string
+      currentSession:
+        $ref: '#/definitions/response.LiveSessionAdminItem'
+      currentSessionId:
+        type: integer
+      id:
+        type: integer
+      liveStartedAt:
+        type: integer
+      liveStatus:
+        type: integer
+      notice:
+        type: string
+      recommendWeight:
+        type: integer
+      roomNo:
+        type: string
+      status:
+        type: integer
+      statusChangedAt:
+        type: integer
+      statusReason:
+        type: string
+      streamKeyVersion:
+        type: integer
+      streamName:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: string
+      visibility:
+        type: integer
+    type: object
   response.LiveRoomAdminItem:
     properties:
       anchorId:
@@ -2368,29 +2458,83 @@ definitions:
   response.LiveRoomPublicItem:
     properties:
       anchorAvatar:
+        description: AnchorAvatar 来源于 MySQL live_anchor.avatar，通过 live_room.anchor_id
+          关联主播。
         type: string
       anchorNickname:
+        description: AnchorNickname 来源于 MySQL live_anchor.nickname，通过 live_room.anchor_id
+          关联主播。
         type: string
       anchorNo:
+        description: AnchorNo 来源于 MySQL live_anchor.anchor_no，通过 live_room.anchor_id
+          关联主播。
         type: string
       categoryId:
+        description: CategoryId 来源于 MySQL live_room.category_id，表示直播间当前分类，不是场次快照。
         type: integer
       coverUrl:
+        description: CoverURL 来源于 MySQL live_room.cover_url，表示直播间当前封面，不是场次快照。
         type: string
       likeCount:
+        description: LikeCount 来源于 MySQL live_session.like_count，通过 live_room.current_session_id
+          关联；没有当前场次时返回 0。
         type: integer
       liveStartedAt:
+        description: LiveStartedAt 来源于 MySQL live_room.live_started_at，是当前场次首次有效推流的毫秒时间戳。
+        type: integer
+      liveStatus:
+        description: LiveStatus 来源于 MySQL live_room.live_status：0未开播、1准备中、2直播中、3结束中。
         type: integer
       notice:
+        description: Notice 来源于 MySQL live_room.notice；值为空时可能因 omitempty 不出现在 JSON
+          中。
         type: string
       roomNo:
+        description: RoomNo 来源于 MySQL live_room.room_no，是直播间对外编号。
         type: string
       sessionNo:
+        description: SessionNo 来源于 MySQL live_session.session_no，通过 live_room.current_session_id
+          关联；没有当前场次时返回空字符串。
         type: string
       title:
+        description: Title 来源于 MySQL live_room.title，表示直播间当前标题，不是场次快照。
         type: string
       viewCount:
+        description: ViewCount 来源于 MySQL live_session.view_count，通过 live_room.current_session_id
+          关联；没有当前场次时返回 0。
         type: integer
+    type: object
+  response.LiveRoomPublicItemV2:
+    properties:
+      anchorInfo:
+        allOf:
+        - $ref: '#/definitions/response.AnchorPublicDetailResp'
+        description: AnchorInfo 来源于 live_anchor，保持完整公开主播详情结构。
+      categoryId:
+        description: CategoryId 来源于 live_room.category_id，是房间当前分类。
+        type: integer
+      coverUrl:
+        description: CoverURL 来源于 live_room.cover_url，是房间当前封面。
+        type: string
+      latestSession:
+        allOf:
+        - $ref: '#/definitions/response.LiveSessionPublicSummary'
+        description: LatestSession 优先取当前活动场次，否则取最近一次已结束直播；没有时返回 {}。
+      liveStatus:
+        description: LiveStatus 来源于 live_room.live_status：0未开播、1准备中、2直播中、3结束中。
+        type: integer
+      notice:
+        description: Notice 来源于 live_room.notice。
+        type: string
+      roomNo:
+        description: RoomNo 来源于 live_room.room_no。
+        type: string
+      streamName:
+        description: StreamName 来源于 live_room.stream_name，是稳定流名称，不是推流凭证。
+        type: string
+      title:
+        description: Title 来源于 live_room.title，是房间当前标题。
+        type: string
     type: object
   response.LiveRoomPublicListResp:
     properties:
@@ -2441,6 +2585,10 @@ definitions:
         type: integer
       peakOnlineCount:
         type: integer
+      prepareDeadlineAt:
+        type: integer
+      publishIp:
+        type: string
       reconnectDeadlineAt:
         type: integer
       roomId:
@@ -2455,6 +2603,8 @@ definitions:
         type: integer
       status:
         type: integer
+      streamInfo:
+        type: object
       title:
         type: string
       viewCount:
@@ -2518,6 +2668,8 @@ definitions:
         type: integer
       peakOnlineCount:
         type: integer
+      prepareDeadlineAt:
+        type: integer
       reconnectDeadlineAt:
         type: integer
       roomNo:
@@ -2530,6 +2682,8 @@ definitions:
         type: integer
       status:
         type: integer
+      streamInfo:
+        type: object
       title:
         type: string
       viewCount:
@@ -2541,6 +2695,8 @@ definitions:
     properties:
       playUrl:
         type: string
+      prepareDeadlineAt:
+        type: integer
       publishToken:
         type: string
       pushUrl:
@@ -2551,6 +2707,49 @@ definitions:
         type: string
       streamName:
         type: string
+    type: object
+  response.LiveSessionPublicSummary:
+    properties:
+      categoryId:
+        description: CategoryId 来源于 live_session.category_id，是本场分类快照。
+        type: integer
+      coverUrl:
+        description: CoverURL 来源于 live_session.cover_url，是本场封面快照。
+        type: string
+      durationMs:
+        description: DurationMs 来源于 live_session.duration_ms，单位毫秒。
+        type: integer
+      endedAt:
+        description: EndedAt 来源于 live_session.ended_at，未结束时为0，单位毫秒。
+        type: integer
+      likeCount:
+        description: LikeCount 来源于 live_session.like_count。
+        type: integer
+      peakOnlineCount:
+        description: PeakOnlineCount 来源于 live_session.peak_online_count。
+        type: integer
+      sessionNo:
+        description: SessionNo 来源于 live_session.session_no，是场次对外编号。
+        type: string
+      startedAt:
+        description: StartedAt 来源于 live_session.started_at，单位毫秒。
+        type: integer
+      status:
+        description: Status 来源于 live_session.status：0准备中、1直播中、2结束中、3已结束。
+        type: integer
+      streamInfo:
+        description: StreamInfo 来源于 live_session.stream_info，只保存允许公开的视频信息白名单；暂无信息时返回
+          {}。
+        type: object
+      title:
+        description: Title 来源于 live_session.title，是本场标题快照。
+        type: string
+      viewCount:
+        description: ViewCount 来源于 live_session.view_count。
+        type: integer
+      viewerCount:
+        description: ViewerCount 来源于 live_session.viewer_count。
+        type: integer
     type: object
   response.MyAnchorInfo:
     properties:
@@ -5631,6 +5830,7 @@ paths:
       - LiveCategoryAdmin
   /live/room/detail:
     get:
+      description: 直播间有当前活动场次时，currentSession 返回该场次的内容、状态、时间和统计快照。
       parameters:
       - description: 直播间内部ID
         in: query
@@ -5647,7 +5847,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.LiveRoomAdminItem'
+                  $ref: '#/definitions/response.LiveRoomAdminDetailResp'
               type: object
       security:
       - ApiKeyAuth: []
@@ -5784,6 +5984,7 @@ paths:
     post:
       consumes:
       - application/json
+      description: 准备中的场次直接取消；直播中的场次先进入结束中并同步尝试SRS断流，成功后立即结算，失败由定时任务重试。接口具有幂等语义。
       parameters:
       - description: 场次ID和原因
         in: body
@@ -8627,13 +8828,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: 必须携带 X-Live-Hook-Token；param 中必须包含 prepare 接口签发的 token。
+      description: 接口来源由部署层 IP 白名单保护；param 中必须包含 prepare 接口签发的 pt，服务端会解密并校验完整载荷。
       parameters:
-      - description: SRS回调密钥
-        in: header
-        name: X-Live-Hook-Token
-        required: true
-        type: string
       - description: SRS回调
         in: body
         name: data
@@ -8654,13 +8850,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: 供可信统计服务写入；礼物流水仍应由独立账本保存，本接口只更新场次汇总。
+      description: 由部署层 IP 白名单保护，供可信统计服务写入；礼物流水仍应由独立账本保存，本接口只更新场次汇总。
       parameters:
-      - description: 内部回调密钥
-        in: header
-        name: X-Live-Hook-Token
-        required: true
-        type: string
       - description: 场次统计
         in: body
         name: data
@@ -8681,13 +8872,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: 不直接结束场次，而是记录断流并开启可配置的重连窗口。
+      description: 接口来源由部署层 IP 白名单保护；不直接结束场次，而是记录断流并开启可配置的重连窗口。
       parameters:
-      - description: SRS回调密钥
-        in: header
-        name: X-Live-Hook-Token
-        required: true
-        type: string
       - description: SRS回调
         in: body
         name: data
@@ -8706,7 +8892,8 @@ paths:
       - LiveHook
   /v1/app/live/room/detail:
     get:
-      description: 只返回正常、公开、正在直播且主播状态正常的房间，不暴露任何内部主键。
+      description: 未开播也可以查询；只返回房间正常、公开且主播审核通过并状态正常的房间，不暴露内部主键和服务端控制字段。latestSession
+        在有活动场次时返回当前场次，否则返回最近一次已结束直播；从未完成过直播时返回空对象 {}。
       parameters:
       - description: 直播间对外编号
         in: query
@@ -8723,9 +8910,9 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.LiveRoomPublicItem'
+                  $ref: '#/definitions/response.LiveRoomPublicItemV2'
               type: object
-      summary: 获取正在直播的公开直播间
+      summary: 按房间号获取公开直播间
       tags:
       - LiveRoomApp
   /v1/app/live/room/info:
@@ -8830,16 +9017,7 @@ paths:
       - LiveRoomApp
   /v1/app/live/room/session/end:
     post:
-      consumes:
-      - application/json
-      description: 准备中的场次会取消；直播中的场次进入结束中，由后台任务幂等结算后变为已结束。
-      parameters:
-      - description: 场次对外编号
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.LiveSessionEndReq'
+      description: 根据 APP JWT 结束当前主播的活动场次，无需请求体。准备中的场次直接取消；直播中的场次先进入结束中并同步尝试SRS断流，成功后立即结算，失败由定时任务重试。接口具有幂等语义。
       produces:
       - application/json
       responses:

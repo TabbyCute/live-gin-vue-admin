@@ -1,6 +1,10 @@
 package request
 
-import commonReq "tb_live_module/model/common/request"
+import (
+	"encoding/json"
+
+	commonReq "tb_live_module/model/common/request"
+)
 
 type LiveRoomSaveReq struct {
 	CategoryId uint64 `json:"categoryId"`
@@ -21,10 +25,6 @@ type LiveSessionPrepareReq struct {
 	Visibility *uint8 `json:"visibility" binding:"required,oneof=0 1 2"`
 }
 
-type LiveSessionEndReq struct {
-	SessionNo string `json:"sessionNo" binding:"required,max=32"`
-}
-
 type LiveSessionHistoryReq struct {
 	commonReq.PageInfo
 	Status *uint8 `json:"status" form:"status" binding:"omitempty,oneof=0 1 2 3 4 5"`
@@ -39,19 +39,51 @@ type LiveRoomPublicListReq struct {
 	CategoryId uint64 `json:"categoryId" form:"categoryId"`
 }
 
-// SRSHookReq 兼容 SRS HTTP callback 的核心字段。
+// SRSHookReq 接收 SRS 6.x 及更高版本发布/停止发布回调的完整已知字段。
+// Extra 会保留未来版本或自定义 SRS 模块增加的字段，避免反序列化时静默丢失。
 type SRSHookReq struct {
-	Action   string `json:"action"`
-	ClientID string `json:"client_id"`
-	IP       string `json:"ip"`
-	Vhost    string `json:"vhost"`
-	App      string `json:"app"`
-	Stream   string `json:"stream" binding:"required,max=64"`
-	Param    string `json:"param"`
+	ServerID  string                     `json:"server_id" binding:"omitempty,max=128"`
+	ServiceID string                     `json:"service_id" binding:"omitempty,max=128"`
+	Action    string                     `json:"action" binding:"required,oneof=on_publish on_unpublish"`
+	ClientID  string                     `json:"client_id" binding:"omitempty,max=128"`
+	IP        string                     `json:"ip" binding:"omitempty,max=64"`
+	Vhost     string                     `json:"vhost" binding:"omitempty,max=255"`
+	App       string                     `json:"app" binding:"omitempty,max=128"`
+	TCURL     string                     `json:"tcUrl" binding:"omitempty,max=2048"`
+	Stream    string                     `json:"stream" binding:"required,max=64"`
+	Param     string                     `json:"param" binding:"omitempty,max=8192"`
+	StreamURL string                     `json:"stream_url" binding:"omitempty,max=2048"`
+	StreamID  string                     `json:"stream_id" binding:"omitempty,max=128"`
+	Extra     map[string]json.RawMessage `json:"-" swaggerignore:"true"`
+}
+
+// UnmarshalJSON 在解析标准字段的同时保留 SRS 后续版本增加的未知字段。
+func (r *SRSHookReq) UnmarshalJSON(data []byte) error {
+	type plainSRSHookReq SRSHookReq
+	var known plainSRSHookReq
+	if err := json.Unmarshal(data, &known); err != nil {
+		return err
+	}
+	*r = SRSHookReq(known)
+
+	var extra map[string]json.RawMessage
+	if err := json.Unmarshal(data, &extra); err != nil {
+		return err
+	}
+	for _, key := range []string{
+		"server_id", "service_id", "action", "client_id", "ip", "vhost", "app",
+		"tcUrl", "stream", "param", "stream_url", "stream_id",
+	} {
+		delete(extra, key)
+	}
+	if len(extra) > 0 {
+		r.Extra = extra
+	}
+	return nil
 }
 
 type LiveSessionStatsReq struct {
-	SessionNo       string `json:"sessionNo" binding:"required,max=32"`
+	SessionNo       string `json:"sessionNo" binding:"required,max=96"`
 	ViewCount       uint64 `json:"viewCount"`
 	ViewerCount     uint64 `json:"viewerCount"`
 	PeakOnlineCount uint32 `json:"peakOnlineCount"`
@@ -94,7 +126,7 @@ type LiveRoomAdminStatusReq struct {
 
 type LiveSessionAdminListReq struct {
 	commonReq.PageInfo
-	SessionNo      string `json:"sessionNo" form:"sessionNo" binding:"omitempty,max=32"`
+	SessionNo      string `json:"sessionNo" form:"sessionNo" binding:"omitempty,max=96"`
 	RoomNo         string `json:"roomNo" form:"roomNo" binding:"omitempty,max=32"`
 	AnchorNo       string `json:"anchorNo" form:"anchorNo" binding:"omitempty,max=32"`
 	CategoryId     uint64 `json:"categoryId" form:"categoryId"`

@@ -13,7 +13,9 @@ type Response struct {
 }
 
 const (
-	ERROR   = 7
+	// ERROR（7）是通用业务失败响应码；具体失败原因由响应消息说明。
+	ERROR = 7
+	// SUCCESS（0）是通用业务成功响应码。
 	SUCCESS = 0
 )
 

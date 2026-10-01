@@ -86,6 +86,10 @@ func RegisterTables() {
 		global.GVA_LOG.Error("migrate live duration column failed", zap.Error(err))
 		os.Exit(1)
 	}
+	if err = backfillLiveRoomLastSession(db); err != nil {
+		global.GVA_LOG.Error("backfill live room last session failed", zap.Error(err))
+		os.Exit(1)
+	}
 	if err = (&liveService.RoomService{}).BackfillApprovedAnchorRooms(db); err != nil {
 		global.GVA_LOG.Error("backfill approved anchor rooms failed", zap.Error(err))
 		os.Exit(1)

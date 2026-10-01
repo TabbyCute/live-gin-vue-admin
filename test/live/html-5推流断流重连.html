@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SRS 推流、断流与重连测试</title>
+  <style>
+    :root { color-scheme: light; --ok: #18794e; --warn: #9a6700; --error: #cf222e; --line: #d0d7de; }
+    body { max-width: 1080px; margin: 24px auto; padding: 0 16px 40px; font: 14px/1.55 system-ui, sans-serif; color: #24292f; }
+    h1 { margin-bottom: 6px; font-size: 24px; }
+    fieldset { margin: 18px 0; padding: 14px; border: 1px solid var(--line); border-radius: 8px; }
+    legend { padding: 0 6px; font-weight: 700; }
+    label { display: block; margin: 8px 0; }
+    input, button, textarea { box-sizing: border-box; font: inherit; }
+    input, textarea { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; }
+    button { margin: 5px 5px 5px 0; padding: 7px 12px; border: 1px solid var(--line); border-radius: 6px; background: #f6f8fa; cursor: pointer; }
+    button.primary { color: white; border-color: #0969da; background: #0969da; }
+    button.danger { color: white; border-color: var(--error); background: var(--error); }
+    button:disabled { cursor: wait; opacity: .55; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 14px; }
+    .wide { grid-column: 1 / -1; }
+    .hint { color: #57606a; }
+    .warning { padding: 9px 11px; border-left: 4px solid #bf8700; background: #fff8c5; }
+    .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .card { padding: 10px; border: 1px solid var(--line); border-radius: 6px; background: #f6f8fa; }
+    .card strong { display: block; margin-bottom: 5px; }
+    code { overflow-wrap: anywhere; }
+    pre { min-height: 300px; max-height: 620px; margin: 0; padding: 12px; overflow: auto; color: #f0f6fc; background: #0d1117; border-radius: 8px; white-space: pre-wrap; }
+    #status.ok { color: var(--ok); }
+    #status.error { color: var(--error); }
+    @media (max-width: 720px) { .grid, .cards { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <h1>SRS 推流、断流与主播重连测试</h1>
+  <p>
+    <a href="html-4主播开播.html">返回主播开播页</a>
+  </p>
+  <p class="hint">先在“主播开播”页调用 <code>/session/prepare</code>，再把返回的 <code>pushUrl</code> 粘贴到本页。本页模拟的是 SRS 6.x HTTP Callback，不会真的发送音视频。</p>
+
+  <fieldset>
+    <legend>接口与推流参数</legend>
+    <div class="grid">
+      <label>API 基址
+        <input id="baseUrl" value="http://127.0.0.1:8888/api/v1">
+      </label>
+      <p class="hint">Hook 来源由部署层 IP 白名单保护，本页面不会发送额外的鉴权请求头。若通过生产入口测试，浏览器出口 IP 也必须临时加入测试白名单。</p>
+      <label class="wide">prepare 返回的 pushUrl
+        <input id="pushUrl" placeholder="rtmp://push.example.com/tb_live/A_1000009?pt=v1_...">
+      </label>
+      <div class="wide">
+        <button id="parsePushUrl">解析 pushUrl</button>
+        <button id="saveNonSecretConfig">保存非敏感配置</button>
+      </div>
+      <label>vhost
+        <input id="vhost" value="push.xxx.com">
+      </label>
+      <label>app
+        <input id="app" value="tb_live">
+      </label>
+      <label>stream
+        <input id="stream" placeholder="A_1000009">
+      </label>
+      <label>模拟客户端 IP
+        <input id="ip" value="127.0.0.1">
+      </label>
+      <label class="wide">publishToken（pt）
+        <textarea id="publishToken" rows="3" placeholder="v1_..."></textarea>
+      </label>
+      <label>server_id
+        <input id="serverId">
+      </label>
+      <label>service_id
+        <input id="serviceId">
+      </label>
+      <label>自动重连等待（毫秒）
+        <input id="reconnectDelay" type="number" min="0" max="60000" value="1000">
+      </label>
+      <label>APP Bearer Token（可选，仅用于查询当前场次）
+        <input id="appToken" type="password" autocomplete="off" placeholder="不参与 SRS Hook 请求">
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>连接身份</legend>
+    <div class="cards">
+      <div class="card">
+        <strong>上一条连接（用于模拟迟到回调）</strong>
+        <div>client_id: <code id="previousClientId">-</code></div>
+        <div>stream_id: <code id="previousStreamId">-</code></div>
+      </div>
+      <div class="card">
+        <strong>当前连接</strong>
+        <div>client_id: <code id="currentClientId">-</code></div>
+        <div>stream_id: <code id="currentStreamId">-</code></div>
+      </div>
+    </div>
+    <button id="newConnection">只生成一条新连接</button>
+    <button id="resetConnections">重置连接身份</button>
+  </fieldset>
+
+  <fieldset>
+    <legend>分步模拟</legend>
+    <button id="firstPublish" class="primary">1. 首次推流 on_publish</button>
+    <button id="duplicatePublish">2. 重复当前 on_publish</button>
+    <button id="currentUnpublish" class="danger">3. 当前连接断流 on_unpublish</button>
+    <button id="reconnectPublish" class="primary">4. 新连接重连 on_publish</button>
+    <button id="staleUnpublish" class="danger">5. 上一连接迟到 on_unpublish</button>
+    <button id="queryCurrent">查询当前场次</button>
+    <p class="hint">正常重连流程是 1 → 3 → 4。第 2、5 步用于验证幂等和乱序回调。</p>
+  </fieldset>
+
+  <fieldset>
+    <legend>一键场景</legend>
+    <button id="disconnectAndReconnect" class="primary">当前连接断流并自动重连</button>
+    <button id="runFullScenario">完整场景：推流 → 断流 → 重连 → 旧回调迟到</button>
+  </fieldset>
+
+  <p class="warning"><code>on_publish</code> 会解密并校验 pt 的场次、app、vhost、stream、凭证版本、准备截止时间和有效期。后端使用 <code>server_id + client_id + stream_id</code> 识别当前发布连接；“上一连接迟到 on_unpublish”应当被幂等忽略，不得影响已经重连的新连接。</p>
+
+  <p id="status">等待请求</p>
+  <pre id="output">尚无调用记录</pre>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const CONFIG_KEY = 'liveSrsHookTest.config';
+    let currentConnection = null;
+    let previousConnection = null;
+    let running = false;
+    const logs = [];
+
+    function value(id) { return $(id).value.trim(); }
+    function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+    function randomId(prefix) {
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      const bytes = crypto.getRandomValues(new Uint8Array(8));
+      return prefix + Array.from(bytes, byte => chars[byte % chars.length]).join('');
+    }
+    function ensureServerIds() {
+      if (!value('serverId')) $('serverId').value = randomId('vid-');
+      if (!value('serviceId')) $('serviceId').value = randomId('vid-');
+    }
+    function makeConnection() {
+      return { clientId: randomId('c-'), streamId: randomId('vid-') };
+    }
+    function setNewCurrentConnection() {
+      if (currentConnection) previousConnection = currentConnection;
+      currentConnection = makeConnection();
+      renderConnections();
+      return currentConnection;
+    }
+    function renderConnections() {
+      $('previousClientId').textContent = previousConnection ? previousConnection.clientId : '-';
+      $('previousStreamId').textContent = previousConnection ? previousConnection.streamId : '-';
+      $('currentClientId').textContent = currentConnection ? currentConnection.clientId : '-';
+      $('currentStreamId').textContent = currentConnection ? currentConnection.streamId : '-';
+    }
+    function setRunning(next) {
+      running = next;
+      document.querySelectorAll('button').forEach(button => { button.disabled = next; });
+    }
+    function appendLog(title, detail) {
+      logs.push({ time: new Date().toLocaleTimeString(), title, ...detail });
+      $('output').textContent = logs.map((entry, index) => {
+        return `#${index + 1} [${entry.time}] ${entry.title}\n${JSON.stringify(entry, null, 2)}`;
+      }).join('\n\n');
+      $('output').scrollTop = $('output').scrollHeight;
+    }
+    function saveNonSecretConfig() {
+      const config = {
+        baseUrl: value('baseUrl'), vhost: value('vhost'), app: value('app'), ip: value('ip'),
+        serverId: value('serverId'), serviceId: value('serviceId'), reconnectDelay: value('reconnectDelay')
+      };
+      localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+      $('status').className = 'ok';
+      $('status').textContent = '已保存非敏感配置；publishToken 和 APP Token 未保存';
+    }
+    function loadConfig() {
+      try {
+        const config = JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}');
+        for (const [key, nextValue] of Object.entries(config)) {
+          if ($(key) && nextValue !== undefined) $(key).value = nextValue;
+        }
+      } catch (error) {
+        appendLog('读取本地配置失败', { error: error.message });
+      }
+      const sharedBaseUrl = localStorage.getItem('liveTest.baseUrl');
+      const sharedAppToken = localStorage.getItem('liveTest.token');
+      if (sharedBaseUrl) $('baseUrl').value = sharedBaseUrl;
+      if (sharedAppToken) $('appToken').value = sharedAppToken;
+      ensureServerIds();
+    }
+    function parsePushUrl() {
+      if (!value('pushUrl')) throw new Error('请先粘贴 prepare 返回的 pushUrl');
+      const url = new URL(value('pushUrl'));
+      const parts = url.pathname.split('/').filter(Boolean);
+      if (parts.length < 2) throw new Error('pushUrl 路径应至少包含 /app/stream');
+      $('vhost').value = url.hostname;
+      $('app').value = parts.slice(0, -1).join('/');
+      $('stream').value = parts[parts.length - 1];
+      $('publishToken').value = url.searchParams.get('pt') || url.searchParams.get('token') || '';
+      $('status').className = 'ok';
+      $('status').textContent = 'pushUrl 已解析';
+    }
+    function validateHookInput(action) {
+      if (!value('baseUrl')) throw new Error('请填写 API 基址');
+      if (!value('stream')) throw new Error('请填写 stream，或先解析 pushUrl');
+      if (!value('app')) throw new Error('请填写 app');
+      if (action === 'on_publish' && !value('publishToken')) throw new Error('on_publish 需要 publishToken（pt）');
+    }
+    function hookBody(action, connection) {
+      validateHookInput(action);
+      ensureServerIds();
+      if (!connection) throw new Error('尚未生成连接身份');
+      const app = value('app').replace(/^\/+|\/+$/g, '');
+      const vhost = value('vhost');
+      const param = value('publishToken') ? '?pt=' + encodeURIComponent(value('publishToken')) : '';
+      return {
+        server_id: value('serverId'),
+        service_id: value('serviceId'),
+        action,
+        client_id: connection.clientId,
+        ip: value('ip'),
+        vhost,
+        app,
+        tcUrl: `rtmp://${vhost}/${app}`,
+        stream: value('stream'),
+        param,
+        stream_url: `/${app}/${value('stream')}`,
+        stream_id: connection.streamId
+      };
+    }
+    async function hookRequest(action, connection, label) {
+      const body = hookBody(action, connection);
+      const endpoint = action === 'on_publish' ? '/app/live/hook/publish' : '/app/live/hook/unpublish';
+      const url = value('baseUrl').replace(/\/$/, '') + endpoint;
+      $('status').className = '';
+      $('status').textContent = `${label}：POST ${url}`;
+      let response;
+      let result;
+      try {
+        response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const text = await response.text();
+        try { result = JSON.parse(text); } catch { result = text; }
+      } catch (error) {
+        appendLog(label, { request: body, networkError: error.message });
+        $('status').className = 'error';
+        $('status').textContent = label + '：网络请求失败';
+        throw error;
+      }
+      const ok = response.ok && result && result.code === 0;
+      appendLog(label, { endpoint, request: body, httpStatus: response.status, response: result });
+      $('status').className = ok ? 'ok' : 'error';
+      $('status').textContent = `${label}：HTTP ${response.status}，业务 code ${result && result.code !== undefined ? result.code : '-'}`;
+      if (!ok) throw new Error(label + '失败，请查看调用记录');
+      return result;
+    }
+    async function queryCurrentSession() {
+      if (!value('appToken')) throw new Error('请填写 APP Bearer Token');
+      const url = value('baseUrl').replace(/\/$/, '') + '/app/live/room/session/current';
+      const response = await fetch(url, { headers: { Authorization: 'Bearer ' + value('appToken') } });
+      const text = await response.text();
+      let result;
+      try { result = JSON.parse(text); } catch { result = text; }
+      appendLog('查询当前场次', { httpStatus: response.status, response: result });
+      $('status').className = response.ok && result && result.code === 0 ? 'ok' : 'error';
+      $('status').textContent = `查询当前场次：HTTP ${response.status}`;
+      return result;
+    }
+    async function guarded(task) {
+      if (running) return;
+      setRunning(true);
+      try { await task(); }
+      catch (error) {
+        $('status').className = 'error';
+        $('status').textContent = error.message;
+      } finally { setRunning(false); }
+    }
+    async function firstPublish() {
+      if (!currentConnection) setNewCurrentConnection();
+      return hookRequest('on_publish', currentConnection, '首次推流');
+    }
+    async function currentUnpublish() {
+      if (!currentConnection) throw new Error('请先执行首次推流');
+      return hookRequest('on_unpublish', currentConnection, '当前连接断流');
+    }
+    async function reconnectPublish() {
+      setNewCurrentConnection();
+      return hookRequest('on_publish', currentConnection, '主播用新连接重连');
+    }
+    async function disconnectAndReconnect() {
+      if (!currentConnection) await firstPublish();
+      await currentUnpublish();
+      const delay = Math.max(0, Math.min(60000, Number(value('reconnectDelay')) || 0));
+      appendLog('等待重连窗口', { delayMs: delay });
+      await sleep(delay);
+      await reconnectPublish();
+    }
+
+    $('parsePushUrl').onclick = () => guarded(async () => parsePushUrl());
+    $('saveNonSecretConfig').onclick = () => saveNonSecretConfig();
+    $('newConnection').onclick = () => {
+      setNewCurrentConnection();
+      $('status').className = 'ok';
+      $('status').textContent = '已生成新连接身份，尚未调用接口';
+    };
+    $('resetConnections').onclick = () => {
+      currentConnection = null;
+      previousConnection = null;
+      renderConnections();
+      $('status').className = 'ok';
+      $('status').textContent = '连接身份已重置';
+    };
+    $('firstPublish').onclick = () => guarded(firstPublish);
+    $('duplicatePublish').onclick = () => guarded(async () => {
+      if (!currentConnection) throw new Error('请先执行首次推流');
+      await hookRequest('on_publish', currentConnection, '重复当前推流回调');
+    });
+    $('currentUnpublish').onclick = () => guarded(currentUnpublish);
+    $('reconnectPublish').onclick = () => guarded(reconnectPublish);
+    $('staleUnpublish').onclick = () => guarded(async () => {
+      if (!previousConnection) throw new Error('请先执行重连，生成上一条连接');
+      await hookRequest('on_unpublish', previousConnection, '上一连接迟到断流回调');
+    });
+    $('queryCurrent').onclick = () => guarded(queryCurrentSession);
+    $('disconnectAndReconnect').onclick = () => guarded(disconnectAndReconnect);
+    $('runFullScenario').onclick = () => guarded(async () => {
+      if (!currentConnection) await firstPublish();
+      await disconnectAndReconnect();
+      await hookRequest('on_unpublish', previousConnection, '上一连接迟到断流回调');
+      if (value('appToken')) await queryCurrentSession();
+    });
+
+    loadConfig();
+    renderConnections();
+  </script>
+</body>
+</html>

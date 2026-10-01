@@ -1,8 +1,8 @@
 package initialize
 
 import (
-	"tb_live_module/global"
 	"go.uber.org/zap"
+	"tb_live_module/global"
 )
 
 // Reload 优雅地重新加载系统配置
@@ -35,10 +35,9 @@ func Reload() error {
 	if global.GVA_DB != nil {
 		// 确保数据库表结构是最新的
 		RegisterTables()
+		// 表结构就绪后重新注册任务并立即执行一次直播生命周期扫描。
+		Timer()
 	}
-
-	// 重新初始化定时任务
-	Timer()
 
 	global.GVA_LOG.Info("系统配置重新加载完成")
 	return nil

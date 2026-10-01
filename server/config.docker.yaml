@@ -11,12 +11,25 @@ jwt-app:
     signing-key: qmPlus-live-app-key
     expires-time: 30d
     issuer: qmPlus-live-app
-# live room and SRS callback configuration
+# live room lifecycle configuration
 live:
     reconnect-window-seconds: 20
-    srs-hook-token: ""
-    push-base-url: ""
-    play-base-url: ""
+    prepare-timeout-seconds: 120
+    push-token-seconds: 86400
+    publish-token-key: ""
+    end-scan-interval-seconds: 5
+    end-scan-batch-size: 100
+    end-retry-base-seconds: 5
+    end-retry-max-seconds: 60
+    # SRS media server configuration
+    srs:
+        app: ""
+        http_apis: ""
+        api-username: ""
+        api-password: ""
+        api-request-timeout-seconds: 3
+        push-base-url: ""
+        play-base-url: ""
 
 # zap logger configuration
 zap:

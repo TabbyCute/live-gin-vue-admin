@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"tb_live_module/router"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,4 +17,5 @@ func initBizRouter(routers ...*gin.RouterGroup) {
 	publicGroup := routers[1]
 
 	holder(publicGroup, privateGroup)
+
 }

@@ -2,6 +2,7 @@ package request
 
 import jwt "github.com/golang-jwt/jwt/v5"
 
+// AppTokenType（live_app_access）是客户端账号访问令牌的固定类型，用于与管理后台 JWT 及其他令牌区分。
 const AppTokenType = "live_app_access"
 
 // AppClaims 是客户端账号专用 Claims，不复用管理后台 CustomClaims。

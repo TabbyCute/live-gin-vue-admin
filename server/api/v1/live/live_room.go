@@ -145,11 +145,9 @@ func (a *RoomApi) Current(c *gin.Context) {
 // End
 // @Tags LiveRoomApp
 // @Summary 主播结束直播场次
-// @Description 准备中的场次会取消；直播中的场次进入结束中，由后台任务幂等结算后变为已结束。
+// @Description 根据 APP JWT 结束当前主播的活动场次，无需请求体。准备中的场次直接取消；直播中的场次先进入结束中并同步尝试SRS断流，成功后立即结算，失败由定时任务重试。接口具有幂等语义。
 // @Security AppBearerAuth
-// @Accept application/json
 // @Produce application/json
-// @Param data body liveReq.LiveSessionEndReq true "场次对外编号"
 // @Success 200 {object} response.Response
 // @Router /v1/app/live/room/session/end [post]
 func (a *RoomApi) End(c *gin.Context) {
@@ -157,16 +155,11 @@ func (a *RoomApi) End(c *gin.Context) {
 	if !ok {
 		return
 	}
-	var req liveReq.LiveSessionEndReq
-	if err := c.ShouldBindJSON(&req); err != nil {
-		response.FailWithMessage("结束参数错误: "+err.Error(), c)
-		return
-	}
-	if err := roomService.RequestOwnerEnd(userID, req.SessionNo); err != nil {
+	if err := roomService.RequestOwnerEnd(userID); err != nil {
 		respondLiveRoomError(c, "结束直播失败", err)
 		return
 	}
-	response.OkWithMessage("直播正在结束", c)
+	response.OkWithMessage("直播结束请求已处理", c)
 }
 
 // History
@@ -199,11 +192,11 @@ func (a *RoomApi) History(c *gin.Context) {
 
 // PublicDetail
 // @Tags LiveRoomApp
-// @Summary 获取正在直播的公开直播间
-// @Description 只返回正常、公开、正在直播且主播状态正常的房间，不暴露任何内部主键。
+// @Summary 按房间号获取公开直播间
+// @Description 未开播也可以查询；只返回房间正常、公开且主播审核通过并状态正常的房间，不暴露内部主键和服务端控制字段。latestSession 在有活动场次时返回当前场次，否则返回最近一次已结束直播；从未完成过直播时返回空对象 {}。
 // @Produce application/json
 // @Param roomNo query string true "直播间对外编号"
-// @Success 200 {object} response.Response{data=liveRes.LiveRoomPublicItem}
+// @Success 200 {object} response.Response{data=liveRes.LiveRoomPublicItemV2}
 // @Router /v1/app/live/room/detail [get]
 func (a *RoomApi) PublicDetail(c *gin.Context) {
 	var req liveReq.LiveRoomPublicDetailReq
@@ -246,9 +239,10 @@ func respondLiveRoomError(c *gin.Context, operation string, err error) {
 	known := []error{
 		liveService.ErrLiveRoomNotFound, liveService.ErrLiveRoomNoRequired, liveService.ErrLiveRoomNoExists,
 		liveService.ErrLiveRoomUnavailable,
-		liveService.ErrLiveRoomActiveSessionExists, liveService.ErrLiveRoomStatusReasonRequired,
+		liveService.ErrLiveRoomActiveSessionExists, liveService.ErrLiveRoomActiveSessionNotFound,
+		liveService.ErrLiveRoomStatusReasonRequired,
 		liveService.ErrLiveSessionNotFound, liveService.ErrLiveSessionStateInvalid,
-		liveService.ErrLivePublishTokenInvalid, liveService.ErrLiveHookUnauthorized,
+		liveService.ErrLivePublishTokenInvalid, liveService.ErrLivePublishTokenConfigInvalid,
 		liveService.ErrAnchorNotFound, liveService.ErrLiveCategoryNotFound,
 		liveService.ErrLiveCategoryParentDisabled,
 	}

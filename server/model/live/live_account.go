@@ -3,7 +3,9 @@ package live
 import "tb_live_module/global"
 
 const (
-	LiveAccountStatusNormal   uint8 = 1
+	// LiveAccountStatusNormal（1）表示客户端账号状态正常，允许继续登录和访问 APP 接口。
+	LiveAccountStatusNormal uint8 = 1
+	// LiveAccountStatusDisabled（2）表示客户端账号已被禁用，不允许继续登录和访问受保护接口。
 	LiveAccountStatusDisabled uint8 = 2
 )
 

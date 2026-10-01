@@ -97,19 +97,44 @@
       <template #footer><el-button @click="statusVisible = false">取消</el-button><el-button type="primary" :loading="submitting" @click="submitStatus">确认</el-button></template>
     </el-dialog>
 
-    <el-drawer v-model="detailVisible" title="直播间详情" size="620px">
-      <el-descriptions v-if="detail" :column="2" border>
-        <el-descriptions-item label="内部 ID">{{ detail.id }}</el-descriptions-item><el-descriptions-item label="房间编号">{{ detail.roomNo }}</el-descriptions-item>
-        <el-descriptions-item label="主播内部 ID">{{ detail.anchorId }}</el-descriptions-item><el-descriptions-item label="主播编号">{{ detail.anchorNo }}</el-descriptions-item>
-        <el-descriptions-item label="主播展示名">{{ detail.anchorNickname || '-' }}</el-descriptions-item><el-descriptions-item label="分类">{{ categoryLabel(detail.categoryId) }}</el-descriptions-item>
-        <el-descriptions-item label="标题" :span="2">{{ detail.title || '-' }}</el-descriptions-item><el-descriptions-item label="公告" :span="2">{{ detail.notice || '-' }}</el-descriptions-item>
-        <el-descriptions-item label="封面" :span="2">{{ detail.coverUrl || '-' }}</el-descriptions-item><el-descriptions-item label="稳定流名称">{{ detail.streamName }}</el-descriptions-item>
-        <el-descriptions-item label="密钥版本">{{ detail.streamKeyVersion }}</el-descriptions-item><el-descriptions-item label="房间状态">{{ roomStatus(detail.status).label }}</el-descriptions-item>
-        <el-descriptions-item label="直播状态">{{ liveStatus(detail.liveStatus).label }}</el-descriptions-item><el-descriptions-item label="状态原因">{{ detail.statusReason || '-' }}</el-descriptions-item>
-        <el-descriptions-item label="当前场次 ID">{{ detail.currentSessionId || '-' }}</el-descriptions-item><el-descriptions-item label="当前开播时间">{{ formatTimestamp(detail.liveStartedAt) }}</el-descriptions-item>
-        <el-descriptions-item label="可见范围">{{ visibilityLabel(detail.visibility) }}</el-descriptions-item><el-descriptions-item label="推荐权重">{{ detail.recommendWeight }}</el-descriptions-item>
-        <el-descriptions-item label="创建时间">{{ formatDateTime(detail.createdAt) }}</el-descriptions-item><el-descriptions-item label="更新时间">{{ formatDateTime(detail.updatedAt) }}</el-descriptions-item>
-      </el-descriptions>
+    <el-drawer v-model="detailVisible" title="直播间详情" size="760px">
+      <template v-if="detail">
+        <el-descriptions :column="2" border>
+          <el-descriptions-item label="内部 ID">{{ detail.id }}</el-descriptions-item><el-descriptions-item label="房间编号">{{ detail.roomNo }}</el-descriptions-item>
+          <el-descriptions-item label="主播内部 ID">{{ detail.anchorId }}</el-descriptions-item><el-descriptions-item label="主播编号">{{ detail.anchorNo }}</el-descriptions-item>
+          <el-descriptions-item label="主播展示名">{{ detail.anchorNickname || '-' }}</el-descriptions-item><el-descriptions-item label="分类">{{ categoryLabel(detail.categoryId) }}</el-descriptions-item>
+          <el-descriptions-item label="标题" :span="2">{{ detail.title || '-' }}</el-descriptions-item><el-descriptions-item label="公告" :span="2">{{ detail.notice || '-' }}</el-descriptions-item>
+          <el-descriptions-item label="封面" :span="2">{{ detail.coverUrl || '-' }}</el-descriptions-item><el-descriptions-item label="稳定流名称">{{ detail.streamName }}</el-descriptions-item>
+          <el-descriptions-item label="密钥版本">{{ detail.streamKeyVersion }}</el-descriptions-item><el-descriptions-item label="房间状态">{{ roomStatus(detail.status).label }}</el-descriptions-item>
+          <el-descriptions-item label="直播状态">{{ liveStatus(detail.liveStatus).label }}</el-descriptions-item><el-descriptions-item label="状态原因">{{ detail.statusReason || '-' }}</el-descriptions-item>
+          <el-descriptions-item label="当前场次 ID">{{ detail.currentSessionId || '-' }}</el-descriptions-item><el-descriptions-item label="当前开播时间">{{ formatTimestamp(detail.liveStartedAt) }}</el-descriptions-item>
+          <el-descriptions-item label="可见范围">{{ visibilityLabel(detail.visibility) }}</el-descriptions-item><el-descriptions-item label="推荐权重">{{ detail.recommendWeight }}</el-descriptions-item>
+          <el-descriptions-item label="创建时间">{{ formatDateTime(detail.createdAt) }}</el-descriptions-item><el-descriptions-item label="更新时间">{{ formatDateTime(detail.updatedAt) }}</el-descriptions-item>
+        </el-descriptions>
+
+        <div class="detail-section-title">当前直播快照</div>
+        <template v-if="detail.currentSession">
+          <el-descriptions :column="2" border>
+            <el-descriptions-item label="场次内部 ID">{{ detail.currentSession.id }}</el-descriptions-item><el-descriptions-item label="场次编号">{{ detail.currentSession.sessionNo }}</el-descriptions-item>
+            <el-descriptions-item label="快照标题" :span="2">{{ detail.currentSession.title || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="快照封面" :span="2">{{ detail.currentSession.coverUrl || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="快照分类">{{ categoryLabel(detail.currentSession.categoryId) }}</el-descriptions-item><el-descriptions-item label="场次状态"><el-tag :type="sessionStatus(detail.currentSession.status).type">{{ sessionStatus(detail.currentSession.status).label }}</el-tag></el-descriptions-item>
+            <el-descriptions-item label="准备截止">{{ formatTimestamp(detail.currentSession.prepareDeadlineAt) }}</el-descriptions-item><el-descriptions-item label="首次推流">{{ formatTimestamp(detail.currentSession.startedAt) }}</el-descriptions-item>
+            <el-descriptions-item label="结束时间">{{ formatTimestamp(detail.currentSession.endedAt) }}</el-descriptions-item><el-descriptions-item label="逻辑时长">{{ durationText(detail.currentSession.durationMs) }}</el-descriptions-item>
+            <el-descriptions-item label="首次推流 IP" :span="2">{{ detail.currentSession.publishIp || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="最近断流">{{ formatTimestamp(detail.currentSession.lastUnpublishAt) }}</el-descriptions-item><el-descriptions-item label="重连截止">{{ formatTimestamp(detail.currentSession.reconnectDeadlineAt) }}</el-descriptions-item>
+            <el-descriptions-item label="断流次数">{{ detail.currentSession.disconnectCount }}</el-descriptions-item><el-descriptions-item label="结束原因">{{ endReasonLabel(detail.currentSession.endReason) }}</el-descriptions-item>
+            <el-descriptions-item label="失败/操作原因" :span="2">{{ detail.currentSession.failureReason || '-' }}</el-descriptions-item>
+          </el-descriptions>
+          <div class="stat-grid">
+            <div><strong>{{ detail.currentSession.viewCount }}</strong><span>进入次数</span></div><div><strong>{{ detail.currentSession.viewerCount }}</strong><span>去重观众</span></div><div><strong>{{ detail.currentSession.peakOnlineCount }}</strong><span>峰值在线</span></div>
+            <div><strong>{{ detail.currentSession.likeCount }}</strong><span>点赞</span></div><div><strong>{{ detail.currentSession.giftCount }}</strong><span>礼物件数</span></div><div><strong>{{ detail.currentSession.giftCoinAmount }}</strong><span>礼物金币</span></div><div><strong>{{ detail.currentSession.giftUserCount }}</strong><span>送礼人数</span></div>
+          </div>
+          <div class="snapshot-subtitle">公开流媒体信息</div>
+          <pre class="stream-info">{{ streamInfoText(detail.currentSession.streamInfo) }}</pre>
+        </template>
+        <el-empty v-else description="当前没有活动直播场次" :image-size="72" />
+      </template>
     </el-drawer>
   </div>
 </template>
@@ -123,6 +148,8 @@ import { getLiveRoomDetail, getLiveRoomList, updateLiveRoom, updateLiveRoomStatu
 
 const roomStatuses = [{ value: 0, label: '禁用', type: 'danger' }, { value: 1, label: '正常', type: 'success' }, { value: 2, label: '关闭', type: 'info' }]
 const liveStatuses = [{ value: 0, label: '未开播', type: 'info' }, { value: 1, label: '准备中', type: 'warning' }, { value: 2, label: '直播中', type: 'success' }, { value: 3, label: '结束中', type: 'warning' }]
+const sessionStatuses = [{ value: 0, label: '准备中', type: 'warning' }, { value: 1, label: '直播中', type: 'success' }, { value: 2, label: '结束中', type: 'warning' }, { value: 3, label: '已结束', type: 'info' }, { value: 4, label: '已取消', type: 'info' }, { value: 5, label: '失败', type: 'danger' }]
+const endReasons = ['未知', '主播结束', '管理员结束', '断流超时', '主播封禁/权限关闭', '系统异常', '准备开播超时']
 const defaultSearch = () => ({ roomNo: '', anchorNo: '', title: '', categoryId: null, status: null, liveStatus: null })
 const searchInfo = reactive(defaultSearch())
 const page = ref(1); const pageSize = ref(20); const total = ref(0); const loading = ref(false); const submitting = ref(false)
@@ -141,9 +168,13 @@ const categoryOptions = computed(() => flatten(categoryTree.value))
 const categoryLabel = (id) => id ? (categoryOptions.value.find((item) => item.id === id)?.label.trim() || `分类 ID ${id}`) : '未分类'
 const roomStatus = (value) => roomStatuses.find((item) => item.value === value) || { label: `未知(${value})`, type: 'info' }
 const liveStatus = (value) => liveStatuses.find((item) => item.value === value) || { label: `未知(${value})`, type: 'info' }
+const sessionStatus = (value) => sessionStatuses.find((item) => item.value === value) || { label: `未知(${value})`, type: 'info' }
+const endReasonLabel = (value) => endReasons[value] || `未知(${value})`
 const visibilityLabel = (value) => ['私密', '公开', '仅关注者'][value] || `未知(${value})`
 const formatDateTime = (value) => value ? (formatDate(value) || '-') : '-'
 const formatTimestamp = (value) => Number(value) ? (formatDate(Number(value)) || '-') : '-'
+const durationText = (milliseconds) => { const seconds = Math.floor(Number(milliseconds || 0) / 1000); if (seconds < 60) return `${seconds} 秒`; if (seconds < 3600) return `${Math.floor(seconds / 60)} 分 ${seconds % 60} 秒`; return `${Math.floor(seconds / 3600)} 小时 ${Math.floor((seconds % 3600) / 60)} 分` }
+const streamInfoText = (value) => { if (!value || (typeof value === 'object' && Object.keys(value).length === 0)) return '{}'; if (typeof value === 'string') { try { return JSON.stringify(JSON.parse(value), null, 2) } catch { return value } } return JSON.stringify(value, null, 2) }
 const params = () => { const result = { page: page.value, pageSize: pageSize.value }; Object.entries(searchInfo).forEach(([key, value]) => { if (value !== '' && value !== null && value !== undefined) result[key] = value }); return result }
 const getTableData = async () => { loading.value = true; try { const res = await getLiveRoomList(params()); if (res.code === 0) { tableData.value = res.data.list || []; total.value = Number(res.data.total || 0) } } finally { loading.value = false } }
 const loadCategories = async () => { const res = await getCategoryTree(); if (res.code === 0) categoryTree.value = res.data || [] }
@@ -164,5 +195,6 @@ onMounted(refreshData)
 .room-overview { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 16px; padding: 22px 24px; color: #fff; border-radius: 12px; background: linear-gradient(125deg, #172554, #1d4ed8 62%, #0ea5e9); }
 .overview-title { font-size: 22px; font-weight: 700; }.overview-desc { margin-top: 7px; opacity: .82; }.overview-counts { display: flex; gap: 30px; }.overview-counts div { display: flex; flex-direction: column; align-items: center; }.overview-counts strong { font-size: 23px; }.overview-counts span { margin-top: 3px; font-size: 12px; opacity: .8; }
 .room-toolbar { display: flex; align-items: center; justify-content: space-between; color: #909399; font-size: 13px; }.main-cell { display: flex; flex-direction: column; gap: 4px; }.main-cell span { color: #909399; font-size: 12px; }.dialog-alert { margin-bottom: 18px; }
-@media (max-width: 900px) { .room-overview { align-items: flex-start; flex-direction: column; }.overview-counts { width: 100%; justify-content: space-around; } }
+.detail-section-title { margin: 24px 0 12px; font-size: 16px; font-weight: 700; }.snapshot-subtitle { margin: 18px 0 10px; font-size: 14px; font-weight: 600; }.stat-grid { display: grid; margin-top: 14px; grid-template-columns: repeat(4, 1fr); gap: 10px; }.stat-grid div { display: flex; min-height: 74px; padding: 10px; border: 1px solid #ebeef5; border-radius: 8px; flex-direction: column; justify-content: center; align-items: center; }.stat-grid strong { font-size: 18px; }.stat-grid span { margin-top: 5px; color: #909399; font-size: 12px; }.stream-info { max-height: 260px; padding: 14px; overflow: auto; color: #303133; border: 1px solid #ebeef5; border-radius: 8px; background: #f8fafc; white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 900px) { .room-overview { align-items: flex-start; flex-direction: column; }.overview-counts { width: 100%; justify-content: space-around; }.stat-grid { grid-template-columns: repeat(2, 1fr); } }
 </style>

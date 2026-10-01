@@ -93,12 +93,25 @@ jwt-app:
     signing-key: 7ec6580e-2528-4d50-9b50-4e707dd142d9
     expires-time: 30d
     issuer: tblive-app
-# live room and SRS callback configuration
+# live room lifecycle configuration
 live:
-    reconnect-window-seconds: 20
-    srs-hook-token: ""
-    push-base-url: ""
-    play-base-url: ""
+    reconnect-window-seconds: 120 #重连时间(秒)
+    prepare-timeout-seconds: 120 #表示“准备开播超时时间”。取得推流凭证后允许等待首次成功推流的时间(秒)
+    push-token-seconds: 172800 #pt有效时间(秒)，需覆盖预期最长直播及重连时间。表示推流凭证 publishToken（也就是 pt）的有效期。
+    publish-token-key: "TB_LIVE_ENC_KEY" #仅供Go服务加解密pt，生产环境必须替换为强随机密钥
+    end-scan-interval-seconds: 5 #准备超时、断线超时和结束中场次的兜底扫描周期
+    end-scan-batch-size: 100 #每轮最多处理的场次数量
+    end-retry-base-seconds: 5 #SRS停止推流失败后的首次重试间隔
+    end-retry-max-seconds: 60 #SRS停止推流失败后的最大重试间隔
+    # SRS media server configuration
+    srs:
+        app: "TB_LIVE"
+        http_apis: "https://wwww.a.com/ax/api/v1"
+        api-username: ""
+        api-password: ""
+        api-request-timeout-seconds: 3
+        push-base-url: "rtmp://wwww.a.com:1935"
+        play-base-url: ""
 local:
     path: uploads/test
     store-path: uploads/test
@@ -261,7 +274,7 @@ tencent-cos:
     base-url: https://gin.vue.admin
     path-prefix: tb_live_module
 zap:
-    level: debug
+    level: debuglive
     prefix: '[tb_live_module:test]'
     format: console
     director: log/test

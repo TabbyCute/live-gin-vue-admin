@@ -21,3 +21,21 @@ func migrateLiveDurationColumn(db *gorm.DB) error {
 	// 无法从 Schema 定位列而触发空指针。
 	return db.Exec("ALTER TABLE live_anchor DROP COLUMN total_live_duration").Error
 }
+
+// backfillLiveRoomLastSession 为存量直播间补齐最近一次已完成直播场次指针。
+// 只处理 status=3 的正常已结算场次，准备后取消或失败的场次不属于“最后一次直播”。
+func backfillLiveRoomLastSession(db *gorm.DB) error {
+	if !db.Migrator().HasTable(&live.LiveRoom{}) || !db.Migrator().HasTable(&live.LiveSession{}) ||
+		!db.Migrator().HasColumn(&live.LiveRoom{}, "last_session_id") {
+		return nil
+	}
+	return db.Exec(`UPDATE live_room
+		SET last_session_id = COALESCE((
+			SELECT MAX(live_session.id)
+			FROM live_session
+			WHERE live_session.room_id = live_room.id
+				AND live_session.status = ?
+				AND live_session.deleted_at IS NULL
+		), 0)
+		WHERE last_session_id = 0`, live.LiveSessionEnded).Error
+}

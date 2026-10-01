@@ -7,48 +7,73 @@ import (
 )
 
 const (
+	// AnchorApplyStatusNone（0）表示主播尚未提交申请。
 	AnchorApplyStatusNone uint8 = iota
+	// AnchorApplyStatusPending（1）表示主播申请已提交，正在等待后台审核。
 	AnchorApplyStatusPending
+	// AnchorApplyStatusApproved（2）表示主播申请审核通过；通过时系统会确保创建唯一直播间。
 	AnchorApplyStatusApproved
+	// AnchorApplyStatusRejected（3）表示主播申请审核未通过，允许修改资料后重新提交。
 	AnchorApplyStatusRejected
 )
 
 const (
+	// AnchorStatusDisabled（0）表示主播身份被后台停用，不能开播。
 	AnchorStatusDisabled uint8 = iota
+	// AnchorStatusNormal（1）表示主播身份正常；是否能开播还需继续检查审核、权限和风险状态。
 	AnchorStatusNormal
+	// AnchorStatusBanned（2）表示主播被封禁，临时封禁期限由 BanUntil 表示，0 表示未设置自动到期时间。
 	AnchorStatusBanned
+	// AnchorStatusCancelled（3）表示主播身份已注销，该状态不能通过普通状态接口恢复。
 	AnchorStatusCancelled
 )
 
 const (
+	// AnchorCertStatusNone（0）表示主播尚未提交或尚无认证信息。
 	AnchorCertStatusNone uint8 = iota
+	// AnchorCertStatusPending（1）表示主播认证正在审核中。
 	AnchorCertStatusPending
+	// AnchorCertStatusApproved（2）表示主播认证审核通过。
 	AnchorCertStatusApproved
+	// AnchorCertStatusFailed（3）表示主播认证审核失败。
 	AnchorCertStatusFailed
 )
 
 const (
+	// AnchorCertTypeNone（0）表示主播没有认证类型。
 	AnchorCertTypeNone uint8 = iota
+	// AnchorCertTypePersonal（1）表示个人身份认证。
 	AnchorCertTypePersonal
+	// AnchorCertTypeOrganization（2）表示机构或组织认证。
 	AnchorCertTypeOrganization
+	// AnchorCertTypeOfficial（3）表示平台官方认证。
 	AnchorCertTypeOfficial
 )
 
 const (
+	// AnchorRiskNormal（0）表示主播当前没有已识别的风险。
 	AnchorRiskNormal uint8 = iota
+	// AnchorRiskLow（1）表示主播处于低风险等级，仅用于风控记录和后续策略判断。
 	AnchorRiskLow
+	// AnchorRiskMedium（2）表示主播处于中风险等级，仅用于风控记录和后续策略判断。
 	AnchorRiskMedium
+	// AnchorRiskHigh（3）表示主播处于高风险等级，实时资格检查会禁止开播并结束活动场次。
 	AnchorRiskHigh
 )
 
 const (
+	// AnchorPermissionDisabled（0）表示对应业务权限未开放或已关闭。
 	AnchorPermissionDisabled uint8 = iota
+	// AnchorPermissionEnabled（1）表示对应业务权限已开放，但仍需通过其他状态和风控检查。
 	AnchorPermissionEnabled
 )
 
 const (
+	// AnchorTypeNormal（0）表示普通主播账号。
 	AnchorTypeNormal uint8 = iota
+	// AnchorTypeOfficial（1）表示平台官方主播账号。
 	AnchorTypeOfficial
+	// AnchorTypeInternal（2）表示平台内部运营主播账号。
 	AnchorTypeInternal
 )
 
