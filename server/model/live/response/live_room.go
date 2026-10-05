@@ -39,36 +39,40 @@ type LiveRoomInfo struct {
 // GET /api/v1/app/live/room/info 通过 currentSession 字段返回；GET /api/v1/app/live/room/session/history 作为列表元素返回。
 // 管理后台的 GET /api/v1/admin/live/session/detail 和 GET /api/v1/admin/live/session/list 通过 LiveSessionAdminItem 嵌入返回。
 type LiveSessionInfo struct {
-	SessionNo           string          `json:"sessionNo"`
-	RoomNo              string          `json:"roomNo"`
-	AnchorNo            string          `json:"anchorNo"`
-	CategoryId          uint64          `json:"categoryId"`
-	Title               string          `json:"title"`
-	CoverURL            string          `json:"coverUrl"`
-	StreamInfo          json.RawMessage `json:"streamInfo" swaggertype:"object"`
-	Status              uint8           `json:"status"`
-	PrepareDeadlineAt   int64           `json:"prepareDeadlineAt"`
-	StartedAt           int64           `json:"startedAt"`
-	EndedAt             int64           `json:"endedAt"`
-	DurationMs          uint64          `json:"durationMs"`
-	LastUnpublishAt     int64           `json:"lastUnpublishAt"`
-	ReconnectDeadlineAt int64           `json:"reconnectDeadlineAt"`
-	DisconnectCount     uint32          `json:"disconnectCount"`
-	EndReason           uint8           `json:"endReason"`
-	FailureReason       string          `json:"failureReason"`
-	ViewCount           uint64          `json:"viewCount"`
-	ViewerCount         uint64          `json:"viewerCount"`
-	PeakOnlineCount     uint32          `json:"peakOnlineCount"`
-	LikeCount           uint64          `json:"likeCount"`
-	GiftCount           uint64          `json:"giftCount"`
-	GiftCoinAmount      uint64          `json:"giftCoinAmount"`
-	GiftUserCount       uint32          `json:"giftUserCount"`
-	StatsFinalizedAt    int64           `json:"statsFinalizedAt"`
+	SessionNo            string          `json:"sessionNo"`
+	RoomNo               string          `json:"roomNo"`
+	AnchorNo             string          `json:"anchorNo"`
+	CategoryId           uint64          `json:"categoryId"`
+	Title                string          `json:"title"`
+	CoverURL             string          `json:"coverUrl"`
+	StreamInfo           json.RawMessage `json:"streamInfo" swaggertype:"object"`
+	Status               uint8           `json:"status"`
+	PrepareDeadlineAt    int64           `json:"prepareDeadlineAt"`
+	StartedAt            int64           `json:"startedAt"`
+	EndedAt              int64           `json:"endedAt"`
+	DurationMs           uint64          `json:"durationMs"`
+	LastUnpublishAt      int64           `json:"lastUnpublishAt"`
+	ReconnectDeadlineAt  int64           `json:"reconnectDeadlineAt"`
+	DisconnectCount      uint32          `json:"disconnectCount"`
+	EndReason            uint8           `json:"endReason"`
+	FailureReason        string          `json:"failureReason"`
+	ViewCount            uint64          `json:"viewCount"`
+	ViewerCount          uint64          `json:"viewerCount"`
+	PeakOnlineCount      uint32          `json:"peakOnlineCount"`
+	LikeCount            uint64          `json:"likeCount"`
+	GiftCount            uint64          `json:"giftCount"`
+	GiftCoinAmount       uint64          `json:"giftCoinAmount"`
+	GiftUserCount        uint32          `json:"giftUserCount"`
+	StatsFinalizedAt     int64           `json:"statsFinalizedAt"`
+	MediaState           uint8           `json:"mediaState"`
+	MediaStateChangedAt  int64           `json:"mediaStateChangedAt"`
+	MediaLastConfirmedAt int64           `json:"mediaLastConfirmedAt"`
 }
 
 // LiveSessionPrepareResp 表示主播准备开播成功后的响应。
-// PublishToken 是本次准备生成的 AES-256-GCM 加密推流凭证，只在该响应中返回一次。
-// 使用接口：POST /api/v1/app/live/room/session/prepare。
+// PublishToken 是本次准备生成的 AES-256-GCM 加密推流凭证。携带相同 Idempotency-Key 重试时，
+// 服务端可以在准备截止时间内从 Redis 的短期加密结果中返回完全相同的响应。
+// 使用接口：POST /api/v1/app/live/room/session/prepare 和 POST /api/v1/app/live/room/session/push-url/refresh。
 type LiveSessionPrepareResp struct {
 	RoomNo            string `json:"roomNo"`
 	SessionNo         string `json:"sessionNo"`
@@ -210,9 +214,23 @@ type LiveSessionAdminItem struct {
 	ID        uint      `json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
 	LiveSessionInfo
-	RoomID    uint   `json:"roomId"`
-	AnchorID  uint   `json:"anchorId"`
-	PublishIP string `json:"publishIp"`
+	RoomID               uint   `json:"roomId"`
+	AnchorID             uint   `json:"anchorId"`
+	PublishIP            string `json:"publishIp"`
+	PublisherEpoch       uint64 `json:"publisherEpoch"`
+	SRSGeneration        uint64 `json:"srsGeneration"`
+	SRSHealthState       uint8  `json:"srsHealthState"`
+	EffectiveMediaState  uint8  `json:"effectiveMediaState"`
+	StopRequestedAt      int64  `json:"stopRequestedAt"`
+	StopAttempts         uint32 `json:"stopAttempts"`
+	StopNextRetryAt      int64  `json:"stopNextRetryAt"`
+	StopLastError        string `json:"stopLastError"`
+	StopRecoveryState    uint8  `json:"stopRecoveryState"`
+	EndingAlertLevel     uint8  `json:"endingAlertLevel"`
+	EndingAlertedAt      int64  `json:"endingAlertedAt"`
+	MediaStopSource      uint8  `json:"mediaStopSource"`
+	MediaStopConfirmedAt int64  `json:"mediaStopConfirmedAt"`
+	MediaStopConfirmedBy uint   `json:"mediaStopConfirmedBy"`
 }
 
 // LiveSessionAdminListResp 表示管理后台的直播场次分页响应。

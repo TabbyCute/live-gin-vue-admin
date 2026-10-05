@@ -307,6 +307,30 @@ func (s *CategoryService) EnsureEnabledCategory(categoryID uint64) error {
 	return nil
 }
 
+// categoryEnabledForShare 无论分类当前是否启用都会取得共享锁并返回状态。
+// prepare 的幂等重放需要先保持 category -> room 的固定锁顺序，再决定停用分类是否属于“新建场次”错误；
+// 已经提交成功的同一操作可以重放原响应，但停用分类不能创建新场次。
+func (s *CategoryService) categoryEnabledForShare(db *gorm.DB, categoryID uint64) (bool, error) {
+	if categoryID == 0 {
+		return true, nil
+	}
+	if db == nil {
+		return false, errors.New("数据库未初始化")
+	}
+	var category liveModel.LiveCategory
+	err := db.Clauses(clause.Locking{Strength: "SHARE"}).
+		Select("id", "status").
+		Where("id = ?", categoryID).
+		First(&category).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return false, ErrLiveCategoryNotFound
+	}
+	if err != nil {
+		return false, err
+	}
+	return category.Status == liveModel.LiveCategoryStatusEnabled, nil
+}
+
 func validateLiveCategoryParent(db *gorm.DB, categoryID, parentID uint, status uint8) error {
 	if parentID == 0 {
 		return nil

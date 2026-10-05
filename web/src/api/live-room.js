@@ -13,3 +13,5 @@ export const getLiveSessionList = (params) => service({ url: '/live/session/list
 export const getLiveSessionDetail = (params) => service({ url: '/live/session/detail', method: 'get', params })
 
 export const endLiveSession = (data) => service({ url: '/live/session/end', method: 'post', data })
+
+export const confirmLiveSessionMediaStopped = (data) => service({ url: '/live/session/confirm-media-stopped', method: 'post', data })

@@ -3899,6 +3899,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/live/session/confirm-media-stopped": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "仅用于SRS严重降级或已经进入人工关注的Ending场次；需要超级管理员权限、并保存独立业务审计。不会允许Living直接结算。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveSessionAdmin"
+                ],
+                "summary": "人工确认结束中场次的媒体已经停止",
+                "parameters": [
+                    {
+                        "description": "场次、连接版本、原因和外部证据",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.LiveSessionConfirmMediaStoppedReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/live/session/detail": {
             "get": {
                 "security": [
@@ -8778,7 +8817,7 @@ const docTemplate = `{
         },
         "/v1/app/live/hook/publish": {
             "post": {
-                "description": "接口来源由部署层 IP 白名单保护；param 中必须包含 prepare 接口签发的 pt，服务端会解密并校验完整载荷。",
+                "description": "接口来源由部署层 IP 白名单保护；param 中必须包含 prepare 接口签发的 pt，服务端会解密并校验完整载荷。请求体有硬上限；开启 live.log-srs-hook-raw-body 后，原始 JSON 也只会按配置上限写入 INFO 日志。",
                 "consumes": [
                     "application/json"
                 ],
@@ -8803,6 +8842,12 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "请求体超过上限",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -8840,13 +8885,19 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
+                    },
+                    "413": {
+                        "description": "请求体超过上限",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
                     }
                 }
             }
         },
         "/v1/app/live/hook/unpublish": {
             "post": {
-                "description": "接口来源由部署层 IP 白名单保护；不直接结束场次，而是记录断流并开启可配置的重连窗口。",
+                "description": "接口来源由部署层 IP 白名单保护；不直接结束场次，而是记录断流并开启可配置的重连窗口。请求体有硬上限；开启 live.log-srs-hook-raw-body 后，原始 JSON 也只会按配置上限写入 INFO 日志。",
                 "consumes": [
                     "application/json"
                 ],
@@ -8871,6 +8922,12 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "请求体超过上限",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -9186,7 +9243,7 @@ const docTemplate = `{
                         "AppBearerAuth": []
                     }
                 ],
-                "description": "实时校验主播开播资格和直播间状态；返回一次性推流凭证，数据库仅保存其哈希。\n同一直播间在准备中、直播中、结束中最多只能有一个场次，由数据库唯一约束兜底。",
+                "description": "实时校验主播开播资格和直播间状态；返回一次性推流凭证，数据库仅保存其哈希。\n同一直播间在准备中、直播中、结束中最多只能有一个场次，由数据库唯一约束兜底。\n建议客户端为一次准备操作生成 Idempotency-Key，并在网络超时重试时复用；服务端会返回完全相同的推流地址。",
                 "consumes": [
                     "application/json"
                 ],
@@ -9206,6 +9263,58 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/request.LiveSessionPrepareReq"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "8到128位幂等键；同一次操作重试必须保持不变",
+                        "name": "Idempotency-Key",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.LiveSessionPrepareResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/room/session/push-url/refresh": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "仅允许当前主播自己的 Preparing 场次，且尚未收到 SRS on_publish；不会延长 prepareDeadlineAt，旧地址立即失效。\nIdempotency-Key 必填；相同键重试会返回完全相同的推流地址。每场累计签发次数受 live.push-url-refresh-limit 限制。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveRoomApp"
+                ],
+                "summary": "为尚未开始推流的准备场次重新签发推流地址",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "8到128位幂等键；同一次刷新重试必须保持不变",
+                        "name": "Idempotency-Key",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -9617,6 +9726,12 @@ const docTemplate = `{
         "config.Live": {
             "type": "object",
             "properties": {
+                "end-critical-seconds": {
+                    "type": "integer"
+                },
+                "end-manual-retry-seconds": {
+                    "type": "integer"
+                },
                 "end-retry-base-seconds": {
                     "type": "integer"
                 },
@@ -9629,6 +9744,27 @@ const docTemplate = `{
                 "end-scan-interval-seconds": {
                     "type": "integer"
                 },
+                "end-scan-max-batches-per-run": {
+                    "type": "integer"
+                },
+                "end-stop-batch-size": {
+                    "type": "integer"
+                },
+                "end-stop-concurrency": {
+                    "type": "integer"
+                },
+                "end-stop-max-batches-per-run": {
+                    "type": "integer"
+                },
+                "end-warning-seconds": {
+                    "type": "integer"
+                },
+                "log-srs-hook-raw-body": {
+                    "type": "boolean"
+                },
+                "max-concurrent-streams": {
+                    "type": "integer"
+                },
                 "prepare-timeout-seconds": {
                     "type": "integer"
                 },
@@ -9638,11 +9774,65 @@ const docTemplate = `{
                 "push-token-seconds": {
                     "type": "integer"
                 },
+                "push-url-refresh-limit": {
+                    "type": "integer"
+                },
                 "reconnect-window-seconds": {
                     "type": "integer"
                 },
                 "srs": {
                     "$ref": "#/definitions/config.SRS"
+                },
+                "srs-hook-log-max-body-bytes": {
+                    "type": "integer"
+                },
+                "srs-hook-max-body-bytes": {
+                    "type": "integer"
+                },
+                "srs-snapshot-cache-milliseconds": {
+                    "type": "integer"
+                },
+                "state-transition-concurrency": {
+                    "type": "integer"
+                },
+                "stream-ready-batch-size": {
+                    "type": "integer"
+                },
+                "stream-ready-max-batches-per-run": {
+                    "type": "integer"
+                },
+                "stream-ready-retry-base-seconds": {
+                    "type": "integer"
+                },
+                "stream-ready-retry-max-seconds": {
+                    "type": "integer"
+                },
+                "stream-ready-scan-interval-seconds": {
+                    "type": "integer"
+                },
+                "stream-ready-timeout-seconds": {
+                    "type": "integer"
+                },
+                "stream-reconcile-batch-size": {
+                    "type": "integer"
+                },
+                "stream-reconcile-interval-seconds": {
+                    "type": "integer"
+                },
+                "stream-reconcile-max-batches-per-run": {
+                    "type": "integer"
+                },
+                "stream-reconcile-missing-threshold": {
+                    "type": "integer"
+                },
+                "task-leader-enabled": {
+                    "type": "boolean"
+                },
+                "task-leader-fail-open": {
+                    "type": "boolean"
+                },
+                "task-leader-lease-seconds": {
+                    "type": "integer"
                 }
             }
         },
@@ -10132,6 +10322,12 @@ const docTemplate = `{
                 },
                 "push-base-url": {
                     "type": "string"
+                },
+                "snapshot-max-streams": {
+                    "type": "integer"
+                },
+                "snapshot-page-size": {
+                    "type": "integer"
                 }
             }
         },
@@ -11858,6 +12054,33 @@ const docTemplate = `{
                 }
             }
         },
+        "request.LiveSessionConfirmMediaStoppedReq": {
+            "type": "object",
+            "required": [
+                "evidence",
+                "expectedPublisherEpoch",
+                "reason",
+                "sessionId"
+            ],
+            "properties": {
+                "evidence": {
+                    "type": "string",
+                    "maxLength": 1000,
+                    "minLength": 5
+                },
+                "expectedPublisherEpoch": {
+                    "type": "integer"
+                },
+                "reason": {
+                    "type": "string",
+                    "maxLength": 500,
+                    "minLength": 5
+                },
+                "sessionId": {
+                    "type": "integer"
+                }
+            }
+        },
         "request.LiveSessionPrepareReq": {
             "type": "object",
             "required": [
@@ -13063,10 +13286,19 @@ const docTemplate = `{
                 "durationMs": {
                     "type": "integer"
                 },
+                "effectiveMediaState": {
+                    "type": "integer"
+                },
                 "endReason": {
                     "type": "integer"
                 },
                 "endedAt": {
+                    "type": "integer"
+                },
+                "endingAlertLevel": {
+                    "type": "integer"
+                },
+                "endingAlertedAt": {
                     "type": "integer"
                 },
                 "failureReason": {
@@ -13090,6 +13322,24 @@ const docTemplate = `{
                 "likeCount": {
                     "type": "integer"
                 },
+                "mediaLastConfirmedAt": {
+                    "type": "integer"
+                },
+                "mediaState": {
+                    "type": "integer"
+                },
+                "mediaStateChangedAt": {
+                    "type": "integer"
+                },
+                "mediaStopConfirmedAt": {
+                    "type": "integer"
+                },
+                "mediaStopConfirmedBy": {
+                    "type": "integer"
+                },
+                "mediaStopSource": {
+                    "type": "integer"
+                },
                 "peakOnlineCount": {
                     "type": "integer"
                 },
@@ -13098,6 +13348,9 @@ const docTemplate = `{
                 },
                 "publishIp": {
                     "type": "string"
+                },
+                "publisherEpoch": {
+                    "type": "integer"
                 },
                 "reconnectDeadlineAt": {
                     "type": "integer"
@@ -13111,6 +13364,12 @@ const docTemplate = `{
                 "sessionNo": {
                     "type": "string"
                 },
+                "srsGeneration": {
+                    "type": "integer"
+                },
+                "srsHealthState": {
+                    "type": "integer"
+                },
                 "startedAt": {
                     "type": "integer"
                 },
@@ -13118,6 +13377,21 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status": {
+                    "type": "integer"
+                },
+                "stopAttempts": {
+                    "type": "integer"
+                },
+                "stopLastError": {
+                    "type": "string"
+                },
+                "stopNextRetryAt": {
+                    "type": "integer"
+                },
+                "stopRecoveryState": {
+                    "type": "integer"
+                },
+                "stopRequestedAt": {
                     "type": "integer"
                 },
                 "streamInfo": {
@@ -13214,6 +13488,15 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "likeCount": {
+                    "type": "integer"
+                },
+                "mediaLastConfirmedAt": {
+                    "type": "integer"
+                },
+                "mediaState": {
+                    "type": "integer"
+                },
+                "mediaStateChangedAt": {
                     "type": "integer"
                 },
                 "peakOnlineCount": {

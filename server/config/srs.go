@@ -7,6 +7,8 @@ type SRS struct {
 	APIUsername              string `mapstructure:"api-username" json:"api-username" yaml:"api-username"`
 	APIPassword              string `mapstructure:"api-password" json:"api-password" yaml:"api-password"`
 	APIRequestTimeoutSeconds int    `mapstructure:"api-request-timeout-seconds" json:"api-request-timeout-seconds" yaml:"api-request-timeout-seconds"`
+	SnapshotPageSize         int    `mapstructure:"snapshot-page-size" json:"snapshot-page-size" yaml:"snapshot-page-size"`
+	SnapshotMaxStreams       int    `mapstructure:"snapshot-max-streams" json:"snapshot-max-streams" yaml:"snapshot-max-streams"`
 	PushBaseURL              string `mapstructure:"push-base-url" json:"push-base-url" yaml:"push-base-url"`
 	PlayBaseURL              string `mapstructure:"play-base-url" json:"play-base-url" yaml:"play-base-url"`
 }

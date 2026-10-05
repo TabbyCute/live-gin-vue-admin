@@ -19,7 +19,7 @@ func TestTimerImmediatelyProcessesPendingLiveSessions(t *testing.T) {
 	require.NoError(t, err)
 	sqlDB, err := db.DB()
 	require.NoError(t, err)
-	require.NoError(t, db.AutoMigrate(&liveModel.LiveRoom{}, &liveModel.LiveSession{}))
+	require.NoError(t, db.AutoMigrate(&liveModel.LiveRoom{}, &liveModel.LiveSession{}, &liveModel.LiveSRSRuntime{}))
 
 	room := liveModel.LiveRoom{
 		RoomNo: "startup-room", AnchorId: 1001, StreamName: "startup-stream",
@@ -47,6 +47,12 @@ func TestTimerImmediatelyProcessesPendingLiveSessions(t *testing.T) {
 
 	startedAt := time.Now()
 	Timer()
+	for _, name := range []string{
+		"LiveSessionLifecycle", "LiveSessionStop", "LiveStreamReadiness", "LiveStreamReconciliation",
+	} {
+		_, exists := testTimer.FindCron(name)
+		require.True(t, exists, "定时任务未注册: %s", name)
+	}
 	require.Eventually(t, func() bool {
 		if err := db.First(&session, session.ID).Error; err != nil {
 			return false

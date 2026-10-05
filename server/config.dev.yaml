@@ -39,12 +39,12 @@ cors:
     whitelist:
         - allow-origin: http://127.0.0.1:8080
           allow-methods: POST, GET, OPTIONS, DELETE, PUT, PATCH
-          allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id
+          allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id,Idempotency-Key
           expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At
           allow-credentials: true
         - allow-origin: http://localhost:8080
           allow-methods: POST, GET, OPTIONS, DELETE, PUT, PATCH
-          allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id
+          allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id,Idempotency-Key
           expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At
           allow-credentials: true
 db-list:
@@ -93,25 +93,97 @@ jwt-app:
     signing-key: 7ec6580e-2528-4d50-9b50-4e707dd142d9
     expires-time: 30d
     issuer: tblive-app
-# live room lifecycle configuration
+# 直播完整生命周期配置
 live:
-    reconnect-window-seconds: 120 #重连时间(秒)
-    prepare-timeout-seconds: 120 #表示“准备开播超时时间”。取得推流凭证后允许等待首次成功推流的时间(秒)
-    push-token-seconds: 172800 #pt有效时间(秒)，需覆盖预期最长直播及重连时间。表示推流凭证 publishToken（也就是 pt）的有效期。
-    publish-token-key: "TB_LIVE_ENC_KEY" #仅供Go服务加解密pt，生产环境必须替换为强随机密钥
-    end-scan-interval-seconds: 5 #准备超时、断线超时和结束中场次的兜底扫描周期
-    end-scan-batch-size: 100 #每轮最多处理的场次数量
-    end-retry-base-seconds: 5 #SRS停止推流失败后的首次重试间隔
-    end-retry-max-seconds: 60 #SRS停止推流失败后的最大重试间隔
-    # SRS media server configuration
+    # 控制面按该并发主播上限规划每轮批次数；即使手工把max-batches配小，也会自动提升到足以覆盖该容量。
+    max-concurrent-streams: 10000
+    # SRS确认断流后，仍允许主播在多少秒内重连并继续原场直播。值越大越能容忍弱网，但观众看到“直播中”的时间也越长。
+    reconnect-window-seconds: 120
+    # 调用prepare取得推流地址后，最多等待多少秒收到首次有效推流；超时会取消本场准备并释放直播间。
+    prepare-timeout-seconds: 120
+    # 收到on_publish后，最多等待多少秒从SRS取得有效视频宽高；超时会停止该推流，并按“准备了但未开播”结束。
+    stream-ready-timeout-seconds: 15
+    # 每多少秒扫描一次“正在等待视频宽高”的场次；值越小状态变化越及时，数据库扫描也越频繁。
+    stream-ready-scan-interval-seconds: 1
+    # 第一次未取得有效宽高后，至少等待多少秒再查SRS；后续按指数退避。
+    stream-ready-retry-base-seconds: 1
+    # 等待视频宽高时，两次SRS查询之间最多间隔多少秒，防止退避时间无限变长。
+    stream-ready-retry-max-seconds: 4
+    # 正式直播中每隔多少秒批量查询一次SRS流列表。一次扫描只请求一份列表，不会按直播间逐个请求。
+    stream-reconcile-interval-seconds: 5
+    # SRS接口查询成功、但连续多少次没有当前发布流，才判定断流并进入上面的重连窗口。查询失败不会累计；建议2到3次。
+    stream-reconcile-missing-threshold: 3
+    # 每个数据库批次最多处理多少个等待视频宽高的场次；单批有界，整轮按max-concurrent-streams连续推进。
+    stream-ready-batch-size: 1000
+    # 显式下限为10批；代码还会按max-concurrent-streams自动补足，默认一轮覆盖10000路突发开播。
+    stream-ready-max-batches-per-run: 10
+    # 准备超时、重连超时和流就绪落库的固定worker数；代码硬上限64，不会按场次数创建goroutine。
+    state-transition-concurrency: 16
+    # 一轮最多处理多少个直播中对账场次；正常存在的流会合并成批量数据库更新。
+    stream-reconcile-batch-size: 1000
+    # 单次Cron连续处理10个对账批次；所有批次复用同一份SRS快照，一轮覆盖10000路。
+    stream-reconcile-max-batches-per-run: 10
+    # readiness与reconcile在该时间窗口内共享同一份SRS发布流快照；Redis会协调多实例，代码会拒绝使用过期快照。
+    srs-snapshot-cache-milliseconds: 1500
+    # 多后端实例通过Redis租约保证每类任务同一时刻只有一个实例执行；Redis异常时按下一项有界降级。
+    task-leader-enabled: true
+    # Redis/Leader不可用时仍执行有界任务，由数据库租约和CAS保证幂等，避免所有直播状态被冻结。
+    task-leader-fail-open: true
+    # Leader租约会在任务执行期间自动续期；应明显大于单次SRS请求超时。
+    task-leader-lease-seconds: 60
+    # 推流凭证pt有效期。必须覆盖可能的最长直播时长和断流重连时间，否则超长直播断线后无法重新推流。
+    push-token-seconds: 172800
+    # Go服务加解密pt的密钥；生产环境必须换成足够长的强随机值，并且多实例必须保持一致。
+    publish-token-key: "TB_LIVE_ENC_KEY"
+    # 每场在首次prepare之外最多允许重新签发多少次推流地址；相同Idempotency-Key的缓存重放不计次数，代码硬上限20。
+    push-url-refresh-limit: 5
+    # 每多少秒扫描准备超时、重连超时和“结束中”场次。数据库状态扫描与SRS断流任务相互隔离，SRS故障不会拖住超时处理。
+    end-scan-interval-seconds: 5
+    # 准备超时和重连超时每个数据库批次最多取多少场，代码单批上限1000。
+    end-scan-batch-size: 1000
+    # 每类超时任务一轮最多10批；代码会按max-concurrent-streams自动补足但保持硬上限。
+    end-scan-max-batches-per-run: 10
+    # 结束中任务每批最多认领1000场，一轮10批覆盖10000场；worker并发仍由下一项限制。
+    end-stop-batch-size: 1000
+    end-stop-max-batches-per-run: 10
+    # 同时允许多少个“停止SRS推流”请求。建议4到8；提高可加快大量收尾，但会增加SRS连接和本服务goroutine；小于1按8处理，代码上限64。
+    end-stop-concurrency: 8
+    # 调用SRS停止推流失败后，第一次等待多少秒再重试。
+    end-retry-base-seconds: 5
+    # 停止推流连续失败时，指数退避的最大等待秒数；场次会保持“结束中”，不会错误结算。
+    end-retry-max-seconds: 60
+    # Ending滞留达到这些阈值时分别进入警告、严重/人工关注；阈值绝不会触发自动结算。
+    end-warning-seconds: 120
+    end-critical-seconds: 900
+    # 进入人工关注后保留低频自动恢复；SRS恢复事件会立即绕过该等待。
+    end-manual-retry-seconds: 300
+    # 是否把publish/unpublish原始JSON写入INFO日志。只建议本地联调开启，因为日志会包含pt推流凭证。
+    log-srs-hook-raw-body: true
+    # 单个SRS Hook请求体最大字节数；超出返回HTTP 413，代码硬上限1MiB。
+    srs-hook-max-body-bytes: 65536
+    # 开启原始Hook日志时最多记录的请求体字节数；超出会截断，代码硬上限64KiB。
+    srs-hook-log-max-body-bytes: 4096
+    # 本地SRS回调共享密钥；生产应使用SRS_HOOK_TOKEN环境变量覆盖且使用高熵随机值。
+    srs-hook-token: "local-srs-hook-change-me"
+    # SRS媒体服务器配置
     srs:
+        # SRS中的应用名，必须和推流地址及srs.conf保持一致。
         app: "TB_LIVE"
-        http_apis: "https://wwww.a.com/ax/api/v1"
+        # 后端访问SRS HTTP API的地址；用于查询视频尺寸、持续对账和主动停止推流。
+        http_apis: "http://127.0.0.1:12985"
+        # SRS HTTP API启用Basic Auth时填写；未启用则保持为空。
         api-username: ""
         api-password: ""
+        # 单次SRS HTTP API请求最多等待多少秒；超时只记录错误，不会累计“流缺失”次数。
         api-request-timeout-seconds: 3
-        push-base-url: "rtmp://wwww.a.com:1935"
-        play-base-url: ""
+        # SRS发布流快照每页请求数量；提高该值可减少大规模直播时的HTTP分页次数，代码硬上限5000。
+        snapshot-page-size: 5000
+        # 单次快照允许读取的最大流数；超过时明确失败，不会使用被截断的列表误判断流。
+        snapshot-max-streams: 20000
+        # 返回给主播的RTMP推流基础地址；服务会自动拼接app、streamName和pt。
+        push-base-url: "rtmp://127.0.0.1:12935"
+        # 返回给客户端的播放基础地址；服务会自动拼接app和streamName。
+        play-base-url: "rtmp://127.0.0.1:12935"
 local:
     path: uploads/test
     store-path: uploads/test

@@ -4,6 +4,8 @@ import (
 	"tb_live_module/model/common/response"
 	liveReq "tb_live_module/model/live/request"
 	liveRes "tb_live_module/model/live/response"
+	liveService "tb_live_module/service/live"
+	"tb_live_module/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -183,4 +185,32 @@ func (a *RoomAdminApi) EndSession(c *gin.Context) {
 		return
 	}
 	response.OkWithMessage("直播结束请求已处理", c)
+}
+
+// ConfirmMediaStopped
+// @Tags LiveSessionAdmin
+// @Summary 人工确认结束中场次的媒体已经停止
+// @Description 仅用于SRS严重降级或已经进入人工关注的Ending场次；需要超级管理员权限、并保存独立业务审计。不会允许Living直接结算。
+// @Security ApiKeyAuth
+// @Accept application/json
+// @Produce application/json
+// @Param data body liveReq.LiveSessionConfirmMediaStoppedReq true "场次、连接版本、原因和外部证据"
+// @Success 200 {object} response.Response
+// @Router /live/session/confirm-media-stopped [post]
+func (a *RoomAdminApi) ConfirmMediaStopped(c *gin.Context) {
+	var req liveReq.LiveSessionConfirmMediaStoppedReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage("人工确认参数错误: "+err.Error(), c)
+		return
+	}
+	actor := liveService.MediaStopActor{
+		UserID: utils.GetUserID(c), Username: utils.GetUserName(c),
+		ClientIP: c.ClientIP(), UserAgent: c.Request.UserAgent(),
+		RequestID: c.GetHeader("X-Request-ID"),
+	}
+	if err := roomService.ConfirmMediaStopped(req, actor); err != nil {
+		respondLiveRoomError(c, "人工确认媒体停止失败", err)
+		return
+	}
+	response.OkWithMessage("媒体停止已确认，场次结算完成", c)
 }

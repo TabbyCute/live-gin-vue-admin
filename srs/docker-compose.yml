@@ -1,0 +1,35 @@
+name: tb-live-srs
+
+services:
+  srs:
+    image: ossrs/srs:7.0.165
+    container_name: tb-live-srs
+    restart: unless-stopped
+    working_dir: /usr/local/srs
+    command:
+      - ./objs/srs
+      - -c
+      - conf/tb-live.conf
+    environment:
+      CANDIDATE: "${CANDIDATE:-127.0.0.1}"
+      SRS_HOOK_TOKEN: "${SRS_HOOK_TOKEN:-local-srs-hook-change-me}"
+    ports:
+      - "127.0.0.1:12935:1935"
+      - "127.0.0.1:12985:1985"
+      - "127.0.0.1:18080:8080"
+      - "127.0.0.1:8000:8000/udp"
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./srs.conf:/usr/local/srs/conf/tb-live.conf:ro
+      - ../release/srs/data:/usr/local/srs/objs/nginx/html
+    logging:
+      driver: local
+      options:
+        max-size: "10m"
+        max-file: "3"
+    stop_grace_period: 10s

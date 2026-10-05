@@ -278,45 +278,50 @@ func (s *AnchorService) checkLivePermission(userID uint64) (liveRes.AnchorPermis
 	if err != nil {
 		return liveRes.AnchorPermissionCheckResp{}, nil, err
 	}
+	return livePermissionForAnchor(anchor, time.Now().UnixMilli()), anchor, nil
+}
 
+// livePermissionForAnchor 是主播实时开播资格的唯一判定入口。
+// 普通查询使用已读取的主播快照；prepare在事务内锁定主播行后调用，保证资格判断与场次创建原子化。
+func livePermissionForAnchor(anchor *liveModel.LiveAnchor, now int64) liveRes.AnchorPermissionCheckResp {
 	switch anchor.ApplyStatus {
 	case liveModel.AnchorApplyStatusApproved:
 	case liveModel.AnchorApplyStatusRejected:
-		return denied("APPLY_REJECTED", "主播申请未通过", 0), anchor, nil
+		return denied("APPLY_REJECTED", "主播申请未通过", 0)
 	default:
-		return denied("APPLY_PENDING", "主播申请尚未审核通过", 0), anchor, nil
+		return denied("APPLY_PENDING", "主播申请尚未审核通过", 0)
 	}
 
 	switch anchor.Status {
 	case liveModel.AnchorStatusNormal:
 	case liveModel.AnchorStatusDisabled:
-		return denied("ANCHOR_DISABLED", "主播账号已被禁用", 0), anchor, nil
+		return denied("ANCHOR_DISABLED", "主播账号已被禁用", 0)
 	case liveModel.AnchorStatusBanned:
 		// BanUntil=0 表示永久封禁，未来时间表示临时封禁。已过期但 status 仍为 2 时，
 		// check 保持只读并继续拒绝，等待专门的恢复机制处理状态，GET 不隐式写库。
 		message := "主播账号当前处于封禁状态"
-		if anchor.BanUntil > 0 && anchor.BanUntil <= time.Now().UnixMilli() {
+		if anchor.BanUntil > 0 && anchor.BanUntil <= now {
 			message = "主播封禁已到期，等待系统恢复账号状态"
 		}
-		return denied("ANCHOR_BANNED", message, anchor.BanUntil), anchor, nil
+		return denied("ANCHOR_BANNED", message, anchor.BanUntil)
 	case liveModel.AnchorStatusCancelled:
-		return denied("ANCHOR_CANCELLED", "主播账号已注销", 0), anchor, nil
+		return denied("ANCHOR_CANCELLED", "主播账号已注销", 0)
 	default:
-		return denied("ANCHOR_DISABLED", "主播账号状态异常", 0), anchor, nil
+		return denied("ANCHOR_DISABLED", "主播账号状态异常", 0)
 	}
 
 	// 第一版仅禁止高风险主播；中风险不擅自扩大限制。风险等级只保存事实状态，
 	// 不在 risk/update 中联动改权限，所有实时决策集中在这里。
 	if !canLiveByRiskLevel(anchor.RiskLevel) {
-		return denied("RISK_LEVEL_BLOCKED", "当前风险等级不允许开播", 0), anchor, nil
+		return denied("RISK_LEVEL_BLOCKED", "当前风险等级不允许开播", 0)
 	}
 	if anchor.LivePermission != liveModel.AnchorPermissionEnabled {
-		return denied("LIVE_PERMISSION_DISABLED", "主播开播权限未开启", 0), anchor, nil
+		return denied("LIVE_PERMISSION_DISABLED", "主播开播权限未开启", 0)
 	}
 	if certificationRequiredForLive && anchor.CertStatus != liveModel.AnchorCertStatusApproved {
-		return denied("CERTIFICATION_REQUIRED", "完成主播认证后才能开播", 0), anchor, nil
+		return denied("CERTIFICATION_REQUIRED", "完成主播认证后才能开播", 0)
 	}
-	return allowed(), anchor, nil
+	return allowed()
 }
 
 func (s *AnchorService) GetAnchorList(req *liveReq.AnchorAdminListReq) ([]liveRes.AnchorAdminListItemResp, int64, error) {
@@ -667,6 +672,15 @@ func (s *AnchorService) getAnchorByUserID(db *gorm.DB, userID uint64) (*liveMode
 	}
 	var anchor liveModel.LiveAnchor
 	err := db.Where("user_id = ?", userID).First(&anchor).Error
+	return &anchor, err
+}
+
+func (s *AnchorService) getAnchorByUserIDForUpdate(db *gorm.DB, userID uint64) (*liveModel.LiveAnchor, error) {
+	if db == nil {
+		return nil, errors.New("数据库未初始化")
+	}
+	var anchor liveModel.LiveAnchor
+	err := db.Clauses(clause.Locking{Strength: "UPDATE"}).Where("user_id = ?", userID).First(&anchor).Error
 	return &anchor, err
 }
 

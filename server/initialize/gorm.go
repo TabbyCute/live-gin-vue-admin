@@ -77,9 +77,15 @@ func RegisterTables() {
 		live.LiveCategory{},
 		live.LiveRoom{},
 		live.LiveSession{},
+		live.LiveSRSRuntime{},
+		live.LiveSessionMediaAudit{},
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = db.Where("id = ?", 1).FirstOrCreate(&live.LiveSRSRuntime{ID: 1}).Error; err != nil {
+		global.GVA_LOG.Error("initialize single SRS runtime row failed", zap.Error(err))
 		os.Exit(1)
 	}
 	if err = migrateLiveDurationColumn(db); err != nil {

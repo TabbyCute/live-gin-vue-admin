@@ -36,7 +36,7 @@
         <el-table-column label="点赞" prop="likeCount" width="90" />
         <el-table-column label="礼物件数" prop="giftCount" width="100" />
         <el-table-column label="礼物金币" prop="giftCoinAmount" width="110" />
-        <el-table-column label="操作" width="155" fixed="right"><template #default="scope"><el-button link type="primary" @click="showDetail(scope.row)">详情</el-button><el-button v-if="[0, 1].includes(scope.row.status)" link type="danger" @click="openEnd(scope.row)">强制结束</el-button></template></el-table-column>
+        <el-table-column label="操作" width="230" fixed="right"><template #default="scope"><el-button link type="primary" @click="showDetail(scope.row)">详情</el-button><el-button v-if="[0, 1].includes(scope.row.status)" link type="danger" @click="openEnd(scope.row)">强制结束</el-button><el-button v-if="canConfirmStopped(scope.row)" link type="warning" @click="openConfirmStopped(scope.row)">确认已停流</el-button></template></el-table-column>
       </el-table>
       <div class="gva-pagination"><el-pagination v-model:current-page="page" v-model:page-size="pageSize" :page-sizes="[10, 20, 50, 100]" :total="total" layout="total, sizes, prev, pager, next, jumper" @current-change="getTableData" @size-change="handleSizeChange" /></div>
     </div>
@@ -45,6 +45,19 @@
       <el-alert type="warning" :closable="false" :title="`将结束场次 ${endForm.sessionNo}`" class="dialog-alert" />
       <el-form label-width="84px"><el-form-item label="结束原因"><el-input v-model.trim="endForm.reason" type="textarea" :rows="4" maxlength="500" show-word-limit placeholder="建议填写，便于后续审计和主播问题排查" /></el-form-item></el-form>
       <template #footer><el-button @click="endVisible = false">取消</el-button><el-button type="danger" :loading="submitting" @click="submitEnd">确认结束</el-button></template>
+    </el-dialog>
+
+    <el-dialog v-model="confirmStoppedVisible" title="人工确认媒体已停止" width="580px" destroy-on-close>
+      <el-alert type="error" :closable="false" show-icon title="这是不可逆的高风险恢复操作，仅在已从 SRS 主机侧确认该连接停止后使用。提交后会立即结算场次。" class="dialog-alert" />
+      <el-descriptions :column="1" border class="dialog-alert">
+        <el-descriptions-item label="场次编号">{{ confirmStoppedForm.sessionNo }}</el-descriptions-item>
+        <el-descriptions-item label="发布版本">{{ confirmStoppedForm.expectedPublisherEpoch }}</el-descriptions-item>
+      </el-descriptions>
+      <el-form label-width="92px">
+        <el-form-item label="确认原因"><el-input v-model.trim="confirmStoppedForm.reason" type="textarea" :rows="3" maxlength="500" show-word-limit placeholder="至少 5 个字符，例如：已登录 SRS 主机确认无该流" /></el-form-item>
+        <el-form-item label="外部证据"><el-input v-model.trim="confirmStoppedForm.evidence" type="textarea" :rows="3" maxlength="1000" show-word-limit placeholder="至少 5 个字符，例如：工单号、命令输出摘要或监控事件号" /></el-form-item>
+      </el-form>
+      <template #footer><el-button @click="confirmStoppedVisible = false">取消</el-button><el-button type="danger" :loading="submitting" @click="submitConfirmStopped">确认媒体已停止并结算</el-button></template>
     </el-dialog>
 
     <el-drawer v-model="detailVisible" title="直播场次详情" size="680px">
@@ -61,6 +74,10 @@
           <el-descriptions-item label="最近断流">{{ formatTimestamp(detail.lastUnpublishAt) }}</el-descriptions-item><el-descriptions-item label="重连截止">{{ formatTimestamp(detail.reconnectDeadlineAt) }}</el-descriptions-item>
           <el-descriptions-item label="结束原因">{{ endReasonLabel(detail.endReason) }}</el-descriptions-item><el-descriptions-item label="统计完成">{{ formatTimestamp(detail.statsFinalizedAt) }}</el-descriptions-item>
           <el-descriptions-item label="失败/操作原因" :span="2">{{ detail.failureReason || '-' }}</el-descriptions-item>
+          <el-descriptions-item label="SRS 健康状态">{{ srsHealthLabel(detail.srsHealthState) }}</el-descriptions-item><el-descriptions-item label="有效媒体状态">{{ mediaStateLabel(detail.effectiveMediaState) }}</el-descriptions-item>
+          <el-descriptions-item label="发布版本">{{ detail.publisherEpoch }}</el-descriptions-item><el-descriptions-item label="SRS 代际">{{ detail.srsGeneration }}</el-descriptions-item>
+          <el-descriptions-item label="收尾重试">{{ detail.stopAttempts }}</el-descriptions-item><el-descriptions-item label="收尾告警">{{ endingAlertLabel(detail.endingAlertLevel) }}</el-descriptions-item>
+          <el-descriptions-item label="最近收尾错误" :span="2">{{ detail.stopLastError || '-' }}</el-descriptions-item>
         </el-descriptions>
         <div class="detail-section-title">本场统计快照</div>
         <div class="stat-grid">
@@ -79,14 +96,20 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { formatDate } from '@/utils/format'
 import { getCategoryTree } from '@/api/live-category'
-import { endLiveSession, getLiveSessionDetail, getLiveSessionList } from '@/api/live-room'
+import { confirmLiveSessionMediaStopped, endLiveSession, getLiveSessionDetail, getLiveSessionList } from '@/api/live-room'
+import { useUserStore } from '@/pinia/modules/user'
 
 const statuses = [{ value: 0, label: '准备中', type: 'warning' }, { value: 1, label: '直播中', type: 'success' }, { value: 2, label: '结束中', type: 'warning' }, { value: 3, label: '已结束', type: 'info' }, { value: 4, label: '已取消', type: 'info' }, { value: 5, label: '失败', type: 'danger' }]
 const endReasons = ['未知', '主播结束', '管理员结束', '断流超时', '主播封禁/权限关闭', '系统异常', '准备开播超时']
+const mediaStates = ['未知', '发布中', '已断流', '停止中', '已停止', 'SRS 不可观测']
+const srsHealthStates = ['未知', '健康', '降级']
+const endingAlerts = ['无', '警告', '严重']
 const defaultSearch = () => ({ sessionNo: '', roomNo: '', anchorNo: '', categoryId: null, status: null, startedAtRange: [] })
+const userStore = useUserStore()
 const searchInfo = reactive(defaultSearch()); const page = ref(1); const pageSize = ref(20); const total = ref(0)
 const loading = ref(false); const submitting = ref(false); const tableData = ref([]); const categoryTree = ref([]); const detail = ref(null)
 const detailVisible = ref(false); const endVisible = ref(false); const endForm = reactive({ sessionId: 0, sessionNo: '', reason: '' })
+const confirmStoppedVisible = ref(false); const confirmStoppedForm = reactive({ sessionId: 0, sessionNo: '', expectedPublisherEpoch: 0, reason: '', evidence: '' })
 const activeCount = computed(() => tableData.value.filter((item) => [0, 1].includes(item.status)).length)
 const endingCount = computed(() => tableData.value.filter((item) => item.status === 2).length)
 const flatten = (items, depth = 0) => items.flatMap((item) => [{ id: item.id, label: `${'　'.repeat(depth)}${item.name}` }, ...flatten(item.children || [], depth + 1)])
@@ -94,6 +117,9 @@ const categoryOptions = computed(() => flatten(categoryTree.value))
 const categoryLabel = (id) => id ? (categoryOptions.value.find((item) => item.id === id)?.label.trim() || `分类 ID ${id}`) : '未分类'
 const statusMeta = (value) => statuses.find((item) => item.value === value) || { label: `未知(${value})`, type: 'info' }
 const endReasonLabel = (value) => endReasons[value] || `未知(${value})`
+const mediaStateLabel = (value) => mediaStates[value] || `未知(${value})`
+const srsHealthLabel = (value) => srsHealthStates[value] || `未知(${value})`
+const endingAlertLabel = (value) => endingAlerts[value] || `未知(${value})`
 const formatTimestamp = (value) => Number(value) ? (formatDate(Number(value)) || '-') : '-'
 const durationText = (milliseconds) => { const seconds = Math.floor(Number(milliseconds || 0) / 1000); if (seconds < 60) return `${seconds} 秒`; if (seconds < 3600) return `${Math.floor(seconds / 60)} 分 ${seconds % 60} 秒`; return `${Math.floor(seconds / 3600)} 小时 ${Math.floor((seconds % 3600) / 60)} 分` }
 const streamInfoText = (value) => { if (!value || (typeof value === 'object' && Object.keys(value).length === 0)) return '{}'; if (typeof value === 'string') { try { return JSON.stringify(JSON.parse(value), null, 2) } catch { return value } } return JSON.stringify(value, null, 2) }
@@ -105,6 +131,9 @@ const onSubmit = () => { page.value = 1; getTableData() }; const onReset = () =>
 const showDetail = async (row) => { const res = await getLiveSessionDetail({ sessionId: row.id }); if (res.code === 0) { detail.value = res.data; detailVisible.value = true } }
 const openEnd = (row) => { Object.assign(endForm, { sessionId: row.id, sessionNo: row.sessionNo, reason: '' }); endVisible.value = true }
 const submitEnd = async () => { if (!endForm.reason) return ElMessage.warning('请填写强制结束原因'); submitting.value = true; try { const res = await endLiveSession({ sessionId: endForm.sessionId, reason: endForm.reason }); if (res.code === 0) { ElMessage.success('场次已进入结束流程'); endVisible.value = false; getTableData() } } finally { submitting.value = false } }
+const canConfirmStopped = (row) => Number(userStore.userInfo?.authorityId) === 888 && row.status === 2 && row.stopRecoveryState === 1
+const openConfirmStopped = (row) => { Object.assign(confirmStoppedForm, { sessionId: row.id, sessionNo: row.sessionNo, expectedPublisherEpoch: Number(row.publisherEpoch || 0), reason: '', evidence: '' }); confirmStoppedVisible.value = true }
+const submitConfirmStopped = async () => { if (confirmStoppedForm.reason.length < 5) return ElMessage.warning('确认原因至少需要 5 个字符'); if (confirmStoppedForm.evidence.length < 5) return ElMessage.warning('外部证据至少需要 5 个字符'); submitting.value = true; try { const res = await confirmLiveSessionMediaStopped({ sessionId: confirmStoppedForm.sessionId, expectedPublisherEpoch: confirmStoppedForm.expectedPublisherEpoch, reason: confirmStoppedForm.reason, evidence: confirmStoppedForm.evidence }); if (res.code === 0) { ElMessage.success('媒体停止已确认，场次结算完成'); confirmStoppedVisible.value = false; await getTableData(); if (detail.value?.id === confirmStoppedForm.sessionId) await showDetail({ id: confirmStoppedForm.sessionId }) } } finally { submitting.value = false } }
 onMounted(refreshData)
 </script>
 

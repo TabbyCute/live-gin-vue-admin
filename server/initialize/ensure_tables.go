@@ -68,6 +68,8 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 		liveModel.LiveCategory{},
 		liveModel.LiveRoom{},
 		liveModel.LiveSession{},
+		liveModel.LiveSRSRuntime{},
+		liveModel.LiveSessionMediaAudit{},
 
 		model.Info{},
 	}
@@ -76,6 +78,7 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 		// 视图 authority_menu 会被当成表来创建，引发冲突错误（更新版本的gorm似乎不会）
 		// 由于 AutoMigrate() 基本无需考虑错误，因此显式忽略
 	}
+	_ = db.Where("id = ?", 1).FirstOrCreate(&liveModel.LiveSRSRuntime{ID: 1}).Error
 	return ctx, nil
 }
 
@@ -113,6 +116,8 @@ func (e *ensureTables) TableCreated(ctx context.Context) bool {
 		liveModel.LiveCategory{},
 		liveModel.LiveRoom{},
 		liveModel.LiveSession{},
+		liveModel.LiveSRSRuntime{},
+		liveModel.LiveSessionMediaAudit{},
 
 		model.Info{},
 	}

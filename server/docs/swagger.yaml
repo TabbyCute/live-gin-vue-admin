@@ -155,6 +155,10 @@ definitions:
     type: object
   config.Live:
     properties:
+      end-critical-seconds:
+        type: integer
+      end-manual-retry-seconds:
+        type: integer
       end-retry-base-seconds:
         type: integer
       end-retry-max-seconds:
@@ -163,16 +167,66 @@ definitions:
         type: integer
       end-scan-interval-seconds:
         type: integer
+      end-scan-max-batches-per-run:
+        type: integer
+      end-stop-batch-size:
+        type: integer
+      end-stop-concurrency:
+        type: integer
+      end-stop-max-batches-per-run:
+        type: integer
+      end-warning-seconds:
+        type: integer
+      log-srs-hook-raw-body:
+        type: boolean
+      max-concurrent-streams:
+        type: integer
       prepare-timeout-seconds:
         type: integer
       publish-token-key:
         type: string
       push-token-seconds:
         type: integer
+      push-url-refresh-limit:
+        type: integer
       reconnect-window-seconds:
         type: integer
       srs:
         $ref: '#/definitions/config.SRS'
+      srs-hook-log-max-body-bytes:
+        type: integer
+      srs-hook-max-body-bytes:
+        type: integer
+      srs-snapshot-cache-milliseconds:
+        type: integer
+      state-transition-concurrency:
+        type: integer
+      stream-ready-batch-size:
+        type: integer
+      stream-ready-max-batches-per-run:
+        type: integer
+      stream-ready-retry-base-seconds:
+        type: integer
+      stream-ready-retry-max-seconds:
+        type: integer
+      stream-ready-scan-interval-seconds:
+        type: integer
+      stream-ready-timeout-seconds:
+        type: integer
+      stream-reconcile-batch-size:
+        type: integer
+      stream-reconcile-interval-seconds:
+        type: integer
+      stream-reconcile-max-batches-per-run:
+        type: integer
+      stream-reconcile-missing-threshold:
+        type: integer
+      task-leader-enabled:
+        type: boolean
+      task-leader-fail-open:
+        type: boolean
+      task-leader-lease-seconds:
+        type: integer
     type: object
   config.Local:
     properties:
@@ -526,6 +580,10 @@ definitions:
         type: string
       push-base-url:
         type: string
+      snapshot-max-streams:
+        type: integer
+      snapshot-page-size:
+        type: integer
     type: object
   config.Server:
     properties:
@@ -1748,6 +1806,26 @@ definitions:
     - reason
     - sessionId
     type: object
+  request.LiveSessionConfirmMediaStoppedReq:
+    properties:
+      evidence:
+        maxLength: 1000
+        minLength: 5
+        type: string
+      expectedPublisherEpoch:
+        type: integer
+      reason:
+        maxLength: 500
+        minLength: 5
+        type: string
+      sessionId:
+        type: integer
+    required:
+    - evidence
+    - expectedPublisherEpoch
+    - reason
+    - sessionId
+    type: object
   request.LiveSessionPrepareReq:
     properties:
       categoryId:
@@ -2565,9 +2643,15 @@ definitions:
         type: integer
       durationMs:
         type: integer
+      effectiveMediaState:
+        type: integer
       endReason:
         type: integer
       endedAt:
+        type: integer
+      endingAlertLevel:
+        type: integer
+      endingAlertedAt:
         type: integer
       failureReason:
         type: string
@@ -2583,12 +2667,26 @@ definitions:
         type: integer
       likeCount:
         type: integer
+      mediaLastConfirmedAt:
+        type: integer
+      mediaState:
+        type: integer
+      mediaStateChangedAt:
+        type: integer
+      mediaStopConfirmedAt:
+        type: integer
+      mediaStopConfirmedBy:
+        type: integer
+      mediaStopSource:
+        type: integer
       peakOnlineCount:
         type: integer
       prepareDeadlineAt:
         type: integer
       publishIp:
         type: string
+      publisherEpoch:
+        type: integer
       reconnectDeadlineAt:
         type: integer
       roomId:
@@ -2597,11 +2695,25 @@ definitions:
         type: string
       sessionNo:
         type: string
+      srsGeneration:
+        type: integer
+      srsHealthState:
+        type: integer
       startedAt:
         type: integer
       statsFinalizedAt:
         type: integer
       status:
+        type: integer
+      stopAttempts:
+        type: integer
+      stopLastError:
+        type: string
+      stopNextRetryAt:
+        type: integer
+      stopRecoveryState:
+        type: integer
+      stopRequestedAt:
         type: integer
       streamInfo:
         type: object
@@ -2665,6 +2777,12 @@ definitions:
       lastUnpublishAt:
         type: integer
       likeCount:
+        type: integer
+      mediaLastConfirmedAt:
+        type: integer
+      mediaState:
+        type: integer
+      mediaStateChangedAt:
         type: integer
       peakOnlineCount:
         type: integer
@@ -5955,6 +6073,30 @@ paths:
       summary: 后台修改直播间编号和资料
       tags:
       - LiveRoomAdmin
+  /live/session/confirm-media-stopped:
+    post:
+      consumes:
+      - application/json
+      description: 仅用于SRS严重降级或已经进入人工关注的Ending场次；需要超级管理员权限、并保存独立业务审计。不会允许Living直接结算。
+      parameters:
+      - description: 场次、连接版本、原因和外部证据
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.LiveSessionConfirmMediaStoppedReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 人工确认结束中场次的媒体已经停止
+      tags:
+      - LiveSessionAdmin
   /live/session/detail:
     get:
       parameters:
@@ -8828,7 +8970,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: 接口来源由部署层 IP 白名单保护；param 中必须包含 prepare 接口签发的 pt，服务端会解密并校验完整载荷。
+      description: 接口来源由部署层 IP 白名单保护；param 中必须包含 prepare 接口签发的 pt，服务端会解密并校验完整载荷。请求体有硬上限；开启
+        live.log-srs-hook-raw-body 后，原始 JSON 也只会按配置上限写入 INFO 日志。
       parameters:
       - description: SRS回调
         in: body
@@ -8841,6 +8984,10 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "413":
+          description: 请求体超过上限
           schema:
             $ref: '#/definitions/response.Response'
       summary: SRS发布流回调
@@ -8865,6 +9012,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/response.Response'
+        "413":
+          description: 请求体超过上限
+          schema:
+            $ref: '#/definitions/response.Response'
       summary: 写入直播场次实时统计快照
       tags:
       - LiveHook
@@ -8872,7 +9023,8 @@ paths:
     post:
       consumes:
       - application/json
-      description: 接口来源由部署层 IP 白名单保护；不直接结束场次，而是记录断流并开启可配置的重连窗口。
+      description: 接口来源由部署层 IP 白名单保护；不直接结束场次，而是记录断流并开启可配置的重连窗口。请求体有硬上限；开启 live.log-srs-hook-raw-body
+        后，原始 JSON 也只会按配置上限写入 INFO 日志。
       parameters:
       - description: SRS回调
         in: body
@@ -8885,6 +9037,10 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "413":
+          description: 请求体超过上限
           schema:
             $ref: '#/definitions/response.Response'
       summary: SRS停止发布流回调
@@ -9071,6 +9227,7 @@ paths:
       description: |-
         实时校验主播开播资格和直播间状态；返回一次性推流凭证，数据库仅保存其哈希。
         同一直播间在准备中、直播中、结束中最多只能有一个场次，由数据库唯一约束兜底。
+        建议客户端为一次准备操作生成 Idempotency-Key，并在网络超时重试时复用；服务端会返回完全相同的推流地址。
       parameters:
       - description: 本场标题、封面、分类和可见范围
         in: body
@@ -9078,6 +9235,10 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/request.LiveSessionPrepareReq'
+      - description: 8到128位幂等键；同一次操作重试必须保持不变
+        in: header
+        name: Idempotency-Key
+        type: string
       produces:
       - application/json
       responses:
@@ -9093,6 +9254,34 @@ paths:
       security:
       - AppBearerAuth: []
       summary: 创建一场待推流的直播场次
+      tags:
+      - LiveRoomApp
+  /v1/app/live/room/session/push-url/refresh:
+    post:
+      description: |-
+        仅允许当前主播自己的 Preparing 场次，且尚未收到 SRS on_publish；不会延长 prepareDeadlineAt，旧地址立即失效。
+        Idempotency-Key 必填；相同键重试会返回完全相同的推流地址。每场累计签发次数受 live.push-url-refresh-limit 限制。
+      parameters:
+      - description: 8到128位幂等键；同一次刷新重试必须保持不变
+        in: header
+        name: Idempotency-Key
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.LiveSessionPrepareResp'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 为尚未开始推流的准备场次重新签发推流地址
       tags:
       - LiveRoomApp
   /v1/app/live/room/status/update:

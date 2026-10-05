@@ -85,5 +85,6 @@ func liveRoomAdminAPIs() []system.SysApi {
 		{ApiGroup: "直播场次", Method: "GET", Path: "/live/session/list", Description: "分页查询直播场次"},
 		{ApiGroup: "直播场次", Method: "GET", Path: "/live/session/detail", Description: "获取直播场次后台详情"},
 		{ApiGroup: "直播场次", Method: "POST", Path: "/live/session/end", Description: "后台强制结束直播场次"},
+		{ApiGroup: "直播场次", Method: "POST", Path: "/live/session/confirm-media-stopped", Description: "人工确认结束中场次媒体已停止"},
 	}
 }

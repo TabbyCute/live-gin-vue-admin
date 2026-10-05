@@ -14,7 +14,7 @@ const (
 const (
 	// LiveRoomOffline（0）表示直播间当前没有活动直播场次。
 	LiveRoomOffline uint8 = iota
-	// LiveRoomPreparing（1）表示直播间已创建准备中场次，正在等待有效推流。
+	// LiveRoomPreparing（1）表示直播间正在等待首次有效推流，或已收到publish但仍在等待SRS取得视频宽高。
 	LiveRoomPreparing
 	// LiveRoomLiving（2）表示直播间当前正在直播。
 	LiveRoomLiving

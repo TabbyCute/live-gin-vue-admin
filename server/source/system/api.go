@@ -267,6 +267,7 @@ func (i *initApi) InitializeData(ctx context.Context) (context.Context, error) {
 		{ApiGroup: "直播场次", Method: "GET", Path: "/live/session/list", Description: "分页查询直播场次"},
 		{ApiGroup: "直播场次", Method: "GET", Path: "/live/session/detail", Description: "获取直播场次后台详情"},
 		{ApiGroup: "直播场次", Method: "POST", Path: "/live/session/end", Description: "后台强制结束直播场次"},
+		{ApiGroup: "直播场次", Method: "POST", Path: "/live/session/confirm-media-stopped", Description: "人工确认结束中场次媒体已停止"},
 	}
 	if err := db.Create(&entities).Error; err != nil {
 		return ctx, errors.Wrap(err, sysModel.SysApi{}.TableName()+"表数据初始化失败!")

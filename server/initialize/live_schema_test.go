@@ -36,14 +36,32 @@ func TestMigrateLiveDurationColumn(t *testing.T) {
 func TestBackfillLiveRoomLastSession(t *testing.T) {
 	db, err := gorm.Open(sqlite.Open("file:"+t.Name()+"?mode=memory&cache=shared"), &gorm.Config{})
 	require.NoError(t, err)
-	require.NoError(t, db.AutoMigrate(&liveModel.LiveRoom{}, &liveModel.LiveSession{}))
+	require.NoError(t, db.AutoMigrate(
+		&liveModel.LiveRoom{}, &liveModel.LiveSession{},
+		&liveModel.LiveSRSRuntime{}, &liveModel.LiveSessionMediaAudit{},
+	))
 	require.True(t, db.Migrator().HasColumn(&liveModel.LiveSession{}, "stream_info"))
 	require.True(t, db.Migrator().HasColumn(&liveModel.LiveSession{}, "publish_ip"))
 	require.True(t, db.Migrator().HasColumn(&liveModel.LiveSession{}, "prepare_deadline_at"))
+	require.True(t, db.Migrator().HasColumn(&liveModel.LiveSession{}, "publish_credential_issue_count"))
 	require.True(t, db.Migrator().HasColumn(&liveModel.LiveSession{}, "srs_stream_id"))
+	require.True(t, db.Migrator().HasColumn(&liveModel.LiveSession{}, "stream_ready_deadline_at"))
+	require.True(t, db.Migrator().HasColumn(&liveModel.LiveSession{}, "stream_probe_attempts"))
+	require.True(t, db.Migrator().HasColumn(&liveModel.LiveSession{}, "stream_probe_next_at"))
+	require.True(t, db.Migrator().HasColumn(&liveModel.LiveSession{}, "stream_probe_last_error"))
 	require.True(t, db.Migrator().HasColumn(&liveModel.LiveSession{}, "stop_next_retry_at"))
+	require.True(t, db.Migrator().HasColumn(&liveModel.LiveSession{}, "srs_generation"))
+	require.True(t, db.Migrator().HasColumn(&liveModel.LiveSession{}, "publisher_epoch"))
+	require.True(t, db.Migrator().HasColumn(&liveModel.LiveSession{}, "media_state"))
+	require.True(t, db.Migrator().HasColumn(&liveModel.LiveSession{}, "stop_recovery_state"))
+	require.True(t, db.Migrator().HasColumn(&liveModel.LiveSession{}, "media_stop_source"))
 	require.True(t, db.Migrator().HasIndex(&liveModel.LiveSession{}, "idx_live_session_prepare_timeout"))
+	require.True(t, db.Migrator().HasIndex(&liveModel.LiveSession{}, "idx_live_session_stream_ready"))
+	require.True(t, db.Migrator().HasIndex(&liveModel.LiveSession{}, "idx_live_session_stream_probe"))
 	require.True(t, db.Migrator().HasIndex(&liveModel.LiveSession{}, "idx_live_session_end_retry"))
+	require.True(t, db.Migrator().HasIndex(&liveModel.LiveSession{}, "idx_live_session_end_stall"))
+	require.True(t, db.Migrator().HasTable(&liveModel.LiveSRSRuntime{}))
+	require.True(t, db.Migrator().HasTable(&liveModel.LiveSessionMediaAudit{}))
 
 	room := liveModel.LiveRoom{RoomNo: "10001", AnchorId: 1, StreamName: "10001"}
 	require.NoError(t, db.Create(&room).Error)

@@ -23,5 +23,6 @@ func (r *RoomAdminRouter) InitRoomAdminRouter(privateGroup *gin.RouterGroup) {
 		sessionRead.GET("list", roomAdminApi.SessionList)
 		sessionRead.GET("detail", roomAdminApi.SessionDetail)
 		sessionWrite.POST("end", roomAdminApi.EndSession)
+		sessionWrite.POST("confirm-media-stopped", middleware.RequireAuthority(888), roomAdminApi.ConfirmMediaStopped)
 	}
 }

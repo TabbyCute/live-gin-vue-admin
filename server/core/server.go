@@ -12,13 +12,6 @@ import (
 )
 
 func RunServer() {
-	if global.GVA_CONFIG.System.UseRedis {
-		initialize.Redis()
-		if global.GVA_CONFIG.System.UseMultipoint {
-			initialize.RedisList()
-		}
-	}
-
 	if global.GVA_CONFIG.System.UseMongo {
 		if err := initialize.Mongo.Initialization(); err != nil {
 			zap.L().Error(fmt.Sprintf("%+v", err))

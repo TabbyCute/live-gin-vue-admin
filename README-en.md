@@ -1,319 +1,333 @@
+# 后端本地打包与多环境部署
 
-<div align=center>
-<img src="http://qmplusimg.henrongyi.top/gvalogo.jpg" width="300" height="300" />
-</div>
-<div align=center>
-<img src="https://img.shields.io/badge/golang-1.18-blue"/>
-<img src="https://img.shields.io/badge/gin-1.9.1-lightBlue"/>
-<img src="https://img.shields.io/badge/vue-3.3.4-brightgreen"/>
-<img src="https://img.shields.io/badge/element--plus-2.3.8-green"/>
-<img src="https://img.shields.io/badge/gorm-1.25.2-red"/>
-</div>
+本文只介绍后端部署：在本地编译一次 Linux 二进制文件，上传到服务器后，通过不同的外部 YAML 配置文件启动正式服、测试服或其他环境。
 
-English | [简体中文](./README.md)
+同一操作系统和 CPU 架构下，所有环境共用同一个二进制文件，不需要为正式服、测试服分别编译。
 
-[gitee](https://gitee.com/pixelmax/gin-vue-admin): https://gitee.com/pixelmax/gin-vue-admin
-
-[github](https://github.com/flipped-aurora/gin-vue-admin): https://github.com/flipped-aurora/gin-vue-admin
-
-# Project Guidelines
-[Online Documentation](https://www.gin-vue-admin.com/) : https://www.gin-vue-admin.com/
-
-[From the environment to the deployment of teaching videos](https://www.bilibili.com/video/BV1fV411y7dT)
-
-[Development Steps](https://www.gin-vue-admin.com/guide/start-quickly/env.html) (Contributor:  <a href="https://github.com/LLemonGreen">LLemonGreen</a> And <a href="https://github.com/fkk0509">Fann</a>)
-
-## Live Demos
-
-- **Demo Site**: [http://demo.gin-vue-admin.com](http://demo.gin-vue-admin.com)
-- **Licensed Edition Demo**: [https://vip.gin-vue-admin.com](https://vip.gin-vue-admin.com)
-- **Demo Username**: `admin`
-- **Demo Password**: `123456`
-
-Explore the [licensed edition demo](https://vip.gin-vue-admin.com) to see the complete experience. For licensed-edition features or official commercial support, [purchase a commercial license](https://plugin.gin-vue-admin.com/license).
-
-## 1. Basic Introduction
-
-### 1.1 Project Introduction
-
-> Gin-vue-admin is a backstage management system based on [vue](https://vuejs.org) and [gin](https://gin-gonic.com), which separates the front and rear of the full stack. It integrates jwt authentication, dynamic routing, dynamic menu, casbin authentication, form generator, code generator and other functions. It provides a variety of sample files, allowing you to focus more time on business development.
-
-### 1.2 Contributing Guide
-
-Hi! Thank you for choosing gin-vue-admin.
-
-Gin-vue-admin is a full-stack (frontend and backend separation) framework for developers, designers and product managers.
-
-We are excited that you are interested in contributing to gin-vue-admin. Before submitting your contribution though, please make sure to take a moment and read through the following guidelines.
-
-#### 1.2.1 Issue Guidelines
-
-- Issues are exclusively for bug reports, feature requests and design-related topics. Other questions may be closed directly. If any questions come up when you are using Element, please hit [Gitter](https://gitter.im/element-en/Lobby) for help.
-
-- Before submitting an issue, please check if similar problems have already been issued.
-
-#### 1.2.2 Pull Request Guidelines
-
-- Fork this repository to your own account. Do not create branches here.
-
-- Commit info should be formatted as `[File Name]: Info about commit.` (e.g. `README.md: Fix xxx bug`)
-
-- <font color=red>Make sure PRs are created to `develop` branch instead of `master` branch.</font>
-
-- If your PR fixes a bug, please provide a description about the related bug.
-
-- Merging a PR takes two maintainers: one approves the changes after reviewing, and then the other reviews and merges.
-
-### 1.3 Version list
-
-- master: 2.0 code, for prod
-- develop: 2.0 dev code, for test
-- [gin-vue-admin_v2_dev](https://github.com/flipped-aurora/gin-vue-admin/tree/gin-vue-admin_v2_dev) (v2.0 [GormV1](https://v1.gorm.io) Stable branch)
-- [gva_gormv2_dev](https://github.com/flipped-aurora/gin-vue-admin/tree/gva_gormv2_dev) (v2.0 [GormV2](https://v2.gorm.io) Development branch)
-
-## 2. Getting started
-
-```
-- node version > v8.6.0
-- golang version >= v1.14
-- IDE recommendation: Goland
-- initialization project: different versions of the database are not initialized. See synonyms at initialization https://www.gin-vue-admin.com/docs/first
-- Replace the Qiniuyun public key, private key, warehouse name and default url address in the project to avoid data confusion in the test file.
+```text
+同一个 tb-live-server
+├── -c /etc/tb-live/config.production.yaml
+├── -c /etc/tb-live/config.testing.yaml
+└── -c /etc/tb-live/config.staging.yaml
 ```
 
-### 2.1 server project
+## 1. 确认服务器架构
 
-use `Goland` And other editing tools，open server catalogue，You can't open it. `gin-vue-admin` root directory
+先在本地查询目标服务器的 CPU 架构：
 
 ```bash
-# clone the project
-git clone https://github.com/flipped-aurora/gin-vue-admin.git
-
-# open server catalogue
-cd server
-
-# use go mod And install the go dependency package
-go generate
-
-# Compile 
-go build -o server main.go (windows the compile command is go build -o server.exe main.go )
-
-# Run binary
-./server (windows The run command is server.exe)
+ssh deploy@your-server 'uname -m'
 ```
 
-### 2.1 web project
+对应关系：
+
+| 服务器返回值 | Go 编译参数 |
+|---|---|
+| `x86_64` | `GOARCH=amd64` |
+| `aarch64` 或 `arm64` | `GOARCH=arm64` |
+
+不同 CPU 架构不能共用同一个二进制文件。如果所有服务器架构一致，只需构建一次。
+
+## 2. 在本地构建后端
+
+项目当前使用 Go `1.24.x`。在项目根目录执行：
 
 ```bash
-# enter the project directory
-cd web
+cd /path/to/live-gin-vue-admin
 
-# install dependency
-npm install
+export TARGET_ARCH=amd64
+export RELEASE_ID="$(date +%Y%m%d%H%M%S)"
 
-# develop
-npm run serve
+mkdir -p release
+
+cd server
+go mod download
+
+CGO_ENABLED=0 GOOS=linux GOARCH="$TARGET_ARCH" \
+  go build -trimpath \
+  -o "../release/tb-live-server-$RELEASE_ID-linux-$TARGET_ARCH" .
 ```
 
-### 2.2 Server
+ARM64 服务器请将 `TARGET_ARCH` 改为 `arm64`。
+
+该命令只生成一个后端二进制文件，环境配置不会编译进二进制。
+
+这里保留 `-trimpath`，用于移除构建机器上的本地绝对路径；不使用 `-ldflags="-s -w"`，从而保留更完整的符号表和 DWARF 调试信息，方便通过 Delve、GDB 或 core dump 排查生产问题。该构建仍会使用 Go 默认的编译优化，不是关闭优化的调试构建。
+
+在 macOS 上可以检查文件类型和生成校验值：
 
 ```bash
-# using go.mod
+cd /path/to/live-gin-vue-admin/release
 
-# install go modules
-go list (go mod tidy)
-
-# build the server
-go build
+file "tb-live-server-$RELEASE_ID-linux-$TARGET_ARCH"
+shasum -a 256 "tb-live-server-$RELEASE_ID-linux-$TARGET_ARCH" \
+  > "tb-live-server-$RELEASE_ID-linux-$TARGET_ARCH.sha256"
 ```
 
-### 2.3 API docs auto-generation using swagger
+不要尝试在 macOS 或 Windows 上直接运行 Linux 二进制文件。
 
-#### 2.3.1 install swagger 
+## 3. 准备各环境的配置文件
 
-##### (1) Using VPN or outside mainland China
-````
-go get -u github.com/swaggo/swag/cmd/swag
-````
+可以以 `server/config.prod.yaml` 或 `server/config.dev.yaml` 为模板，在本地分别准备：
 
-##### (2) In mainland China
-
-In mainland China, access to go.org/x is prohibited，we recommend [goproxy.io](https://goproxy.io/zh/) or [goproxy.cn](https://goproxy.cn)
-
-````bash
-# If you are using a version of Go 1.13 - 1.15 Need to set up manually GO111MODULE=on, The opening mode is as follows, If your Go version is 1.16 ~ Latest edition You can ignore the following step one
-# Step one、Enable Go Modules Function
-go env -w GO111MODULE=on 
-# Step two、Configuration GOPROXY Environment variable
-go env -w GOPROXY=https://goproxy.cn,https://goproxy.io,direct
-
-# If you dislike trouble,You can use the go generate Automatically execute code before compilation, But this can't be used command line terminal of `Goland` or `Vscode` 
-cd server
-go generate -run "go env -w .*?"
-
-# Use the following command to download swag
-go get -u github.com/swaggo/swag/cmd/swag
-````
-
-#### 2.3.2 API docs generation
-
-````
-cd server
-swag init
-````
-
-> After executing the above command，server directory will appear in the docs folder `docs.go`, `swagger.json`, `swagger.yaml` Three file updates，After starting the go service, type in the browser [http://localhost:8888/swagger/index.html](http://localhost:8888/swagger/index.html) You can view swagger document
-
-
-## 3. Technical selection
-
-- Frontend: using [Element](https://github.com/ElemeFE/element) based on [Vue](https://vuejs.org)，to code the page.
-- Backend: using [Gin](https://gin-gonic.com/) to quickly build basic RESTful API. [Gin](https://gin-gonic.com/)is a web framework written in Go (Golang).
-- DB: `MySql`(5.6.44)，using [gorm](http://gorm.io)` to implement data manipulation, added support for SQLite databases.
-- Cache: using `Redis` to implement the recording of the JWT token of the currently active user and implement the multi-login restriction.
-- API: using Swagger to auto generate APIs docs。
-- Config: using [fsnotify](https://github.com/fsnotify/fsnotify) and [viper](https://github.com/spf13/viper) to implement `yaml` config file。
-- Log: using [zap](https://github.com/uber-go/zap) record logs。
-
-## 4. Project Architecture
-
-### 4.1 Architecture Diagram
-
-![Architecture diagram](http://qmplusimg.henrongyi.top/gva/gin-vue-admin.png)
-
-### 4.2 Front-end Detailed Design Diagram (Contributor: <a href="https://github.com/baobeisuper">baobeisuper</a>)
-
-![Front-end Detailed Design Diagram](http://qmplusimg.henrongyi.top/naotu.png)
-
-### 4.3 Project Layout
-
-```
-    ├── server
-        ├── api             (api entrance)
-        │   └── v1          (v1 version interface)
-        ├── config          (configuration package)
-        ├── core            (core document)
-        ├── docs            (swagger document directory)
-        ├── global          (global object)                    
-        ├── initialize      (initialization)                        
-        │   └── internal    (initialize internal function)                            
-        ├── middleware      (middleware layer)                        
-        ├── model           (model layer)                    
-        │   ├── request     (input parameter structure)                        
-        │   └── response    (out-of-parameter structure)                            
-        ├── packfile        (static file packaging)                        
-        ├── resource        (static resource folder)                        
-        │   ├── excel       (excel import and export default path)                        
-        │   ├── page        (form generator)                        
-        │   └── template    (template)                            
-        ├── router          (routing layer)                    
-        ├── service         (service layer)                    
-        ├── source          (source layer)                    
-        └── utils           (tool kit)                    
-            ├── timer       (timer interface encapsulation)                        
-            └── upload      (oss interface encapsulation)  
-            
-    └─web            （frontend）
-        ├─public        （deploy templates）
-        └─src           （source code）
-            ├─api       （frontend APIs）
-            ├─assets	（static files）
-            ├─components（components）
-            ├─router	（frontend routers）
-            ├─store     （vuex state management）
-            ├─style     （common styles）
-            ├─utils     （frontend common utilitie）
-            └─view      （pages）
-
+```text
+config.production.yaml
+config.testing.yaml
+config.staging.yaml
 ```
 
-## 5. Features
+配置文件不应打进二进制，也不要提交包含真实密码和密钥的生产配置到 Git。
 
-- Authority management: Authority management based on `jwt` and `casbin`. 
-- File upload and download: implement file upload operations based on `Qiniuyun', `Aliyun 'and `Tencent Cloud` (please develop your own application for each platform corresponding to `token` or `key` ).
-- Pagination Encapsulation：The frontend uses `mixins` to encapsulate paging, and the paging method can call `mixins` .
-- User management: The system administrator assigns user roles and role permissions.
-- Role management: Create the main object of permission control, and then assign different API permissions and menu permissions to the role.
-- Menu management: User dynamic menu configuration implementation, assigning different menus to different roles.
-- API management: Different users can call different API permissions.
-- Configuration management: the configuration file can be modified in the foreground (this feature is not available in the online experience site).
-- Conditional search: Add an example of conditional search.
-- Restful example: You can see sample APIs in user management module.
-  - Front-end file reference: [web/src/view/superAdmin/api/api.vue](https://github.com/flipped-aurora/gin-vue-admin/blob/master/web/src/view/superAdmin/api/api.vue).
-  - Stage reference: [server/router/sys_api.go](https://github.com/flipped-aurora/gin-vue-admin/blob/master/server/router/sys_api.go).
-- Multi-login restriction: Change `user-multipoint` to true in `system` in the active environment file (`config.dev.yaml` or `config.prod.yaml`; you need to configure Redis yourself).
-- Upload file by chunk：Provides examples of file upload and large file upload by chunk.
-- Form Builder：With the help of [@form-generator](https://github.com/JakHuang/form-generator).
-- Code generator: Providing backend with basic logic and simple curd code generator.
+如果多个实例同时运行在同一台服务器上，每份配置至少需要检查以下内容：
 
-## 6. Knowledge base
+- `system.addr`：每个实例必须使用不同端口，例如正式服 `8888`、测试服 `8889`。
+- `system.router-prefix`：根据实际网关路由设置，例如 `/api`。
+- `mysql`：使用对应环境的数据库地址、账号、密码和数据库名。
+- `redis`：使用对应环境的 Redis；共用 Redis 时至少隔离数据库编号和业务数据。
+- `jwt.signing-key`、`jwt-app.signing-key`：使用安全密钥，并确保两者不同。
+- `zap.director`：使用不同日志目录，例如 `log/production` 和 `log/testing`。
+- `local.path`、`local.store-path`：使用不同上传目录，例如 `uploads/production` 和 `uploads/testing`。
+- `live.publish-token-key` 和 `live.srs`：填写对应环境的直播密钥及 SRS 地址。
+- `live.log-srs-hook-raw-body`：只在排查 SRS 回调时临时开启；原始 publish 参数可能包含 `pt` 凭据。
+- `system.disable-auto-migrate`：正式环境通常设置为 `true`，数据库变更应经过审核后单独执行。
 
-### 6.1 Team blog
+示例目录和端口：
 
-> https://www.yuque.com/flipped-aurora
->
->There are video courses about frontend framework in our blo. If you think the project is helpful to you, you can add my personal WeChat:shouzi_1994，your comments is welcomed。
+| 环境 | 配置文件 | 后端端口 | 日志目录 | 上传目录 |
+|---|---|---:|---|---|
+| 正式服 | `config.production.yaml` | `8888` | `log/production` | `uploads/production` |
+| 测试服 | `config.testing.yaml` | `8889` | `log/testing` | `uploads/testing` |
+| 预发布 | `config.staging.yaml` | `8890` | `log/staging` | `uploads/staging` |
 
-### 6.2 Video courses
+## 4. 上传二进制和配置文件
 
-(1) Development environment course
+在本地执行：
 
-> Bilibili：https://www.bilibili.com/video/BV1Fg4y187Bw/
+```bash
+cd /path/to/live-gin-vue-admin/release
 
-(2) Template course
+scp "tb-live-server-$RELEASE_ID-linux-$TARGET_ARCH" \
+  "tb-live-server-$RELEASE_ID-linux-$TARGET_ARCH.sha256" \
+  deploy@your-server:/tmp/
 
-> Bilibili：https://www.bilibili.com/video/BV16K4y1r7BD/
+scp /path/to/config.production.yaml \
+  /path/to/config.testing.yaml \
+  /path/to/config.staging.yaml \
+  deploy@your-server:/tmp/
+```
 
-(3) 2.0 version introduction and development experience
+如果没有预发布环境，可以从命令中去掉 `config.staging.yaml`。
 
-> Bilibili：https://www.bilibili.com/video/BV1aV411d7Gm#reply2831798461
+## 5. 在服务器上安装
 
-(4) Golang basic course
+登录服务器：
 
-> https://space.bilibili.com/322210472/channel/detail?cid=108884
+```bash
+ssh deploy@your-server
+```
 
-(5) gin frame basic teaching
+设置本次发布参数，并校验二进制：
 
-> bilibili：https://space.bilibili.com/322210472/channel/detail?cid=126418&ctype=0
+```bash
+export RELEASE_ID=<release-id>
+export TARGET_ARCH=<amd64-or-arm64>
 
-(6) gin-vue-admin version update introduction video
-> bilibili：https://space.bilibili.com/322210472/channel/detail?cid=126418&ctype=0
+cd /tmp
+sha256sum -c "tb-live-server-$RELEASE_ID-linux-$TARGET_ARCH.sha256"
+file "tb-live-server-$RELEASE_ID-linux-$TARGET_ARCH"
+```
 
-## 7.Contacts
+创建服务用户和目录：
 
-### 7.1 Groups
+```bash
+sudo useradd --system --home /opt/tb-live --shell /usr/sbin/nologin tb-live 2>/dev/null || true
 
-#### QQ group: 622360840
+sudo install -d -m 0755 /opt/tb-live/bin
+sudo install -d -m 0755 /opt/tb-live/server
+sudo install -d -m 0750 -o tb-live -g tb-live /opt/tb-live/server/log
+sudo install -d -m 0750 -o tb-live -g tb-live /opt/tb-live/server/uploads
+sudo install -d -m 0750 -o root -g tb-live /etc/tb-live
+```
 
-| QQ group |d
-|  :---:  |
-| <img src="http://qmplusimg.henrongyi.top/qq.jpg" width="180"/> |
+先限制上传到临时目录中的配置文件权限：
 
+```bash
+chmod 600 /tmp/config.production.yaml
+chmod 600 /tmp/config.testing.yaml
+chmod 600 /tmp/config.staging.yaml
+```
 
-#### Wechat group: comment "加入gin-vue-admin交流群"
+安装这一个公共二进制文件：
 
-| Wechat |
-|  :---:  | 
-| <img width="150" src="http://qmplusimg.henrongyi.top/qrjjz.png"> 
+```bash
+sudo install -m 0755 -o root -g root \
+  "/tmp/tb-live-server-$RELEASE_ID-linux-$TARGET_ARCH" \
+  /opt/tb-live/bin/tb-live-server
+```
 
-#### [About Us](https://www.gin-vue-admin.com/about/join.html)
+安装各环境配置：
 
-## 8. Contributors
+```bash
+sudo install -m 0640 -o root -g tb-live \
+  /tmp/config.production.yaml \
+  /etc/tb-live/config.production.yaml
 
-Thank you for considering your contribution to gin-vue-admin!
+sudo install -m 0640 -o root -g tb-live \
+  /tmp/config.testing.yaml \
+  /etc/tb-live/config.testing.yaml
 
-<a href="https://openomy.app/github/flipped-aurora/gin-vue-admin" target="_blank" style="display: block; width: 100%;" align="center">
-  <img src="https://openomy.app/svg?repo=flipped-aurora/gin-vue-admin&chart=bubble&latestMonth=3" target="_blank" alt="Contribution Leaderboard" style="display: block; width: 100%;" />
- </a>
+sudo install -m 0640 -o root -g tb-live \
+  /tmp/config.staging.yaml \
+  /etc/tb-live/config.staging.yaml
+```
 
-<a href="https://github.com/flipped-aurora/gin-vue-admin/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=flipped-aurora/gin-vue-admin" />
-</a>
+如果需要使用后台的代码生成或模板相关功能，还应将仓库中的 `server/resource` 目录部署为 `/opt/tb-live/server/resource`。普通环境仍然共用同一个二进制文件。
 
-## 9. Donate
+## 6. 手动验证指定配置文件
 
-If you find this project useful, you can buy author a glass of juice :tropical_drink: [here](https://www.gin-vue-admin.com/coffee/index.html)
+后端通过 `-c` 参数选择配置文件，且该参数的优先级最高。
 
-## 10. Commercial considerations
+例如，用测试服配置启动同一个二进制：
 
-This project is licensed under the Apache License 2.0. When using, modifying, or distributing it, follow the `LICENSE` file and retain all applicable notices required by the license.
+```bash
+cd /opt/tb-live/server
+sudo -u tb-live /opt/tb-live/bin/tb-live-server \
+  -c /etc/tb-live/config.testing.yaml
+```
+
+启动日志中应出现实际加载的配置路径。完成手动验证后按 `Ctrl+C` 停止，再配置 systemd 常驻运行。
+
+## 7. 使用 systemd 启动多个环境
+
+创建模板服务 `/etc/systemd/system/tb-live@.service`：
+
+```ini
+[Unit]
+Description=TB Live backend (%i)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tb-live
+Group=tb-live
+WorkingDirectory=/opt/tb-live/server
+Environment=GIN_MODE=release
+ExecStart=/opt/tb-live/bin/tb-live-server -c /etc/tb-live/config.%i.yaml
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
+```
+
+这里的 `%i` 是服务实例名：
+
+| systemd 服务 | 实际加载的配置文件 |
+|---|---|
+| `tb-live@production` | `/etc/tb-live/config.production.yaml` |
+| `tb-live@testing` | `/etc/tb-live/config.testing.yaml` |
+| `tb-live@staging` | `/etc/tb-live/config.staging.yaml` |
+
+加载 systemd 配置：
+
+```bash
+sudo systemctl daemon-reload
+```
+
+按需启动并设置开机自启：
+
+```bash
+sudo systemctl enable --now tb-live@production
+sudo systemctl enable --now tb-live@testing
+sudo systemctl enable --now tb-live@staging
+```
+
+不需要哪个环境，就不要启动对应实例。
+
+查看状态和日志：
+
+```bash
+sudo systemctl status tb-live@production --no-pager
+sudo journalctl -u tb-live@production -n 100 --no-pager
+
+sudo systemctl status tb-live@testing --no-pager
+sudo journalctl -u tb-live@testing -n 100 --no-pager
+```
+
+虽然测试服使用测试配置，但 `GIN_MODE=release` 仍然是合适的服务器运行模式；具体环境参数由 `-c` 指定的 YAML 文件决定。
+
+## 8. 验证不同环境
+
+以下端口仅对应前文示例：
+
+```bash
+curl --fail http://127.0.0.1:8888/api/health
+curl --fail http://127.0.0.1:8889/api/health
+curl --fail http://127.0.0.1:8890/api/health
+```
+
+如果配置中的 `system.router-prefix` 为空，健康检查地址应改为 `/health`。
+
+还应确认：
+
+- 每个 systemd 实例都加载了正确的配置文件。
+- 每个实例监听不同端口，没有端口冲突。
+- 数据库、Redis、SRS、日志和上传目录均指向对应环境。
+- 后端端口只允许本机网关或受信任网络访问。
+
+## 9. 更新公共二进制
+
+发布新版本时，本地仍然只构建一个二进制。上传并校验后，先写入临时文件，再原子替换公共文件：
+
+```bash
+sudo install -m 0755 -o root -g root \
+  "/tmp/tb-live-server-$RELEASE_ID-linux-$TARGET_ARCH" \
+  /opt/tb-live/bin/tb-live-server.new
+
+sudo mv -f \
+  /opt/tb-live/bin/tb-live-server.new \
+  /opt/tb-live/bin/tb-live-server
+```
+
+然后重启需要切换到新版本的实例：
+
+```bash
+sudo systemctl restart tb-live@production
+sudo systemctl restart tb-live@testing
+sudo systemctl restart tb-live@staging
+```
+
+Linux 进程启动后会继续使用内存中已加载的旧程序，因此替换文件后，必须重启对应实例才能使用新版本。
+
+配置文件发生变化后也建议重启对应服务：
+
+```bash
+sudo systemctl restart tb-live@production
+```
+
+## 10. 常用命令
+
+```bash
+# 正式服
+sudo systemctl start tb-live@production
+sudo systemctl stop tb-live@production
+sudo systemctl restart tb-live@production
+sudo systemctl status tb-live@production --no-pager
+
+# 测试服
+sudo systemctl restart tb-live@testing
+sudo journalctl -u tb-live@testing -f
+
+# 确认所有实例都使用同一个二进制路径
+systemctl show tb-live@production -p ExecStart
+systemctl show tb-live@testing -p ExecStart
+```
+
+最终只需要维护：
+
+- 一个公共后端二进制：`/opt/tb-live/bin/tb-live-server`
+- 多个外部配置文件：`/etc/tb-live/config.<环境>.yaml`
+- 一个 systemd 模板服务：`tb-live@.service`

@@ -19,10 +19,11 @@ type LiveRoomOwnerStatusReq struct {
 }
 
 type LiveSessionPrepareReq struct {
-	CategoryId uint64 `json:"categoryId"`
-	Title      string `json:"title" binding:"required,max=128"`
-	CoverURL   string `json:"coverUrl" binding:"omitempty,max=500"`
-	Visibility *uint8 `json:"visibility" binding:"required,oneof=0 1 2"`
+	CategoryId     uint64 `json:"categoryId"`
+	Title          string `json:"title" binding:"required,max=128"`
+	CoverURL       string `json:"coverUrl" binding:"omitempty,max=500"`
+	Visibility     *uint8 `json:"visibility" binding:"required,oneof=0 1 2"`
+	IdempotencyKey string `json:"-" swaggerignore:"true"`
 }
 
 type LiveSessionHistoryReq struct {
@@ -142,4 +143,11 @@ type LiveSessionAdminDetailReq struct {
 type LiveSessionAdminEndReq struct {
 	SessionID uint   `json:"sessionId" binding:"required,gt=0"`
 	Reason    string `json:"reason" binding:"required,max=500"`
+}
+
+type LiveSessionConfirmMediaStoppedReq struct {
+	SessionID              uint    `json:"sessionId" binding:"required,gt=0"`
+	ExpectedPublisherEpoch *uint64 `json:"expectedPublisherEpoch" binding:"required"`
+	Reason                 string  `json:"reason" binding:"required,min=5,max=500"`
+	Evidence               string  `json:"evidence" binding:"required,min=5,max=1000"`
 }

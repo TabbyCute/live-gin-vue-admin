@@ -22,6 +22,7 @@ yarn-error.log*
 *.sw?
 
 rm_file/
+/release/
 /server/log/
 /server/gva
 /server/server

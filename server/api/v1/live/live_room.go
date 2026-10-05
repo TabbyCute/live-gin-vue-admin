@@ -98,10 +98,12 @@ func (a *RoomApi) UpdateOwnerStatus(c *gin.Context) {
 // @Summary 创建一场待推流的直播场次
 // @Description 实时校验主播开播资格和直播间状态；返回一次性推流凭证，数据库仅保存其哈希。
 // @Description 同一直播间在准备中、直播中、结束中最多只能有一个场次，由数据库唯一约束兜底。
+// @Description 建议客户端为一次准备操作生成 Idempotency-Key，并在网络超时重试时复用；服务端会返回完全相同的推流地址。
 // @Security AppBearerAuth
 // @Accept application/json
 // @Produce application/json
 // @Param data body liveReq.LiveSessionPrepareReq true "本场标题、封面、分类和可见范围"
+// @Param Idempotency-Key header string false "8到128位幂等键；同一次操作重试必须保持不变"
 // @Success 200 {object} response.Response{data=liveRes.LiveSessionPrepareResp}
 // @Router /v1/app/live/room/session/prepare [post]
 func (a *RoomApi) Prepare(c *gin.Context) {
@@ -114,12 +116,36 @@ func (a *RoomApi) Prepare(c *gin.Context) {
 		response.FailWithMessage("开播参数错误: "+err.Error(), c)
 		return
 	}
+	req.IdempotencyKey = c.GetHeader("Idempotency-Key")
 	result, err := roomService.PrepareSession(userID, req)
 	if err != nil {
 		respondLiveRoomError(c, "创建直播场次失败", err)
 		return
 	}
 	response.OkWithDetailed(result, "场次已准备", c)
+}
+
+// RefreshPushURL
+// @Tags LiveRoomApp
+// @Summary 为尚未开始推流的准备场次重新签发推流地址
+// @Description 仅允许当前主播自己的 Preparing 场次，且尚未收到 SRS on_publish；不会延长 prepareDeadlineAt，旧地址立即失效。
+// @Description Idempotency-Key 必填；相同键重试会返回完全相同的推流地址。每场累计签发次数受 live.push-url-refresh-limit 限制。
+// @Security AppBearerAuth
+// @Produce application/json
+// @Param Idempotency-Key header string true "8到128位幂等键；同一次刷新重试必须保持不变"
+// @Success 200 {object} response.Response{data=liveRes.LiveSessionPrepareResp}
+// @Router /v1/app/live/room/session/push-url/refresh [post]
+func (a *RoomApi) RefreshPushURL(c *gin.Context) {
+	userID, ok := appUserID(c)
+	if !ok {
+		return
+	}
+	result, err := roomService.RefreshOwnerPushURL(userID, c.GetHeader("Idempotency-Key"))
+	if err != nil {
+		respondLiveRoomError(c, "重新签发推流地址失败", err)
+		return
+	}
+	response.OkWithDetailed(result, "推流地址已签发", c)
 }
 
 // Current
@@ -243,6 +269,10 @@ func respondLiveRoomError(c *gin.Context, operation string, err error) {
 		liveService.ErrLiveRoomStatusReasonRequired,
 		liveService.ErrLiveSessionNotFound, liveService.ErrLiveSessionStateInvalid,
 		liveService.ErrLivePublishTokenInvalid, liveService.ErrLivePublishTokenConfigInvalid,
+		liveService.ErrLiveIdempotencyKeyInvalid, liveService.ErrLiveIdempotencyUnavailable,
+		liveService.ErrLiveIdempotencyConflict,
+		liveService.ErrLivePushURLRefreshLimit,
+		liveService.ErrLiveManualConfirmationTooEarly,
 		liveService.ErrAnchorNotFound, liveService.ErrLiveCategoryNotFound,
 		liveService.ErrLiveCategoryParentDisabled,
 	}

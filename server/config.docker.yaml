@@ -11,24 +11,82 @@ jwt-app:
     signing-key: qmPlus-live-app-key
     expires-time: 30d
     issuer: qmPlus-live-app
-# live room lifecycle configuration
+# 直播完整生命周期配置
 live:
+    # 控制面按1万并发主播规划所有生命周期任务的单轮容量。
+    max-concurrent-streams: 10000
+    # 确认断流后允许主播重连的秒数；值越大越容忍弱网，但观众看到“直播中”的时间也越长。
     reconnect-window-seconds: 20
+    # 取得推流地址后等待首次有效推流的秒数；超时会取消本场准备并释放直播间。
     prepare-timeout-seconds: 120
+    # 收到on_publish后等待SRS返回有效视频宽高的最长秒数；超时按“准备了但未开播”处理。
+    stream-ready-timeout-seconds: 15
+    # 等待视频宽高任务的数据库扫描周期；值越小开播状态更新越及时。
+    stream-ready-scan-interval-seconds: 1
+    # 未取得有效宽高时的首次重试间隔，后续按指数退避。
+    stream-ready-retry-base-seconds: 1
+    # 等待宽高时两次SRS查询的最大间隔，防止退避时间无限变长。
+    stream-ready-retry-max-seconds: 4
+    # 正式直播中每隔多少秒批量查询一次SRS流列表；不是每个直播间单独请求。
+    stream-reconcile-interval-seconds: 5
+    # SRS查询成功但连续多少次缺少当前流才进入重连窗口；API失败不累计。3次配合5秒间隔约15秒确认异常。
+    stream-reconcile-missing-threshold: 3
+    stream-ready-batch-size: 1000
+    stream-ready-max-batches-per-run: 10
+    state-transition-concurrency: 16
+    stream-reconcile-batch-size: 1000
+    stream-reconcile-max-batches-per-run: 10
+    srs-snapshot-cache-milliseconds: 1500
+    # 当前Docker示例关闭了system.use-redis，因此默认不开Leader；多实例部署时必须同时启用Redis和此项。
+    task-leader-enabled: false
+    task-leader-fail-open: true
+    task-leader-lease-seconds: 60
+    # 推流凭证pt有效秒数；需覆盖最长直播时长和重连，否则超长直播断线后无法重新推流。
     push-token-seconds: 86400
+    # pt加解密密钥；部署前必须填写强随机值，多实例必须一致，禁止与JWT密钥复用。
     publish-token-key: ""
+    # 每场首次prepare之外最多重新签发5次推流地址；相同Idempotency-Key重试只重放缓存，不计次数。
+    push-url-refresh-limit: 5
+    # 准备超时、重连超时和结束重试的扫描周期；数据库状态扫描与SRS请求相互隔离。
     end-scan-interval-seconds: 5
-    end-scan-batch-size: 100
+    # 准备超时和重连超时的单批大小；整轮连续10批覆盖1万路。
+    end-scan-batch-size: 1000
+    end-scan-max-batches-per-run: 10
+    end-stop-batch-size: 1000
+    end-stop-max-batches-per-run: 10
+    # 批量快照后同时执行SRS断流的最大请求数；SRS故障时仍只占固定数量连接和goroutine，代码上限64。
+    end-stop-concurrency: 8
+    # SRS停止推流失败后的首次重试间隔。
     end-retry-base-seconds: 5
+    # SRS停止推流失败后指数退避的最大间隔；失败期间场次保持“结束中”。
     end-retry-max-seconds: 60
-    # SRS media server configuration
+    end-warning-seconds: 120
+    end-critical-seconds: 900
+    end-manual-retry-seconds: 300
+    # 是否记录SRS Hook原始JSON；部署环境建议关闭，开启后INFO日志会包含pt推流凭证。
+    log-srs-hook-raw-body: false
+    # 单个SRS Hook请求体最大字节数；超出返回HTTP 413，代码硬上限1MiB。
+    srs-hook-max-body-bytes: 65536
+    # 开启原始Hook日志时最多记录的请求体字节数；超出会截断，代码硬上限64KiB。
+    srs-hook-log-max-body-bytes: 4096
+    # 正式部署请通过SRS_HOOK_TOKEN环境变量提供同一高熵密钥；空值仅兼容外层严格IP白名单。
+    srs-hook-token: ""
+    # SRS媒体服务器配置
     srs:
+        # SRS应用名，必须与推流地址及srs.conf一致。
         app: ""
+        # 后端访问SRS HTTP API的地址，用于尺寸探测、持续对账和主动断流。
         http_apis: ""
+        # SRS HTTP API启用Basic Auth时填写，否则留空。
         api-username: ""
         api-password: ""
+        # 单次SRS API请求超时时间；请求失败不会累计流缺失次数。
         api-request-timeout-seconds: 3
+        snapshot-page-size: 5000
+        snapshot-max-streams: 20000
+        # 对外返回的RTMP推流基础地址，服务会自动拼接app、streamName和pt。
         push-base-url: ""
+        # 对外返回的播放基础地址，服务会自动拼接app和streamName。
         play-base-url: ""
 
 # zap logger configuration
@@ -290,13 +348,13 @@ cors:
     mode: strict-whitelist # 放行模式: allow-all, 放行全部; whitelist, 白名单模式, 来自白名单内域名的请求添加 cors 头; strict-whitelist 严格白名单模式, 白名单外的请求一律拒绝
     whitelist:
         - allow-origin: http://127.0.0.1:8080
-          allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id
+          allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id,Idempotency-Key
           allow-methods: POST, GET, OPTIONS, DELETE, PUT, PATCH
           expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At
 
           allow-credentials: true # 布尔值
         - allow-origin: http://localhost:8080
-          allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id
+          allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id,Idempotency-Key
           allow-methods: POST, GET, OPTIONS, DELETE, PUT, PATCH
           expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At
           allow-credentials: true # 布尔值

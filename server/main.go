@@ -44,6 +44,14 @@ func initializeSystem() {
 	initialize.OtherInit()
 	global.GVA_LOG = core.Zap() // 初始化zap日志库
 	zap.ReplaceGlobals(global.GVA_LOG)
+	// 直播定时任务会在注册后立即执行，并使用Redis Leader和共享SRS快照；
+	// Redis必须先于Timer就绪，避免启动补偿被误跳过。
+	if global.GVA_CONFIG.System.UseRedis {
+		initialize.Redis()
+		if global.GVA_CONFIG.System.UseMultipoint {
+			initialize.RedisList()
+		}
+	}
 	global.GVA_DB = initialize.Gorm() // gorm连接数据库
 	initialize.DBList()
 	initialize.SetupHandlers() // 注册全局函数

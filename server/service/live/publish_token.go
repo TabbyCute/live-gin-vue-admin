@@ -142,7 +142,7 @@ func decryptLivePublishToken(cfg livePublishTokenConfig, token string) (livePubl
 	if !strings.HasPrefix(token, livePublishTokenPrefix) {
 		return claims, ErrLivePublishTokenInvalid
 	}
-	sealed, err := base64.RawURLEncoding.DecodeString(strings.TrimPrefix(token, livePublishTokenPrefix))
+	sealed, err := base64.RawURLEncoding.Strict().DecodeString(strings.TrimPrefix(token, livePublishTokenPrefix))
 	if err != nil {
 		return claims, ErrLivePublishTokenInvalid
 	}
