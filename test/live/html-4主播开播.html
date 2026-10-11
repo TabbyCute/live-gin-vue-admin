@@ -83,9 +83,12 @@
 
   <fieldset>
     <legend>SRS 回调模拟（仅本地联调）</legend>
+    <label>SRS Hook Token（不会保存）
+      <input id="hookToken" type="password" autocomplete="off" value="local-srs-hook-change-me-32bytes-minimum">
+    </label>
     <button id="hookPublish">模拟 on_publish</button>
     <button id="hookUnpublish">模拟 on_unpublish</button>
-    <small>正式环境由 SRS 调用，回调来源由部署层 IP 白名单保护；本地页面不发送额外鉴权请求头。若通过生产入口测试，浏览器出口 IP 也必须临时加入测试白名单。</small>
+    <small>正式环境由 SRS 调用，回调必须同时通过共享密钥认证和部署层 IP 白名单。若通过生产入口测试，浏览器出口 IP 也必须临时加入测试白名单。</small>
   </fieldset>
 
   <p id="status"></p>
@@ -224,10 +227,12 @@
     function hookRequest(path) {
       const isUnpublish = path.endsWith('/unpublish');
       if (!value('streamName')) throw new Error('请先准备场次或填写 streamName');
+      if (!value('hookToken')) throw new Error('请填写 SRS Hook Token');
       if (!isUnpublish && !value('publishToken')) throw new Error('请先准备开播，取得本次 publishToken');
       return request(path, {
         auth: false,
         method: 'POST',
+        headers: { 'X-SRS-Hook-Token': value('hookToken') },
         body: JSON.stringify({
           server_id: 'browser-srs-1',
           action: isUnpublish ? 'on_unpublish' : 'on_publish',

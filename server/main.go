@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
 	"tb_live_module/core"
@@ -41,6 +43,10 @@ func main() {
 // 提取为单独函数以便于系统重载时调用
 func initializeSystem() {
 	global.GVA_VP = core.Viper() // 初始化Viper
+	// Hook认证必须失败关闭，并在连接数据库、Redis或启动定时任务前冻结密钥快照。
+	if err := initialize.InitializeLiveSecurity(); err != nil {
+		panic(fmt.Errorf("初始化直播安全配置失败: %w", err))
+	}
 	initialize.OtherInit()
 	global.GVA_LOG = core.Zap() // 初始化zap日志库
 	zap.ReplaceGlobals(global.GVA_LOG)

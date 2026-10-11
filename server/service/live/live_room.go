@@ -67,12 +67,15 @@ var (
 	ErrLivePushURLRefreshLimit        = errors.New("本场推流地址重新签发次数已达上限")
 	ErrLiveTaskCapacityExceeded       = errors.New("直播定时任务待处理数量超过单轮容量")
 	ErrLiveManualConfirmationTooEarly = errors.New("SRS尚未达到严重降级或场次尚未进入人工关注状态")
+	errLiveStopLeaseLost              = errors.New("直播场次停止任务租约已丢失")
 )
 
 type RoomService struct {
-	srsController      srsclient.Controller
-	prepareResultCache livePrepareResultCache
-	snapshotCache      livePublisherSnapshotCache
+	srsController              srsclient.Controller
+	prepareResultCache         livePrepareResultCache
+	prepareCacheOnce           sync.Once
+	resolvedPrepareResultCache livePrepareResultCache
+	snapshotCache              livePublisherSnapshotCache
 }
 
 type publicStreamSnapshot struct {
@@ -244,7 +247,7 @@ func (s *RoomService) PrepareSession(userID uint64, req liveReq.LiveSessionPrepa
 			ErrLivePublishTokenConfigInvalid,
 		)
 	}
-	idempotencyKey, err := normalizeLiveIdempotencyKey(req.IdempotencyKey, false)
+	idempotencyKey, err := normalizeLiveIdempotencyKey(req.IdempotencyKey, true)
 	if err != nil {
 		return liveRes.LiveSessionPrepareResp{}, err
 	}
@@ -285,10 +288,24 @@ func (s *RoomService) PrepareSession(userID uint64, req liveReq.LiveSessionPrepa
 			var current liveModel.LiveSession
 			lookupErr := tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&current, room.CurrentSessionId).Error
 			if lookupErr == nil && isActiveSession(current.Status) {
-				if idempotencyKey != "" &&
-					(current.Status == liveModel.LiveSessionPreparing || current.Status == liveModel.LiveSessionLiving) &&
+				if (current.Status == liveModel.LiveSessionPreparing || current.Status == liveModel.LiveSessionLiving) &&
+					secureStringEqual(
+						current.PublishIdempotencyKeyHash,
+						livePrepareIdempotencyHash(publishConfig.publishTokenKey, userID, idempotencyKey),
+					) &&
 					prepareRequestMatchesCurrentSession(req, room, current) {
 					now := time.Now()
+					persisted, ok, persistedErr := loadPersistedLivePrepareResult(
+						userID, idempotencyKey, publishConfig, room, current, now,
+					)
+					if persistedErr != nil {
+						return persistedErr
+					}
+					if ok {
+						session = current
+						result = persisted
+						return nil
+					}
 					cached, ok, cacheErr := s.loadLivePrepareResult(
 						userID, idempotencyKey, publishConfig, room, current, now,
 					)
@@ -300,7 +317,7 @@ func (s *RoomService) PrepareSession(userID uint64, req liveReq.LiveSessionPrepa
 						result = cached
 						return nil
 					}
-					// Redis键被提前淘汰时，同参数重试仍可在尚未publish的准备窗口内安全轮换凭证。
+					// 幂等缓存键被提前淘汰时，同参数且同幂等键的重试仍可在尚未publish的准备窗口内安全轮换凭证。
 					// 旧pt哈希会在同一事务中失效，且不延长prepare截止时间。
 					if current.Status == liveModel.LiveSessionPreparing &&
 						current.PrepareDeadlineAt > now.UnixMilli() && !hasSRSPublisher(current) {
@@ -340,6 +357,9 @@ func (s *RoomService) PrepareSession(userID uint64, req liveReq.LiveSessionPrepa
 			Status:                      liveModel.LiveSessionPreparing,
 			PrepareDeadlineAt:           preparedAt.Add(time.Duration(prepareTimeoutSeconds) * time.Second).UnixMilli(),
 			PublishCredentialIssueCount: 1,
+			PublishIdempotencyKeyHash: livePrepareIdempotencyHash(
+				publishConfig.publishTokenKey, userID, idempotencyKey,
+			),
 		}
 		if txErr = tx.Create(&session).Error; txErr != nil {
 			return normalizeActiveSessionError(txErr)
@@ -368,11 +388,17 @@ func (s *RoomService) PrepareSession(userID uint64, req liveReq.LiveSessionPrepa
 		if txErr = tx.Model(&liveModel.LiveRoom{}).Where("id = ?", room.ID).Updates(updates).Error; txErr != nil {
 			return txErr
 		}
-		if txErr = tx.First(&room, room.ID).Error; txErr != nil {
+		result = buildLivePrepareResponse(publishConfig, room, session, publishToken)
+		encryptedResult, encryptErr := prepareEncryptedLiveResult(userID, idempotencyKey, publishConfig, result)
+		if encryptErr != nil {
+			return encryptErr
+		}
+		if txErr = tx.Model(&liveModel.LiveSession{}).Where("id = ?", session.ID).
+			Update("publish_result_ciphertext", encryptedResult.value).Error; txErr != nil {
 			return txErr
 		}
-		result = buildLivePrepareResponse(publishConfig, room, session, publishToken)
-		return s.cacheLivePrepareResult(userID, idempotencyKey, publishConfig, result)
+		session.PublishResultCiphertext = encryptedResult.value
+		return s.storeEncryptedLivePrepareResult(encryptedResult)
 	})
 	if err != nil {
 		return liveRes.LiveSessionPrepareResp{}, normalizeRoomError(err)
@@ -591,6 +617,8 @@ func (s *RoomService) OnPublish(req liveReq.SRSHookReq) (liveRes.LiveSessionInfo
 			publishUpdates["media_state"] = liveModel.LiveMediaPublishing
 			publishUpdates["media_state_changed_at"] = now
 			publishUpdates["media_last_confirmed_at"] = now
+			// 客户端已经持有凭证并成功推流后不再需要数据库重放密文，避免历史场次持续占用空间。
+			publishUpdates["publish_result_ciphertext"] = ""
 			if session.PrepareDeadlineAt < streamReadyDeadline {
 				publishUpdates["prepare_deadline_at"] = streamReadyDeadline
 				session.PrepareDeadlineAt = streamReadyDeadline
@@ -938,7 +966,7 @@ func runLiveSessionIDWorkers(ids []uint, concurrency int, run func(uint) error) 
 
 // ProcessEndingSessions 只处理需要访问SRS的结束中场次，与准备/重连超时扫描完全隔离。
 // 有界工作池既消除逐场串行请求造成的队头阻塞，也限制SRS故障时的并发连接和goroutine数量。
-// stop_next_retry_at同时充当多实例租约；不同服务实例即使读到相同ID，也只有一个能真正调用SRS。
+// 重试时间与数据库租约彼此独立；长批次会续租，旧执行者依靠随机token不能提交结果。
 func (s *RoomService) ProcessEndingSessions(now int64) error {
 	if err := promoteEndingStallAlerts(now); err != nil {
 		return err
@@ -950,7 +978,7 @@ func (s *RoomService) ProcessEndingSessions(now int64) error {
 	maxItems := batchSize * liveEndStopMaxBatchesPerRun()
 	var endingIDs []uint
 	if err := global.GVA_DB.Model(&liveModel.LiveSession{}).
-		Where("status = ? AND stop_next_retry_at <= ?", liveModel.LiveSessionEnding, now).
+		Where("status = ? AND stop_next_retry_at <= ? AND stop_lease_until <= ?", liveModel.LiveSessionEnding, now, now).
 		Order("stop_recovery_state DESC, stop_requested_at ASC, id ASC").Limit(maxItems).Pluck("id", &endingIDs).Error; err != nil {
 		return err
 	}
@@ -1023,49 +1051,106 @@ func (s *RoomService) processEndingSessionsBatch(
 	if len(sessions) == 0 {
 		return nil
 	}
-	runErrors := make([]error, 0)
-	pending := sessions[:0]
+	claimedIDs := make([]uint, 0, len(sessions))
 	for _, session := range sessions {
+		claimedIDs = append(claimedIDs, session.ID)
+	}
+	stopCtx, cancelStop := context.WithCancel(context.Background())
+	type leaseResult struct {
+		until int64
+		err   error
+	}
+	leaseDone := make(chan leaseResult, 1)
+	go func() {
+		until, renewErr := maintainEndingSessionsLease(
+			stopCtx, claimedIDs, sessions[0].StopLeaseToken, sessions[0].StopLeaseUntil, liveStopBatchLeaseMillis(),
+		)
+		if renewErr != nil {
+			cancelStop()
+		}
+		leaseDone <- leaseResult{until: until, err: renewErr}
+	}()
+	leaseFinished := false
+	var renewedLease leaseResult
+	finishLease := func() leaseResult {
+		if leaseFinished {
+			return renewedLease
+		}
+		cancelStop()
+		renewedLease = <-leaseDone
+		leaseFinished = true
+		for index := range sessions {
+			sessions[index].StopLeaseUntil = renewedLease.until
+		}
+		return renewedLease
+	}
+	defer finishLease()
+
+	pendingIndexes := make([]int, 0, len(sessions))
+	roomIDs := make([]uint, 0, len(sessions))
+	for index, session := range sessions {
 		if mediaStopAlreadyConfirmed(session) {
-			if finalizeErr := s.finalizeSession(session.ID, observedUnixMilli(now)); finalizeErr != nil {
-				runErrors = append(runErrors, finalizeErr)
-			}
 			continue
 		}
-		pending = append(pending, session)
-	}
-	sessions = pending
-	if len(sessions) == 0 {
-		return runErrors
-	}
-	roomIDs := make([]uint, 0, len(sessions))
-	for _, session := range sessions {
+		pendingIndexes = append(pendingIndexes, index)
 		roomIDs = append(roomIDs, session.RoomId)
 	}
-	var rooms []liveModel.LiveRoom
-	if err = global.GVA_DB.Select("id", "stream_name").Where("id IN ?", roomIDs).Find(&rooms).Error; err != nil {
-		return []error{err}
+	stopErrors := make([]error, len(sessions))
+	if len(pendingIndexes) > 0 {
+		var rooms []liveModel.LiveRoom
+		if err = global.GVA_DB.Select("id", "stream_name").Where("id IN ?", roomIDs).Find(&rooms).Error; err != nil {
+			leaseState := finishLease()
+			return []error{errors.Join(err, leaseState.err)}
+		}
+		roomByID := make(map[uint]string, len(rooms))
+		for _, room := range rooms {
+			roomByID[room.ID] = room.StreamName
+		}
+		defaultApp := strings.Trim(strings.TrimSpace(global.GVA_CONFIG.Live.SRS.App), "/")
+		defaultVhost := ""
+		if pushURL, parseErr := url.Parse(strings.TrimSpace(global.GVA_CONFIG.Live.SRS.PushBaseURL)); parseErr == nil {
+			defaultVhost = pushURL.Hostname()
+		}
+		refs := make([]srsclient.StreamRef, 0, len(pendingIndexes))
+		for _, index := range pendingIndexes {
+			session := sessions[index]
+			app := strings.Trim(strings.TrimSpace(session.SRSApp), "/")
+			if app == "" {
+				app = defaultApp
+			}
+			vhost := strings.TrimSpace(session.SRSVhost)
+			if vhost == "" {
+				vhost = defaultVhost
+			}
+			refs = append(refs, srsclient.StreamRef{
+				ServerID: session.SRSServerID,
+				StreamID: session.SRSStreamID,
+				ClientID: session.SRSClientID,
+				Vhost:    vhost,
+				App:      app,
+				Stream:   roomByID[session.RoomId],
+			})
+		}
+		pendingErrors := controller.StopPublishers(stopCtx, refs, workerCount)
+		if len(pendingErrors) != len(pendingIndexes) {
+			leaseState := finishLease()
+			return []error{errors.Join(
+				fmt.Errorf("SRS批量停止结果数量错误: want=%d got=%d", len(pendingIndexes), len(pendingErrors)),
+				leaseState.err,
+			)}
+		}
+		for resultIndex, sessionIndex := range pendingIndexes {
+			stopErrors[sessionIndex] = pendingErrors[resultIndex]
+		}
 	}
-	roomByID := make(map[uint]string, len(rooms))
-	for _, room := range rooms {
-		roomByID[room.ID] = room.StreamName
+	if leaseState := finishLease(); leaseState.err != nil {
+		return []error{leaseState.err}
 	}
-	refs := make([]srsclient.StreamRef, 0, len(sessions))
-	for _, session := range sessions {
-		refs = append(refs, srsclient.StreamRef{
-			StreamID: session.SRSStreamID,
-			Vhost:    session.SRSVhost,
-			App:      session.SRSApp,
-			Stream:   roomByID[session.RoomId],
-		})
-	}
-	stopErrors := controller.StopPublishers(context.Background(), refs, workerCount)
-	if len(stopErrors) != len(sessions) {
-		return []error{fmt.Errorf("SRS批量停止结果数量错误: want=%d got=%d", len(sessions), len(stopErrors))}
-	}
+
+	runErrors := make([]error, 0)
 	var batchSRSFailure error
-	for _, stopErr := range stopErrors {
-		if stopErr != nil {
+	for _, index := range pendingIndexes {
+		if stopErr := stopErrors[index]; stopErr != nil {
 			batchSRSFailure = stopErr
 			break
 		}
@@ -1073,7 +1158,7 @@ func (s *RoomService) processEndingSessionsBatch(
 	completedObservationAt := observedUnixMilli(now)
 	if batchSRSFailure != nil {
 		_ = observeLiveSRSFailure(completedObservationAt, batchSRSFailure)
-	} else {
+	} else if len(pendingIndexes) > 0 {
 		_, _ = observeLiveSRSSuccess(srsclient.RuntimeIdentity{}, completedObservationAt)
 	}
 	byID := make(map[uint]int, len(sessions))
@@ -1092,7 +1177,7 @@ func (s *RoomService) processEndingSessionsBatch(
 			}
 			return stopErr
 		}
-		return s.finalizeSession(session.ID, completedAt)
+		return s.finalizeClaimedSession(session, completedAt)
 	})...)
 	return runErrors
 }
@@ -1104,18 +1189,23 @@ func mediaStopAlreadyConfirmed(session liveModel.LiveSession) bool {
 }
 
 func claimEndingSessionsBatch(endingIDs []uint, now int64) ([]liveModel.LiveSession, error) {
-	leaseUntil := now + liveStopBatchLeaseMillis()
+	claimAt := observedUnixMilli(now)
+	leaseUntil := claimAt + liveStopBatchLeaseMillis()
+	leaseToken, err := newLiveStopLeaseToken()
+	if err != nil {
+		return nil, err
+	}
 	dialect := global.GVA_DB.Dialector.Name()
 	if dialect == "mysql" || dialect == "postgres" {
 		var sessions []liveModel.LiveSession
-		err := global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+		err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 			if err := tx.Clauses(clause.Locking{Strength: "UPDATE", Options: "SKIP LOCKED"}).
 				Select(
-					"id", "room_id", "srs_stream_id", "srs_vhost", "srs_app",
-					"stop_requested_at", "stop_attempts", "stop_next_retry_at", "stop_recovery_state",
+					"id", "room_id", "srs_server_id", "srs_stream_id", "srs_client_id", "srs_vhost", "srs_app",
+					"stop_requested_at", "stop_attempts", "stop_next_retry_at", "stop_lease_token", "stop_lease_until", "stop_recovery_state",
 					"media_state", "media_stop_source", "media_stop_confirmed_at",
 				).
-				Where("id IN ? AND status = ? AND stop_next_retry_at <= ?", endingIDs, liveModel.LiveSessionEnding, now).
+				Where("id IN ? AND status = ? AND stop_next_retry_at <= ? AND stop_lease_until <= ?", endingIDs, liveModel.LiveSessionEnding, claimAt, claimAt).
 				Order("stop_next_retry_at ASC, id ASC").Find(&sessions).Error; err != nil {
 				return err
 			}
@@ -1127,10 +1217,11 @@ func claimEndingSessionsBatch(endingIDs []uint, now int64) ([]liveModel.LiveSess
 				claimedIDs = append(claimedIDs, session.ID)
 			}
 			claim := tx.Model(&liveModel.LiveSession{}).
-				Where("id IN ? AND status = ? AND stop_next_retry_at <= ?", claimedIDs, liveModel.LiveSessionEnding, now).
+				Where("id IN ? AND status = ? AND stop_next_retry_at <= ? AND stop_lease_until <= ?", claimedIDs, liveModel.LiveSessionEnding, claimAt, claimAt).
 				Updates(map[string]interface{}{
-					"stop_attempts":      gorm.Expr("stop_attempts + 1"),
-					"stop_next_retry_at": leaseUntil,
+					"stop_attempts":    gorm.Expr("stop_attempts + 1"),
+					"stop_lease_token": leaseToken,
+					"stop_lease_until": leaseUntil,
 				})
 			if claim.Error != nil {
 				return claim.Error
@@ -1140,7 +1231,8 @@ func claimEndingSessionsBatch(endingIDs []uint, now int64) ([]liveModel.LiveSess
 			}
 			for index := range sessions {
 				sessions[index].StopAttempts++
-				sessions[index].StopNextRetryAt = leaseUntil
+				sessions[index].StopLeaseToken = leaseToken
+				sessions[index].StopLeaseUntil = leaseUntil
 			}
 			return nil
 		})
@@ -1151,10 +1243,11 @@ func claimEndingSessionsBatch(endingIDs []uint, now int64) ([]liveModel.LiveSess
 	sessions := make([]liveModel.LiveSession, 0, len(endingIDs))
 	for _, sessionID := range endingIDs {
 		claim := global.GVA_DB.Model(&liveModel.LiveSession{}).
-			Where("id = ? AND status = ? AND stop_next_retry_at <= ?", sessionID, liveModel.LiveSessionEnding, now).
+			Where("id = ? AND status = ? AND stop_next_retry_at <= ? AND stop_lease_until <= ?", sessionID, liveModel.LiveSessionEnding, claimAt, claimAt).
 			Updates(map[string]interface{}{
-				"stop_attempts":      gorm.Expr("stop_attempts + 1"),
-				"stop_next_retry_at": leaseUntil,
+				"stop_attempts":    gorm.Expr("stop_attempts + 1"),
+				"stop_lease_token": leaseToken,
+				"stop_lease_until": leaseUntil,
 			})
 		if claim.Error != nil {
 			return nil, claim.Error
@@ -1164,8 +1257,8 @@ func claimEndingSessionsBatch(endingIDs []uint, now int64) ([]liveModel.LiveSess
 		}
 		var session liveModel.LiveSession
 		if err := global.GVA_DB.Select(
-			"id", "room_id", "srs_stream_id", "srs_vhost", "srs_app", "stop_requested_at",
-			"stop_attempts", "stop_next_retry_at", "stop_recovery_state",
+			"id", "room_id", "srs_server_id", "srs_stream_id", "srs_client_id", "srs_vhost", "srs_app", "stop_requested_at",
+			"stop_attempts", "stop_next_retry_at", "stop_lease_token", "stop_lease_until", "stop_recovery_state",
 			"media_state", "media_stop_source", "media_stop_confirmed_at",
 		).First(&session, sessionID).Error; err != nil {
 			return nil, normalizeSessionError(err)
@@ -1175,10 +1268,85 @@ func claimEndingSessionsBatch(endingIDs []uint, now int64) ([]liveModel.LiveSess
 	return sessions, nil
 }
 
+// maintainEndingSessionsLease keeps a long SRS batch owned without extending crash recovery time.
+// The random token and lease timestamp form a fencing claim. If any row was reclaimed or manually
+// changed, the whole batch stops and the stale executor cannot finalize it.
+func maintainEndingSessionsLease(
+	ctx context.Context,
+	sessionIDs []uint,
+	leaseToken string,
+	leaseUntil int64,
+	leaseMillis int64,
+) (int64, error) {
+	if len(sessionIDs) == 0 {
+		return leaseUntil, nil
+	}
+	if leaseMillis <= 0 {
+		leaseMillis = int64((60 * time.Second).Milliseconds())
+	}
+	interval := time.Duration(leaseMillis) * time.Millisecond / 3
+	if interval < 10*time.Millisecond {
+		interval = 10 * time.Millisecond
+	}
+	ticker := time.NewTicker(interval)
+	defer ticker.Stop()
+	currentUntil := leaseUntil
+	for {
+		select {
+		case <-ctx.Done():
+			return currentUntil, nil
+		case <-ticker.C:
+			nextUntil := time.Now().UnixMilli() + leaseMillis
+			operationTimeout := interval / 2
+			if operationTimeout < time.Second {
+				operationTimeout = time.Second
+			}
+			if operationTimeout > 5*time.Second {
+				operationTimeout = 5 * time.Second
+			}
+			renewCtx, cancel := context.WithTimeout(ctx, operationTimeout)
+			err := global.GVA_DB.WithContext(renewCtx).Transaction(func(tx *gorm.DB) error {
+				// 分块避免SQLite变量上限和生产数据库过大的IN列表；事务保证整批续租原子性。
+				const renewChunkSize = 500
+				for start := 0; start < len(sessionIDs); start += renewChunkSize {
+					end := min(start+renewChunkSize, len(sessionIDs))
+					chunk := sessionIDs[start:end]
+					result := tx.Model(&liveModel.LiveSession{}).
+						Where("id IN ? AND status = ? AND stop_lease_token = ? AND stop_lease_until = ?", chunk, liveModel.LiveSessionEnding, leaseToken, currentUntil).
+						Update("stop_lease_until", nextUntil)
+					if result.Error != nil {
+						return result.Error
+					}
+					if result.RowsAffected != int64(len(chunk)) {
+						return fmt.Errorf("%w: want=%d got=%d", errLiveStopLeaseLost, len(chunk), result.RowsAffected)
+					}
+				}
+				return nil
+			})
+			cancel()
+			if err != nil {
+				if errors.Is(err, context.Canceled) {
+					return currentUntil, nil
+				}
+				return currentUntil, err
+			}
+			currentUntil = nextUntil
+		}
+	}
+}
+
+func newLiveStopLeaseToken() (string, error) {
+	token := make([]byte, 32)
+	if _, err := rand.Read(token); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(token), nil
+}
+
 func endingSessionCapacityErrors(now int64, processed int) []error {
 	var remaining int64
 	if err := global.GVA_DB.Model(&liveModel.LiveSession{}).
-		Where("status = ? AND stop_next_retry_at <= ?", liveModel.LiveSessionEnding, now).
+		Where("status = ? AND stop_next_retry_at <= ? AND stop_lease_until <= ?", liveModel.LiveSessionEnding, now, now).
 		Limit(1).Count(&remaining).Error; err != nil {
 		return []error{err}
 	}
@@ -2045,7 +2213,7 @@ func publisherSnapshotMatches(
 	return true
 }
 
-// processEndingSession 使用stop_next_retry_at作为数据库租约。
+// processEndingSession 使用独立的随机token和截止时间作为带fencing校验的数据库租约。
 // 人工请求和一个或多个服务实例上的扫描任务可以同时进入，但只有一个执行者能调用SRS。
 func (s *RoomService) processEndingSession(sessionID uint, now int64) error {
 	controller, controllerErr := s.liveSRSController()
@@ -2058,12 +2226,18 @@ func (s *RoomService) processEndingSessionWithController(
 	controller srsclient.Controller,
 	controllerErr error,
 ) error {
-	leaseUntil := now + liveStopLeaseMillis()
+	claimAt := observedUnixMilli(now)
+	leaseUntil := claimAt + liveStopLeaseMillis()
+	leaseToken, tokenErr := newLiveStopLeaseToken()
+	if tokenErr != nil {
+		return tokenErr
+	}
 	claim := global.GVA_DB.Model(&liveModel.LiveSession{}).
-		Where("id = ? AND status = ? AND stop_next_retry_at <= ?", sessionID, liveModel.LiveSessionEnding, now).
+		Where("id = ? AND status = ? AND stop_next_retry_at <= ? AND stop_lease_until <= ?", sessionID, liveModel.LiveSessionEnding, claimAt, claimAt).
 		Updates(map[string]interface{}{
-			"stop_attempts":      gorm.Expr("stop_attempts + 1"),
-			"stop_next_retry_at": leaseUntil,
+			"stop_attempts":    gorm.Expr("stop_attempts + 1"),
+			"stop_lease_token": leaseToken,
+			"stop_lease_until": leaseUntil,
 		})
 	if claim.Error != nil {
 		return claim.Error
@@ -2082,7 +2256,7 @@ func (s *RoomService) processEndingSessionWithController(
 	// 人工确认是已经持久化并审计的媒体事实。若进程恰好在确认事务提交后、最终结算前
 	// 退出，恢复扫描必须直接完成幂等结算，不能再次依赖仍处于故障中的 SRS。
 	if mediaStopAlreadyConfirmed(session) {
-		return s.finalizeSession(session.ID, observedUnixMilli(now))
+		return s.finalizeClaimedSession(session, observedUnixMilli(now))
 	}
 	var room liveModel.LiveRoom
 	if err := global.GVA_DB.Select("id", "stream_name").First(&room, session.RoomId).Error; err != nil {
@@ -2104,7 +2278,9 @@ func (s *RoomService) processEndingSessionWithController(
 		ctx, cancel := context.WithTimeout(context.Background(), liveSRSRequestTimeout())
 		defer cancel()
 		err = controller.StopPublisher(ctx, srsclient.StreamRef{
+			ServerID: session.SRSServerID,
 			StreamID: session.SRSStreamID,
+			ClientID: session.SRSClientID,
 			Vhost:    vhost,
 			App:      app,
 			Stream:   room.StreamName,
@@ -2116,7 +2292,7 @@ func (s *RoomService) processEndingSessionWithController(
 		return errors.Join(err, s.recordStopFailure(session, completedAt, err))
 	}
 	_, _ = observeLiveSRSSuccess(srsclient.RuntimeIdentity{}, completedAt)
-	return s.finalizeSession(session.ID, completedAt)
+	return s.finalizeClaimedSession(session, completedAt)
 }
 
 func (s *RoomService) liveSRSController() (srsclient.Controller, error) {
@@ -2136,13 +2312,22 @@ func (s *RoomService) recordStopFailure(session liveModel.LiveSession, now int64
 	}
 	delay += liveStopRetryJitterMillis(session.ID, session.StopAttempts, delay)
 	nextRetryAt := now + delay
-	return global.GVA_DB.Model(&liveModel.LiveSession{}).
-		Where("id = ? AND status = ? AND stop_attempts = ? AND stop_next_retry_at = ?",
-			session.ID, liveModel.LiveSessionEnding, session.StopAttempts, session.StopNextRetryAt).
+	result := global.GVA_DB.Model(&liveModel.LiveSession{}).
+		Where("id = ? AND status = ? AND stop_attempts = ?", session.ID, liveModel.LiveSessionEnding, session.StopAttempts).
+		Where("stop_lease_token = ? AND stop_lease_until = ?", session.StopLeaseToken, session.StopLeaseUntil).
 		Updates(map[string]interface{}{
 			"stop_next_retry_at": nextRetryAt,
 			"stop_last_error":    message,
-		}).Error
+			"stop_lease_token":   "",
+			"stop_lease_until":   int64(0),
+		})
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected != 1 {
+		return errLiveStopLeaseLost
+	}
+	return nil
 }
 
 func promoteEndingStallAlerts(now int64) error {
@@ -2968,6 +3153,8 @@ func (s *RoomService) ConfirmMediaStopped(
 				// 直接 finalize，而不是把任务隐藏到一个永不到达的时间点。
 				"stop_next_retry_at": now,
 				"stop_last_error":    "",
+				"stop_lease_token":   "",
+				"stop_lease_until":   int64(0),
 			})
 		if result.Error != nil {
 			return result.Error
@@ -3102,6 +3289,23 @@ func (s *RoomService) cancelPrepareTimeout(sessionID uint, now int64) error {
 }
 
 func (s *RoomService) finalizeSession(sessionID uint, now int64) error {
+	return s.finalizeSessionWithStopClaim(sessionID, now, 0, "", 0, false)
+}
+
+func (s *RoomService) finalizeClaimedSession(session liveModel.LiveSession, now int64) error {
+	return s.finalizeSessionWithStopClaim(
+		session.ID, now, session.StopAttempts, session.StopLeaseToken, session.StopLeaseUntil, true,
+	)
+}
+
+func (s *RoomService) finalizeSessionWithStopClaim(
+	sessionID uint,
+	now int64,
+	expectedAttempts uint32,
+	expectedLeaseToken string,
+	expectedLeaseUntil int64,
+	requireClaim bool,
+) error {
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		var sessionRef liveModel.LiveSession
 		if err := tx.Select("id", "room_id", "anchor_id").First(&sessionRef, sessionID).Error; err != nil {
@@ -3126,16 +3330,32 @@ func (s *RoomService) finalizeSession(sessionID uint, now int64) error {
 		if session.Status != liveModel.LiveSessionEnding {
 			return ErrLiveSessionStateInvalid
 		}
+		if requireClaim && (session.StopAttempts != expectedAttempts ||
+			session.StopLeaseToken != expectedLeaseToken || session.StopLeaseUntil != expectedLeaseUntil) {
+			return fmt.Errorf(
+				"%w: attempts expected=%d actual=%d lease_until expected=%d actual=%d",
+				errLiveStopLeaseLost, expectedAttempts, session.StopAttempts, expectedLeaseUntil, session.StopLeaseUntil,
+			)
+		}
 		if session.StartedAt == 0 {
 			stopSource := session.MediaStopSource
 			if stopSource == liveModel.LiveMediaStopSourceUnknown {
 				stopSource = liveModel.LiveMediaStopSourceSRS
 			}
-			result := tx.Model(&liveModel.LiveSession{}).Where("id = ? AND status = ?", session.ID, liveModel.LiveSessionEnding).
+			update := tx.Model(&liveModel.LiveSession{}).Where("id = ? AND status = ?", session.ID, liveModel.LiveSessionEnding)
+			if requireClaim {
+				update = update.Where(
+					"stop_attempts = ? AND stop_lease_token = ? AND stop_lease_until = ?",
+					expectedAttempts, expectedLeaseToken, expectedLeaseUntil,
+				)
+			}
+			result := update.
 				Updates(map[string]interface{}{
 					"status": liveModel.LiveSessionCancelled, "prepare_deadline_at": int64(0),
-					"reconnect_deadline_at": int64(0), "stats_finalized_at": now,
+					"publish_result_ciphertext": "",
+					"reconnect_deadline_at":     int64(0), "stats_finalized_at": now,
 					"stop_next_retry_at": int64(0), "stop_last_error": "",
+					"stop_lease_token": "", "stop_lease_until": int64(0),
 					"media_state": liveModel.LiveMediaStopped, "media_state_changed_at": now,
 					"media_last_confirmed_at": now, "media_stop_source": stopSource,
 					"media_stop_confirmed_at": now,
@@ -3156,11 +3376,19 @@ func (s *RoomService) finalizeSession(sessionID uint, now int64) error {
 		if session.StartedAt > 0 && endedAt > session.StartedAt {
 			duration = uint64(endedAt - session.StartedAt)
 		}
-		result := tx.Model(&liveModel.LiveSession{}).Where("id = ? AND status = ?", session.ID, liveModel.LiveSessionEnding).
+		update := tx.Model(&liveModel.LiveSession{}).Where("id = ? AND status = ?", session.ID, liveModel.LiveSessionEnding)
+		if requireClaim {
+			update = update.Where(
+				"stop_attempts = ? AND stop_lease_token = ? AND stop_lease_until = ?",
+				expectedAttempts, expectedLeaseToken, expectedLeaseUntil,
+			)
+		}
+		result := update.
 			Updates(map[string]interface{}{
 				"status": liveModel.LiveSessionEnded, "ended_at": endedAt, "duration_ms": duration,
 				"reconnect_deadline_at": int64(0), "stats_finalized_at": now,
 				"stop_next_retry_at": int64(0), "stop_last_error": "",
+				"stop_lease_token": "", "stop_lease_until": int64(0),
 				"media_state": liveModel.LiveMediaStopped, "media_state_changed_at": now,
 				"media_last_confirmed_at": now, "media_stop_source": func() uint8 {
 					if session.MediaStopSource != liveModel.LiveMediaStopSourceUnknown {
@@ -3230,6 +3458,7 @@ func markSessionEnding(tx *gorm.DB, sessionID uint, endReason uint8, failureReas
 			"stream_probe_next_at": int64(0), "stream_probe_last_error": "",
 			"stop_requested_at": requestedAt, "stop_attempts": uint32(0),
 			"stop_next_retry_at": requestedAt, "stop_last_error": "",
+			"stop_lease_token": "", "stop_lease_until": int64(0),
 			"stop_recovery_state": liveModel.LiveStopRecoveryNormal,
 			"ending_alert_level":  liveModel.LiveEndingAlertNone, "ending_alerted_at": int64(0),
 			"media_state": liveModel.LiveMediaStopping, "media_state_changed_at": requestedAt,
@@ -3255,10 +3484,12 @@ func markPreparingPublisherEnding(
 		Updates(map[string]interface{}{
 			"status": liveModel.LiveSessionEnding, "ended_at": now, "end_reason": endReason,
 			"failure_reason": failureReason, "prepare_deadline_at": int64(0),
-			"stream_ready_deadline_at": int64(0), "stream_probe_attempts": uint32(0),
+			"publish_result_ciphertext": "",
+			"stream_ready_deadline_at":  int64(0), "stream_probe_attempts": uint32(0),
 			"stream_probe_next_at": int64(0), "stream_probe_last_error": "",
 			"stop_requested_at": now, "stop_attempts": uint32(0),
 			"stop_next_retry_at": now, "stop_last_error": "",
+			"stop_lease_token": "", "stop_lease_until": int64(0),
 			"stop_recovery_state": liveModel.LiveStopRecoveryNormal,
 			"ending_alert_level":  liveModel.LiveEndingAlertNone, "ending_alerted_at": int64(0),
 			"media_state": liveModel.LiveMediaStopping, "media_state_changed_at": now,
@@ -3277,7 +3508,8 @@ func cancelPreparingSession(tx *gorm.DB, session liveModel.LiveSession, endReaso
 		Updates(map[string]interface{}{
 			"status": liveModel.LiveSessionCancelled, "ended_at": endedAt, "end_reason": endReason,
 			"failure_reason": reason, "stats_finalized_at": endedAt, "prepare_deadline_at": int64(0),
-			"stream_ready_deadline_at": int64(0), "stream_probe_attempts": uint32(0),
+			"publish_result_ciphertext": "",
+			"stream_ready_deadline_at":  int64(0), "stream_probe_attempts": uint32(0),
 			"stream_probe_next_at": int64(0), "stream_probe_last_error": "",
 		})
 	if result.Error != nil {

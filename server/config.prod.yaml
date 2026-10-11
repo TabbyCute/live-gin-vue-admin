@@ -41,11 +41,11 @@ live:
     # Redis故障时降级为各实例有界执行；数据库认领保证正确性，同时日志会持续告警。
     task-leader-fail-open: true
     task-leader-lease-seconds: 60
-    # 推流凭证pt有效秒数；需覆盖最长直播时长和重连，否则超长直播断线后无法重新推流。
-    push-token-seconds: 86400
+    # 推流凭证pt暂设为7天，覆盖首版超长直播的断流重连；后续应改为短期凭证加安全续签。
+    push-token-seconds: 604800
     # pt加解密密钥；正式服必须填写强随机值，多实例必须一致，禁止与JWT密钥复用。
     publish-token-key: ""
-    # 每场首次prepare之外最多重新签发5次推流地址；相同Idempotency-Key重试只重放缓存，不计次数。
+    # 每场首次prepare之外最多重新签发5次推流地址；相同Idempotency-Key重试只做幂等重放，不计次数。
     push-url-refresh-limit: 5
     # 准备超时、重连超时和结束重试的扫描周期；数据库状态扫描与SRS请求相互隔离。
     end-scan-interval-seconds: 5
@@ -63,13 +63,13 @@ live:
     end-warning-seconds: 120
     end-critical-seconds: 900
     end-manual-retry-seconds: 300
-    # 是否记录SRS Hook原始JSON；正式服建议关闭，开启后INFO日志会包含pt推流凭证。
+    # 是否记录SRS Hook清洗后的标准字段；param(pt)和未知字段始终移除，正式服建议关闭。
     log-srs-hook-raw-body: false
     # 单个SRS Hook请求体最大字节数；超出返回HTTP 413，代码硬上限1MiB。
     srs-hook-max-body-bytes: 65536
-    # 开启原始Hook日志时最多记录的请求体字节数；超出会截断，代码硬上限64KiB。
+    # 开启清洗Hook日志时最多记录的清洗结果字节数；超出会截断，代码硬上限64KiB。
     srs-hook-log-max-body-bytes: 4096
-    # 必须通过SRS_HOOK_TOKEN环境变量提供并与SRS一致；不要把生产密钥提交到仓库。
+    # 必须通过SRS_HOOK_TOKEN环境变量提供至少32字节的高熵密钥并与SRS一致；为空时服务拒绝启动。
     srs-hook-token: ""
     # SRS媒体服务器配置
     srs:
@@ -371,7 +371,6 @@ disk-list:
     - mount-point: "/"
 
 # 跨域配置
-# 需要配合 server/initialize/router.go -> `Router.Use(middleware.CorsByRules())` 使用
 cors:
     mode: strict-whitelist # 放行模式: allow-all, 放行全部; whitelist, 白名单模式, 来自白名单内域名的请求添加 cors 头; strict-whitelist 严格白名单模式, 白名单外的请求一律拒绝
     whitelist:

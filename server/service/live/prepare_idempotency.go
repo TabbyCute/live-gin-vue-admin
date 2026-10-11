@@ -1,6 +1,7 @@
 package live
 
 import (
+	"container/heap"
 	"context"
 	"crypto/aes"
 	"crypto/cipher"
@@ -14,6 +15,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"tb_live_module/global"
@@ -32,6 +34,8 @@ const (
 	livePrepareCacheOperationTimeout = time.Second
 	defaultPushURLRefreshLimit       = 5
 	hardPushURLRefreshLimit          = 20
+	minimumLocalPrepareCacheEntries  = 1024
+	hardLocalPrepareCacheEntries     = 100000
 )
 
 var errLivePrepareResultCacheMiss = errors.New("prepare result cache miss")
@@ -41,8 +45,142 @@ type livePrepareResultCache interface {
 	Set(ctx context.Context, key string, value string, ttl time.Duration) error
 }
 
+type encryptedLivePrepareResult struct {
+	cacheKey  string
+	value     string
+	expiresAt time.Time
+}
+
 type redisLivePrepareResultCache struct {
 	client redis.UniversalClient
+}
+
+type localLivePrepareResult struct {
+	value  string
+	expiry *localLivePrepareExpiry
+}
+
+type localLivePrepareExpiry struct {
+	key       string
+	expiresAt time.Time
+	index     int
+}
+
+type localLivePrepareExpiryHeap []*localLivePrepareExpiry
+
+func (h localLivePrepareExpiryHeap) Len() int { return len(h) }
+func (h localLivePrepareExpiryHeap) Less(i, j int) bool {
+	return h[i].expiresAt.Before(h[j].expiresAt)
+}
+func (h localLivePrepareExpiryHeap) Swap(i, j int) {
+	h[i], h[j] = h[j], h[i]
+	h[i].index = i
+	h[j].index = j
+}
+func (h *localLivePrepareExpiryHeap) Push(value interface{}) {
+	entry := value.(*localLivePrepareExpiry)
+	entry.index = len(*h)
+	*h = append(*h, entry)
+}
+func (h *localLivePrepareExpiryHeap) Pop() interface{} {
+	old := *h
+	last := old[len(old)-1]
+	old[len(old)-1] = nil
+	last.index = -1
+	*h = old[:len(old)-1]
+	return last
+}
+
+// localLivePrepareResultCache 是单实例、无 Redis 部署的有界幂等结果缓存。
+// value 仍是 AES-GCM 密文；最小堆只负责 O(log n) 的按需过期清理和容量淘汰，
+// 不启动后台 goroutine，不会在大量键同时过期时形成全表清理尖峰，也不会无限增长。
+type localLivePrepareResultCache struct {
+	mu         sync.Mutex
+	values     map[string]localLivePrepareResult
+	expiries   localLivePrepareExpiryHeap
+	maxEntries int
+	now        func() time.Time
+}
+
+func newLocalLivePrepareResultCache(maxEntries int) *localLivePrepareResultCache {
+	if maxEntries < 1 {
+		maxEntries = 1
+	}
+	initialCapacity := maxEntries
+	if initialCapacity > minimumLocalPrepareCacheEntries {
+		initialCapacity = minimumLocalPrepareCacheEntries
+	}
+	return &localLivePrepareResultCache{
+		values:     make(map[string]localLivePrepareResult, initialCapacity),
+		maxEntries: maxEntries,
+		now:        time.Now,
+	}
+}
+
+func (c *localLivePrepareResultCache) Get(ctx context.Context, key string) (string, error) {
+	if err := ctx.Err(); err != nil {
+		return "", err
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if err := ctx.Err(); err != nil {
+		return "", err
+	}
+
+	now := c.now()
+	value, ok := c.values[key]
+	if !ok || !value.expiry.expiresAt.After(now) {
+		if ok {
+			heap.Remove(&c.expiries, value.expiry.index)
+			delete(c.values, key)
+		}
+		return "", errLivePrepareResultCacheMiss
+	}
+	return value.value, nil
+}
+
+func (c *localLivePrepareResultCache) Set(ctx context.Context, key string, value string, ttl time.Duration) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if ttl <= 0 {
+		return errors.New("prepare result cache ttl must be positive")
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+
+	now := c.now()
+	if _, exists := c.values[key]; !exists && len(c.values) >= c.maxEntries {
+		c.evictEarliestLocked()
+	}
+	expiresAt := now.Add(ttl)
+	if existing, exists := c.values[key]; exists {
+		existing.value = value
+		existing.expiry.expiresAt = expiresAt
+		c.values[key] = existing
+		heap.Fix(&c.expiries, existing.expiry.index)
+		return nil
+	}
+	expiry := &localLivePrepareExpiry{key: key, expiresAt: expiresAt}
+	c.values[key] = localLivePrepareResult{value: value, expiry: expiry}
+	heap.Push(&c.expiries, expiry)
+	return nil
+}
+
+func (c *localLivePrepareResultCache) evictEarliestLocked() {
+	for c.expiries.Len() > 0 {
+		next := heap.Pop(&c.expiries).(*localLivePrepareExpiry)
+		delete(c.values, next.key)
+		return
+	}
+	// 正常情况下 values 和 expiries 始终同步；这里是防御性兜底，确保容量上限不可突破。
+	for key := range c.values {
+		delete(c.values, key)
+		return
+	}
 }
 
 func (c redisLivePrepareResultCache) Get(ctx context.Context, key string) (string, error) {
@@ -61,10 +199,27 @@ func (s *RoomService) prepareCache() livePrepareResultCache {
 	if s.prepareResultCache != nil {
 		return s.prepareResultCache
 	}
-	if global.GVA_REDIS == nil {
-		return nil
+	s.prepareCacheOnce.Do(func() {
+		if global.GVA_REDIS != nil {
+			s.resolvedPrepareResultCache = redisLivePrepareResultCache{client: global.GVA_REDIS}
+			return
+		}
+		s.resolvedPrepareResultCache = newLocalLivePrepareResultCache(localLivePrepareCacheCapacity())
+	})
+	return s.resolvedPrepareResultCache
+}
+
+func localLivePrepareCacheCapacity() int {
+	perSession := int(livePushURLRefreshLimit()) + 1
+	maximum := liveMaxConcurrentStreams()
+	if maximum > hardLocalPrepareCacheEntries/perSession {
+		return hardLocalPrepareCacheEntries
 	}
-	return redisLivePrepareResultCache{client: global.GVA_REDIS}
+	capacity := maximum * perSession
+	if capacity < minimumLocalPrepareCacheEntries {
+		return minimumLocalPrepareCacheEntries
+	}
+	return capacity
 }
 
 func normalizeLiveIdempotencyKey(raw string, required bool) (string, error) {
@@ -89,11 +244,16 @@ func normalizeLiveIdempotencyKey(raw string, required bool) (string, error) {
 }
 
 func livePrepareCacheKey(publishTokenKey string, userID uint64, idempotencyKey string) string {
+	return "live:prepare-result:v1:" + strconv.FormatUint(userID, 10) + ":" +
+		livePrepareIdempotencyHash(publishTokenKey, userID, idempotencyKey)
+}
+
+func livePrepareIdempotencyHash(publishTokenKey string, userID uint64, idempotencyKey string) string {
 	mac := hmac.New(sha256.New, []byte("live:prepare-result:key:v1:"+publishTokenKey))
 	_, _ = mac.Write([]byte(strconv.FormatUint(userID, 10)))
 	_, _ = mac.Write([]byte{0})
 	_, _ = mac.Write([]byte(idempotencyKey))
-	return "live:prepare-result:v1:" + strconv.FormatUint(userID, 10) + ":" + hex.EncodeToString(mac.Sum(nil))
+	return hex.EncodeToString(mac.Sum(nil))
 }
 
 func livePrepareResultCipherKey(publishTokenKey string) [sha256.Size]byte {
@@ -152,35 +312,64 @@ func decryptLivePrepareResult(publishTokenKey, cacheKey, value string) (liveRes.
 	return result, nil
 }
 
-func (s *RoomService) cacheLivePrepareResult(
+func prepareEncryptedLiveResult(
 	userID uint64,
 	idempotencyKey string,
 	publishConfig livePublishTokenConfig,
 	result liveRes.LiveSessionPrepareResp,
-) error {
-	if idempotencyKey == "" {
-		return nil
-	}
-	cache := s.prepareCache()
-	if cache == nil {
-		return ErrLiveIdempotencyUnavailable
-	}
+) (encryptedLivePrepareResult, error) {
 	ttl := time.Until(time.UnixMilli(result.PrepareDeadlineAt))
 	if ttl <= 0 {
-		return ErrLiveSessionStateInvalid
+		return encryptedLivePrepareResult{}, ErrLiveSessionStateInvalid
 	}
 	cacheKey := livePrepareCacheKey(publishConfig.publishTokenKey, userID, idempotencyKey)
 	value, err := encryptLivePrepareResult(publishConfig.publishTokenKey, cacheKey, result)
 	if err != nil {
-		return err
+		return encryptedLivePrepareResult{}, err
+	}
+	return encryptedLivePrepareResult{
+		cacheKey: cacheKey, value: value, expiresAt: time.UnixMilli(result.PrepareDeadlineAt),
+	}, nil
+}
+
+func (s *RoomService) storeEncryptedLivePrepareResult(result encryptedLivePrepareResult) error {
+	cache := s.prepareCache()
+	ttl := time.Until(result.expiresAt)
+	if ttl <= 0 {
+		return ErrLiveSessionStateInvalid
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), livePrepareCacheOperationTimeout)
 	defer cancel()
-	if err = cache.Set(ctx, cacheKey, value, ttl); err != nil {
+	if err := cache.Set(ctx, result.cacheKey, result.value, ttl); err != nil {
 		logLivePrepareCacheError("保存prepare幂等结果失败", err)
 		return ErrLiveIdempotencyUnavailable
 	}
 	return nil
+}
+
+func loadPersistedLivePrepareResult(
+	userID uint64,
+	idempotencyKey string,
+	publishConfig livePublishTokenConfig,
+	room liveModel.LiveRoom,
+	session liveModel.LiveSession,
+	now time.Time,
+) (liveRes.LiveSessionPrepareResp, bool, error) {
+	if session.PublishResultCiphertext == "" {
+		return liveRes.LiveSessionPrepareResp{}, false, nil
+	}
+	cacheKey := livePrepareCacheKey(publishConfig.publishTokenKey, userID, idempotencyKey)
+	result, err := decryptLivePrepareResult(
+		publishConfig.publishTokenKey, cacheKey, session.PublishResultCiphertext,
+	)
+	if err != nil {
+		logLivePrepareCacheError("解密数据库prepare幂等结果失败", err)
+		return liveRes.LiveSessionPrepareResp{}, false, ErrLiveIdempotencyUnavailable
+	}
+	if !validCachedLivePrepareResult(publishConfig, room, session, result, now) {
+		return liveRes.LiveSessionPrepareResp{}, false, ErrLiveIdempotencyConflict
+	}
+	return result, true, nil
 }
 
 func (s *RoomService) loadLivePrepareResult(
@@ -192,9 +381,6 @@ func (s *RoomService) loadLivePrepareResult(
 	now time.Time,
 ) (liveRes.LiveSessionPrepareResp, bool, error) {
 	cache := s.prepareCache()
-	if cache == nil {
-		return liveRes.LiveSessionPrepareResp{}, false, ErrLiveIdempotencyUnavailable
-	}
 	cacheKey := livePrepareCacheKey(publishConfig.publishTokenKey, userID, idempotencyKey)
 	ctx, cancel := context.WithTimeout(context.Background(), livePrepareCacheOperationTimeout)
 	defer cancel()
@@ -295,7 +481,8 @@ func (s *RoomService) rotatePreparingPushURL(
 		return liveRes.LiveSessionPrepareResp{}, err
 	}
 	result := buildLivePrepareResponse(publishConfig, *room, *session, publishToken)
-	if err = s.cacheLivePrepareResult(userID, idempotencyKey, publishConfig, result); err != nil {
+	encryptedResult, err := prepareEncryptedLiveResult(userID, idempotencyKey, publishConfig, result)
+	if err != nil {
 		return liveRes.LiveSessionPrepareResp{}, err
 	}
 	if err = tx.Model(&liveModel.LiveRoom{}).Where("id = ?", room.ID).Updates(map[string]interface{}{
@@ -307,16 +494,27 @@ func (s *RoomService) rotatePreparingPushURL(
 	issuedCount++
 	sessionUpdate := tx.Model(&liveModel.LiveSession{}).
 		Where("id = ? AND status = ? AND srs_stream_id = ''", session.ID, liveModel.LiveSessionPreparing).
-		Update("publish_credential_issue_count", issuedCount)
+		Updates(map[string]interface{}{
+			"publish_credential_issue_count": issuedCount,
+			"publish_idempotency_key_hash":   livePrepareIdempotencyHash(publishConfig.publishTokenKey, userID, idempotencyKey),
+			"publish_result_ciphertext":      encryptedResult.value,
+		})
 	if sessionUpdate.Error != nil {
 		return liveRes.LiveSessionPrepareResp{}, sessionUpdate.Error
 	}
 	if sessionUpdate.RowsAffected != 1 {
 		return liveRes.LiveSessionPrepareResp{}, ErrLiveSessionStateInvalid
 	}
+	if err = s.storeEncryptedLivePrepareResult(encryptedResult); err != nil {
+		return liveRes.LiveSessionPrepareResp{}, err
+	}
 	room.PublishSecretHash = secretHash(publishToken)
 	room.StreamKeyVersion = credentialVersion
 	session.PublishCredentialIssueCount = issuedCount
+	session.PublishIdempotencyKeyHash = livePrepareIdempotencyHash(
+		publishConfig.publishTokenKey, userID, idempotencyKey,
+	)
+	session.PublishResultCiphertext = encryptedResult.value
 	return result, nil
 }
 
@@ -335,7 +533,7 @@ func buildLivePrepareResponse(
 }
 
 // RefreshOwnerPushURL 为已经创建、但尚未被SRS接受publish的准备场次轮换推流凭证。
-// prepare截止时间保持不变；Redis写入失败会让事务整体回滚，避免提交一个无法幂等重放的刷新结果。
+// prepare截止时间保持不变；幂等结果写入失败会让事务整体回滚，避免提交一个无法幂等重放的刷新结果。
 func (s *RoomService) RefreshOwnerPushURL(userID uint64, rawIdempotencyKey string) (liveRes.LiveSessionPrepareResp, error) {
 	if global.GVA_DB == nil {
 		return liveRes.LiveSessionPrepareResp{}, errors.New("数据库未初始化")
@@ -383,6 +581,19 @@ func (s *RoomService) RefreshOwnerPushURL(userID uint64, rawIdempotencyKey strin
 			session.Status != liveModel.LiveSessionPreparing || session.PrepareDeadlineAt <= now.UnixMilli() ||
 			hasSRSPublisher(session) {
 			return ErrLiveSessionStateInvalid
+		}
+		requestedKeyHash := livePrepareIdempotencyHash(publishConfig.publishTokenKey, userID, idempotencyKey)
+		if secureStringEqual(session.PublishIdempotencyKeyHash, requestedKeyHash) {
+			persisted, ok, persistedErr := loadPersistedLivePrepareResult(
+				userID, idempotencyKey, publishConfig, room, session, now,
+			)
+			if persistedErr != nil {
+				return persistedErr
+			}
+			if ok {
+				result = persisted
+				return nil
+			}
 		}
 		cached, ok, txErr := s.loadLivePrepareResult(userID, idempotencyKey, publishConfig, room, session, now)
 		if txErr != nil {

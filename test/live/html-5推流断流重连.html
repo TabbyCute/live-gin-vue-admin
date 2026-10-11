@@ -44,7 +44,10 @@
       <label>API 基址
         <input id="baseUrl" value="http://127.0.0.1:8888/api/v1">
       </label>
-      <p class="hint">Hook 来源由部署层 IP 白名单保护，本页面不会发送额外的鉴权请求头。若通过生产入口测试，浏览器出口 IP 也必须临时加入测试白名单。</p>
+      <label>SRS Hook Token（仅本地联调，不会保存）
+        <input id="hookToken" type="password" autocomplete="off" value="local-srs-hook-change-me-32bytes-minimum">
+      </label>
+      <p class="hint wide">Hook 必须同时通过共享密钥认证和部署层 IP 白名单。若通过生产入口测试，浏览器出口 IP 也必须临时加入测试白名单。</p>
       <label class="wide">prepare 返回的 pushUrl
         <input id="pushUrl" placeholder="rtmp://push.example.com/tb_live/A_1000009?pt=v1_...">
       </label>
@@ -174,7 +177,7 @@
       };
       localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
       $('status').className = 'ok';
-      $('status').textContent = '已保存非敏感配置；publishToken 和 APP Token 未保存';
+      $('status').textContent = '已保存非敏感配置；Hook Token、publishToken 和 APP Token 未保存';
     }
     function loadConfig() {
       try {
@@ -205,6 +208,7 @@
     }
     function validateHookInput(action) {
       if (!value('baseUrl')) throw new Error('请填写 API 基址');
+      if (!value('hookToken')) throw new Error('请填写 SRS Hook Token');
       if (!value('stream')) throw new Error('请填写 stream，或先解析 pushUrl');
       if (!value('app')) throw new Error('请填写 app');
       if (action === 'on_publish' && !value('publishToken')) throw new Error('on_publish 需要 publishToken（pt）');
@@ -242,7 +246,7 @@
       try {
         response = await fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'X-SRS-Hook-Token': value('hookToken') },
           body: JSON.stringify(body)
         });
         const text = await response.text();

@@ -35,6 +35,9 @@ services:
       dockerfile: ./Dockerfile
     container_name: gva-server
     restart: always
+    environment:
+      # 与SRS使用同一个至少32字节的高熵密钥；未提供时Compose直接拒绝启动。
+      SRS_HOOK_TOKEN: "${SRS_HOOK_TOKEN:?SRS_HOOK_TOKEN must be set}"
     ports:
       - '8888:8888'
     depends_on:

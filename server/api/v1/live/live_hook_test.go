@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"tb_live_module/global"
+	"tb_live_module/middleware"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
@@ -15,6 +16,21 @@ import (
 	"go.uber.org/zap/zapcore"
 	"go.uber.org/zap/zaptest/observer"
 )
+
+const testAPIHookToken = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+
+func TestHookAPIRejectsAccidentalRouteWithoutAuthMiddleware(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
+	router.POST("/hook/publish", (&HookApi{}).Publish)
+	recorder := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodPost, "/hook/publish", strings.NewReader(`{"action":"on_publish","stream":"1500001"}`))
+	request.Header.Set("Content-Type", "application/json")
+
+	router.ServeHTTP(recorder, request)
+
+	require.Equal(t, http.StatusUnauthorized, recorder.Code)
+}
 
 func TestBindAndLogSRSHookPreservesRawBodyAndUnknownFields(t *testing.T) {
 	gin.SetMode(gin.TestMode)
@@ -42,13 +58,18 @@ func TestBindAndLogSRSHookPreservesRawBodyAndUnknownFields(t *testing.T) {
 
 	entries := logs.All()
 	require.Len(t, entries, 1)
-	require.Equal(t, "SRS Hook 原始参数", entries[0].Message)
+	require.Equal(t, "SRS Hook 清洗参数", entries[0].Message)
 	fields := entries[0].ContextMap()
 	require.Equal(t, "publish", fields["hook"])
 	require.Equal(t, "/v1/app/live/hook/publish", fields["path"])
 	require.Equal(t, "192.0.2.10", fields["clientIp"])
 	require.Equal(t, "application/json", fields["contentType"])
-	require.Equal(t, rawBody, fields["rawBody"])
+	require.Equal(t, true, fields["rawBodySanitized"])
+	loggedBody, ok := fields["rawBody"].(string)
+	require.True(t, ok)
+	require.NotContains(t, loggedBody, "raw-token")
+	require.NotContains(t, loggedBody, "custom_field")
+	require.Contains(t, loggedBody, "[REDACTED]")
 }
 
 func TestBindAndLogSRSHookLogsMalformedRawBody(t *testing.T) {
@@ -71,7 +92,8 @@ func TestBindAndLogSRSHookLogsMalformedRawBody(t *testing.T) {
 	_, err := bindAndLogSRSHook(context, "unpublish")
 	require.Error(t, err)
 	require.Len(t, logs.All(), 1)
-	require.Equal(t, rawBody, logs.All()[0].ContextMap()["rawBody"])
+	require.NotContains(t, logs.All()[0].ContextMap()["rawBody"], rawBody)
+	require.Contains(t, logs.All()[0].ContextMap()["rawBody"], "malformed JSON")
 }
 
 func TestSRSHookRejectsOversizedBodyWithHTTP413(t *testing.T) {
@@ -81,11 +103,14 @@ func TestSRSHookRejectsOversizedBodyWithHTTP413(t *testing.T) {
 	t.Cleanup(func() { global.GVA_CONFIG.Live = previousLive })
 
 	router := gin.New()
-	router.POST("/hook/publish", (&HookApi{}).Publish)
+	authenticator, err := middleware.NewSRSHookAuthenticator(testAPIHookToken)
+	require.NoError(t, err)
+	router.POST("/hook/publish", authenticator.Handler(), (&HookApi{}).Publish)
 	body := `{"action":"on_publish","stream":"1500001","padding":"` + strings.Repeat("x", 256) + `"}`
 	recorder := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodPost, "/hook/publish", strings.NewReader(body))
 	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set(middleware.SRSHookTokenHeader, testAPIHookToken)
 	router.ServeHTTP(recorder, request)
 
 	require.Equal(t, http.StatusRequestEntityTooLarge, recorder.Code)
@@ -105,11 +130,14 @@ func TestLiveStatsHookRejectsOversizedBodyWithHTTP413(t *testing.T) {
 	t.Cleanup(func() { global.GVA_CONFIG.Live = previousLive })
 
 	router := gin.New()
-	router.POST("/hook/session/stats", (&HookApi{}).UpdateStats)
+	authenticator, err := middleware.NewSRSHookAuthenticator(testAPIHookToken)
+	require.NoError(t, err)
+	router.POST("/hook/session/stats", authenticator.Handler(), (&HookApi{}).UpdateStats)
 	body := `{"sessionNo":"session-1","padding":"` + strings.Repeat("x", 256) + `"}`
 	recorder := httptest.NewRecorder()
 	request := httptest.NewRequest(http.MethodPost, "/hook/session/stats", strings.NewReader(body))
 	request.Header.Set("Content-Type", "application/json")
+	request.Header.Set(middleware.SRSHookTokenHeader, testAPIHookToken)
 	router.ServeHTTP(recorder, request)
 
 	require.Equal(t, http.StatusRequestEntityTooLarge, recorder.Code)
@@ -117,7 +145,7 @@ func TestLiveStatsHookRejectsOversizedBodyWithHTTP413(t *testing.T) {
 
 func TestBindAndLogSRSHookTruncatesRawLogIndependently(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	rawBody := `{"action":"on_publish","stream":"1500001","custom":"` + strings.Repeat("中", 100) + `"}`
+	rawBody := `{"action":"on_publish","stream":"1500001","stream_url":"/live/` + strings.Repeat("a", 300) + `","custom":"` + strings.Repeat("中", 100) + `"}`
 	request := httptest.NewRequest(http.MethodPost, "/v1/app/live/hook/publish", strings.NewReader(rawBody))
 	request.Header.Set("Content-Type", "application/json")
 	context, _ := gin.CreateTestContext(httptest.NewRecorder())
@@ -154,24 +182,4 @@ func TestSRSHookBodyAndLogLimitsHaveHardCaps(t *testing.T) {
 
 	require.Equal(t, hardSRSHookMaxBodyBytes, liveSRSHookMaxBodyBytes())
 	require.Equal(t, hardSRSHookLogMaxBodyBytes, liveSRSHookLogMaxBodyBytes())
-}
-
-func TestSRSHookTokenFailsClosedWhenConfigured(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-	t.Setenv("SRS_HOOK_TOKEN", "high-entropy-test-token")
-	router := gin.New()
-	router.POST("/hook/publish", (&HookApi{}).Publish)
-	body := `{"action":"on_publish","stream":"1500001","stream_id":"stream-1","param":"?pt=x"}`
-
-	unauthorized := httptest.NewRecorder()
-	request := httptest.NewRequest(http.MethodPost, "/hook/publish", strings.NewReader(body))
-	request.Header.Set("Content-Type", "application/json")
-	router.ServeHTTP(unauthorized, request)
-	require.Equal(t, http.StatusUnauthorized, unauthorized.Code)
-
-	wrong := httptest.NewRecorder()
-	request = httptest.NewRequest(http.MethodPost, "/hook/publish?hook_token=wrong", strings.NewReader(body))
-	request.Header.Set("Content-Type", "application/json")
-	router.ServeHTTP(wrong, request)
-	require.Equal(t, http.StatusUnauthorized, wrong.Code)
 }

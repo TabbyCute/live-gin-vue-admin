@@ -12,7 +12,7 @@ services:
       - conf/tb-live.conf
     environment:
       CANDIDATE: "${CANDIDATE:-127.0.0.1}"
-      SRS_HOOK_TOKEN: "${SRS_HOOK_TOKEN:-local-srs-hook-change-me}"
+      SRS_HOOK_TOKEN: "${SRS_HOOK_TOKEN:-local-srs-hook-change-me-32bytes-minimum}"
     ports:
       - "127.0.0.1:12935:1935"
       - "127.0.0.1:12985:1985"

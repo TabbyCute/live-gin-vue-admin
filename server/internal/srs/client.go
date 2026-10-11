@@ -31,7 +31,11 @@ const (
 	srsCodeClientNotFound = 2049
 )
 
-var ErrNotFound = errors.New("SRS资源不存在")
+var (
+	ErrNotFound                  = errors.New("SRS资源不存在")
+	ErrPublisherMatchAmbiguous   = errors.New("SRS发布流匹配不唯一")
+	ErrPublisherIdentityConflict = errors.New("SRS发布流身份冲突")
+)
 
 // Controller 只暴露直播业务真正需要的媒体查询和控制能力，避免业务层依赖SRS原始响应结构。
 type Controller interface {
@@ -67,7 +71,9 @@ type BatchStopController interface {
 // StreamRef 唯一描述一次需要停止的发布流。StreamID可用时优先按ID查询，
 // 不可用或已经失效时退回到vhost/app/stream匹配。
 type StreamRef struct {
+	ServerID string
 	StreamID string
+	ClientID string
 	Vhost    string
 	App      string
 	Stream   string
@@ -286,9 +292,13 @@ func (c *Client) StopPublishers(ctx context.Context, refs []StreamRef, concurren
 			break
 		}
 	}
+	before, err := c.CurrentRuntime(ctx)
+	if err != nil {
+		fillBatchStopErrors(results, err)
+		return results
+	}
 	vhostNames := make(map[string]string)
 	if needsVhostNames {
-		var err error
 		vhostNames, err = c.loadVhostNames(ctx)
 		if err != nil {
 			fillBatchStopErrors(results, err)
@@ -300,13 +310,32 @@ func (c *Client) StopPublishers(ctx context.Context, refs []StreamRef, concurren
 		fillBatchStopErrors(results, err)
 		return results
 	}
+	after, err := c.CurrentRuntime(ctx)
+	if err != nil {
+		fillBatchStopErrors(results, err)
+		return results
+	}
+	if before.ServerID != after.ServerID {
+		fillBatchStopErrors(results, fmt.Errorf(
+			"SRS在批量断流快照期间重启: before=%s after=%s", before.ServerID, after.ServerID,
+		))
+		return results
+	}
+	if err = validateBatchStopSnapshot(streams); err != nil {
+		fillBatchStopErrors(results, err)
+		return results
+	}
 
-	byID := make(map[string]streamItem, len(streams))
+	byID := make(map[string][]streamItem, len(streams))
+	byCID := make(map[string][]streamItem, len(streams))
 	byAppAndName := make(map[string][]streamItem, len(streams))
 	byName := make(map[string][]streamItem, len(streams))
 	for _, stream := range streams {
 		if id := strings.TrimSpace(stream.ID); id != "" {
-			byID[id] = stream
+			byID[id] = append(byID[id], stream)
+		}
+		if cid, parseErr := parseCID(stream.Publish.CID); parseErr == nil {
+			byCID[cid] = append(byCID[cid], stream)
 		}
 		key := streamLookupKey(stream.App, stream.Name)
 		byAppAndName[key] = append(byAppAndName[key], stream)
@@ -319,23 +348,12 @@ func (c *Client) StopPublishers(ctx context.Context, refs []StreamRef, concurren
 		cid   string
 	}
 	jobsToRun := make([]stopJob, 0, len(refs))
+	jobIndexesByCID := make(map[string][]int, len(refs))
 	for index, ref := range refs {
-		stream, found := byID[strings.TrimSpace(ref.StreamID)]
-		if !found || !streamMatches(stream, ref, vhostNames) {
-			found = false
-			candidates := byAppAndName[streamLookupKey(ref.App, ref.Stream)]
-			if strings.Trim(strings.TrimSpace(ref.App), "/") == "" {
-				candidates = byName[strings.TrimSpace(ref.Stream)]
-			}
-			if strings.TrimSpace(ref.Stream) == "" {
-				candidates = streams
-			}
-			for _, candidate := range candidates {
-				if streamMatches(candidate, ref, vhostNames) {
-					stream, found = candidate, true
-					break
-				}
-			}
+		stream, found, matchErr := matchBatchStopStream(ref, after, streams, byID, byCID, byAppAndName, byName, vhostNames)
+		if matchErr != nil {
+			results[index] = matchErr
+			continue
 		}
 		if !found || !stream.Publish.Active {
 			continue
@@ -346,7 +364,27 @@ func (c *Client) StopPublishers(ctx context.Context, refs []StreamRef, concurren
 			continue
 		}
 		jobsToRun = append(jobsToRun, stopJob{index: index, cid: cid})
+		jobIndexesByCID[cid] = append(jobIndexesByCID[cid], len(jobsToRun)-1)
 	}
+	// 一个SRS客户端只能属于一个待结束场次。若多个ref指向同一CID，任何“取第一个”
+	// 都可能断错场次，因此整组标记为歧义并禁止发出DELETE。
+	for cid, indexes := range jobIndexesByCID {
+		if len(indexes) < 2 {
+			continue
+		}
+		for _, jobIndex := range indexes {
+			resultIndex := jobsToRun[jobIndex].index
+			results[resultIndex] = fmt.Errorf("%w: client_id=%s", ErrPublisherMatchAmbiguous, cid)
+			jobsToRun[jobIndex].cid = ""
+		}
+	}
+	runnableJobs := jobsToRun[:0]
+	for _, job := range jobsToRun {
+		if job.cid != "" {
+			runnableJobs = append(runnableJobs, job)
+		}
+	}
+	jobsToRun = runnableJobs
 	if len(jobsToRun) == 0 {
 		return results
 	}
@@ -380,7 +418,131 @@ func (c *Client) StopPublishers(ctx context.Context, refs []StreamRef, concurren
 	}
 	close(jobs)
 	workers.Wait()
+	finalRuntime, runtimeErr := c.CurrentRuntime(ctx)
+	if runtimeErr != nil {
+		fillBatchStopErrors(results, runtimeErr)
+		return results
+	}
+	if finalRuntime.ServerID != after.ServerID {
+		fillBatchStopErrors(results, fmt.Errorf(
+			"SRS在批量断流执行期间重启: snapshot=%s current=%s", after.ServerID, finalRuntime.ServerID,
+		))
+	}
 	return results
+}
+
+func validateBatchStopSnapshot(streams []streamItem) error {
+	streamIDs := make(map[string]struct{}, len(streams))
+	clientIDs := make(map[string]struct{}, len(streams))
+	for _, stream := range streams {
+		if id := strings.TrimSpace(stream.ID); id != "" {
+			if _, exists := streamIDs[id]; exists {
+				return fmt.Errorf("%w: 快照包含重复stream_id=%s", ErrPublisherMatchAmbiguous, id)
+			}
+			streamIDs[id] = struct{}{}
+		}
+		if !stream.Publish.Active {
+			continue
+		}
+		cid, err := parseCID(stream.Publish.CID)
+		if err != nil {
+			continue
+		}
+		if _, exists := clientIDs[cid]; exists {
+			return fmt.Errorf("%w: 快照包含重复client_id=%s", ErrPublisherMatchAmbiguous, cid)
+		}
+		clientIDs[cid] = struct{}{}
+	}
+	return nil
+}
+
+func matchBatchStopStream(
+	ref StreamRef,
+	runtime RuntimeIdentity,
+	streams []streamItem,
+	byID map[string][]streamItem,
+	byCID map[string][]streamItem,
+	byAppAndName map[string][]streamItem,
+	byName map[string][]streamItem,
+	vhostNames map[string]string,
+) (streamItem, bool, error) {
+	if strings.TrimSpace(ref.Stream) == "" {
+		return streamItem{}, false, fmt.Errorf("%w: 待断流stream为空", ErrPublisherIdentityConflict)
+	}
+	sameRuntime := strings.TrimSpace(ref.ServerID) != "" &&
+		strings.TrimSpace(ref.ServerID) == strings.TrimSpace(runtime.ServerID)
+	streamID := strings.TrimSpace(ref.StreamID)
+	clientID := strings.TrimSpace(ref.ClientID)
+
+	var candidates []streamItem
+	if sameRuntime && streamID != "" {
+		candidates = byID[streamID]
+	} else if sameRuntime && clientID != "" {
+		candidates = byCID[clientID]
+	} else if streamID != "" && strings.TrimSpace(ref.ServerID) == "" {
+		candidates = byID[streamID]
+	}
+
+	if len(candidates) > 0 {
+		matched := filterStopCandidates(candidates, ref, sameRuntime, vhostNames)
+		if len(matched) == 1 {
+			return matched[0], true, nil
+		}
+		if len(matched) > 1 {
+			return streamItem{}, false, fmt.Errorf("%w: stream_id=%s", ErrPublisherMatchAmbiguous, streamID)
+		}
+		// 同一SRS代际中的ID仍然存在但稳定身份不一致，不能降级匹配或当成已停止。
+		if sameRuntime {
+			return streamItem{}, false, fmt.Errorf(
+				"%w: server_id=%s stream_id=%s client_id=%s",
+				ErrPublisherIdentityConflict, ref.ServerID, ref.StreamID, ref.ClientID,
+			)
+		}
+	}
+
+	// SRS重启后旧stream/client ID必然失效，只允许按完整业务流身份进行唯一匹配。
+	candidates = byAppAndName[streamLookupKey(ref.App, ref.Stream)]
+	if strings.Trim(strings.TrimSpace(ref.App), "/") == "" {
+		candidates = byName[strings.TrimSpace(ref.Stream)]
+	}
+	matched := filterStopCandidates(candidates, ref, false, vhostNames)
+	if len(matched) == 0 {
+		return streamItem{}, false, nil
+	}
+	if len(matched) > 1 {
+		return streamItem{}, false, fmt.Errorf(
+			"%w: vhost=%s app=%s stream=%s candidates=%d",
+			ErrPublisherMatchAmbiguous, ref.Vhost, ref.App, ref.Stream, len(matched),
+		)
+	}
+	return matched[0], true, nil
+}
+
+func filterStopCandidates(
+	candidates []streamItem,
+	ref StreamRef,
+	requireRuntimeIDs bool,
+	vhostNames map[string]string,
+) []streamItem {
+	matched := make([]streamItem, 0, min(len(candidates), 2))
+	for _, candidate := range candidates {
+		if !streamMatches(candidate, ref, vhostNames) {
+			continue
+		}
+		if requireRuntimeIDs {
+			if expected := strings.TrimSpace(ref.StreamID); expected != "" && strings.TrimSpace(candidate.ID) != expected {
+				continue
+			}
+			if expected := strings.TrimSpace(ref.ClientID); expected != "" {
+				actual, err := parseCID(candidate.Publish.CID)
+				if err != nil || actual != expected {
+					continue
+				}
+			}
+		}
+		matched = append(matched, candidate)
+	}
+	return matched
 }
 
 func fillBatchStopErrors(results []error, err error) {

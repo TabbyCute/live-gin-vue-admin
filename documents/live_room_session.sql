@@ -81,6 +81,8 @@ CREATE TABLE IF NOT EXISTS `live_session` (
   ) STORED COMMENT '活动场次房间ID生成列',
   `prepare_deadline_at` BIGINT NOT NULL DEFAULT 0 COMMENT '等待首次publish回调的截止毫秒时间戳，0表示已正式开播或兼容待清理旧数据',
   `publish_credential_issue_count` INT UNSIGNED NOT NULL DEFAULT 1 COMMENT '本场推流凭证累计签发次数，prepare首次签发计为1',
+  `publish_idempotency_key_hash` CHAR(64) NOT NULL DEFAULT '' COMMENT '当前推流凭证签发操作的Idempotency-Key HMAC摘要',
+  `publish_result_ciphertext` TEXT NOT NULL COMMENT '当前推流凭证响应的AES-GCM密文，用于进程重启后幂等重放',
   `started_at` BIGINT NOT NULL DEFAULT 0 COMMENT 'SRS首次取得有效视频宽高并确认正式开播的毫秒时间戳',
   `publish_ip` VARCHAR(45) NOT NULL DEFAULT '' COMMENT '本场首次接受publish回调的推流IP，仅管理后台可见',
   `ended_at` BIGINT NOT NULL DEFAULT 0 COMMENT '实际最终断流或主动结束毫秒时间戳',
@@ -108,7 +110,9 @@ CREATE TABLE IF NOT EXISTS `live_session` (
   `stream_reconcile_last_error` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '最近一次直播中SRS对账请求或身份校验错误',
   `stop_requested_at` BIGINT NOT NULL DEFAULT 0 COMMENT '进入结束中的请求毫秒时间戳',
   `stop_attempts` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'SRS停止推流累计尝试次数',
-  `stop_next_retry_at` BIGINT NOT NULL DEFAULT 0 COMMENT '下次停止推流重试时间或当前处理租约截止时间',
+  `stop_next_retry_at` BIGINT NOT NULL DEFAULT 0 COMMENT '下次停止推流重试时间',
+  `stop_lease_token` CHAR(64) NOT NULL DEFAULT '' COMMENT '停止任务当前执行者的随机fencing令牌',
+  `stop_lease_until` BIGINT NOT NULL DEFAULT 0 COMMENT '停止任务租约截止毫秒时间戳',
   `stop_last_error` VARCHAR(500) NOT NULL DEFAULT '' COMMENT '最近一次停止推流失败原因',
   `stop_recovery_state` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '0自动恢复 1需要人工关注',
   `ending_alert_level` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '0无 1警告 2严重',
@@ -139,6 +143,7 @@ CREATE TABLE IF NOT EXISTS `live_session` (
   KEY `idx_live_session_stream_reconcile` (`status`, `stream_reconcile_checked_at`),
   KEY `idx_live_session_reconnect` (`status`, `reconnect_deadline_at`),
   KEY `idx_live_session_end_retry` (`status`, `stop_next_retry_at`),
+  KEY `idx_live_session_stop_lease` (`status`, `stop_lease_until`),
   KEY `idx_live_session_end_stall` (`status`, `stop_requested_at`),
   KEY `idx_live_session_end_attention` (`stop_recovery_state`, `ending_alert_level`),
   KEY `idx_live_session_media_state` (`media_state`),
@@ -223,6 +228,32 @@ SET @add_publish_credential_issue_count_sql = IF(
 PREPARE add_publish_credential_issue_count_stmt FROM @add_publish_credential_issue_count_sql;
 EXECUTE add_publish_credential_issue_count_stmt;
 DEALLOCATE PREPARE add_publish_credential_issue_count_stmt;
+
+SET @has_publish_idempotency_key_hash = (
+  SELECT COUNT(*) FROM `information_schema`.`COLUMNS`
+  WHERE `TABLE_SCHEMA` = DATABASE() AND `TABLE_NAME` = 'live_session' AND `COLUMN_NAME` = 'publish_idempotency_key_hash'
+);
+SET @add_publish_idempotency_key_hash_sql = IF(
+  @has_publish_idempotency_key_hash = 0,
+  'ALTER TABLE `live_session` ADD COLUMN `publish_idempotency_key_hash` CHAR(64) NOT NULL DEFAULT '''' COMMENT ''当前推流凭证签发操作的Idempotency-Key HMAC摘要'' AFTER `publish_credential_issue_count`',
+  'SELECT 1'
+);
+PREPARE add_publish_idempotency_key_hash_stmt FROM @add_publish_idempotency_key_hash_sql;
+EXECUTE add_publish_idempotency_key_hash_stmt;
+DEALLOCATE PREPARE add_publish_idempotency_key_hash_stmt;
+
+SET @has_publish_result_ciphertext = (
+  SELECT COUNT(*) FROM `information_schema`.`COLUMNS`
+  WHERE `TABLE_SCHEMA` = DATABASE() AND `TABLE_NAME` = 'live_session' AND `COLUMN_NAME` = 'publish_result_ciphertext'
+);
+SET @add_publish_result_ciphertext_sql = IF(
+  @has_publish_result_ciphertext = 0,
+  'ALTER TABLE `live_session` ADD COLUMN `publish_result_ciphertext` TEXT NOT NULL COMMENT ''当前推流凭证响应的AES-GCM密文，用于进程重启后幂等重放'' AFTER `publish_idempotency_key_hash`',
+  'SELECT 1'
+);
+PREPARE add_publish_result_ciphertext_stmt FROM @add_publish_result_ciphertext_sql;
+EXECUTE add_publish_result_ciphertext_stmt;
+DEALLOCATE PREPARE add_publish_result_ciphertext_stmt;
 
 SET @has_prepare_timeout_index = (
   SELECT COUNT(*) FROM `information_schema`.`STATISTICS`
@@ -490,12 +521,38 @@ SET @has_stop_next_retry_at = (
 );
 SET @add_stop_next_retry_at_sql = IF(
   @has_stop_next_retry_at = 0,
-  'ALTER TABLE `live_session` ADD COLUMN `stop_next_retry_at` BIGINT NOT NULL DEFAULT 0 COMMENT ''下次停止推流重试时间或当前处理租约截止时间'' AFTER `stop_attempts`',
+  'ALTER TABLE `live_session` ADD COLUMN `stop_next_retry_at` BIGINT NOT NULL DEFAULT 0 COMMENT ''下次停止推流重试时间'' AFTER `stop_attempts`',
   'SELECT 1'
 );
 PREPARE add_stop_next_retry_at_stmt FROM @add_stop_next_retry_at_sql;
 EXECUTE add_stop_next_retry_at_stmt;
 DEALLOCATE PREPARE add_stop_next_retry_at_stmt;
+
+SET @has_stop_lease_token = (
+  SELECT COUNT(*) FROM `information_schema`.`COLUMNS`
+  WHERE `TABLE_SCHEMA` = DATABASE() AND `TABLE_NAME` = 'live_session' AND `COLUMN_NAME` = 'stop_lease_token'
+);
+SET @add_stop_lease_token_sql = IF(
+  @has_stop_lease_token = 0,
+  'ALTER TABLE `live_session` ADD COLUMN `stop_lease_token` CHAR(64) NOT NULL DEFAULT '''' COMMENT ''停止任务当前执行者的随机fencing令牌'' AFTER `stop_next_retry_at`',
+  'SELECT 1'
+);
+PREPARE add_stop_lease_token_stmt FROM @add_stop_lease_token_sql;
+EXECUTE add_stop_lease_token_stmt;
+DEALLOCATE PREPARE add_stop_lease_token_stmt;
+
+SET @has_stop_lease_until = (
+  SELECT COUNT(*) FROM `information_schema`.`COLUMNS`
+  WHERE `TABLE_SCHEMA` = DATABASE() AND `TABLE_NAME` = 'live_session' AND `COLUMN_NAME` = 'stop_lease_until'
+);
+SET @add_stop_lease_until_sql = IF(
+  @has_stop_lease_until = 0,
+  'ALTER TABLE `live_session` ADD COLUMN `stop_lease_until` BIGINT NOT NULL DEFAULT 0 COMMENT ''停止任务租约截止毫秒时间戳'' AFTER `stop_lease_token`',
+  'SELECT 1'
+);
+PREPARE add_stop_lease_until_stmt FROM @add_stop_lease_until_sql;
+EXECUTE add_stop_lease_until_stmt;
+DEALLOCATE PREPARE add_stop_lease_until_stmt;
 
 SET @has_stop_last_error = (
   SELECT COUNT(*) FROM `information_schema`.`COLUMNS`
@@ -577,9 +634,24 @@ PREPARE add_end_retry_index_stmt FROM @add_end_retry_index_sql;
 EXECUTE add_end_retry_index_stmt;
 DEALLOCATE PREPARE add_end_retry_index_stmt;
 
+SET @has_stop_lease_index = (
+  SELECT COUNT(*) FROM `information_schema`.`STATISTICS`
+  WHERE `TABLE_SCHEMA` = DATABASE() AND `TABLE_NAME` = 'live_session' AND `INDEX_NAME` = 'idx_live_session_stop_lease'
+);
+SET @add_stop_lease_index_sql = IF(
+  @has_stop_lease_index = 0,
+  'ALTER TABLE `live_session` ADD INDEX `idx_live_session_stop_lease` (`status`, `stop_lease_until`)',
+  'SELECT 1'
+);
+PREPARE add_stop_lease_index_stmt FROM @add_stop_lease_index_sql;
+EXECUTE add_stop_lease_index_stmt;
+DEALLOCATE PREPARE add_stop_lease_index_stmt;
+
 ALTER TABLE `live_session`
   MODIFY COLUMN `session_no` VARCHAR(96) NOT NULL
   COMMENT '直播场次对外编号，格式为yyyyMMddHHmmssSSS-anchorNo-roomNo',
+  MODIFY COLUMN `stop_next_retry_at` BIGINT NOT NULL DEFAULT 0
+  COMMENT '下次停止推流重试时间',
   MODIFY COLUMN `end_reason` TINYINT UNSIGNED NOT NULL DEFAULT 0
   COMMENT '0未知 1主播结束 2管理员结束 3断流超时 4主播封禁 5系统异常 6准备开播超时';
 

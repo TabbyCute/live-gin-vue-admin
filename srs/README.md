@@ -12,12 +12,13 @@ SRS 使用控制台日志，Docker 日志采用带大小限制的 `local` 驱动
 
 ## 启动
 
-先确保本机 Go 后端正在监听 `8888`，然后执行：
+生产环境先生成至少 32 字节的 Base64URL/十六进制安全随机密钥，并把同一个值同时提供给 Go 后端与 SRS。不要把真实值写进仓库：
 
 ```bash
-cd /path/to/live-gin-vue-admin/srs
-docker compose pull
-SRS_HOOK_TOKEN='请替换为高熵随机值' docker compose up -d
+export SRS_HOOK_TOKEN="$(openssl rand -hex 32)"
+cd /path/to/live-gin-vue-admin
+(cd srs && docker compose pull && docker compose up -d)
+make run-server-production
 ```
 
 检查状态：
@@ -35,8 +36,11 @@ http://host.docker.internal:8888/api/v1/app/live/hook/publish
 http://host.docker.internal:8888/api/v1/app/live/hook/unpublish
 ```
 
-回调URL会附带 `hook_token`。Go 后端优先读取同名 `SRS_HOOK_TOKEN` 环境变量；两端必须一致。
-本地未设置时 Compose 仅使用便于联调的默认值，不能用于生产。
+回调 URL 会附带 `hook_token`。Go 后端优先读取同名 `SRS_HOOK_TOKEN` 环境变量；两端必须一致。环境变量显式存在但为空、密钥少于 32 字节、包含非 Base64URL 安全字符，或者生产配置和环境变量都未提供密钥时，Go 服务会拒绝启动。
+
+本地未设置时，Compose 和 `server/config.dev.yaml` 使用相同的联调默认值；该固定值不能用于生产。查询参数可能进入代理访问日志，正式入口必须关闭查询串日志或对 `hook_token` 脱敏，并同时使用内网/IP 白名单限制 Hook 路径。
+
+Go 后端只在进程启动时读取并冻结 Hook 密钥，配置文件热更新和后台 reload 都不会替换运行中密钥。轮换时必须同时更新 Go 与 SRS 的环境变量并协调重启，避免一半实例先使用新密钥导致正常回调被拒绝。
 
 后端还会读取 SRS HTTP API 每个响应中的 `server` 标识。该标识变化代表 SRS 已重启，
 此时旧连接身份全部失效，合法主播可在新实例第一次 `on_publish` 时立即受控接管，无需等待三轮缺失对账。

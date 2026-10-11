@@ -16,6 +16,7 @@
 - SRS `on_unpublish` 不直接结束场次，而是开启可配置重连窗口；窗口内重连继续原场次，超时后才结束。
 - 准备场次写入 `prepare_deadline_at`；超过 `live.prepare-timeout-seconds` 尚未首次发布时直接取消，不访问 SRS、不计直播统计。
 - 发布和断流使用 `server_id + client_id + stream_id` 识别当前连接，旧连接迟到回调不能覆盖或断开新连接的业务状态。
+- SRS `publish`、`unpublish` 和统计 Hook 统一使用启动时冻结的共享密钥强制认证；环境变量优先且显式空值不回退，缺失或弱密钥会阻止服务启动，热更新和后台 reload 不会替换运行中密钥。认证在读取请求体和访问数据库前完成，Handler 还会验证认证上下文以防误注册，现有 pt 与连接身份校验继续作为后续独立安全层。
 - `duration_ms = ended_at - started_at`，表示逻辑直播时长，包含成功重连前的短暂断流；断流超时时 `ended_at` 取 `last_unpublish_at`，不计算最终等待窗口。
 - 房间状态：`0`后台/风控禁用、`1`正常、`2`主播主动关闭或运营停用。
 - 主播禁用、封禁、注销或关闭开播权限时，准备中场次取消，直播中场次进入结束中。
@@ -34,7 +35,7 @@
 - `live.srs.app`：SRS 流应用名，写入 pt 载荷并参与推流/播放 URL 拼接；`live.srs.http_apis` 用于查询发布流并强制断开推流客户端。
 - `live.publish-token-key`：仅供 Go 服务加密、解密 pt；不配置到 SRS、代理或客户端，空值会导致 pt 无法生成或校验。
 - `live.srs.push-base-url`、`live.srs.play-base-url`：准备接口拼接推流和播放 URL 的基础地址。
-- `live.push-token-seconds`：pt 有效时长，单位秒。pt V1 载荷使用 `SHA-256(publish-token-key)` 派生密钥后做 AES-256-GCM 加密，再做 Base64URL 编码并添加 `v1_` 前缀。
+- `live.push-token-seconds`：pt 有效时长，单位秒。首版在尚未实现直播中凭证续签前，开发、生产和 Docker 配置统一临时设为 604800 秒（7 天），保证超长直播断线后仍可重连；后续应恢复短期凭证并增加安全续签。pt V1 载荷使用 `SHA-256(publish-token-key)` 派生密钥后做 AES-256-GCM 加密，再做 Base64URL 编码并添加 `v1_` 前缀。
 - 内置 `LiveSessionLifecycle` 在表结构就绪后立即执行一次，之后默认每 5 秒调用 `ProcessPendingSessions`，处理准备超时、重连超时和结束中场次的 SRS 断流重试。
 
 ## 后台入口

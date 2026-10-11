@@ -25,6 +25,12 @@ spec:
         - name: gin-vue-admin-container
           image: registry.cn-hangzhou.aliyuncs.com/gva/server:latest
           imagePullPolicy: Always
+          env:
+            - name: SRS_HOOK_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: tb-live-secrets
+                  key: srs-hook-token
           ports:
             - containerPort: 8888
               name: http

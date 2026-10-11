@@ -2,15 +2,14 @@ package live
 
 import (
 	"bytes"
-	"crypto/subtle"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
-	"os"
-	"strings"
 
 	"tb_live_module/global"
+	"tb_live_module/middleware"
 	"tb_live_module/model/common/response"
 	liveReq "tb_live_module/model/live/request"
 
@@ -30,15 +29,17 @@ const (
 // Publish
 // @Tags LiveHook
 // @Summary SRS发布流回调
-// @Description 接口来源由部署层 IP 白名单保护；param 中必须包含 prepare 接口签发的 pt，服务端会解密并校验完整载荷。请求体有硬上限；开启 live.log-srs-hook-raw-body 后，原始 JSON 也只会按配置上限写入 INFO 日志。
+// @Description 请求先通过启动时冻结的 SRS Hook 共享密钥认证，并由部署层 IP 白名单提供第二层保护；param 中必须包含 prepare 接口签发的 pt，服务端会解密并校验完整载荷。请求体有硬上限；开启 live.log-srs-hook-raw-body 后也只记录有界的清洗字段，param(pt)和未知字段不会落日志。
 // @Accept application/json
 // @Produce application/json
+// @Param X-SRS-Hook-Token header string false "SRS Hook共享密钥；与hook_token二选一且禁止同时传递"
+// @Param hook_token query string false "SRS原生HTTP Hook使用的共享密钥；与Header二选一且禁止同时传递"
 // @Param data body liveReq.SRSHookReq true "SRS回调"
 // @Success 200 {object} response.Response
 // @Failure 413 {object} response.Response "请求体超过上限"
 // @Router /v1/app/live/hook/publish [post]
 func (a *HookApi) Publish(c *gin.Context) {
-	if !authorizeSRSHook(c) {
+	if !middleware.EnsureSRSHookAuthenticated(c) {
 		return
 	}
 	req, err := bindAndLogSRSHook(c, "publish")
@@ -61,15 +62,17 @@ func (a *HookApi) Publish(c *gin.Context) {
 // Unpublish
 // @Tags LiveHook
 // @Summary SRS停止发布流回调
-// @Description 接口来源由部署层 IP 白名单保护；不直接结束场次，而是记录断流并开启可配置的重连窗口。请求体有硬上限；开启 live.log-srs-hook-raw-body 后，原始 JSON 也只会按配置上限写入 INFO 日志。
+// @Description 请求先通过启动时冻结的 SRS Hook 共享密钥认证，并由部署层 IP 白名单提供第二层保护；不直接结束场次，而是记录断流并开启可配置的重连窗口。请求体有硬上限；开启 live.log-srs-hook-raw-body 后也只记录有界的清洗字段，param(pt)和未知字段不会落日志。
 // @Accept application/json
 // @Produce application/json
+// @Param X-SRS-Hook-Token header string false "SRS Hook共享密钥；与hook_token二选一且禁止同时传递"
+// @Param hook_token query string false "SRS原生HTTP Hook使用的共享密钥；与Header二选一且禁止同时传递"
 // @Param data body liveReq.SRSHookReq true "SRS回调"
 // @Success 200 {object} response.Response
 // @Failure 413 {object} response.Response "请求体超过上限"
 // @Router /v1/app/live/hook/unpublish [post]
 func (a *HookApi) Unpublish(c *gin.Context) {
-	if !authorizeSRSHook(c) {
+	if !middleware.EnsureSRSHookAuthenticated(c) {
 		return
 	}
 	req, err := bindAndLogSRSHook(c, "unpublish")
@@ -88,7 +91,7 @@ func (a *HookApi) Unpublish(c *gin.Context) {
 	response.OkWithMessage("回调处理成功", c)
 }
 
-// bindAndLogSRSHook 在JSON绑定前读取有硬上限的SRS请求体，并按独立的更小上限记录原始日志。
+// bindAndLogSRSHook 在JSON绑定前读取有硬上限的SRS请求体，并按独立的更小上限记录清洗日志。
 // 未知扩展字段仍由SRSHookReq保留；任何配置都不能突破代码中的1MiB请求体硬上限。
 func bindAndLogSRSHook(c *gin.Context, hook string) (liveReq.SRSHookReq, error) {
 	var req liveReq.SRSHookReq
@@ -99,13 +102,15 @@ func bindAndLogSRSHook(c *gin.Context, hook string) (liveReq.SRSHookReq, error) 
 	}
 	c.Request.Body = io.NopCloser(bytes.NewReader(rawBody))
 	if global.GVA_CONFIG.Live.LogSRSHookRawBody && global.GVA_LOG != nil {
-		loggedBody, truncated := truncateSRSHookLogBody(rawBody, liveSRSHookLogMaxBodyBytes())
-		global.GVA_LOG.Info("SRS Hook 原始参数",
+		sanitizedBody := sanitizeSRSHookLogBody(rawBody)
+		loggedBody, truncated := truncateSRSHookLogBody(sanitizedBody, liveSRSHookLogMaxBodyBytes())
+		global.GVA_LOG.Info("SRS Hook 清洗参数",
 			zap.String("hook", hook),
 			zap.String("path", c.Request.URL.Path),
 			zap.String("clientIp", c.ClientIP()),
 			zap.String("contentType", c.ContentType()),
 			zap.Int("rawBodyBytes", len(rawBody)),
+			zap.Bool("rawBodySanitized", true),
 			zap.Bool("rawBodyTruncated", truncated),
 			zap.String("rawBody", string(loggedBody)),
 		)
@@ -114,6 +119,32 @@ func bindAndLogSRSHook(c *gin.Context, hook string) (liveReq.SRSHookReq, error) 
 		return req, err
 	}
 	return req, nil
+}
+
+// sanitizeSRSHookLogBody 只保留排障所需的SRS标准字段，并永久移除param和未知扩展字段。
+// param 包含pt，未知字段也可能由上游携带秘密；即使本地开启原始Hook日志也不得落盘。
+func sanitizeSRSHookLogBody(rawBody []byte) []byte {
+	var source map[string]json.RawMessage
+	if err := json.Unmarshal(rawBody, &source); err != nil {
+		return []byte(`{"omitted":"malformed JSON"}`)
+	}
+	sanitized := make(map[string]json.RawMessage, 12)
+	for _, key := range []string{
+		"server_id", "service_id", "action", "client_id", "ip", "vhost", "app",
+		"tcUrl", "stream", "stream_url", "stream_id",
+	} {
+		if value, ok := source[key]; ok {
+			sanitized[key] = value
+		}
+	}
+	if _, exists := source["param"]; exists {
+		sanitized["param"] = json.RawMessage(`"[REDACTED]"`)
+	}
+	result, err := json.Marshal(sanitized)
+	if err != nil {
+		return []byte(`{"omitted":"unable to sanitize"}`)
+	}
+	return result
 }
 
 func respondSRSHookBindError(c *gin.Context, err error) {
@@ -171,15 +202,17 @@ func truncateSRSHookLogBody(rawBody []byte, limit int64) ([]byte, bool) {
 // UpdateStats
 // @Tags LiveHook
 // @Summary 写入直播场次实时统计快照
-// @Description 由部署层 IP 白名单保护，供可信统计服务写入；礼物流水仍应由独立账本保存，本接口只更新场次汇总。
+// @Description 请求先通过启动时冻结的 SRS Hook 共享密钥认证，并由部署层 IP 白名单提供第二层保护，供可信统计服务写入；礼物流水仍应由独立账本保存，本接口只更新场次汇总。
 // @Accept application/json
 // @Produce application/json
+// @Param X-SRS-Hook-Token header string false "SRS Hook共享密钥；与hook_token二选一且禁止同时传递"
+// @Param hook_token query string false "SRS原生HTTP Hook使用的共享密钥；与Header二选一且禁止同时传递"
 // @Param data body liveReq.LiveSessionStatsReq true "场次统计"
 // @Success 200 {object} response.Response
 // @Failure 413 {object} response.Response "请求体超过上限"
 // @Router /v1/app/live/hook/session/stats [post]
 func (a *HookApi) UpdateStats(c *gin.Context) {
-	if !authorizeSRSHook(c) {
+	if !middleware.EnsureSRSHookAuthenticated(c) {
 		return
 	}
 	var req liveReq.LiveSessionStatsReq
@@ -198,27 +231,4 @@ func (a *HookApi) UpdateStats(c *gin.Context) {
 		return
 	}
 	response.OkWithMessage("更新成功", c)
-}
-
-func authorizeSRSHook(c *gin.Context) bool {
-	expected := strings.TrimSpace(os.Getenv("SRS_HOOK_TOKEN"))
-	if expected == "" {
-		expected = strings.TrimSpace(global.GVA_CONFIG.Live.SRSHookToken)
-	}
-	// 空值保持兼容已有的部署层IP白名单；一旦配置密钥即严格失败关闭。
-	// 生产部署应始终通过环境变量提供密钥，避免把凭证提交到配置文件。
-	if expected == "" {
-		return true
-	}
-	provided := strings.TrimSpace(c.GetHeader("X-SRS-Hook-Token"))
-	if provided == "" {
-		provided = strings.TrimSpace(c.Query("hook_token"))
-	}
-	if len(provided) != len(expected) || subtle.ConstantTimeCompare([]byte(provided), []byte(expected)) != 1 {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response.Response{
-			Code: response.ERROR, Data: map[string]interface{}{}, Msg: "SRS Hook认证失败",
-		})
-		return false
-	}
-	return true
 }

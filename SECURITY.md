@@ -21,7 +21,7 @@ ffmpeg \
 -i "./2.mp4" \
 -c copy \
 -f flv \
-""
+"rtmp://127.0.0.1:12935/TB_LIVE/5100008?pt=v1_4aOlvmB-aT6oLXvZwfggQyPVtuyWcyeYa2N0vy_x7Br1H2dmAHvn3Eb2XDneiOtwhgbIg5tYYCTWImS_wFhuAYCGaqSxs0dY5TMLG1L9AykD-dOX3T3MMyf8TRiUHZyaQhbB2Prqg29Fbj9DBnMk0e3bs7vFgcBm8zpfZLvKRjvgax7ngwkGmG-q2Wuukh8nAqrmZAxqIw_lgfAsIehOtHeOBHU9d4j7t227JNyyxNykKjzJF8v7Zgucc4SLwDRuT-YqYTxJTzWJFKmiqdhmt0cZIWAAg0O9OhdyMlpSU7ide8HuqQ0Dd88mdqEALzLz6pJi3ACYM9BHNVfvCSjuAkGUlYBI8WZCd3LxEm6f"
 
 /proxy/pages/income
 /api/agent/center/income/overview
@@ -372,3 +372,17 @@ publishToken由{
 6. 增加 prepare 幂等、SRS 重启快速恢复、推流凭证刷新。
 7. 再实现多实例 Leader/共享 SRS 快照和多 SRS 节点路由。
 8. 使用 MySQL 8 + SRS 7.0.165 做真实并发、断网、重启、超时和大规模压测，而不只依赖 SQLite 单元测试。
+
+
+
+建议整改顺序
+1. 立即轮换并移除仓库中的所有密钥、数据库密码和 pt。
+2. 落地播放鉴权、Hook 强制认证、后台服务端 RBAC。
+3. 增加真正的 10000 路准入限制。
+4. 修复批量断流快照歧义和租约过短。
+5. 为统计增加序列号，为超长直播增加凭证续签。
+[//]: # (6. 强制 prepare 幂等，修复无 Redis 和 CORS 场景。)
+7. 加全局 body、分页、限流和 HTTP 超时边界。
+8. 禁止直播关键密钥热更新，改成验证后的不可变配置快照。
+9. 使用真实 MySQL 8 + SRS 7 做 10000 路发布、重连、重启、慢 API、HLS 磁盘和 24 小时稳定性压测。
+   本轮仅进行了只读评估和测试，没有修改代码；现有未提交的 SECURITY.md 也保持原样。

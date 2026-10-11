@@ -53,6 +53,8 @@ func TestStopPublishersUsesOneSnapshotAndReturnsAlignedResults(t *testing.T) {
 	var listCalls, deleted atomic.Int32
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch {
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/versions":
+			_, _ = w.Write([]byte(`{"code":0,"server":"srs-1","service":"service-1"}`))
 		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/vhosts":
 			_, _ = w.Write([]byte(`{"code":0,"vhosts":[{"id":"vid-default","name":"__defaultVhost__"}]}`))
 		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/streams":
@@ -82,6 +84,164 @@ func TestStopPublishersUsesOneSnapshotAndReturnsAlignedResults(t *testing.T) {
 	}
 	require.Equal(t, int32(1), listCalls.Load(), "批量停止不能退化为逐场查询SRS")
 	require.Equal(t, int32(2), deleted.Load())
+}
+
+func TestStopPublishersRejectsSRSRestartDuringSnapshot(t *testing.T) {
+	var versionCalls, deleted atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/versions":
+			serverID := "srs-before"
+			if versionCalls.Add(1) > 1 {
+				serverID = "srs-after"
+			}
+			_, _ = fmt.Fprintf(w, `{"code":0,"server":%q}`, serverID)
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/streams":
+			_, _ = w.Write([]byte(`{"code":0,"streams":[{"id":"stream-1","app":"live","name":"room-1","publish":{"active":true,"cid":"client-1"}}]}`))
+		case r.Method == http.MethodDelete:
+			deleted.Add(1)
+			_, _ = w.Write([]byte(`{"code":0}`))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	t.Cleanup(server.Close)
+	client, err := NewClient(config.SRS{HTTPAPIs: server.URL})
+	require.NoError(t, err)
+	results := client.StopPublishers(context.Background(), []StreamRef{{
+		ServerID: "srs-before", StreamID: "stream-1", ClientID: "client-1", App: "live", Stream: "room-1",
+	}}, 1)
+	require.Len(t, results, 1)
+	require.ErrorContains(t, results[0], "快照期间重启")
+	require.Zero(t, deleted.Load())
+}
+
+func TestStopPublishersRejectsAmbiguousStableIdentity(t *testing.T) {
+	var deleted atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/versions":
+			_, _ = w.Write([]byte(`{"code":0,"server":"srs-new"}`))
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/streams":
+			_, _ = w.Write([]byte(`{"code":0,"streams":[` +
+				`{"id":"new-1","app":"live","name":"room-1","publish":{"active":true,"cid":"client-1"}},` +
+				`{"id":"new-2","app":"live","name":"room-1","publish":{"active":true,"cid":"client-2"}}]}`))
+		case r.Method == http.MethodDelete:
+			deleted.Add(1)
+			_, _ = w.Write([]byte(`{"code":0}`))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	t.Cleanup(server.Close)
+	client, err := NewClient(config.SRS{HTTPAPIs: server.URL})
+	require.NoError(t, err)
+	results := client.StopPublishers(context.Background(), []StreamRef{{
+		ServerID: "srs-old", StreamID: "old-stream", ClientID: "old-client", App: "live", Stream: "room-1",
+	}}, 1)
+	require.Len(t, results, 1)
+	require.ErrorIs(t, results[0], ErrPublisherMatchAmbiguous)
+	require.Zero(t, deleted.Load())
+}
+
+func TestStopPublishersRejectsRestartDuringDeletes(t *testing.T) {
+	var versionCalls, deleted atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/versions":
+			serverID := "srs-before"
+			if versionCalls.Add(1) > 2 {
+				serverID = "srs-after"
+			}
+			_, _ = fmt.Fprintf(w, `{"code":0,"server":%q}`, serverID)
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/streams":
+			_, _ = w.Write([]byte(`{"code":0,"streams":[{"id":"stream-1","app":"live","name":"room-1","publish":{"active":true,"cid":"client-1"}}]}`))
+		case r.Method == http.MethodDelete && r.URL.Path == "/api/v1/clients/client-1":
+			deleted.Add(1)
+			_, _ = w.Write([]byte(`{"code":0}`))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	t.Cleanup(server.Close)
+	client, err := NewClient(config.SRS{HTTPAPIs: server.URL})
+	require.NoError(t, err)
+	results := client.StopPublishers(context.Background(), []StreamRef{{
+		ServerID: "srs-before", StreamID: "stream-1", ClientID: "client-1", App: "live", Stream: "room-1",
+	}}, 1)
+	require.Len(t, results, 1)
+	require.ErrorContains(t, results[0], "执行期间重启")
+	require.Equal(t, int32(1), deleted.Load())
+}
+
+func TestStopPublishersRejectsTwoSessionsMappedToOneClient(t *testing.T) {
+	var deleted atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/versions":
+			_, _ = w.Write([]byte(`{"code":0,"server":"srs-1"}`))
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/streams":
+			_, _ = w.Write([]byte(`{"code":0,"streams":[{"id":"stream-1","app":"live","name":"room-1","publish":{"active":true,"cid":"shared-client"}}]}`))
+		case r.Method == http.MethodDelete:
+			deleted.Add(1)
+			_, _ = w.Write([]byte(`{"code":0}`))
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	t.Cleanup(server.Close)
+	client, err := NewClient(config.SRS{HTTPAPIs: server.URL})
+	require.NoError(t, err)
+	ref := StreamRef{ServerID: "srs-1", StreamID: "stream-1", ClientID: "shared-client", App: "live", Stream: "room-1"}
+	results := client.StopPublishers(context.Background(), []StreamRef{ref, ref}, 2)
+	require.Len(t, results, 2)
+	require.ErrorIs(t, results[0], ErrPublisherMatchAmbiguous)
+	require.ErrorIs(t, results[1], ErrPublisherMatchAmbiguous)
+	require.Zero(t, deleted.Load())
+}
+
+func TestStopPublishersHandlesTenThousandRefsWithOnePagedSnapshot(t *testing.T) {
+	const streamCount = 10_000
+	var listCalls atomic.Int32
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/versions":
+			_, _ = w.Write([]byte(`{"code":0,"server":"srs-1"}`))
+		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/streams":
+			listCalls.Add(1)
+			start, _ := strconv.Atoi(r.URL.Query().Get("start"))
+			count, _ := strconv.Atoi(r.URL.Query().Get("count"))
+			end := min(start+count, streamCount)
+			streams := make([]map[string]interface{}, 0, max(0, end-start))
+			for index := start; index < end; index++ {
+				streams = append(streams, map[string]interface{}{
+					"id": fmt.Sprintf("stream-%05d", index), "app": "live", "name": fmt.Sprintf("room-%05d", index),
+					"publish": map[string]interface{}{"active": false},
+				})
+			}
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{"code": 0, "streams": streams})
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	t.Cleanup(server.Close)
+	client, err := NewClient(config.SRS{
+		HTTPAPIs: server.URL, SnapshotPageSize: 5000, SnapshotMaxStreams: 20000,
+	})
+	require.NoError(t, err)
+	refs := make([]StreamRef, 0, streamCount)
+	for index := range streamCount {
+		refs = append(refs, StreamRef{
+			ServerID: "srs-1", StreamID: fmt.Sprintf("stream-%05d", index),
+			App: "live", Stream: fmt.Sprintf("room-%05d", index),
+		})
+	}
+	results := client.StopPublishers(context.Background(), refs, 8)
+	require.Len(t, results, streamCount)
+	for _, result := range results {
+		require.NoError(t, result)
+	}
+	require.Equal(t, int32(3), listCalls.Load(), "1万路快照应只需要两个满页和一个结束页")
 }
 
 func TestListPublishersReturnsLogicalVhostAndMediaInfo(t *testing.T) {

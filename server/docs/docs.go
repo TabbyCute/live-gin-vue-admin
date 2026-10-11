@@ -8817,7 +8817,7 @@ const docTemplate = `{
         },
         "/v1/app/live/hook/publish": {
             "post": {
-                "description": "接口来源由部署层 IP 白名单保护；param 中必须包含 prepare 接口签发的 pt，服务端会解密并校验完整载荷。请求体有硬上限；开启 live.log-srs-hook-raw-body 后，原始 JSON 也只会按配置上限写入 INFO 日志。",
+                "description": "请求先通过启动时冻结的 SRS Hook 共享密钥认证，并由部署层 IP 白名单提供第二层保护；param 中必须包含 prepare 接口签发的 pt，服务端会解密并校验完整载荷。请求体有硬上限；开启 live.log-srs-hook-raw-body 后也只记录有界的清洗字段，param(pt)和未知字段不会落日志。",
                 "consumes": [
                     "application/json"
                 ],
@@ -8829,6 +8829,18 @@ const docTemplate = `{
                 ],
                 "summary": "SRS发布流回调",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SRS Hook共享密钥；与hook_token二选一且禁止同时传递",
+                        "name": "X-SRS-Hook-Token",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "SRS原生HTTP Hook使用的共享密钥；与Header二选一且禁止同时传递",
+                        "name": "hook_token",
+                        "in": "query"
+                    },
                     {
                         "description": "SRS回调",
                         "name": "data",
@@ -8857,7 +8869,7 @@ const docTemplate = `{
         },
         "/v1/app/live/hook/session/stats": {
             "post": {
-                "description": "由部署层 IP 白名单保护，供可信统计服务写入；礼物流水仍应由独立账本保存，本接口只更新场次汇总。",
+                "description": "请求先通过启动时冻结的 SRS Hook 共享密钥认证，并由部署层 IP 白名单提供第二层保护，供可信统计服务写入；礼物流水仍应由独立账本保存，本接口只更新场次汇总。",
                 "consumes": [
                     "application/json"
                 ],
@@ -8869,6 +8881,18 @@ const docTemplate = `{
                 ],
                 "summary": "写入直播场次实时统计快照",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SRS Hook共享密钥；与hook_token二选一且禁止同时传递",
+                        "name": "X-SRS-Hook-Token",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "SRS原生HTTP Hook使用的共享密钥；与Header二选一且禁止同时传递",
+                        "name": "hook_token",
+                        "in": "query"
+                    },
                     {
                         "description": "场次统计",
                         "name": "data",
@@ -8897,7 +8921,7 @@ const docTemplate = `{
         },
         "/v1/app/live/hook/unpublish": {
             "post": {
-                "description": "接口来源由部署层 IP 白名单保护；不直接结束场次，而是记录断流并开启可配置的重连窗口。请求体有硬上限；开启 live.log-srs-hook-raw-body 后，原始 JSON 也只会按配置上限写入 INFO 日志。",
+                "description": "请求先通过启动时冻结的 SRS Hook 共享密钥认证，并由部署层 IP 白名单提供第二层保护；不直接结束场次，而是记录断流并开启可配置的重连窗口。请求体有硬上限；开启 live.log-srs-hook-raw-body 后也只记录有界的清洗字段，param(pt)和未知字段不会落日志。",
                 "consumes": [
                     "application/json"
                 ],
@@ -8909,6 +8933,18 @@ const docTemplate = `{
                 ],
                 "summary": "SRS停止发布流回调",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SRS Hook共享密钥；与hook_token二选一且禁止同时传递",
+                        "name": "X-SRS-Hook-Token",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "SRS原生HTTP Hook使用的共享密钥；与Header二选一且禁止同时传递",
+                        "name": "hook_token",
+                        "in": "query"
+                    },
                     {
                         "description": "SRS回调",
                         "name": "data",
@@ -9243,7 +9279,7 @@ const docTemplate = `{
                         "AppBearerAuth": []
                     }
                 ],
-                "description": "实时校验主播开播资格和直播间状态；返回一次性推流凭证，数据库仅保存其哈希。\n同一直播间在准备中、直播中、结束中最多只能有一个场次，由数据库唯一约束兜底。\n建议客户端为一次准备操作生成 Idempotency-Key，并在网络超时重试时复用；服务端会返回完全相同的推流地址。",
+                "description": "实时校验主播开播资格和直播间状态；返回一次性推流凭证，数据库不保存明文，只保存校验哈希和用于幂等重放的 AES-GCM 密文。\n同一直播间在准备中、直播中、结束中最多只能有一个场次，由数据库唯一约束兜底。\nIdempotency-Key 必填；客户端必须为一次准备操作生成唯一键，并在网络超时重试时复用，服务端会返回完全相同的推流地址。",
                 "consumes": [
                     "application/json"
                 ],
@@ -9268,7 +9304,8 @@ const docTemplate = `{
                         "type": "string",
                         "description": "8到128位幂等键；同一次操作重试必须保持不变",
                         "name": "Idempotency-Key",
-                        "in": "header"
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {

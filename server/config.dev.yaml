@@ -131,11 +131,11 @@ live:
     task-leader-fail-open: true
     # Leader租约会在任务执行期间自动续期；应明显大于单次SRS请求超时。
     task-leader-lease-seconds: 60
-    # 推流凭证pt有效期。必须覆盖可能的最长直播时长和断流重连时间，否则超长直播断线后无法重新推流。
-    push-token-seconds: 172800
+    # 推流凭证pt暂设为7天，覆盖首版超长直播的断流重连；后续应改为短期凭证加安全续签。
+    push-token-seconds: 604800
     # Go服务加解密pt的密钥；生产环境必须换成足够长的强随机值，并且多实例必须保持一致。
     publish-token-key: "TB_LIVE_ENC_KEY"
-    # 每场在首次prepare之外最多允许重新签发多少次推流地址；相同Idempotency-Key的缓存重放不计次数，代码硬上限20。
+    # 每场在首次prepare之外最多允许重新签发多少次推流地址；相同Idempotency-Key的幂等重放不计次数，代码硬上限20。
     push-url-refresh-limit: 5
     # 每多少秒扫描准备超时、重连超时和“结束中”场次。数据库状态扫描与SRS断流任务相互隔离，SRS故障不会拖住超时处理。
     end-scan-interval-seconds: 5
@@ -157,14 +157,14 @@ live:
     end-critical-seconds: 900
     # 进入人工关注后保留低频自动恢复；SRS恢复事件会立即绕过该等待。
     end-manual-retry-seconds: 300
-    # 是否把publish/unpublish原始JSON写入INFO日志。只建议本地联调开启，因为日志会包含pt推流凭证。
+    # 是否把publish/unpublish清洗后的标准字段写入INFO日志；param(pt)和未知字段始终移除，仍只建议本地联调开启。
     log-srs-hook-raw-body: true
     # 单个SRS Hook请求体最大字节数；超出返回HTTP 413，代码硬上限1MiB。
     srs-hook-max-body-bytes: 65536
-    # 开启原始Hook日志时最多记录的请求体字节数；超出会截断，代码硬上限64KiB。
+    # 开启清洗Hook日志时最多记录的清洗结果字节数；超出会截断，代码硬上限64KiB。
     srs-hook-log-max-body-bytes: 4096
-    # 本地SRS回调共享密钥；生产应使用SRS_HOOK_TOKEN环境变量覆盖且使用高熵随机值。
-    srs-hook-token: "local-srs-hook-change-me"
+    # 本地SRS回调共享密钥；至少32字节。生产必须通过SRS_HOOK_TOKEN覆盖为高熵随机值。
+    srs-hook-token: "local-srs-hook-change-me-32bytes-minimum"
     # SRS媒体服务器配置
     srs:
         # SRS中的应用名，必须和推流地址及srs.conf保持一致。

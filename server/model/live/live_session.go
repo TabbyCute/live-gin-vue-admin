@@ -83,11 +83,13 @@ type LiveSession struct {
 	CoverURL   string         `json:"coverUrl" gorm:"column:cover_url;type:varchar(500);not null;default:'';comment:本场封面快照"`
 	StreamInfo datatypes.JSON `json:"streamInfo" gorm:"column:stream_info;type:json;default:null;comment:取得有效视频宽高后保存的公开流媒体信息白名单JSON快照"`
 
-	Status       uint8 `json:"status" gorm:"column:status;type:tinyint unsigned;not null;default:0;index:idx_live_session_prepare_timeout,priority:1;index:idx_live_session_reconnect,priority:1;index:idx_live_session_end_retry,priority:1;index:idx_live_session_end_stall,priority:1;index:idx_live_session_stream_ready,priority:1;index:idx_live_session_stream_probe,priority:1;comment:场次状态：0准备中 1直播中 2结束中 3已结束 4已取消 5失败"`
+	Status       uint8 `json:"status" gorm:"column:status;type:tinyint unsigned;not null;default:0;index:idx_live_session_prepare_timeout,priority:1;index:idx_live_session_reconnect,priority:1;index:idx_live_session_end_retry,priority:1;index:idx_live_session_stop_lease,priority:1;index:idx_live_session_end_stall,priority:1;index:idx_live_session_stream_ready,priority:1;index:idx_live_session_stream_probe,priority:1;comment:场次状态：0准备中 1直播中 2结束中 3已结束 4已取消 5失败"`
 	ActiveRoomId *uint `json:"-" gorm:"->;type:bigint unsigned GENERATED ALWAYS AS (CASE WHEN status IN (0,1,2) THEN room_id ELSE NULL END) STORED;uniqueIndex:uk_live_session_active_room;comment:活动场次房间ID生成列"`
 
 	PrepareDeadlineAt           int64  `json:"prepareDeadlineAt" gorm:"column:prepare_deadline_at;type:bigint;not null;default:0;index:idx_live_session_prepare_timeout,priority:2;comment:等待首次publish回调的截止时间，毫秒时间戳；0仅兼容待清理旧数据或表示已正式开播"`
 	PublishCredentialIssueCount uint32 `json:"-" gorm:"column:publish_credential_issue_count;type:int unsigned;not null;default:1;comment:本场推流凭证累计签发次数，prepare首次签发计为1"`
+	PublishIdempotencyKeyHash   string `json:"-" gorm:"column:publish_idempotency_key_hash;type:char(64);not null;default:'';comment:当前推流凭证签发操作的Idempotency-Key HMAC摘要"`
+	PublishResultCiphertext     string `json:"-" gorm:"column:publish_result_ciphertext;type:text;not null;comment:当前推流凭证响应的AES-GCM密文，用于进程重启后幂等重放"`
 	StartedAt                   int64  `json:"startedAt" gorm:"column:started_at;type:bigint;not null;default:0;index:idx_live_session_anchor_started,priority:2,sort:desc;index:idx_live_session_category_started,priority:2,sort:desc;comment:SRS首次取得有效视频宽高并确认正式开播的时间，毫秒时间戳"`
 	PublishIP                   string `json:"-" gorm:"column:publish_ip;type:varchar(45);not null;default:'';comment:本场首次接受publish回调的推流IP，仅管理后台可见"`
 	EndedAt                     int64  `json:"endedAt" gorm:"column:ended_at;type:bigint;not null;default:0;comment:实际最终断流或主动结束时间，毫秒时间戳"`
@@ -117,7 +119,9 @@ type LiveSession struct {
 
 	StopRequestedAt      int64  `json:"-" gorm:"column:stop_requested_at;type:bigint;not null;default:0;index:idx_live_session_end_stall,priority:2;comment:进入结束中的请求时间，毫秒时间戳"`
 	StopAttempts         uint32 `json:"-" gorm:"column:stop_attempts;type:int unsigned;not null;default:0;comment:SRS停止推流累计尝试次数"`
-	StopNextRetryAt      int64  `json:"-" gorm:"column:stop_next_retry_at;type:bigint;not null;default:0;index:idx_live_session_end_retry,priority:2;comment:下次停止推流重试时间或当前处理租约截止时间"`
+	StopNextRetryAt      int64  `json:"-" gorm:"column:stop_next_retry_at;type:bigint;not null;default:0;index:idx_live_session_end_retry,priority:2;comment:下次停止推流重试时间"`
+	StopLeaseToken       string `json:"-" gorm:"column:stop_lease_token;type:char(64);not null;default:'';comment:停止任务当前执行者的随机fencing令牌"`
+	StopLeaseUntil       int64  `json:"-" gorm:"column:stop_lease_until;type:bigint;not null;default:0;index:idx_live_session_stop_lease,priority:2;comment:停止任务租约截止毫秒时间戳"`
 	StopLastError        string `json:"-" gorm:"column:stop_last_error;type:varchar(500);not null;default:'';comment:最近一次停止推流失败原因"`
 	StopRecoveryState    uint8  `json:"stopRecoveryState" gorm:"column:stop_recovery_state;type:tinyint unsigned;not null;default:0;index:idx_live_session_end_attention,priority:1;comment:收尾恢复状态：0自动恢复 1需要人工关注"`
 	EndingAlertLevel     uint8  `json:"endingAlertLevel" gorm:"column:ending_alert_level;type:tinyint unsigned;not null;default:0;index:idx_live_session_end_attention,priority:2;comment:结束中滞留告警级别：0无 1警告 2严重"`

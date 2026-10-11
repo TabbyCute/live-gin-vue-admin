@@ -96,14 +96,14 @@ func (a *RoomApi) UpdateOwnerStatus(c *gin.Context) {
 // Prepare
 // @Tags LiveRoomApp
 // @Summary 创建一场待推流的直播场次
-// @Description 实时校验主播开播资格和直播间状态；返回一次性推流凭证，数据库仅保存其哈希。
+// @Description 实时校验主播开播资格和直播间状态；返回一次性推流凭证，数据库不保存明文，只保存校验哈希和用于幂等重放的 AES-GCM 密文。
 // @Description 同一直播间在准备中、直播中、结束中最多只能有一个场次，由数据库唯一约束兜底。
-// @Description 建议客户端为一次准备操作生成 Idempotency-Key，并在网络超时重试时复用；服务端会返回完全相同的推流地址。
+// @Description Idempotency-Key 必填；客户端必须为一次准备操作生成唯一键，并在网络超时重试时复用，服务端会返回完全相同的推流地址。
 // @Security AppBearerAuth
 // @Accept application/json
 // @Produce application/json
 // @Param data body liveReq.LiveSessionPrepareReq true "本场标题、封面、分类和可见范围"
-// @Param Idempotency-Key header string false "8到128位幂等键；同一次操作重试必须保持不变"
+// @Param Idempotency-Key header string true "8到128位幂等键；同一次操作重试必须保持不变"
 // @Success 200 {object} response.Response{data=liveRes.LiveSessionPrepareResp}
 // @Router /v1/app/live/room/session/prepare [post]
 func (a *RoomApi) Prepare(c *gin.Context) {

@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -333,8 +335,11 @@ func roomTestPrepareRequest(categoryID uint) liveReq.LiveSessionPrepareReq {
 	visibility := liveModel.LiveRoomVisibilityPublic
 	return liveReq.LiveSessionPrepareReq{
 		CategoryId: uint64(categoryID), Title: "第一场直播", Visibility: &visibility,
+		IdempotencyKey: fmt.Sprintf("room-test-prepare-%020d", roomTestPrepareKeySequence.Add(1)),
 	}
 }
+
+var roomTestPrepareKeySequence atomic.Uint64
 
 // blockNextQueryForTable 暂停指定表的下一次查询。SQLite 测试库使用单连接，
 // 因而可稳定复现“事务已持有业务锁、另一个请求正在等待”的并发提交顺序。
@@ -528,10 +533,11 @@ func TestPrepareIdempotencyReplaySurvivesLaterCategoryDisable(t *testing.T) {
 
 func TestConcurrentPrepareWithSameIdempotencyKeyReturnsOneResult(t *testing.T) {
 	setupRoomTestDB(t)
+	previousRedis := global.GVA_REDIS
+	global.GVA_REDIS = nil
+	t.Cleanup(func() { global.GVA_REDIS = previousRedis })
 	_, category := createRoomTestAnchor(t)
-	cache := newMemoryLivePrepareResultCache()
 	service := newRoomTestService()
-	service.prepareResultCache = cache
 	req := roomTestPrepareRequest(category.ID)
 	req.IdempotencyKey = "concurrent-prepare-0001"
 
@@ -1676,7 +1682,7 @@ func TestEndingScanUsesBatchSRSControllerOnce(t *testing.T) {
 	now := time.Now().UnixMilli()
 	controller := &fakeBatchSRSController{fakeSRSController: &fakeSRSController{}}
 	service := RoomService{srsController: controller}
-	createEndingSessionsForTest(t, 7, now-1)
+	sessions := createEndingSessionsForTest(t, 7, now-1)
 
 	require.NoError(t, service.ProcessEndingSessions(now))
 	batchCalls, batchRefs := controller.batchCounts()
@@ -1687,6 +1693,72 @@ func TestEndingScanUsesBatchSRSControllerOnce(t *testing.T) {
 	require.NoError(t, global.GVA_DB.Model(&liveModel.LiveSession{}).
 		Where("status = ?", liveModel.LiveSessionEnding).Count(&endingCount).Error)
 	require.Zero(t, endingCount)
+	for _, session := range sessions {
+		require.NoError(t, global.GVA_DB.First(&session, session.ID).Error)
+		require.Empty(t, session.StopLeaseToken)
+		require.Zero(t, session.StopLeaseUntil)
+	}
+}
+
+func TestEndingBatchLeaseRenewsWithoutChangingRetrySchedule(t *testing.T) {
+	setupRoomTestDB(t)
+	now := time.Now().UnixMilli()
+	session := createEndingSessionsForTest(t, 1, now-1)[0]
+	token := strings.Repeat("a", 64)
+	initialLease := time.Now().Add(90 * time.Millisecond).UnixMilli()
+	retryAt := session.StopNextRetryAt
+	require.NoError(t, global.GVA_DB.Model(&liveModel.LiveSession{}).Where("id = ?", session.ID).
+		Updates(map[string]interface{}{
+			"stop_attempts": uint32(1), "stop_lease_token": token, "stop_lease_until": initialLease,
+		}).Error)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	type renewalResult struct {
+		until int64
+		err   error
+	}
+	done := make(chan renewalResult, 1)
+	go func() {
+		until, err := maintainEndingSessionsLease(ctx, []uint{session.ID}, token, initialLease, 90)
+		done <- renewalResult{until: until, err: err}
+	}()
+
+	require.Eventually(t, func() bool {
+		var current liveModel.LiveSession
+		require.NoError(t, global.GVA_DB.First(&current, session.ID).Error)
+		return current.StopLeaseUntil > initialLease
+	}, time.Second, 10*time.Millisecond)
+	cancel()
+	result := <-done
+	require.NoError(t, result.err)
+	require.Greater(t, result.until, initialLease)
+	require.NoError(t, global.GVA_DB.First(&session, session.ID).Error)
+	require.Equal(t, retryAt, session.StopNextRetryAt, "续租不能篡改失败重试调度")
+}
+
+func TestExpiredStopLeaseCannotFinalizeAfterReclaim(t *testing.T) {
+	setupRoomTestDB(t)
+	now := time.Now().UnixMilli()
+	session := createEndingSessionsForTest(t, 1, now-1)[0]
+	firstClaim, err := claimEndingSessionsBatch([]uint{session.ID}, now)
+	require.NoError(t, err)
+	require.Len(t, firstClaim, 1)
+	stale := firstClaim[0]
+	require.NotEmpty(t, stale.StopLeaseToken)
+
+	reclaimAt := time.Now().UnixMilli()
+	require.NoError(t, global.GVA_DB.Model(&liveModel.LiveSession{}).Where("id = ?", session.ID).
+		Update("stop_lease_until", reclaimAt-1).Error)
+	secondClaim, err := claimEndingSessionsBatch([]uint{session.ID}, reclaimAt)
+	require.NoError(t, err)
+	require.Len(t, secondClaim, 1)
+	require.NotEqual(t, stale.StopLeaseToken, secondClaim[0].StopLeaseToken)
+	require.Equal(t, stale.StopAttempts+1, secondClaim[0].StopAttempts)
+
+	err = (&RoomService{}).finalizeClaimedSession(stale, time.Now().UnixMilli())
+	require.ErrorIs(t, err, errLiveStopLeaseLost)
+	require.NoError(t, global.GVA_DB.First(&session, session.ID).Error)
+	require.Equal(t, liveModel.LiveSessionEnding, session.Status)
 }
 
 func TestEndingFailuresDoNotStarveLaterBacklog(t *testing.T) {
@@ -2403,6 +2475,7 @@ func TestConcurrentPrepareCreatesOnlyOneActiveSession(t *testing.T) {
 	require.NoError(t, global.GVA_DB.Find(&sessions).Error)
 	require.Len(t, sessions, 1)
 	require.Equal(t, liveModel.LiveSessionPreparing, sessions[0].Status)
+	require.Equal(t, uint32(1), sessions[0].PublishCredentialIssueCount, "不同幂等键不能被误判为缓存丢失并轮换凭证")
 	var room liveModel.LiveRoom
 	require.NoError(t, global.GVA_DB.Where("anchor_id = ?", anchor.ID).First(&room).Error)
 	require.Equal(t, sessions[0].ID, room.CurrentSessionId)
@@ -2629,11 +2702,16 @@ func TestSRSRecoveryPrioritizesAllEndingSessionsWithoutPerSessionHealthWrites(t 
 	const count = 1000
 	sessions := make([]liveModel.LiveSession, 0, count)
 	for index := range count {
-		sessions = append(sessions, liveModel.LiveSession{
+		session := liveModel.LiveSession{
 			SessionNo: fmt.Sprintf("recovery-%04d", index), RoomId: uint(index + 1), AnchorId: uint(index + 1),
 			Status: liveModel.LiveSessionEnding, StopRequestedAt: now - int64(index+1),
 			StopNextRetryAt: now + 300_000, MediaState: liveModel.LiveMediaStopping,
-		})
+		}
+		if index == 0 {
+			session.StopLeaseToken = strings.Repeat("b", 64)
+			session.StopLeaseUntil = now + 60_000
+		}
+		sessions = append(sessions, session)
 	}
 	require.NoError(t, global.GVA_DB.CreateInBatches(&sessions, 200).Error)
 
@@ -2645,6 +2723,10 @@ func TestSRSRecoveryPrioritizesAllEndingSessionsWithoutPerSessionHealthWrites(t 
 	require.NoError(t, global.GVA_DB.Model(&liveModel.LiveSession{}).
 		Where("status = ? AND stop_next_retry_at > ?", liveModel.LiveSessionEnding, now).Count(&delayed).Error)
 	require.Zero(t, delayed, "恢复事件必须一次批量唤醒全部积压，而不是逐场等待原退避")
+	var leased liveModel.LiveSession
+	require.NoError(t, global.GVA_DB.First(&leased, sessions[0].ID).Error)
+	require.Equal(t, strings.Repeat("b", 64), leased.StopLeaseToken)
+	require.Equal(t, now+60_000, leased.StopLeaseUntil, "恢复事件不能破坏正在执行的停止租约")
 }
 
 func TestStalePublisherSnapshotCannotRollbackSRSGeneration(t *testing.T) {
