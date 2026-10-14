@@ -21,6 +21,7 @@ RUN apk update && apk add --no-cache tzdata openntpd \
 WORKDIR /go/src/tb_live_module
 
 COPY --from=0 /go/src/tb_live_module/server ./
+COPY --from=0 /go/src/tb_live_module/assets ./assets/
 COPY --from=0 /go/src/tb_live_module/resource ./resource/
 COPY --from=0 /go/src/tb_live_module/config.docker.yaml ./
 

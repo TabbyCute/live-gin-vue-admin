@@ -64,7 +64,16 @@
 
   <fieldset>
     <legend>开播场次</legend>
+    <label>准备开播 Idempotency-Key
+      <input id="prepareIdempotencyKey" maxlength="128" autocomplete="off" placeholder="同一次准备请求重试必须复用；开始下一场前生成新 Key">
+    </label>
+    <button id="newPrepareIdempotencyKey">生成新准备 Key</button>
     <button id="prepareSession">准备开播</button>
+    <label>重新签发 Idempotency-Key
+      <input id="refreshIdempotencyKey" maxlength="128" autocomplete="off" placeholder="同一次重新签发请求重试必须复用；再次轮换前生成新 Key">
+    </label>
+    <button id="newRefreshIdempotencyKey">生成新签发 Key</button>
+    <button id="refreshPushUrl">重新签发推流地址</button>
     <button id="currentSession">当前场次</button>
     <button id="startLive">开始直播</button>
     <button id="sessionHistory">场次历史</button>
@@ -78,7 +87,7 @@
     <label>playUrl <input id="playUrl" placeholder="准备开播后自动填充"></label>
     <button id="publicRoomDetail">公开房间详情</button>
     <button id="publicRoomList">公开直播列表</button>
-    <small>“开始直播”仅用于本地联调，等同模拟 SRS on_publish；正式环境由 OBS/SRS 推流触发。sessionNo 由“毫秒时间-anchorNo-roomNo”组成；公开详情在未开播时也可查询，公开列表仍只显示直播中的房间；客户端只使用对外编号，不应收到数据库内部主键。</small>
+    <small>准备开播或重新签发发生网络超时时，必须保留对应 Key 并用同一个 Key 重试；只有发起新的操作时才生成新 Key。“开始直播”仅用于本地联调，等同模拟 SRS on_publish；正式环境由 OBS/SRS 推流触发。sessionNo 由“毫秒时间-anchorNo-roomNo”组成；公开详情在未开播时也可查询，公开列表仍只显示直播中的房间；客户端只使用对外编号，不应收到数据库内部主键。</small>
   </fieldset>
 
   <fieldset>
@@ -98,9 +107,14 @@
     const $ = id => document.getElementById(id);
     const BASE_KEY = 'liveTest.baseUrl';
     const TOKEN_KEY = 'liveTest.token';
+    const PREPARE_IDEMPOTENCY_KEY = 'liveTest.prepareIdempotencyKey';
+    const REFRESH_IDEMPOTENCY_KEY = 'liveTest.refreshIdempotencyKey';
 
     $('baseUrl').value = localStorage.getItem(BASE_KEY) || $('baseUrl').value;
     $('token').value = localStorage.getItem(TOKEN_KEY) || '';
+    $('prepareIdempotencyKey').value = sessionStorage.getItem(PREPARE_IDEMPOTENCY_KEY) || newIdempotencyKey('prepare');
+    $('refreshIdempotencyKey').value = sessionStorage.getItem(REFRESH_IDEMPOTENCY_KEY) || newIdempotencyKey('refresh');
+    saveIdempotencyKeys();
 
     function value(id) {
       return $(id).value.trim();
@@ -109,6 +123,35 @@
     function saveConfig() {
       localStorage.setItem(BASE_KEY, value('baseUrl').replace(/\/$/, ''));
       localStorage.setItem(TOKEN_KEY, value('token'));
+      saveIdempotencyKeys();
+    }
+
+    function newIdempotencyKey(prefix) {
+      const random = new Uint32Array(4);
+      crypto.getRandomValues(random);
+      return prefix + ':' + Date.now().toString(36) + ':' + Array.from(random, part => part.toString(16).padStart(8, '0')).join('');
+    }
+
+    function saveIdempotencyKeys() {
+      sessionStorage.setItem(PREPARE_IDEMPOTENCY_KEY, value('prepareIdempotencyKey'));
+      sessionStorage.setItem(REFRESH_IDEMPOTENCY_KEY, value('refreshIdempotencyKey'));
+    }
+
+    function idempotencyKey(id) {
+      const key = value(id);
+      if (!/^[A-Za-z0-9_.:-]{8,128}$/.test(key)) {
+        throw new Error('Idempotency-Key 必须为 8 到 128 位，且只能包含字母、数字、-、_、.、:');
+      }
+      saveIdempotencyKeys();
+      return key;
+    }
+
+    function replaceIdempotencyKey(id, storageKey, prefix) {
+      const key = newIdempotencyKey(prefix);
+      $(id).value = key;
+      sessionStorage.setItem(storageKey, key);
+      $('status').className = 'ok';
+      $('status').textContent = '已生成新的 ' + prefix + ' Idempotency-Key';
     }
 
     function fillLiveFields(result) {
@@ -200,6 +243,12 @@
       $('status').className = 'ok';
       $('status').textContent = '配置已保存';
     };
+    $('newPrepareIdempotencyKey').onclick = () => replaceIdempotencyKey(
+      'prepareIdempotencyKey', PREPARE_IDEMPOTENCY_KEY, 'prepare'
+    );
+    $('newRefreshIdempotencyKey').onclick = () => replaceIdempotencyKey(
+      'refreshIdempotencyKey', REFRESH_IDEMPOTENCY_KEY, 'refresh'
+    );
     $('applyStatus').onclick = () => run(() => request('/app/live/anchor/apply/status'));
     $('anchorInfo').onclick = () => run(() => request('/app/live/anchor/info'));
     $('liveCheck').onclick = () => run(() => request('/app/live/anchor/live/check'));
@@ -212,7 +261,12 @@
     $('roomInfo').onclick = () => run(() => request('/app/live/room/info'));
     $('prepareSession').onclick = () => run(() => request('/app/live/room/session/prepare', {
       method: 'POST',
+      headers: { 'Idempotency-Key': idempotencyKey('prepareIdempotencyKey') },
       body: JSON.stringify(sessionPayload())
+    }));
+    $('refreshPushUrl').onclick = () => run(() => request('/app/live/room/session/push-url/refresh', {
+      method: 'POST',
+      headers: { 'Idempotency-Key': idempotencyKey('refreshIdempotencyKey') }
     }));
     $('currentSession').onclick = () => run(() => request('/app/live/room/session/current'));
     $('startLive').onclick = () => run(() => hookRequest('/app/live/hook/publish'));

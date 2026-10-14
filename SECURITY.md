@@ -21,7 +21,10 @@ ffmpeg \
 -i "./2.mp4" \
 -c copy \
 -f flv \
-"rtmp://127.0.0.1:12935/TB_LIVE/5100008?pt=v1_4aOlvmB-aT6oLXvZwfggQyPVtuyWcyeYa2N0vy_x7Br1H2dmAHvn3Eb2XDneiOtwhgbIg5tYYCTWImS_wFhuAYCGaqSxs0dY5TMLG1L9AykD-dOX3T3MMyf8TRiUHZyaQhbB2Prqg29Fbj9DBnMk0e3bs7vFgcBm8zpfZLvKRjvgax7ngwkGmG-q2Wuukh8nAqrmZAxqIw_lgfAsIehOtHeOBHU9d4j7t227JNyyxNykKjzJF8v7Zgucc4SLwDRuT-YqYTxJTzWJFKmiqdhmt0cZIWAAg0O9OhdyMlpSU7ide8HuqQ0Dd88mdqEALzLz6pJi3ACYM9BHNVfvCSjuAkGUlYBI8WZCd3LxEm6f"
+""
+
+
+
 
 /proxy/pages/income
 /api/agent/center/income/overview

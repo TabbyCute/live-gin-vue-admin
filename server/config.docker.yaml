@@ -357,6 +357,16 @@ cors:
           allow-methods: POST, GET, OPTIONS, DELETE, PUT, PATCH
           expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At
           allow-credentials: true # 布尔值
+        - allow-origin: http://127.0.0.1:8888
+          allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id,Idempotency-Key
+          allow-methods: POST, GET, OPTIONS, DELETE, PUT, PATCH
+          expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At
+          allow-credentials: true # 布尔值
+        - allow-origin: http://localhost:8888
+          allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id,Idempotency-Key
+          allow-methods: POST, GET, OPTIONS, DELETE, PUT, PATCH
+          expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At
+          allow-credentials: true # 布尔值
 mcp:
     name: GVA_MCP
     version: v1.0.0

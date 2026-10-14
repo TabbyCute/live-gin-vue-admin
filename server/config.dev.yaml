@@ -47,6 +47,16 @@ cors:
           allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id,Idempotency-Key
           expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At
           allow-credentials: true
+        - allow-origin: http://127.0.0.1
+          allow-methods: POST, GET, OPTIONS, DELETE, PUT, PATCH
+          allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id,Idempotency-Key
+          expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At
+          allow-credentials: true
+        - allow-origin: http://localhost
+          allow-methods: POST, GET, OPTIONS, DELETE, PUT, PATCH
+          allow-headers: Content-Type,AccessToken,X-CSRF-Token, Authorization, Token,X-Token,X-User-Id,Idempotency-Key
+          expose-headers: Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At
+          allow-credentials: true
 db-list:
     - type: ""
       alias-name: ""
@@ -126,7 +136,7 @@ live:
     # readiness与reconcile在该时间窗口内共享同一份SRS发布流快照；Redis会协调多实例，代码会拒绝使用过期快照。
     srs-snapshot-cache-milliseconds: 1500
     # 多后端实例通过Redis租约保证每类任务同一时刻只有一个实例执行；Redis异常时按下一项有界降级。
-    task-leader-enabled: true
+    task-leader-enabled: false
     # Redis/Leader不可用时仍执行有界任务，由数据库租约和CAS保证幂等，避免所有直播状态被冻结。
     task-leader-fail-open: true
     # Leader租约会在任务执行期间自动续期；应明显大于单次SRS请求超时。
@@ -334,7 +344,7 @@ system:
     iplimit-count: 15000
     iplimit-time: 3600
     use-multipoint: false
-    use-redis: true
+    use-redis: false
     use-mongo: false
     use-strict-auth: true
     disable-auto-migrate: false

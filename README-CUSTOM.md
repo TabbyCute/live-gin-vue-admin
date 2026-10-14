@@ -183,45 +183,30 @@ GIN_MODE=release ./bin/tb-live-server -c config.prod.yaml
 
 ### 7.3 构建正式前端
 
-首先在 `web/.env.production` 中将 `VITE_BASE_PATH` 替换为正式域名，然后执行：
+生产配置使用同源相对地址：管理接口为 `/api/v1/admin`，管理后台页面为
+`/app/v1/assets/admin/`。执行：
 
 ```bash
 cd /Users/tabby/codes/go/live-gin-vue-admin
 make build-web-production
 ```
 
-构建结果在 `web/dist`，建议由 Nginx 托管。基本配置示例：
+构建结果直接写入 `server/assets/admin`，由 Go 服务提供访问：
 
-```nginx
-server {
-    listen 80;
-    server_name your-domain.example.com;
-    root /path/to/live-gin-vue-admin/web/dist;
-    index index.html;
-
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    location /api/ {
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        rewrite ^/api/(.*)$ /$1 break;
-        proxy_pass http://127.0.0.1:8888;
-    }
-}
+```text
+http://127.0.0.1:8888/app/v1/assets/admin
 ```
 
-真实上线时还应在 Nginx 或负载均衡层配置 HTTPS。
+前端使用 hash 路由，页面内路由不会触发服务端路径回退。真实上线时仍应在
+Nginx 或负载均衡层配置 HTTPS。若修改 `system.router-prefix`，必须同步修改
+`web/.env.production` 的 `VITE_BASE_API`。
 
 ## 8. 启动后验证
 
 健康检查：
 
 ```bash
-curl http://127.0.0.1:8888/health
+curl http://127.0.0.1:8888/api/health
 ```
 
 已完成初始化的环境应返回 `needInit: false`：

@@ -1,9 +1,12 @@
 package initialize
 
 import (
+	"io/fs"
 	"net/http"
 	"os"
+	"strings"
 
+	serverassets "tb_live_module/assets"
 	"tb_live_module/docs"
 	"tb_live_module/global"
 	"tb_live_module/middleware"
@@ -16,6 +19,13 @@ import (
 type justFilesFilesystem struct {
 	fs http.FileSystem
 }
+
+const publicHTMLRoute = "/app/v1/assets/html"
+
+const (
+	publicAdminRoute     = "/app/v1/assets/admin"
+	publicAdminAssetsDir = "assets/admin"
+)
 
 func (fs justFilesFilesystem) Open(name string) (http.File, error) {
 	f, err := fs.fs.Open(name)
@@ -31,6 +41,50 @@ func (fs justFilesFilesystem) Open(name string) (http.File, error) {
 	return f, nil
 }
 
+func registerPublicHTML(router *gin.Engine) {
+	htmlFiles, err := fs.Sub(serverassets.HTML, "html")
+	if err != nil {
+		panic("initialize embedded HTML assets: " + err.Error())
+	}
+
+	router.StaticFS(publicHTMLRoute, justFilesFilesystem{fs: http.FS(htmlFiles)})
+}
+
+func registerPublicAdmin(router *gin.Engine, adminFiles http.FileSystem) {
+	filesOnly := justFilesFilesystem{fs: adminFiles}
+	serve := func(c *gin.Context) {
+		name := c.Param("filepath")
+		if name == "" || name == "/" {
+			name = "/index.html"
+		}
+		if name == "/index.html" {
+			c.Header("Cache-Control", "no-cache")
+		} else if strings.HasPrefix(name, "/assets/") {
+			c.Header("Cache-Control", "public, max-age=31536000, immutable")
+		}
+
+		file, err := filesOnly.Open(name)
+		if err != nil {
+			c.Status(http.StatusNotFound)
+			return
+		}
+		defer file.Close()
+
+		stat, err := file.Stat()
+		if err != nil || stat.IsDir() {
+			c.Status(http.StatusNotFound)
+			return
+		}
+
+		http.ServeContent(c.Writer, c.Request, stat.Name(), stat.ModTime(), file)
+	}
+
+	router.GET(publicAdminRoute, serve)
+	router.HEAD(publicAdminRoute, serve)
+	router.GET(publicAdminRoute+"/*filepath", serve)
+	router.HEAD(publicAdminRoute+"/*filepath", serve)
+}
+
 // 初始化总路由
 
 func Routers() *gin.Engine {
@@ -41,8 +95,8 @@ func Routers() *gin.Engine {
 		Router.Use(gin.Logger())
 	}
 	// 浏览器跨域请求统一按配置处理；无 Origin 的 SRS hook 和原生客户端不受 CORS 限制。
-	Router.Use(middleware.CorsByRules())
-	global.GVA_LOG.Info("use middleware cors by configured rules")
+	Router.Use(middleware.Cors())
+	//global.GVA_LOG.Info("use middleware cors by configured rules")
 
 	// 如果想要不使用nginx代理前端网页，可以修改 web/.env.production 下的
 	// VUE_APP_BASE_API = /
@@ -53,6 +107,8 @@ func Routers() *gin.Engine {
 	// Router.StaticFile("/", "./dist/index.html") // 前端网页入口页面
 
 	Router.StaticFS(global.GVA_CONFIG.Local.StorePath, justFilesFilesystem{http.Dir(global.GVA_CONFIG.Local.StorePath)})
+	registerPublicHTML(Router)
+	registerPublicAdmin(Router, http.Dir(publicAdminAssetsDir))
 	// Router.Use(middleware.LoadTls())  // 如果需要使用https 请打开此中间件 然后前往 core/server.go 将启动模式 更变为 Router.RunTLS("端口","你的cre/pem文件","你的key文件")
 
 	//swagger

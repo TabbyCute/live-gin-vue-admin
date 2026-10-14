@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HLS / FLV / WebRTC 直播测试</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.13/dist/hls.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mpegts.js@1.8.0/dist/mpegts.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 24px;
+            color: #e5e7eb;
+            background: #0f172a;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        .app {
+            width: min(960px, 100%);
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin: 0 0 20px;
+            font-size: 24px;
+        }
+
+        .panel {
+            padding: 20px;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            background: #1e293b;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 130px minmax(0, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        select,
+        input,
+        button {
+            min-height: 42px;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: #f8fafc;
+            background: #0f172a;
+            font: inherit;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 0 12px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #38bdf8;
+            outline: none;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        button {
+            padding: 0 18px;
+            cursor: pointer;
+        }
+
+        button.primary {
+            border-color: #0284c7;
+            background: #0284c7;
+        }
+
+        button:hover {
+            filter: brightness(1.15);
+        }
+
+        .option {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-left: auto;
+            color: #cbd5e1;
+        }
+
+        .option input {
+            width: 16px;
+            min-height: auto;
+        }
+
+        video {
+            display: block;
+            width: 100%;
+            min-height: 300px;
+            max-height: 65vh;
+            border-radius: 10px;
+            background: #000;
+        }
+
+        .status {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 18px;
+            margin: 14px 0;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .status strong {
+            color: #38bdf8;
+        }
+
+        .log {
+            height: 180px;
+            margin: 0;
+            padding: 12px;
+            overflow: auto;
+            border-radius: 8px;
+            color: #a7f3d0;
+            background: #020617;
+            font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .tip {
+            margin: 14px 0 0;
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 12px;
+            }
+
+            .panel {
+                padding: 14px;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            .option {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            video {
+                min-height: 210px;
+            }
+        }
+    </style>
+</head>
+<body>
+<main class="app">
+    <h1>HLS / FLV / WebRTC 直播测试</h1>
+
+    <section class="panel">
+        <div class="controls">
+            <select id="streamType" aria-label="流类型">
+                <option value="hls">HLS（m3u8）</option>
+                <option value="flv">HTTP-FLV</option>
+                <option value="webrtc">WebRTC（WHEP）</option>
+            </select>
+            <input id="streamUrl" type="url" spellcheck="false" aria-label="流地址">
+        </div>
+
+        <div class="actions">
+            <button id="playButton" class="primary" type="button">加载并播放</button>
+            <button id="stopButton" type="button">停止并销毁</button>
+            <button id="clearButton" type="button">清空日志</button>
+            <label class="option">
+                <input id="muted" type="checkbox" checked>
+                静音自动播放
+            </label>
+        </div>
+
+        <video id="video" controls playsinline></video>
+
+        <div class="status">
+            <span>状态：<strong id="playStatus">空闲</strong></span>
+            <span>当前时间：<strong id="currentTime">0.00s</strong></span>
+            <span>缓冲：<strong id="buffered">0.00s</strong></span>
+            <span>分辨率：<strong id="resolution">-</strong></span>
+        </div>
+
+        <pre id="log" class="log">等待加载流地址...</pre>
+        <p class="tip">
+            如果播放失败，请检查流地址是否有效、页面协议是否与流协议兼容，以及流服务器是否允许 CORS。
+            HTTP-FLV 需要浏览器支持 MediaSource；WebRTC 需要网络允许访问服务端 UDP 媒体端口。
+        </p>
+    </section>
+</main>
+
+<script>
+    const sampleUrls = {
+        hls: "http://118.24.77.144:18080/live/livestream.m3u8",
+        flv: "http://118.24.77.144:18080/live/livestream.flv",
+        webrtc: "http://118.24.77.144:12985/rtc/v1/whep/?app=live&stream=livestream"
+    };
+
+    const video = document.querySelector("#video");
+    const streamType = document.querySelector("#streamType");
+    const streamUrl = document.querySelector("#streamUrl");
+    const muted = document.querySelector("#muted");
+    const playStatus = document.querySelector("#playStatus");
+    const currentTime = document.querySelector("#currentTime");
+    const buffered = document.querySelector("#buffered");
+    const resolution = document.querySelector("#resolution");
+    const logElement = document.querySelector("#log");
+
+    let hlsInstance = null;
+    let flvInstance = null;
+    let rtcPeerConnection = null;
+    let rtcRemoteStream = null;
+    let rtcAbortController = null;
+    let rtcHealthTimer = null;
+
+    streamUrl.value = sampleUrls.hls;
+
+    /**
+     * 向页面日志区域追加带时间的信息。
+     *
+     * @param {string} message 日志内容。
+     * @param {"info"|"error"} [level="info"] 日志级别。
+     */
+    function writeLog(message, level = "info") {
+        const time = new Date().toLocaleTimeString();
+        const prefix = level === "error" ? "[错误]" : "[信息]";
+        logElement.textContent += `\n${time} ${prefix} ${message}`;
+        logElement.scrollTop = logElement.scrollHeight;
+    }
+
+    /**
+     * 销毁播放器实例并断开 video 资源。
+     * 每次切换或重新加载前调用，避免监听器和 MediaSource 残留。
+     */
+    function destroyPlayer() {
+        if (hlsInstance) {
+            hlsInstance.destroy();
+            hlsInstance = null;
+            writeLog("Hls 实例已销毁");
+        }
+
+        if (flvInstance) {
+            flvInstance.pause();
+            flvInstance.unload();
+            flvInstance.detachMediaElement();
+            flvInstance.destroy();
+            flvInstance = null;
+            writeLog("FLV 实例已销毁");
+        }
+
+        if (rtcAbortController) {
+            rtcAbortController.abort();
+            rtcAbortController = null;
+        }
+
+        if (rtcHealthTimer) {
+            window.clearTimeout(rtcHealthTimer);
+            rtcHealthTimer = null;
+        }
+
+        if (rtcPeerConnection) {
+            rtcPeerConnection.ontrack = null;
+            rtcPeerConnection.onconnectionstatechange = null;
+            rtcPeerConnection.oniceconnectionstatechange = null;
+            rtcPeerConnection.close();
+            rtcPeerConnection = null;
+            writeLog("WebRTC 连接已关闭");
+        }
+
+        if (rtcRemoteStream) {
+            rtcRemoteStream.getTracks().forEach((track) => track.stop());
+            rtcRemoteStream = null;
+        }
+
+        video.pause();
+        video.srcObject = null;
+        video.removeAttribute("src");
+        video.load();
+        playStatus.textContent = "空闲";
+    }
+
+    /**
+     * 执行播放，并捕获浏览器自动播放策略导致的拒绝。
+     *
+     * @returns {Promise<void>}
+     */
+    async function startVideoPlayback() {
+        video.muted = muted.checked;
+
+        try {
+            await video.play();
+            writeLog("视频开始播放");
+        } catch (error) {
+            writeLog(`自动播放失败，请手动点击视频播放按钮：${error.message}`, "error");
+        }
+    }
+
+    /**
+     * 使用 hls.js 或浏览器原生能力加载 m3u8。
+     *
+     * @param {string} url HLS 流地址。
+     */
+    function loadHls(url) {
+        if (window.Hls && Hls.isSupported()) {
+            hlsInstance = new Hls({
+                enableWorker: true,
+                lowLatencyMode: true,
+                backBufferLength: 30
+            });
+
+            hlsInstance.on(Hls.Events.MANIFEST_PARSED, (_, data) => {
+                writeLog(`HLS 清单解析完成，共 ${data.levels.length} 个清晰度`);
+                void startVideoPlayback();
+            });
+
+            hlsInstance.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
+                const level = hlsInstance.levels[data.level];
+                if (level) writeLog(`切换清晰度：${level.width || "-"}x${level.height || "-"}`);
+            });
+
+            hlsInstance.on(Hls.Events.ERROR, (_, data) => {
+                writeLog(
+                    `HLS ${data.fatal ? "致命" : "非致命"}错误：${data.type} / ${data.details}`,
+                    "error"
+                );
+
+                if (!data.fatal) return;
+
+                if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+                    writeLog("尝试恢复 HLS 网络加载");
+                    hlsInstance.startLoad();
+                } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+                    writeLog("尝试恢复 HLS 媒体错误");
+                    hlsInstance.recoverMediaError();
+                } else {
+                    destroyPlayer();
+                }
+            });
+
+            hlsInstance.loadSource(url);
+            hlsInstance.attachMedia(video);
+            writeLog(`通过 hls.js 加载：${url}`);
+            return;
+        }
+
+        if (video.canPlayType("application/vnd.apple.mpegurl")) {
+            video.src = url;
+            video.addEventListener("loadedmetadata", startVideoPlayback, { once: true });
+            writeLog(`通过浏览器原生 HLS 加载：${url}`);
+            return;
+        }
+
+        writeLog("当前浏览器不支持 HLS 播放", "error");
+        playStatus.textContent = "不支持";
+    }
+
+    /**
+     * 使用 mpegts.js 加载 HTTP-FLV 直播。
+     * mpegts.js 1.7.3+ 支持 Enhanced RTMP/FLV 中的 HEVC 视频，
+     * 可以识别旧版 flv.js 会误判为 Codec ID 3 的 H.265 流。
+     *
+     * @param {string} url FLV 流地址。
+     */
+    function loadFlv(url) {
+        if (!window.mpegts || !mpegts.isSupported()) {
+            writeLog("当前浏览器不支持 mpegts.js 所需的 MediaSource", "error");
+            playStatus.textContent = "不支持";
+            return;
+        }
+
+        flvInstance = mpegts.createPlayer(
+            {
+                type: "flv",
+                url,
+                isLive: true,
+                hasAudio: true,
+                hasVideo: true
+            },
+            {
+                enableWorker: false,
+                enableStashBuffer: false,
+                stashInitialSize: 128,
+                autoCleanupSourceBuffer: true
+            }
+        );
+
+        flvInstance.on(mpegts.Events.LOADING_COMPLETE, () => {
+            writeLog("FLV 数据加载完成");
+        });
+
+        flvInstance.on(mpegts.Events.ERROR, (type, detail, info) => {
+            writeLog(`FLV 错误：${type} / ${detail} / ${JSON.stringify(info)}`, "error");
+            playStatus.textContent = "错误";
+        });
+
+        flvInstance.attachMediaElement(video);
+        flvInstance.load();
+        writeLog(`通过 mpegts.js 加载：${url}`);
+        void startVideoPlayback();
+    }
+
+    /**
+     * 通过 WHEP 与 SRS 协商只接收音视频的 WebRTC 连接。
+     * WHEP 信令返回的 Answer SDP 包含服务端 ICE 信息，浏览器会据此自动连接 UDP 媒体端口。
+     *
+     * @param {string} url SRS WHEP 信令地址。
+     * @returns {Promise<void>}
+     */
+    async function loadWebRtc(url) {
+        if (!window.RTCPeerConnection || !window.MediaStream) {
+            writeLog("当前浏览器不支持 WebRTC", "error");
+            playStatus.textContent = "不支持";
+            return;
+        }
+
+        const peerConnection = new RTCPeerConnection();
+        const remoteStream = new MediaStream();
+        const abortController = new AbortController();
+
+        rtcPeerConnection = peerConnection;
+        rtcRemoteStream = remoteStream;
+        rtcAbortController = abortController;
+        video.srcObject = remoteStream;
+
+        peerConnection.addTransceiver("audio", { direction: "recvonly" });
+        const videoTransceiver = peerConnection.addTransceiver("video", {
+            direction: "recvonly"
+        });
+
+        const videoCapabilities = window.RTCRtpReceiver
+            ? RTCRtpReceiver.getCapabilities("video")
+            : null;
+        const videoCodecs = videoCapabilities ? videoCapabilities.codecs : [];
+        const h265Codecs = videoCodecs.filter((codec) => codec.mimeType.toLowerCase() === "video/h265");
+
+        if (h265Codecs.length > 0 && videoTransceiver.setCodecPreferences) {
+            const remainingCodecs = videoCodecs.filter(
+                (codec) => codec.mimeType.toLowerCase() !== "video/h265"
+            );
+            videoTransceiver.setCodecPreferences([...h265Codecs, ...remainingCodecs]);
+            writeLog("浏览器支持 WebRTC H.265，已设为首选视频编码");
+        }
+
+        peerConnection.ontrack = (event) => {
+            if (!remoteStream.getTracks().some((track) => track.id === event.track.id)) {
+                remoteStream.addTrack(event.track);
+            }
+            writeLog(`收到 WebRTC ${event.track.kind} 轨道`);
+            void startVideoPlayback();
+        };
+
+        peerConnection.onconnectionstatechange = () => {
+            const state = peerConnection.connectionState;
+            writeLog(`WebRTC 连接状态：${state}`);
+
+            if (state === "connected") {
+                playStatus.textContent = "播放中";
+            } else if (state === "failed" || state === "disconnected") {
+                playStatus.textContent = state === "failed" ? "错误" : "已断开";
+            }
+        };
+
+        peerConnection.oniceconnectionstatechange = () => {
+            writeLog(`WebRTC ICE 状态：${peerConnection.iceConnectionState}`);
+        };
+
+        try {
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            writeLog(`正在请求 WHEP 信令：${url}`);
+
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Accept": "application/sdp",
+                    "Content-Type": "application/sdp"
+                },
+                body: offer.sdp,
+                signal: abortController.signal
+            });
+
+            if (!response.ok) {
+                throw new Error(`WHEP HTTP ${response.status} ${response.statusText}`);
+            }
+
+            const answerSdp = await response.text();
+            if (peerConnection !== rtcPeerConnection) return;
+
+            await peerConnection.setRemoteDescription({
+                type: "answer",
+                sdp: answerSdp
+            });
+
+            const videoPayload = answerSdp.match(/m=video\s+\d+\s+\S+\s+(\d+)/);
+            const videoCodec = videoPayload
+                ? answerSdp.match(new RegExp(`a=rtpmap:${videoPayload[1]}\\s+([^/\\r\\n]+)`))
+                : null;
+            writeLog(
+                `WHEP 信令协商完成，视频编码：${videoCodec ? videoCodec[1] : "未提供"}`
+            );
+
+            rtcHealthTimer = window.setTimeout(async () => {
+                if (peerConnection !== rtcPeerConnection) return;
+
+                const stats = await peerConnection.getStats();
+                let videoBytesReceived = 0;
+                stats.forEach((report) => {
+                    if (report.type === "inbound-rtp" && report.kind === "video") {
+                        videoBytesReceived += report.bytesReceived || 0;
+                    }
+                });
+
+                if (videoBytesReceived === 0) {
+                    playStatus.textContent = "仅音频";
+                    writeLog(
+                        "WebRTC 已连接但未收到视频包，请检查源视频编码与 WHEP 协商编码是否一致",
+                        "error"
+                    );
+                }
+            }, 8000);
+        } catch (error) {
+            if (error.name === "AbortError") return;
+            writeLog(`WebRTC 播放失败：${error.message}`, "error");
+            playStatus.textContent = "错误";
+            peerConnection.close();
+
+            if (peerConnection === rtcPeerConnection) {
+                rtcPeerConnection = null;
+                rtcRemoteStream = null;
+                rtcAbortController = null;
+                video.srcObject = null;
+            }
+        }
+    }
+
+    function loadStream() {
+        const type = streamType.value;
+        const url = streamUrl.value.trim();
+
+        if (!url) {
+            writeLog("请先输入流地址", "error");
+            streamUrl.focus();
+            return;
+        }
+
+        destroyPlayer();
+        playStatus.textContent = "加载中";
+
+        if (type === "hls") {
+            loadHls(url);
+        } else if (type === "flv") {
+            loadFlv(url);
+        } else {
+            void loadWebRtc(url);
+        }
+    }
+
+    streamType.addEventListener("change", () => {
+        destroyPlayer();
+        streamUrl.value = sampleUrls[streamType.value];
+        writeLog(`已切换到 ${streamType.value.toUpperCase()} 模式`);
+    });
+
+    document.querySelector("#playButton").addEventListener("click", loadStream);
+    document.querySelector("#stopButton").addEventListener("click", destroyPlayer);
+    document.querySelector("#clearButton").addEventListener("click", () => {
+        logElement.textContent = "日志已清空";
+    });
+
+    video.addEventListener("playing", () => {
+        playStatus.textContent = "播放中";
+    });
+    video.addEventListener("waiting", () => {
+        playStatus.textContent = "缓冲中";
+    });
+    video.addEventListener("pause", () => {
+        if (video.currentSrc) playStatus.textContent = "已暂停";
+    });
+    video.addEventListener("error", () => {
+        const error = video.error;
+        writeLog(`Video 错误：${error ? `${error.code} / ${error.message}` : "未知错误"}`, "error");
+        playStatus.textContent = "错误";
+    });
+    video.addEventListener("timeupdate", () => {
+        currentTime.textContent = `${video.currentTime.toFixed(2)}s`;
+
+        if (video.buffered.length > 0) {
+            const end = video.buffered.end(video.buffered.length - 1);
+            buffered.textContent = `${Math.max(0, end - video.currentTime).toFixed(2)}s`;
+        }
+    });
+    video.addEventListener("resize", () => {
+        resolution.textContent = `${video.videoWidth}x${video.videoHeight}`;
+    });
+
+    window.addEventListener("beforeunload", destroyPlayer);
+</script>
+</body>
+</html>

@@ -1,0 +1,861 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>主播注册、申请与开播 Key 联调</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --success: #15803d;
+      --success-soft: #f0fdf4;
+      --warning: #b45309;
+      --warning-soft: #fffbeb;
+      --danger: #dc2626;
+      --text: #172033;
+      --muted: #667085;
+      --line: #d8dee9;
+      --panel: #ffffff;
+      --page: #f4f7fb;
+      --code: #0f172a;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px 56px;
+      color: var(--text);
+      font: 14px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--page);
+    }
+    h1, h2, p { margin-top: 0; }
+    h1 { margin-bottom: 8px; font-size: 26px; }
+    h2 { margin-bottom: 4px; font-size: 18px; }
+    code { overflow-wrap: anywhere; }
+    a { color: var(--primary); }
+    button, input, select, textarea { font: inherit; }
+    input, select, textarea {
+      width: 100%;
+      padding: 9px 11px;
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgb(37 99 235 / 12%);
+    }
+    textarea { min-height: 82px; resize: vertical; }
+    button {
+      padding: 8px 13px;
+      color: #344054;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      cursor: pointer;
+    }
+    button:hover { border-color: #98a2b3; background: #f8fafc; }
+    button.primary { color: #fff; border-color: var(--primary); background: var(--primary); }
+    button.success { color: #fff; border-color: var(--success); background: var(--success); }
+    button.link-button { padding: 4px 8px; color: var(--primary); border: 0; background: transparent; }
+    button:disabled { cursor: wait; opacity: .55; }
+
+    .hero {
+      padding: 24px;
+      color: #fff;
+      background: linear-gradient(125deg, #172554, #1d4ed8 58%, #0891b2);
+      border-radius: 14px;
+      box-shadow: 0 14px 35px rgb(15 23 42 / 13%);
+    }
+    .hero p { margin-bottom: 0; color: rgb(255 255 255 / 78%); }
+    .hero a { color: #fff; }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 18px 0;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      color: var(--muted);
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--panel);
+    }
+    .step-number {
+      display: grid;
+      flex: 0 0 28px;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      border-radius: 50%;
+      background: #eef2f6;
+      font-weight: 700;
+    }
+    .step.active { color: var(--primary); border-color: #93c5fd; background: var(--primary-soft); }
+    .step.done { color: var(--success); border-color: #86efac; background: var(--success-soft); }
+    .step.done .step-number { color: #fff; background: var(--success); }
+
+    .panel {
+      padding: 20px;
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: var(--panel);
+      box-shadow: 0 3px 12px rgb(15 23 42 / 4%);
+    }
+    .panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 14px; }
+    .panel-heading p { margin-bottom: 0; color: var(--muted); }
+    .badge { padding: 4px 9px; color: var(--muted); border-radius: 999px; background: #f2f4f7; white-space: nowrap; }
+    .badge.ok { color: var(--success); background: var(--success-soft); }
+    .badge.warn { color: var(--warning); background: var(--warning-soft); }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .wide { grid-column: 1 / -1; }
+    label > span { display: block; margin-bottom: 5px; color: #475467; font-weight: 600; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .hint { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
+    .notice { padding: 12px 14px; margin: 12px 0; border-left: 4px solid var(--warning); background: var(--warning-soft); }
+    .notice strong { color: var(--warning); }
+    .result-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 16px; margin-top: 14px; }
+    .result-field { position: relative; }
+    .result-field input { padding-right: 58px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+    .result-field button { position: absolute; right: 4px; bottom: 4px; padding: 5px 8px; }
+    .public-results { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.5fr); gap: 16px; margin-top: 16px; }
+    .result-box { min-width: 0; padding: 14px; border: 1px solid var(--line); border-radius: 9px; background: #fbfcfe; }
+    .result-box h3 { margin: 0 0 10px; font-size: 15px; }
+    .result-box pre { min-height: 230px; max-height: 440px; margin: 0; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+    th, td { padding: 9px 10px; border-bottom: 1px solid #e7ebf1; text-align: left; }
+    th { color: #475467; background: #f8fafc; font-size: 12px; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: #f8fbff; }
+    td button { padding: 4px 8px; color: var(--primary); }
+    .empty-cell { padding: 28px 10px; color: var(--muted); text-align: center; }
+    .status-bar {
+      position: sticky;
+      bottom: 12px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 11px 14px;
+      margin-top: 16px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: rgb(255 255 255 / 94%);
+      box-shadow: 0 8px 24px rgb(15 23 42 / 14%);
+      backdrop-filter: blur(8px);
+    }
+    #status.ok { color: var(--success); }
+    #status.error { color: var(--danger); }
+    details { margin-top: 14px; }
+    summary { cursor: pointer; font-weight: 700; }
+    pre {
+      min-height: 240px;
+      max-height: 580px;
+      padding: 14px;
+      overflow: auto;
+      color: #e2e8f0;
+      background: var(--code);
+      border-radius: 8px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    @media (max-width: 780px) {
+      body { padding: 14px 10px 36px; }
+      .hero, .panel { padding: 16px; }
+      .steps, .grid, .grid.three, .result-grid, .public-results { grid-template-columns: 1fr; }
+      .wide { grid-column: auto; }
+      .status-bar { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <h1>主播注册 → 申请 → 开播 Key</h1>
+    <p>单页完成 APP 账号注册、登录、主播申请和场次准备。生成 Key 后可继续进入 <a href="html-5.html">推流、断流与重连测试</a>。</p>
+  </header>
+
+  <div class="steps">
+    <div id="step1" class="step active"><span class="step-number">1</span><span>注册并登录</span></div>
+    <div id="step2" class="step"><span class="step-number">2</span><span>申请主播</span></div>
+    <div id="step3" class="step"><span class="step-number">3</span><span>后台审核授权</span></div>
+    <div id="step4" class="step"><span class="step-number">4</span><span>生成开播 Key</span></div>
+  </div>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <h2>公共配置</h2>
+        <p>默认接口地址与之前的联调页面一致。</p>
+      </div>
+    </div>
+    <div class="grid">
+      <label><span>API 基址</span><input id="baseUrl" value="http://127.0.0.1:8888/api/v1"></label>
+      <label><span>APP Bearer Token</span><input id="token" type="password" autocomplete="off" placeholder="登录成功后自动填入"></label>
+    </div>
+    <div class="actions">
+      <button id="saveConfig">保存地址和 Token</button>
+      <button id="clearToken">清空 Token</button>
+      <button id="accountInfo">查询当前用户</button>
+    </div>
+    <p class="hint">为兼容之前的测试页，API 地址和 Token 使用相同的 localStorage 键；密码不会保存。</p>
+  </section>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <h2>1. 创建用户并登录</h2>
+        <p>注册成功后仍需登录，登录接口才会签发 APP Token。</p>
+      </div>
+      <span id="accountBadge" class="badge">未登录</span>
+    </div>
+    <div class="grid">
+      <label><span>用户名</span><input id="username" maxlength="32" value="anchor_demo"></label>
+      <label><span>密码</span><input id="password" type="password" autocomplete="new-password" value="12345678"></label>
+      <label><span>昵称</span><input id="nickname" maxlength="64" value="联调主播"></label>
+      <label><span>头像 URL（可选）</span><input id="avatar" maxlength="500" placeholder="https://example.com/avatar.png"></label>
+    </div>
+    <div class="actions">
+      <button id="randomUser">生成不重复用户名</button>
+      <button id="register">注册用户</button>
+      <button id="login">登录</button>
+      <button id="registerAndLogin" class="primary">注册并登录</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <h2>2. 申请成为主播</h2>
+        <p>主播号由后端按照“渠道号 + 六位序列”生成，用户 ID 从当前 Token 读取。</p>
+      </div>
+      <span id="anchorBadge" class="badge">未申请</span>
+    </div>
+    <div class="grid three">
+      <label><span>渠道 ID</span><input id="channelId" type="number" min="1" max="999999" value="1"></label>
+      <label><span>直播分类</span>
+        <select id="categoryId"><option value="0">未分类</option></select>
+      </label>
+      <label><span>主播昵称</span><input id="anchorNickname" maxlength="64" value="联调主播"></label>
+      <label class="wide"><span>主页封面 URL（可选）</span><input id="cover" maxlength="500" placeholder="https://example.com/cover.png"></label>
+      <label class="wide"><span>主播签名（可选）</span><input id="signature" maxlength="255" value="欢迎来到我的直播间"></label>
+    </div>
+    <div class="actions">
+      <button id="loadCategories">加载直播分类</button>
+      <button id="applyAnchor" class="primary">提交主播申请</button>
+      <button id="applyStatus">查询申请状态</button>
+      <button id="anchorInfo">查询主播资料</button>
+    </div>
+    <div class="result-grid">
+      <label><span>当前用户 ID</span><input id="accountId" readonly></label>
+      <label><span>生成的主播号</span><input id="anchorNo" readonly></label>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <h2>3. 后台审核并开放开播权限</h2>
+        <p>此步骤沿用现有管理流程，不能由 APP Token 自行绕过。</p>
+      </div>
+      <span id="permissionBadge" class="badge warn">等待检查</span>
+    </div>
+    <div class="notice">
+      <strong>必须完成：</strong>进入管理后台的“主播管理”，先将申请审核为“通过”，再在“功能权限”中开启“开播权限”。审核通过会自动创建该主播的直播间。
+    </div>
+    <div class="actions">
+      <a href="/app/v1/assets/admin/" target="_blank" rel="noopener"><button type="button">打开管理后台</button></a>
+      <button id="checkLive" class="success">检查开播资格</button>
+      <button id="roomInfo">读取直播间</button>
+    </div>
+    <p id="permissionMessage" class="hint">尚未检查。申请待审核或开播权限未开启时，下一步不会生成 Key。</p>
+  </section>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <h2>4. 生成开播 Key</h2>
+        <p>调用场次准备接口，返回一次性 publishToken 和完整推流地址。</p>
+      </div>
+      <span id="prepareBadge" class="badge">尚未生成</span>
+    </div>
+    <div class="grid">
+      <label><span>直播标题</span><input id="liveTitle" maxlength="128" value="联调主播的第一场直播"></label>
+      <label><span>可见范围</span>
+        <select id="visibility">
+          <option value="1">公开</option>
+          <option value="2">仅关注者</option>
+          <option value="0">私密</option>
+        </select>
+      </label>
+      <label class="wide"><span>本场封面 URL（可选）</span><input id="liveCover" maxlength="500" placeholder="https://example.com/live-cover.png"></label>
+      <label class="wide"><span>Idempotency-Key</span><input id="idempotencyKey" maxlength="128"></label>
+    </div>
+    <div class="actions">
+      <button id="newIdempotencyKey">生成新 Idempotency-Key</button>
+      <button id="prepareSession" class="primary">检查资格并生成开播 Key</button>
+    </div>
+
+    <div class="result-grid">
+      <label><span>房间号</span><input id="roomNo" readonly></label>
+      <label><span>场次号</span><input id="sessionNo" readonly></label>
+      <label><span>流名称</span><input id="streamName" readonly></label>
+      <label><span>准备截止时间</span><input id="prepareDeadline" readonly></label>
+      <label class="wide result-field"><span>publishToken</span><input id="publishToken" readonly><button data-copy="publishToken">复制</button></label>
+      <label class="wide result-field"><span>完整 pushUrl</span><input id="pushUrl" readonly><button data-copy="pushUrl">复制</button></label>
+      <label class="wide result-field"><span>OBS 服务器</span><input id="obsServer" readonly><button data-copy="obsServer">复制</button></label>
+      <label class="wide result-field"><span>OBS 串流密钥 / Stream Key</span><input id="obsStreamKey" readonly><button data-copy="obsStreamKey">复制</button></label>
+      <label class="wide result-field"><span>播放地址</span><input id="playUrl" readonly><button data-copy="playUrl">复制</button></label>
+    </div>
+    <p class="hint">同一次请求遇到网络超时时必须复用当前 Idempotency-Key；准备下一场直播时再生成新的 Key。</p>
+    <div class="actions">
+      <a href="html-5.html"><button type="button">携带结果进入断流重连页</button></a>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <h2>5. 查询公开直播</h2>
+        <p>公开接口无需登录。房间详情可查询未开播房间；公开列表只展示正在直播且可公开访问的房间。</p>
+      </div>
+      <span id="publicBadge" class="badge">尚未查询</span>
+    </div>
+    <div class="grid three">
+      <label><span>查询房间号 roomNo</span><input id="publicRoomNo" maxlength="32" placeholder="输入房间号"></label>
+      <label><span>列表页码</span><input id="publicPage" type="number" min="1" value="1"></label>
+      <label><span>每页数量</span><input id="publicPageSize" type="number" min="1" max="100" value="20"></label>
+      <label><span>列表分类</span>
+        <select id="publicCategoryId"><option value="0">全部分类</option></select>
+      </label>
+    </div>
+    <div class="actions">
+      <button id="loadPublicCategories">加载列表分类</button>
+      <button id="usePreparedRoomNo">使用上方生成的房间号</button>
+      <button id="queryPublicRoom" class="primary">按 roomNo 查询公开直播间</button>
+      <button id="queryPublicList" class="success">查询公开直播列表</button>
+    </div>
+
+    <div class="public-results">
+      <div class="result-box">
+        <h3>公开直播间详情</h3>
+        <pre id="publicDetailOutput">等待按 roomNo 查询</pre>
+      </div>
+      <div class="result-box">
+        <h3 id="publicListMeta">公开直播列表</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>房间号</th>
+                <th>主播</th>
+                <th>标题</th>
+                <th>状态</th>
+                <th>观看/点赞</th>
+                <th>开播时间</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="publicRoomList">
+              <tr><td colspan="7" class="empty-cell">等待查询公开直播列表</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <details open class="panel">
+    <summary>请求日志</summary>
+    <pre id="output">等待操作</pre>
+  </details>
+
+  <div class="status-bar">
+    <span id="status">准备就绪</span>
+    <button id="clearLog" class="link-button">清空日志</button>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const BASE_KEY = 'liveTest.baseUrl';
+    const TOKEN_KEY = 'liveTest.token';
+    const IDEMPOTENCY_KEY = 'liveFlow.prepareIdempotencyKey';
+    const logs = [];
+    let running = false;
+
+    function value(id) { return $(id).value.trim(); }
+    function setValue(id, next) { $(id).value = next === undefined || next === null ? '' : String(next); }
+    function setBadge(id, text, type = '') {
+      const badge = $(id);
+      badge.textContent = text;
+      badge.className = 'badge' + (type ? ' ' + type : '');
+    }
+    function setStep(step, state) { $('step' + step).className = 'step ' + state; }
+    function setStatus(message, type = '') {
+      $('status').textContent = message;
+      $('status').className = type;
+    }
+    function setRunning(next) {
+      running = next;
+      document.querySelectorAll('button').forEach(button => { button.disabled = next; });
+    }
+    function appendLog(title, detail) {
+      logs.push({ time: new Date().toLocaleTimeString(), title, detail });
+      $('output').textContent = logs.map((entry, index) =>
+        `#${index + 1} [${entry.time}] ${entry.title}\n${JSON.stringify(entry.detail, null, 2)}`
+      ).join('\n\n') || '等待操作';
+      $('output').scrollTop = $('output').scrollHeight;
+    }
+    function saveConfig() {
+      localStorage.setItem(BASE_KEY, value('baseUrl').replace(/\/$/, ''));
+      localStorage.setItem(TOKEN_KEY, value('token'));
+      sessionStorage.setItem(IDEMPOTENCY_KEY, value('idempotencyKey'));
+    }
+    function newIdempotencyKey() {
+      const random = new Uint32Array(4);
+      crypto.getRandomValues(random);
+      return 'prepare:' + Date.now().toString(36) + ':' + Array.from(random, part => part.toString(16).padStart(8, '0')).join('');
+    }
+    function replaceIdempotencyKey() {
+      setValue('idempotencyKey', newIdempotencyKey());
+      saveConfig();
+      setStatus('已生成新的 Idempotency-Key', 'ok');
+    }
+    function assertCredentials() {
+      if (!/^[A-Za-z0-9_]{3,32}$/.test(value('username'))) throw new Error('用户名只能包含字母、数字和下划线，长度 3 到 32 位');
+      const passwordLength = new TextEncoder().encode($('password').value).length;
+      if (passwordLength < 8 || passwordLength > 72) throw new Error('密码长度必须为 8 到 72 字节');
+    }
+    function credentials() { return { username: value('username'), password: $('password').value }; }
+
+    class ApiError extends Error {
+      constructor(message, result, response) {
+        super(message);
+        this.result = result;
+        this.response = response;
+      }
+    }
+
+    async function request(path, options = {}) {
+      saveConfig();
+      const url = value('baseUrl').replace(/\/$/, '') + path;
+      const headers = { ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...(options.headers || {}) };
+      if (options.auth !== false) {
+        if (!value('token')) throw new Error('请先登录获取 APP Token');
+        headers.Authorization = 'Bearer ' + value('token');
+      }
+      const method = options.method || 'GET';
+      setStatus(`${method} ${url}`);
+      let response;
+      let result;
+      try {
+        response = await fetch(url, { method, headers, body: options.body });
+        const text = await response.text();
+        try { result = JSON.parse(text); } catch { result = text; }
+      } catch (error) {
+        appendLog(method + ' ' + path, { networkError: error.message });
+        throw new Error('网络请求失败：' + error.message);
+      }
+      appendLog(method + ' ' + path, { httpStatus: response.status, response: result });
+      if (!response.ok || !result || result.code !== 0) {
+        throw new ApiError(result && result.msg ? result.msg : `HTTP ${response.status}`, result, response);
+      }
+      return result;
+    }
+
+    async function run(label, action) {
+      if (running) return;
+      setRunning(true);
+      try {
+        const result = await action();
+        setStatus(label + '成功', 'ok');
+        return result;
+      } catch (error) {
+        setStatus(label + '失败：' + error.message, 'error');
+        appendLog(label + '失败', { error: error.message });
+        return null;
+      } finally {
+        setRunning(false);
+      }
+    }
+
+    function fillAccount(result) {
+      const account = result && result.data && (result.data.account || result.data);
+      if (!account || !account.id) return;
+      setValue('accountId', account.id);
+      if (account.nickname) {
+        setValue('nickname', account.nickname);
+        setValue('anchorNickname', account.nickname);
+      }
+      setBadge('accountBadge', `已登录 · UID ${account.id}`, 'ok');
+      setStep(1, 'done');
+      setStep(2, 'active');
+    }
+
+    async function registerAccount(ignoreExisting = false) {
+      assertCredentials();
+      try {
+        return await request('/app/live/user/register', {
+          auth: false,
+          method: 'POST',
+          body: JSON.stringify({ ...credentials(), nickname: value('nickname'), avatar: value('avatar') })
+        });
+      } catch (error) {
+        if (ignoreExisting && error instanceof ApiError && String(error.message).includes('已注册')) {
+          appendLog('注册用户', { info: '用户名已存在，继续尝试登录' });
+          return null;
+        }
+        throw error;
+      }
+    }
+
+    async function loginAccount() {
+      assertCredentials();
+      const result = await request('/app/live/user/login', {
+        auth: false,
+        method: 'POST',
+        body: JSON.stringify(credentials())
+      });
+      if (!result.data || !result.data.token) throw new Error('登录响应中没有 token');
+      setValue('token', result.data.token);
+      saveConfig();
+      fillAccount(result);
+      return result;
+    }
+
+    function flattenCategories(items, depth = 0) {
+      return (items || []).flatMap(item => [
+        { id: item.id, label: '　'.repeat(depth) + item.name + ' (' + item.code + ')' },
+        ...flattenCategories(item.children, depth + 1)
+      ]);
+    }
+    async function loadCategories() {
+      const result = await request('/app/live/category/list', { auth: false });
+      const categories = flattenCategories(result.data);
+      for (const selectId of ['categoryId', 'publicCategoryId']) {
+        const select = $(selectId);
+        const selected = select.value || '0';
+        select.replaceChildren();
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '0';
+        defaultOption.textContent = selectId === 'categoryId' ? '未分类' : '全部分类';
+        select.appendChild(defaultOption);
+        for (const category of categories) {
+          const option = document.createElement('option');
+          option.value = String(category.id);
+          option.textContent = category.label;
+          select.appendChild(option);
+        }
+        select.value = selected;
+      }
+      return result;
+    }
+
+    function fillAnchor(result) {
+      const data = result && result.data ? result.data : {};
+      const anchor = data.anchor || data;
+      if (anchor.anchorNo) setValue('anchorNo', anchor.anchorNo);
+      if (data.applyStatus !== undefined) {
+        const labels = { 0: '未申请', 1: '待审核', 2: '已通过', 3: '已拒绝' };
+        const state = Number(data.applyStatus);
+        setBadge('anchorBadge', labels[state] || `状态 ${state}`, state === 2 ? 'ok' : 'warn');
+        setStep(2, state === 0 ? 'active' : 'done');
+        setStep(3, state === 2 ? 'active' : 'active');
+      }
+      if (anchor.applyStatus !== undefined) {
+        const state = Number(anchor.applyStatus);
+        const labels = { 0: '未申请', 1: '待审核', 2: '已通过', 3: '已拒绝' };
+        setBadge('anchorBadge', labels[state] || `状态 ${state}`, state === 2 ? 'ok' : 'warn');
+      }
+    }
+
+    async function applyAnchor() {
+      const channelId = Number(value('channelId'));
+      if (!Number.isInteger(channelId) || channelId < 1 || channelId > 999999) throw new Error('渠道 ID 必须是 1 到 999999 之间的整数');
+      if (!value('anchorNickname')) throw new Error('主播昵称不能为空');
+      const result = await request('/app/live/anchor/apply', {
+        method: 'POST',
+        body: JSON.stringify({
+          nickname: value('anchorNickname'),
+          avatar: value('avatar'),
+          cover: value('cover'),
+          signature: value('signature'),
+          gender: 0,
+          birthday: null,
+          countryCode: '',
+          regionCode: '',
+          cityCode: '',
+          language: 'zh-CN',
+          categoryId: Number(value('categoryId') || 0),
+          tagIds: [],
+          channelId
+        })
+      });
+      fillAnchor(result);
+      return result;
+    }
+
+    async function queryApplyStatus() {
+      const result = await request('/app/live/anchor/apply/status');
+      fillAnchor(result);
+      return result;
+    }
+
+    async function checkLivePermission() {
+      const result = await request('/app/live/anchor/live/check');
+      const data = result.data || {};
+      $('permissionMessage').textContent = data.message || (data.allow ? '允许开播' : '当前不允许开播');
+      setBadge('permissionBadge', data.allow ? '允许开播' : '暂不可开播', data.allow ? 'ok' : 'warn');
+      if (data.allow) {
+        setStep(3, 'done');
+        setStep(4, 'active');
+      }
+      return result;
+    }
+
+    function fillRoom(result) {
+      const data = result && result.data ? result.data : {};
+      const room = data.room || data;
+      if (room.roomNo) {
+        setValue('roomNo', room.roomNo);
+        setValue('publicRoomNo', room.roomNo);
+      }
+      if (room.streamName) setValue('streamName', room.streamName);
+      if (room.title) setValue('liveTitle', room.title);
+      if (room.coverUrl) setValue('liveCover', room.coverUrl);
+      if (room.categoryId !== undefined) $('categoryId').value = String(room.categoryId);
+      if (room.visibility !== undefined) $('visibility').value = String(room.visibility);
+    }
+
+    function fillPrepare(result) {
+      const data = result.data || {};
+      setValue('roomNo', data.roomNo);
+      setValue('publicRoomNo', data.roomNo);
+      setValue('sessionNo', data.sessionNo);
+      setValue('streamName', data.streamName);
+      setValue('prepareDeadline', data.prepareDeadlineAt ? new Date(Number(data.prepareDeadlineAt)).toLocaleString() + ` (${data.prepareDeadlineAt})` : '');
+      setValue('publishToken', data.publishToken);
+      setValue('pushUrl', data.pushUrl);
+      setValue('playUrl', data.playUrl);
+      parseOBSFields(data.pushUrl);
+      setBadge('prepareBadge', '已生成', 'ok');
+      setStep(4, 'done');
+      localStorage.setItem('liveFlow.lastPushUrl', data.pushUrl || '');
+      return result;
+    }
+
+    function parseOBSFields(pushUrl) {
+      if (!pushUrl) return;
+      try {
+        const url = new URL(pushUrl);
+        const parts = url.pathname.split('/').filter(Boolean);
+        const stream = parts.pop() || '';
+        const appPath = parts.join('/');
+        const server = `${url.protocol}//${url.host}${appPath ? '/' + appPath : ''}`;
+        setValue('obsServer', server);
+        setValue('obsStreamKey', stream + url.search);
+      } catch (error) {
+        appendLog('解析 OBS 参数失败', { error: error.message, pushUrl });
+      }
+    }
+
+    async function prepareSession() {
+      const permission = await checkLivePermission();
+      if (!permission.data || !permission.data.allow) {
+        throw new Error(permission.data && permission.data.message ? permission.data.message : '当前没有开播权限');
+      }
+      const key = value('idempotencyKey');
+      if (!/^[A-Za-z0-9_.:-]{8,128}$/.test(key)) throw new Error('Idempotency-Key 格式无效');
+      const result = await request('/app/live/room/session/prepare', {
+        method: 'POST',
+        headers: { 'Idempotency-Key': key },
+        body: JSON.stringify({
+          categoryId: Number(value('categoryId') || 0),
+          title: value('liveTitle'),
+          coverUrl: value('liveCover'),
+          visibility: Number(value('visibility'))
+        })
+      });
+      return fillPrepare(result);
+    }
+
+    function publicLiveStatusLabel(status) {
+      return ({ 0: '未开播', 1: '准备中', 2: '直播中', 3: '结束中' })[Number(status)] || `状态 ${status}`;
+    }
+
+    function formatTimestamp(timestamp) {
+      const value = Number(timestamp);
+      return value > 0 ? new Date(value).toLocaleString() : '-';
+    }
+
+    function appendCell(row, text, className = '') {
+      const cell = document.createElement('td');
+      cell.textContent = text === undefined || text === null || text === '' ? '-' : String(text);
+      if (className) cell.className = className;
+      row.appendChild(cell);
+      return cell;
+    }
+
+    function renderPublicRoomList(result) {
+      const data = result.data || {};
+      const list = Array.isArray(data.list) ? data.list : [];
+      $('publicListMeta').textContent = `公开直播列表 · 共 ${Number(data.total || 0)} 条 · 第 ${Number(data.page || 1)} 页`;
+      const body = $('publicRoomList');
+      body.replaceChildren();
+      if (!list.length) {
+        const row = document.createElement('tr');
+        appendCell(row, '当前筛选条件下没有正在直播的公开房间', 'empty-cell').colSpan = 7;
+        body.appendChild(row);
+        return;
+      }
+      for (const room of list) {
+        const row = document.createElement('tr');
+        appendCell(row, room.roomNo);
+        appendCell(row, room.anchorNickname || room.anchorNo);
+        appendCell(row, room.title);
+        appendCell(row, publicLiveStatusLabel(room.liveStatus));
+        appendCell(row, `${Number(room.viewCount || 0)} / ${Number(room.likeCount || 0)}`);
+        appendCell(row, formatTimestamp(room.liveStartedAt));
+        const actionCell = appendCell(row, '');
+        const action = document.createElement('button');
+        action.type = 'button';
+        action.textContent = '查看详情';
+        action.dataset.publicRoomNo = room.roomNo || '';
+        actionCell.replaceChildren(action);
+        body.appendChild(row);
+      }
+    }
+
+    async function queryPublicRoom(roomNo = value('publicRoomNo')) {
+      const normalized = String(roomNo || '').trim();
+      if (!normalized) throw new Error('请输入需要查询的 roomNo');
+      setValue('publicRoomNo', normalized);
+      const result = await request('/app/live/room/detail?roomNo=' + encodeURIComponent(normalized), { auth: false });
+      $('publicDetailOutput').textContent = JSON.stringify(result.data || {}, null, 2);
+      setBadge('publicBadge', '详情查询成功', 'ok');
+      return result;
+    }
+
+    async function queryPublicRoomList() {
+      const page = Number(value('publicPage'));
+      const pageSize = Number(value('publicPageSize'));
+      const categoryId = Number(value('publicCategoryId') || 0);
+      if (!Number.isInteger(page) || page < 1) throw new Error('列表页码必须是大于 0 的整数');
+      if (!Number.isInteger(pageSize) || pageSize < 1 || pageSize > 100) throw new Error('每页数量必须是 1 到 100 之间的整数');
+      const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
+      if (categoryId > 0) params.set('categoryId', String(categoryId));
+      const result = await request('/app/live/room/list?' + params.toString(), { auth: false });
+      renderPublicRoomList(result);
+      setBadge('publicBadge', `列表 ${Number(result.data && result.data.total || 0)} 条`, 'ok');
+      return result;
+    }
+
+    $('saveConfig').onclick = () => {
+      saveConfig();
+      setStatus('配置已保存', 'ok');
+    };
+    $('clearToken').onclick = () => {
+      setValue('token', '');
+      localStorage.removeItem(TOKEN_KEY);
+      setBadge('accountBadge', '未登录');
+      setStep(1, 'active');
+      setStatus('Token 已清空');
+    };
+    $('randomUser').onclick = () => {
+      const suffix = Date.now().toString(36).slice(-7) + Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+      setValue('username', 'anchor_' + suffix);
+      setValue('nickname', '联调主播_' + suffix.slice(-4));
+      setValue('anchorNickname', value('nickname'));
+      setStatus('已生成新的用户名', 'ok');
+    };
+    $('register').onclick = () => run('注册用户', () => registerAccount());
+    $('login').onclick = () => run('登录', () => loginAccount());
+    $('registerAndLogin').onclick = () => run('注册并登录', async () => {
+      await registerAccount(true);
+      return loginAccount();
+    });
+    $('accountInfo').onclick = () => run('查询当前用户', async () => {
+      const result = await request('/app/live/user/info');
+      fillAccount(result);
+      return result;
+    });
+    $('loadCategories').onclick = () => run('加载分类', () => loadCategories());
+    $('applyAnchor').onclick = () => run('提交主播申请', () => applyAnchor());
+    $('applyStatus').onclick = () => run('查询申请状态', () => queryApplyStatus());
+    $('anchorInfo').onclick = () => run('查询主播资料', async () => {
+      const result = await request('/app/live/anchor/info');
+      fillAnchor(result);
+      return result;
+    });
+    $('checkLive').onclick = () => run('检查开播资格', () => checkLivePermission());
+    $('roomInfo').onclick = () => run('读取直播间', async () => {
+      const result = await request('/app/live/room/info');
+      fillRoom(result);
+      return result;
+    });
+    $('newIdempotencyKey').onclick = replaceIdempotencyKey;
+    $('prepareSession').onclick = () => run('生成开播 Key', () => prepareSession());
+    $('usePreparedRoomNo').onclick = () => {
+      if (!value('roomNo')) {
+        setStatus('上方还没有生成房间号', 'error');
+        return;
+      }
+      setValue('publicRoomNo', value('roomNo'));
+      setStatus('已填入上方生成的房间号', 'ok');
+    };
+    $('loadPublicCategories').onclick = () => run('加载分类', () => loadCategories());
+    $('queryPublicRoom').onclick = () => run('查询公开直播间', () => queryPublicRoom());
+    $('queryPublicList').onclick = () => run('查询公开直播列表', () => queryPublicRoomList());
+    $('publicRoomList').onclick = event => {
+      const button = event.target.closest('[data-public-room-no]');
+      if (!button) return;
+      setValue('publicRoomNo', button.dataset.publicRoomNo);
+      run('查询公开直播间', () => queryPublicRoom(button.dataset.publicRoomNo));
+    };
+    $('clearLog').onclick = () => {
+      logs.length = 0;
+      $('output').textContent = '等待操作';
+      setStatus('日志已清空');
+    };
+    document.querySelectorAll('[data-copy]').forEach(button => {
+      button.onclick = async event => {
+        event.preventDefault();
+        const id = button.dataset.copy;
+        if (!value(id)) {
+          setStatus('没有可复制的内容', 'error');
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText($(id).value);
+          setStatus('已复制：' + id, 'ok');
+        } catch {
+          $(id).select();
+          document.execCommand('copy');
+          setStatus('已复制：' + id, 'ok');
+        }
+      };
+    });
+
+    (function initialize() {
+      const inferredBase = location.protocol.startsWith('http') ? location.origin + '/api/v1' : 'http://127.0.0.1:8888/api/v1';
+      setValue('baseUrl', localStorage.getItem(BASE_KEY) || inferredBase);
+      setValue('token', localStorage.getItem(TOKEN_KEY) || '');
+      setValue('idempotencyKey', sessionStorage.getItem(IDEMPOTENCY_KEY) || newIdempotencyKey());
+      if (value('token')) setBadge('accountBadge', '已有 Token', 'ok');
+      saveConfig();
+    })();
+  </script>
+</body>
+</html>

@@ -57,12 +57,12 @@ build-image-server:
 build-local:
 	if [ -d "build" ];then rm -rf build; else echo "OK!"; fi \
 	&& if [ -f "/.dockerenv" ];then echo "OK!"; else  make build-web-local && make build-server-local; fi \
-	&& mkdir build && cp -r web/dist build/ && cp server/server build/ && cp -r server/resource build/resource
+	&& mkdir build && cp server/server build/ && cp -r server/assets build/assets && cp -r server/resource build/resource
 
 #本地环境打包前端
 build-web-local:
-	@cd web/ && if [ -d "dist" ];then rm -rf dist; else echo "OK!"; fi \
-	&& yarn config set registry http://mirrors.cloud.tencent.com/npm/ && yarn install && yarn build
+	@cd web/ && yarn config set registry http://mirrors.cloud.tencent.com/npm/ \
+	&& yarn install && yarn build
 
 #本地环境打包后端
 build-server-local:

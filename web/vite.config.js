@@ -4,14 +4,11 @@ import { loadEnv } from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import VueFilePathPlugin from './vitePlugin/componentName/index.js'
-import { svgBuilder } from 'vite-auto-import-svg'
 import vueRootValidator from 'vite-check-multiple-dom'
-import { AddSecret } from './vitePlugin/secret'
 import UnoCSS from '@unocss/vite'
 
 // @see https://cn.vitejs.dev/config/
 export default ({ mode }) => {
-  AddSecret('')
   const env = loadEnv(mode, process.cwd())
 
   const timestamp = Date.parse(new Date())
@@ -21,9 +18,11 @@ export default ({ mode }) => {
     vue$: 'vue/dist/vue.runtime.esm-bundler.js'
   }
 
-  const base = '/'
+  const base = env.VITE_PUBLIC_PATH || '/'
   const root = './'
-  const outDir = 'dist'
+  const outDir = env.VITE_OUTPUT_DIR
+    ? path.resolve(import.meta.dirname, env.VITE_OUTPUT_DIR)
+    : 'dist'
 
   const config = {
     base: base, // 编译后js导入的资源路径
@@ -48,6 +47,7 @@ export default ({ mode }) => {
       manifest: false, // 是否产出manifest.json
       sourcemap: false, // 是否产出sourcemap.json
       outDir: outDir, // 产出目录
+      emptyOutDir: true,
       target: 'es2015',
       rolldownOptions: {
         output: {
@@ -61,11 +61,10 @@ export default ({ mode }) => {
       env.VITE_POSITION === 'open' &&
       vueDevTools({ launchEditor: env.VITE_EDITOR }),
       vuePlugin(),
-      svgBuilder(['./src/plugin/', './src/assets/icons/'], base, outDir, 'assets', mode),
       [Banner(`\n Build based on admin \n Time : ${timestamp}`)],
       VueFilePathPlugin('./src/pathInfo.json'),
       UnoCSS(),
-      vueRootValidator()
+      mode === 'development' && vueRootValidator()
     ]
   }
   return config

@@ -1,5 +1,6 @@
 /web/node_modules
 /web/dist
+/server/assets/admin/
 
 .DS_Store
 

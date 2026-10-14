@@ -12,7 +12,6 @@
 </template>
 
 <script setup>
-  import banner from '@/assets/banner.jpg'
   import banner2 from '@/assets/banner2.jpg'
 
   const openLink = (link) => {
@@ -20,10 +19,6 @@
   }
 
   const banners = [
-    {
-      img: banner,
-      link: 'https://plugin.gin-vue-admin.com/license'
-    },
     {
       img: banner2,
       link: 'https://plugin.gin-vue-admin.com'

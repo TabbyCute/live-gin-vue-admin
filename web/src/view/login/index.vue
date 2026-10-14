@@ -109,15 +109,6 @@
         <a href="https://support.qq.com/product/371961" target="_blank">
           <img src="@/assets/kefu.png" class="w-8 h-8" alt="客服" />
         </a>
-        <a
-          href="https://github.com/flipped-aurora/gin-vue-admin"
-          target="_blank"
-        >
-          <img src="@/assets/github.png" class="w-8 h-8" alt="github" />
-        </a>
-        <a href="https://space.bilibili.com/322210472" target="_blank">
-          <img src="@/assets/video.png" class="w-8 h-8" alt="视频站" />
-        </a>
       </div>
     </BottomInfo>
   </div>
