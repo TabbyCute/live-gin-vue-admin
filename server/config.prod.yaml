@@ -138,8 +138,8 @@ live:
         api-request-timeout-seconds: 3
         snapshot-page-size: 5000
         snapshot-max-streams: 20000
-        push-base-url: rtmp://127.0.0.1:12935
-        play-base-url: rtmp://127.0.0.1:12935
+        push-base-url: rtmp://140.210.12.162:12935
+        play-base-url: rtmp://140.210.12.162:12935
 local:
     path: uploads/production
     store-path: uploads/production

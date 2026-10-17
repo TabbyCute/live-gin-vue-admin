@@ -13,6 +13,8 @@ services:
     environment:
       CANDIDATE: "${CANDIDATE:-127.0.0.1}"
       SRS_HOOK_TOKEN: "${SRS_HOOK_TOKEN:-local-srs-hook-change-me-32bytes-minimum}"
+      SRS_HOOK_ON_PUBLISH: "http://host.docker.internal:8888/api/v1/app/live/hook/publish?hook_token=${SRS_HOOK_TOKEN:-local-srs-hook-change-me-32bytes-minimum}"
+      SRS_HOOK_ON_UNPUBLISH: "http://host.docker.internal:8888/api/v1/app/live/hook/unpublish?hook_token=${SRS_HOOK_TOKEN:-local-srs-hook-change-me-32bytes-minimum}"
     ports:
       - "127.0.0.1:12935:1935"
       - "127.0.0.1:12985:1985"

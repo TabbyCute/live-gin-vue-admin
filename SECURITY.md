@@ -7,13 +7,15 @@ Please report security issues to qimiaojiangjizhao@gmail.com
 
 http://127.0.0.1:18080/TB_LIVE/5100008.m3u8
 http://127.0.0.1:18080/TB_LIVE/5100008.flv
+https://6hadak7.bxdlks.com/TB_LIVE_PRO/10100001.flv
+https://6hadak7.bxdlks.com/TB_LIVE_PRO/10100001.m3u8
 
 http://127.0.0.1:12985/rtc/v1/whep/?app=TB_LIVE&stream=5100008
 
 
+nohup env GIN_MODE=release /data/live/tb-live-server -c /data/live/config.prod.yaml   >> ./log/production/server-console.log 2>&1 < /dev/null &
 
-
-
+http://140.210.12.162:18080/TB_LIVE_PRO/10100001.flv
 
 ffmpeg \
 -re \
@@ -23,7 +25,13 @@ ffmpeg \
 -f flv \
 ""
 
-
+ffmpeg \
+-re \
+-stream_loop -1 \
+-i "./2.mp4" \
+-c copy \
+-f flv \
+"rtmp://140.210.12.162:12935/TB_LIVE_PRO/10100001?pt=v1_qDJYKPzfUc35PVW0HC8ONbrs0g7fOjsl4VUkw3nNBXdSSS37fcpwxLOjzOBzN1bKX77GYtWr4xpih7kW-HDBIWHJ754ZoPVtgBbtZAiUNHZyRz0mzMbuQvbb8cx3urS9D3AWzxFoZqhKVcKGZbB4z87U8XLAMa-t-UijOZPkd8sQXSn4B5vdUrxX-gzX03xGriM52K5fDDR_e7OYYBMCY2JuDSRv2jo8AWKDqT5f3PGsxl0IKGWPN-fWDCC2ntdRoM30AxWiIwVUh2D8mFqD9KdywRD5eZmGLKBx1J7-PJjfNzYzPMWRlLOKNbuI4WFvqhYN83kq28EhCf0Kb7Zc0jaF82SCd2f5_y6zcztWYgH2TWm15jaay3g"
 
 
 /proxy/pages/income
