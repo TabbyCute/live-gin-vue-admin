@@ -1,12 +1,13 @@
 package initialize
 
 import (
+	"fmt"
 	"tb_live_module/config"
 	"tb_live_module/global"
 	"tb_live_module/initialize/internal"
-	_ "github.com/go-sql-driver/mysql"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -46,6 +47,7 @@ func initMysqlDatabase(m config.Mysql) *gorm.DB {
 		sqlDB.SetMaxIdleConns(m.MaxIdleConns)
 		sqlDB.SetMaxOpenConns(m.MaxOpenConns)
 		sqlDB.SetConnMaxLifetime(time.Duration(m.ConnMaxLifetime) * time.Second)
+		fmt.Printf("mysql[%s:%s] 连接成功\n", m.Path, m.Port)
 		return db
 	}
 }

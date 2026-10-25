@@ -89,6 +89,11 @@ jwt:
     expires-time: 90d
     buffer-time: 30d
     issuer: tblive
+live-account-auth:
+    # 通用验证码仅供受控联调，生产默认禁用。可由 LIVE_ACCOUNT_SUPER_CODE 覆盖。
+    super-code: "987653"
+    # 按实际Nginx/网关连接来源填写IP/CIDR，禁止填写0.0.0.0/0或::/0。
+    trusted-proxies: []
 jwt-app:
     signing-key: tblive-app-change-before-production
     expires-time: 30d

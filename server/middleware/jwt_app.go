@@ -3,6 +3,7 @@ package middleware
 import (
 	"errors"
 	"strings"
+	"time"
 
 	"tb_live_module/global"
 	"tb_live_module/model/common/response"
@@ -45,7 +46,7 @@ func JWTAppAuth() gin.HandlerFunc {
 			return
 		}
 		var account liveModel.LiveAccount
-		err = global.GVA_DB.Select("id", "status").First(&account, claims.AccountID).Error
+		err = global.GVA_DB.Select("id", "status", "ban_until", "token_version").First(&account, claims.AccountID).Error
 		if err != nil {
 			if !errors.Is(err, gorm.ErrRecordNotFound) {
 				global.GVA_LOG.Error("客户端鉴权查询账号失败", zap.Error(err))
@@ -54,8 +55,22 @@ func JWTAppAuth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		if account.Status != liveModel.LiveAccountStatusNormal {
-			response.NoAuth("客户端账号已被禁用", c)
+		if account.Status == liveModel.LiveAccountStatusBanned && account.BanUntil > 0 && account.BanUntil <= time.Now().UnixMilli() {
+			result := global.GVA_DB.Model(&liveModel.LiveAccount{}).
+				Where("id = ? AND status = ? AND ban_until > 0 AND ban_until <= ?", account.ID, liveModel.LiveAccountStatusBanned, time.Now().UnixMilli()).
+				Updates(map[string]interface{}{"status": liveModel.LiveAccountStatusNormal, "status_reason": "", "ban_until": int64(0)})
+			if result.Error != nil {
+				global.GVA_LOG.Error("恢复已到期客户端封禁失败", zap.Error(result.Error))
+				response.NoAuth("客户端鉴权服务不可用", c)
+				c.Abort()
+				return
+			}
+			if result.RowsAffected > 0 {
+				account.Status = liveModel.LiveAccountStatusNormal
+			}
+		}
+		if account.Status != liveModel.LiveAccountStatusNormal || account.TokenVersion != claims.TokenVersion {
+			response.NoAuth("客户端登录已失效，请重新登录", c)
 			c.Abort()
 			return
 		}

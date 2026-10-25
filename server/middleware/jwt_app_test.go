@@ -23,7 +23,7 @@ func setupAppAuthTest(t *testing.T) (string, *gin.Engine) {
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	require.NoError(t, err)
 	require.NoError(t, db.AutoMigrate(&liveModel.LiveAccount{}))
-	account := liveModel.LiveAccount{Username: "demo", Password: "hash", Nickname: "demo", Status: liveModel.LiveAccountStatusNormal}
+	account := liveModel.LiveAccount{AccountNo: "1145781", Username: "demo", Password: "hash", Nickname: "demo", Status: liveModel.LiveAccountStatusNormal, TokenVersion: 1}
 	require.NoError(t, db.Create(&account).Error)
 
 	previousDB := global.GVA_DB
@@ -41,7 +41,7 @@ func setupAppAuthTest(t *testing.T) (string, *gin.Engine) {
 		global.GVA_CONFIG.JWTApp = previousAppJWT
 	})
 
-	token, _, err := utils.NewAppJWT().CreateToken(account.ID, account.Username)
+	token, _, err := utils.NewAppJWT().CreateToken(account.ID, account.Username, account.TokenVersion)
 	require.NoError(t, err)
 	router := gin.New()
 	router.GET("/private", JWTAppAuth(), func(c *gin.Context) {
@@ -74,4 +74,16 @@ func TestJWTAppAuthOnlyAcceptsAuthorizationBearerToken(t *testing.T) {
 	router.ServeHTTP(bearerResponse, bearerRequest)
 	require.Equal(t, http.StatusNoContent, bearerResponse.Code)
 	require.Empty(t, bearerResponse.Header().Values("Set-Cookie"))
+}
+
+func TestJWTAppAuthRejectsRevokedTokenVersion(t *testing.T) {
+	token, router := setupAppAuthTest(t)
+	require.NoError(t, global.GVA_DB.Model(&liveModel.LiveAccount{}).Where("username = ?", "demo").
+		UpdateColumn("token_version", gorm.Expr("token_version + 1")).Error)
+
+	request := httptest.NewRequest(http.MethodGet, "/private", nil)
+	request.Header.Set("Authorization", "Bearer "+token)
+	result := httptest.NewRecorder()
+	router.ServeHTTP(result, request)
+	require.Equal(t, http.StatusUnauthorized, result.Code)
 }

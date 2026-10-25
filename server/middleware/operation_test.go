@@ -85,6 +85,36 @@ func TestOperationRecordDoesNotDrainUnreadLargeRequest(t *testing.T) {
 	require.Equal(t, operationRecordTooLarge, record.Body)
 }
 
+func TestOperationRecordRedactsSensitiveJSONWithoutChangingHandlerBody(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	db := setupOperationRecordTest(t)
+	requestBody := `{"accountId":7,"phone":"+60123456789","smsCode":"012345","nested":{"newPassword":"secret123","super-code":"654321"}}`
+	var handlerBody string
+	router := gin.New()
+	router.Use(OperationRecord())
+	router.POST("/redacted", func(c *gin.Context) {
+		body, err := io.ReadAll(c.Request.Body)
+		require.NoError(t, err)
+		handlerBody = string(body)
+		c.JSON(http.StatusOK, gin.H{"phone": "+60123456789", "result": "ok"})
+	})
+
+	recorder := httptest.NewRecorder()
+	request := httptest.NewRequest(http.MethodPost, "/redacted", strings.NewReader(requestBody))
+	request.Header.Set("Content-Type", "application/json")
+	router.ServeHTTP(recorder, request)
+
+	require.Equal(t, requestBody, handlerBody)
+	var record system.SysOperationRecord
+	require.NoError(t, db.Order("id DESC").First(&record).Error)
+	require.NotContains(t, record.Body, "+60123456789")
+	require.NotContains(t, record.Body, "secret123")
+	require.NotContains(t, record.Body, "012345")
+	require.NotContains(t, record.Body, "654321")
+	require.NotContains(t, record.Resp, "+60123456789")
+	require.Contains(t, record.Body, operationRecordRedacted)
+}
+
 type countingReadCloser struct {
 	io.Reader
 	readBytes int

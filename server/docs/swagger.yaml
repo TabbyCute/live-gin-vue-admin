@@ -983,6 +983,136 @@ definitions:
         description: 作者
         type: integer
     type: object
+  request.AccountAdminActionReq:
+    properties:
+      accountId:
+        type: integer
+    required:
+    - accountId
+    type: object
+  request.AccountAdminProfileUpdateReq:
+    properties:
+      accountId:
+        type: integer
+      avatar:
+        maxLength: 500
+        type: string
+      birthday:
+        type: string
+      cityCode:
+        maxLength: 32
+        type: string
+      countryCode:
+        type: string
+      gender:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+      language:
+        maxLength: 16
+        type: string
+      nickname:
+        maxLength: 64
+        type: string
+      phone:
+        description: Phone为nil表示不修改；提供时必须为非空E.164格式，后台设置后视为已验证。
+        maxLength: 20
+        type: string
+      regionCode:
+        maxLength: 32
+        type: string
+      signature:
+        maxLength: 255
+        type: string
+    required:
+    - accountId
+    - nickname
+    type: object
+  request.AccountAdminStatusUpdateReq:
+    properties:
+      accountId:
+        type: integer
+      banUntil:
+        type: integer
+      status:
+        enum:
+        - 1
+        - 2
+        - 3
+        - 4
+        type: integer
+      statusReason:
+        maxLength: 255
+        type: string
+    required:
+    - accountId
+    - status
+    type: object
+  request.AccountPasswordChangeReq:
+    properties:
+      newPassword:
+        maxLength: 72
+        minLength: 8
+        type: string
+      oldPassword:
+        maxLength: 72
+        minLength: 8
+        type: string
+    required:
+    - newPassword
+    - oldPassword
+    type: object
+  request.AccountProfileUpdateReq:
+    properties:
+      avatar:
+        maxLength: 500
+        type: string
+      birthday:
+        type: string
+      cityCode:
+        maxLength: 32
+        type: string
+      countryCode:
+        type: string
+      gender:
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        type: integer
+      language:
+        maxLength: 16
+        type: string
+      nickname:
+        maxLength: 64
+        type: string
+      regionCode:
+        maxLength: 32
+        type: string
+      signature:
+        maxLength: 255
+        type: string
+    required:
+    - nickname
+    type: object
+  request.AccountSMSSendReq:
+    properties:
+      phone:
+        example: "+60123456789"
+        maxLength: 20
+        type: string
+      purpose:
+        enum:
+        - register
+        example: register
+        type: string
+    required:
+    - phone
+    type: object
   request.AddMenuAuthorityInfo:
     properties:
       authorityId:
@@ -2012,17 +2142,159 @@ definitions:
     type: object
   response.Account:
     properties:
+      accountNo:
+        type: string
       avatar:
+        type: string
+      banUntil:
+        type: integer
+      birthday:
+        type: string
+      cityCode:
+        type: string
+      countryCode:
         type: string
       createdAt:
         type: string
+      gender:
+        type: integer
       id:
         type: integer
+      language:
+        type: string
+      lastLoginAt:
+        type: integer
       nickname:
+        type: string
+      phoneMasked:
+        type: string
+      phoneVerified:
+        type: boolean
+      realNameStatus:
+        type: integer
+      realNameVerifiedAt:
+        type: integer
+      regionCode:
+        type: string
+      signature:
         type: string
       status:
         type: integer
       username:
+        type: string
+    type: object
+  response.AccountAdminDetailResp:
+    properties:
+      accountNo:
+        type: string
+      avatar:
+        type: string
+      banUntil:
+        type: integer
+      birthday:
+        type: string
+      cityCode:
+        type: string
+      countryCode:
+        type: string
+      createdAt:
+        type: string
+      gender:
+        type: integer
+      id:
+        type: integer
+      language:
+        type: string
+      lastLoginAt:
+        type: integer
+      nickname:
+        type: string
+      passwordChangedAt:
+        type: integer
+      phone:
+        type: string
+      phoneMasked:
+        type: string
+      phoneVerifiedAt:
+        type: integer
+      realNameStatus:
+        type: integer
+      realNameVerifiedAt:
+        type: integer
+      regionCode:
+        type: string
+      registerChannelId:
+        type: integer
+      registerSource:
+        type: string
+      signature:
+        type: string
+      status:
+        type: integer
+      statusReason:
+        type: string
+      updatedAt:
+        type: string
+      username:
+        type: string
+    type: object
+  response.AccountAdminListItemResp:
+    properties:
+      accountNo:
+        type: string
+      avatar:
+        type: string
+      banUntil:
+        type: integer
+      createdAt:
+        type: string
+      id:
+        type: integer
+      lastLoginAt:
+        type: integer
+      nickname:
+        type: string
+      phoneMasked:
+        type: string
+      phoneVerified:
+        type: boolean
+      realNameStatus:
+        type: integer
+      registerChannelId:
+        type: integer
+      registerSource:
+        type: string
+      status:
+        type: integer
+      username:
+        type: string
+    type: object
+  response.AccountAdminListResp:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.AccountAdminListItemResp'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  response.AccountPublicProfileResp:
+    properties:
+      accountNo:
+        type: string
+      avatar:
+        type: string
+      countryCode:
+        type: string
+      gender:
+        type: integer
+      nickname:
+        type: string
+      signature:
         type: string
     type: object
   response.AccountResponse:
@@ -2967,6 +3239,13 @@ definitions:
       total:
         type: integer
     type: object
+  response.PasswordChangeResponse:
+    properties:
+      expiresAt:
+        type: integer
+      token:
+        type: string
+    type: object
   response.PluginInfo:
     properties:
       apis:
@@ -3661,14 +3940,13 @@ definitions:
         maxLength: 72
         minLength: 8
         type: string
-      username:
-        example: demo_user
-        maxLength: 32
-        minLength: 3
+      phone:
+        example: "+60123456789"
+        maxLength: 20
         type: string
     required:
     - password
-    - username
+    - phone
     type: object
   tb_live_module_model_live_request.Register:
     properties:
@@ -3685,14 +3963,17 @@ definitions:
         maxLength: 72
         minLength: 8
         type: string
-      username:
-        example: demo_user
-        maxLength: 32
-        minLength: 3
+      phone:
+        example: "+60123456789"
+        maxLength: 20
+        type: string
+      smsCode:
+        example: "123456"
         type: string
     required:
     - password
-    - username
+    - phone
+    - smsCode
     type: object
   tb_live_module_model_live_response.LoginResponse:
     properties:
@@ -5321,6 +5602,210 @@ paths:
       summary: jwt加入黑名单
       tags:
       - Jwt
+  /live/account/detail:
+    get:
+      parameters:
+      - description: 用户ID
+        in: query
+        name: accountId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误或用户不存在
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或token无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 获取客户端用户后台详情
+      tags:
+      - LiveAccountAdmin
+  /live/account/list:
+    get:
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        required: true
+        type: integer
+      - description: 每页数量，最大100
+        in: query
+        name: pageSize
+        required: true
+        type: integer
+      - description: 对外账号编号前缀
+        in: query
+        name: accountNo
+        type: string
+      - description: 内部用户名前缀
+        in: query
+        name: username
+        type: string
+      - description: E.164完整手机号，精确查询
+        in: query
+        name: phone
+        type: string
+      - description: 昵称
+        in: query
+        name: nickname
+        type: string
+      - description: 账号状态：1正常 2禁用 3封禁 4注销
+        in: query
+        name: status
+        type: integer
+      - description: 实名状态：0未认证 1审核中 2已认证 3未通过 4过期或撤销
+        in: query
+        name: realNameStatus
+        type: integer
+      - description: 注册来源
+        in: query
+        name: registerSource
+        type: string
+      - description: 注册渠道ID
+        in: query
+        name: registerChannelId
+        type: integer
+      - description: 注册日期起，YYYY-MM-DD
+        in: query
+        name: createdAtStart
+        type: string
+      - description: 注册日期止，YYYY-MM-DD（含当天）
+        in: query
+        name: createdAtEnd
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 参数错误或查询失败
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 未登录或token无效
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查询客户端用户
+      tags:
+      - LiveAccountAdmin
+  /live/account/logout-all:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户ID
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AccountAdminActionReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 操作成功
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 仅高级管理员可操作
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 强制客户端用户全部登录失效
+      tags:
+      - LiveAccountAdmin
+  /live/account/phone/unbind:
+    post:
+      consumes:
+      - application/json
+      description: 纯手机号登录下禁止解绑，请通过修改资料更换手机号。
+      parameters:
+      - description: 用户ID
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AccountAdminActionReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 纯手机号登录下禁止解绑
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 仅高级管理员可操作
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 手机号解绑已禁用
+      tags:
+      - LiveAccountAdmin
+  /live/account/profile/update:
+    post:
+      consumes:
+      - application/json
+      description: phone不传表示保持不变，提供时必须为非空E.164格式；后台换号直接视为已验证并使既有客户端JWT失效。
+      parameters:
+      - description: 用户ID和资料白名单
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AccountAdminProfileUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 修改成功
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 仅高级管理员可操作
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 后台修改客户端用户公开资料
+      tags:
+      - LiveAccountAdmin
+  /live/account/status/update:
+    post:
+      consumes:
+      - application/json
+      description: 非正常状态必须填写原因；封禁截止为0表示永久封禁。操作会立即使既有客户端JWT失效。
+      parameters:
+      - description: 用户状态
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AccountAdminStatusUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 修改成功
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: 仅高级管理员可操作
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 修改客户端用户状态
+      tags:
+      - LiveAccountAdmin
   /live/anchor/agency/update:
     post:
       consumes:
@@ -9361,9 +9846,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: 校验客户端账号密码并签发客户端专用 JWT
+      description: 仅支持已验证手机号与密码登录，不支持用户名或账号编号登录；超级验证码不能代替密码。
       parameters:
-      - description: 用户名和密码
+      - description: E.164手机号和密码
         in: body
         name: data
         required: true
@@ -9379,13 +9864,89 @@ paths:
       summary: 客户端账号登录
       tags:
       - LiveAccount
+  /v1/app/live/user/password/change:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 旧密码和新密码
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AccountPasswordChangeReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 修改成功并签发新token
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PasswordChangeResponse'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 修改当前客户端账号密码并轮换JWT版本
+      tags:
+      - LiveAccount
+  /v1/app/live/user/profile:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: 公开资料白名单
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AccountProfileUpdateReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 修改成功
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 修改当前客户端账号资料
+      tags:
+      - LiveAccount
+  /v1/app/live/user/public-profile:
+    get:
+      parameters:
+      - description: 对外账号编号
+        in: query
+        name: accountNo
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.AccountPublicProfileResp'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 获取用户公开资料
+      tags:
+      - LiveAccount
   /v1/app/live/user/register:
     post:
       consumes:
       - application/json
-      description: 创建独立于管理后台账号体系的客户端账号；用户名不区分大小写
+      description: 使用E.164手机号、6位超级验证码和密码注册；系统自动生成数字账号编号和内部用户名。当前为短信接入前的联调实现，验证码只允许注册。
       parameters:
-      - description: 用户名、密码、昵称和头像
+      - description: 手机号、验证码、密码及可选昵称头像
         in: body
         name: data
         required: true
@@ -9395,10 +9956,40 @@ paths:
       - application/json
       responses:
         "200":
-          description: 参数错误或用户名已注册
+          description: 参数错误、验证码错误或手机号已注册
+          schema:
+            $ref: '#/definitions/response.Response'
+        "429":
+          description: 请求过于频繁
           schema:
             $ref: '#/definitions/response.Response'
       summary: 客户端账号注册
+      tags:
+      - LiveAccount
+  /v1/app/live/user/sms/send:
+    post:
+      consumes:
+      - application/json
+      description: 校验参数和限流后等待2秒返回ok，不发送短信、不生成或保存验证码；purpose可省略或为register。请求取消时立即停止等待。
+      parameters:
+      - description: 手机号及可选注册用途
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AccountSMSSendReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/response.Response'
+        "429":
+          description: 请求过于频繁
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: 注册短信占位接口
       tags:
       - LiveAccount
 securityDefinitions:

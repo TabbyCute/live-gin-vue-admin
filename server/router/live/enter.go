@@ -4,6 +4,7 @@ import api "tb_live_module/api/v1"
 
 type RouterGroup struct {
 	UserRouter
+	AccountAdminRouter
 	AnchorRouter
 	AnchorAdminRouter
 	CategoryRouter
@@ -15,6 +16,7 @@ type RouterGroup struct {
 
 var (
 	userApi          = api.ApiGroupApp.LiveApiGroup.UserApi
+	accountAdminApi  = api.ApiGroupApp.LiveApiGroup.AccountAdminApi
 	anchorApi        = api.ApiGroupApp.LiveApiGroup.AnchorApi
 	anchorAdminApi   = api.ApiGroupApp.LiveApiGroup.AnchorAdminApi
 	categoryApi      = api.ApiGroupApp.LiveApiGroup.CategoryApi

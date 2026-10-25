@@ -47,6 +47,7 @@ func registerSystemRoutesV1(apiRoot *gin.RouterGroup, engine *gin.Engine) {
 
 	// 直播后台接口继承 adminPrivateGroup 的 JWT，并由 live Router 继续区分读写操作日志。
 	liveRouter := router.RouterGroupApp.Live
+	liveRouter.InitAccountAdminRouter(adminPrivateGroup)
 	liveRouter.InitAnchorAdminRouter(adminPrivateGroup)
 	liveRouter.InitCategoryAdminRouter(adminPrivateGroup)
 	liveRouter.InitRoomAdminRouter(adminPrivateGroup)

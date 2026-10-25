@@ -1,14 +1,70 @@
 package initialize
 
 import (
+	"regexp"
 	"testing"
 
 	liveModel "tb_live_module/model/live"
+	"tb_live_module/model/system"
 
 	"github.com/glebarez/sqlite"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 )
+
+func TestPrepareLiveAccountAutoMigrationBackfillsAccountNumber(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open("file:"+t.Name()+"?mode=memory&cache=shared"), &gorm.Config{})
+	require.NoError(t, err)
+	require.NoError(t, db.Exec(`CREATE TABLE live_account (
+		id integer PRIMARY KEY AUTOINCREMENT,
+		created_at datetime, updated_at datetime, deleted_at datetime,
+		username varchar(32) NOT NULL, password varchar(255) NOT NULL,
+		nickname varchar(64) NOT NULL DEFAULT '', avatar varchar(500) NOT NULL DEFAULT '',
+		status tinyint NOT NULL DEFAULT 1
+	)`).Error)
+	require.NoError(t, db.Exec(`INSERT INTO live_account (username, password, nickname) VALUES
+		('legacy_one', 'hash', 'One'), ('legacy_two', 'hash', 'Two')`).Error)
+
+	require.NoError(t, prepareLiveAccountAutoMigration(db))
+	var accountNos []string
+	require.NoError(t, db.Table("live_account").Order("id").Pluck("account_no", &accountNos).Error)
+	require.Len(t, accountNos, 2)
+	require.NotEqual(t, accountNos[0], accountNos[1])
+	for _, accountNo := range accountNos {
+		require.Regexp(t, regexp.MustCompile(`^U[A-F0-9]{20}$`), accountNo)
+	}
+	require.NoError(t, db.AutoMigrate(&liveModel.LiveAccount{}, &liveModel.LiveAccountNumberSequence{}, &liveModel.LiveAccountRealName{}))
+	require.NoError(t, ensureLiveAccountPerformanceIndexes(db))
+	require.NoError(t, ensureLiveAccountNumberSequence(db))
+	require.True(t, db.Migrator().HasIndex(&liveModel.LiveAccount{}, "uk_live_account_account_no"))
+	require.True(t, db.Migrator().HasIndex(&liveModel.LiveAccount{}, "idx_live_account_created_at"))
+	require.True(t, db.Migrator().HasIndex(&liveModel.LiveAccountRealName{}, "uk_live_account_real_name_account"))
+	require.True(t, db.Migrator().HasIndex(&liveModel.LiveAccountRealName{}, "uk_live_account_real_name_document"))
+	require.True(t, db.Migrator().HasIndex(&liveModel.LiveAccountRealName{}, "uk_live_account_real_name_provider_ref"))
+	require.True(t, db.Migrator().HasIndex(&liveModel.LiveAccountRealName{}, "idx_live_account_real_name_status_expire"))
+	var sequence liveModel.LiveAccountNumberSequence
+	require.NoError(t, db.First(&sequence, 1).Error)
+	require.Equal(t, liveModel.LiveAccountNumberStart, sequence.NextValue)
+}
+
+func TestSyncLiveAccountAdminMetadataIsIdempotent(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open("file:"+t.Name()+"?mode=memory&cache=shared"), &gorm.Config{})
+	require.NoError(t, err)
+	require.NoError(t, db.AutoMigrate(
+		&system.SysApi{}, &system.SysBaseMenu{}, &system.SysAuthority{}, &system.SysAuthorityMenu{},
+	))
+	require.NoError(t, db.Create(&system.SysAuthority{AuthorityId: 888, AuthorityName: "超级管理员"}).Error)
+	require.NoError(t, syncLiveAccountAdminMetadata(db))
+	require.NoError(t, syncLiveAccountAdminMetadata(db))
+
+	var menuCount, apiCount, relationCount int64
+	require.NoError(t, db.Model(&system.SysBaseMenu{}).Where("name IN ?", []string{"appUserManagement", "liveAccount"}).Count(&menuCount).Error)
+	require.NoError(t, db.Model(&system.SysApi{}).Where("api_group = ?", "客户端用户").Count(&apiCount).Error)
+	require.NoError(t, db.Model(&system.SysAuthorityMenu{}).Where("sys_authority_authority_id = ?", "888").Count(&relationCount).Error)
+	require.EqualValues(t, 2, menuCount)
+	require.EqualValues(t, len(liveAccountAdminAPIs()), apiCount)
+	require.EqualValues(t, 2, relationCount)
+}
 
 func TestMigrateLiveDurationColumn(t *testing.T) {
 	db, err := gorm.Open(sqlite.Open("file:"+t.Name()+"?mode=memory&cache=shared"), &gorm.Config{})

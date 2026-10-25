@@ -260,3 +260,54 @@ fmt.Println(decodeBytes, err)
 
 请遵守 Apache License 2.0，并按许可证要求保留适用的版权、专利、商标和归属声明。
 授权版功能与官方商业支持请通过[商业授权页面](https://plugin.gin-vue-admin.com/license)获取。
+
+## 11. Debug 模式启动后端
+
+在项目根目录执行以下 Make 命令，以 Debug 模式启动后端，并明确加载
+`server/config.dev.yaml` 配置文件：
+
+```bash
+make run-server-test
+```
+
+该 Make 命令等价于：
+
+```bash
+cd server && GIN_MODE=debug go run . -c config.dev.yaml
+```
+
+## 12. App 手机号注册与登录（短信联调阶段）
+
+客户端仅支持手机号与密码登录。手机号统一使用含国家码的格式，例如 `+60123456789` 或 `+8613812345678`。
+注册仍按 `1145781、1145782…` 分配数字账号，并生成 `u1145781` 形式的内部用户名；用户名和数字账号均不能用于登录。
+
+在实际加载的 YAML 配置文件中设置：
+
+```yaml
+live-account-auth:
+    super-code: "123456"
+    trusted-proxies: []
+```
+
+`super-code` 必须是带引号的 6 位数字字符串，支持前导零。开发配置默认 `123456`，生产和 Docker 示例默认空值；空值或非法值会拒绝注册。
+环境变量 `LIVE_ACCOUNT_SUPER_CODE` 优先于文件配置，显式设为空也会禁用注册。修改环境变量需重启，文件中的验证码支持热更新。
+超级验证码不会通过后台配置接口返回或修改，保存其他后台配置也不会清空它。
+
+以下路径需要加上 `system.router-prefix`；当前开发配置为 `/api`，例如完整短信地址是 `/api/v1/app/live/user/sms/send`。
+
+| 接口 | JSON 请求示例 | 行为 |
+| --- | --- | --- |
+| `POST /v1/app/live/user/sms/send` | `{"phone":"+60123456789","purpose":"register"}` | 参数有效且未触发限流时等待 2 秒，返回 `{"code":0,"data":{},"msg":"ok"}`；不发送、生成或保存验证码 |
+| `POST /v1/app/live/user/register` | `{"phone":"+60123456789","smsCode":"123456","password":"password123","nickname":"测试用户"}` | 校验超级验证码、手机号唯一性及密码，创建账号；昵称、头像可省略 |
+| `POST /v1/app/live/user/login` | `{"phone":"+60123456789","password":"password123"}` | 校验手机号和密码，返回 App JWT |
+
+短信请求的 `purpose` 可省略，目前仅允许 `register`。注册不要求先调用短信占位接口。通用验证码仅用于注册，不能代替登录密码，也未用于找回密码或自助换号。
+通用验证码不能证明手机号所有权，公开上线前需接入真实短信校验并移除该注册放行方式。
+
+认证接口按 IP 和手机号限流，超限返回 HTTP 429 和 `Retry-After`。注册上限为每 IP 每分钟 10 次、每手机号每 10 分钟 5 次；登录分别为每分钟 20 次和 10 次；短信分别为每分钟 10 次和 1 次。
+请求体上限 4 KiB，正文读取截止时间为 5 秒，请求上下文截止时间为 10 秒；单实例同时处理密码认证最多 16 个，短信等待最多 128 个。客户端取消请求时停止短信等待。
+启用 Redis 时使用原子计数并在 Redis 故障时返回 HTTP 503；未启用 Redis 的单实例使用有容量上限的本地限流，多实例部署应启用共享 Redis。
+
+经过 Nginx/网关时，`trusted-proxies` 需填写实际连接来源的代理 IP/CIDR（修改后重启），以便安全读取 `X-Forwarded-For`；空列表按 TCP 对端 IP 限流，代理后的用户会共用该 IP 配额。不能填写全网地址段。
+后台允许直接更换手机号，换号后旧登录令牌失效；纯手机号登录下禁止清空或解绑手机号。已删除账号占用的手机号也不会被新注册复用。
+已有 `phone` 唯一索引、`phone_verified_at` 和账号序列表足够支撑本次改造，无需额外数据迁移；尚未执行此前账号迁移的环境仍需先执行 `server/migrations/` 中对应 SQL。

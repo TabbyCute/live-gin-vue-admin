@@ -23,6 +23,7 @@ const operationRecordCaptureLimit = 1024
 const (
 	operationRecordTooLarge = "[超出记录长度]"
 	operationRecordFileBody = "[文件]"
+	operationRecordRedacted = "[已脱敏]"
 )
 
 func OperationRecord() gin.HandlerFunc {
@@ -42,6 +43,9 @@ func OperationRecord() gin.HandlerFunc {
 			captured, truncated, replacement, err := captureOperationRequestBody(c.Request.Body, operationRecordCaptureLimit)
 			c.Request.Body = replacement
 			body, bodyTruncated = captured, truncated
+			if !bodyTruncated && strings.Contains(contentType, "application/json") {
+				body = redactOperationRecordJSON(body)
+			}
 			if err != nil && global.GVA_LOG != nil {
 				global.GVA_LOG.Error("read body from request error:", zap.Error(err))
 			}
@@ -77,7 +81,11 @@ func OperationRecord() gin.HandlerFunc {
 		if isDownloadResponse(c.Writer.Header()) {
 			record.Resp = operationRecordFileBody
 		} else {
-			record.Resp = operationRecordText(writer.body.Bytes(), writer.truncated)
+			responseBody := writer.body.Bytes()
+			if !writer.truncated && strings.Contains(c.Writer.Header().Get("Content-Type"), "application/json") {
+				responseBody = redactOperationRecordJSON(responseBody)
+			}
+			record.Resp = operationRecordText(responseBody, writer.truncated)
 		}
 
 		if global.GVA_DB == nil {
@@ -128,7 +136,11 @@ func operationRecordQuery(rawQuery string) ([]byte, bool) {
 	for _, part := range parts {
 		pair := strings.SplitN(part, "=", 2)
 		if len(pair) == 2 {
-			values[pair[0]] = pair[1]
+			if isSensitiveOperationRecordKey(pair[0]) {
+				values[pair[0]] = operationRecordRedacted
+			} else {
+				values[pair[0]] = pair[1]
+			}
 		}
 	}
 	body, _ := json.Marshal(&values)
@@ -136,6 +148,47 @@ func operationRecordQuery(rawQuery string) ([]byte, bool) {
 		return body[:operationRecordCaptureLimit], true
 	}
 	return body, false
+}
+
+func redactOperationRecordJSON(value []byte) []byte {
+	var data interface{}
+	if len(value) == 0 || json.Unmarshal(value, &data) != nil {
+		return value
+	}
+	redactOperationRecordValue(data)
+	redacted, err := json.Marshal(data)
+	if err != nil || len(redacted) > operationRecordCaptureLimit {
+		return value
+	}
+	return redacted
+}
+
+func redactOperationRecordValue(value interface{}) {
+	switch typed := value.(type) {
+	case map[string]interface{}:
+		for key, item := range typed {
+			if isSensitiveOperationRecordKey(key) {
+				typed[key] = operationRecordRedacted
+				continue
+			}
+			redactOperationRecordValue(item)
+		}
+	case []interface{}:
+		for _, item := range typed {
+			redactOperationRecordValue(item)
+		}
+	}
+}
+
+func isSensitiveOperationRecordKey(key string) bool {
+	normalized := strings.NewReplacer("_", "", "-", "").Replace(strings.ToLower(key))
+	switch normalized {
+	case "password", "oldpassword", "newpassword", "confirmpassword", "phone", "legalname", "documentno",
+		"token", "accesstoken", "refreshtoken", "authorization", "secret", "privatekey", "smscode", "supercode":
+		return true
+	default:
+		return false
+	}
 }
 
 func operationRecordText(value []byte, truncated bool) string {

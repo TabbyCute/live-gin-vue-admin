@@ -2741,6 +2741,330 @@
                 }
             }
         },
+        "/live/account/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveAccountAdmin"
+                ],
+                "summary": "获取客户端用户后台详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "用户ID",
+                        "name": "accountId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "参数错误或用户不存在",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或token无效",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/live/account/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveAccountAdmin"
+                ],
+                "summary": "分页查询客户端用户",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页数量，最大100",
+                        "name": "pageSize",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "对外账号编号前缀",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "内部用户名前缀",
+                        "name": "username",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "E.164完整手机号，精确查询",
+                        "name": "phone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "昵称",
+                        "name": "nickname",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "账号状态：1正常 2禁用 3封禁 4注销",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "实名状态：0未认证 1审核中 2已认证 3未通过 4过期或撤销",
+                        "name": "realNameStatus",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "注册来源",
+                        "name": "registerSource",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "注册渠道ID",
+                        "name": "registerChannelId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "注册日期起，YYYY-MM-DD",
+                        "name": "createdAtStart",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "注册日期止，YYYY-MM-DD（含当天）",
+                        "name": "createdAtEnd",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "参数错误或查询失败",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或token无效",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/live/account/logout-all": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveAccountAdmin"
+                ],
+                "summary": "强制客户端用户全部登录失效",
+                "parameters": [
+                    {
+                        "description": "用户ID",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.AccountAdminActionReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "操作成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "仅高级管理员可操作",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/live/account/phone/unbind": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "纯手机号登录下禁止解绑，请通过修改资料更换手机号。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveAccountAdmin"
+                ],
+                "summary": "手机号解绑已禁用",
+                "parameters": [
+                    {
+                        "description": "用户ID",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.AccountAdminActionReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "纯手机号登录下禁止解绑",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "仅高级管理员可操作",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/live/account/profile/update": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "phone不传表示保持不变，提供时必须为非空E.164格式；后台换号直接视为已验证并使既有客户端JWT失效。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveAccountAdmin"
+                ],
+                "summary": "后台修改客户端用户公开资料",
+                "parameters": [
+                    {
+                        "description": "用户ID和资料白名单",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.AccountAdminProfileUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "修改成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "仅高级管理员可操作",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/live/account/status/update": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "非正常状态必须填写原因；封禁截止为0表示永久封禁。操作会立即使既有客户端JWT失效。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveAccountAdmin"
+                ],
+                "summary": "修改客户端用户状态",
+                "parameters": [
+                    {
+                        "description": "用户状态",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.AccountAdminStatusUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "修改成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "仅高级管理员可操作",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/live/anchor/agency/update": {
             "post": {
                 "security": [
@@ -9452,7 +9776,7 @@
         },
         "/v1/app/live/user/login": {
             "post": {
-                "description": "校验客户端账号密码并签发客户端专用 JWT",
+                "description": "仅支持已验证手机号与密码登录，不支持用户名或账号编号登录；超级验证码不能代替密码。",
                 "consumes": [
                     "application/json"
                 ],
@@ -9465,7 +9789,7 @@
                 "summary": "客户端账号登录",
                 "parameters": [
                     {
-                        "description": "用户名和密码",
+                        "description": "E.164手机号和密码",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -9484,9 +9808,142 @@
                 }
             }
         },
+        "/v1/app/live/user/password/change": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveAccount"
+                ],
+                "summary": "修改当前客户端账号密码并轮换JWT版本",
+                "parameters": [
+                    {
+                        "description": "旧密码和新密码",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.AccountPasswordChangeReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "修改成功并签发新token",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.PasswordChangeResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/user/profile": {
+            "patch": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveAccount"
+                ],
+                "summary": "修改当前客户端账号资料",
+                "parameters": [
+                    {
+                        "description": "公开资料白名单",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.AccountProfileUpdateReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "修改成功",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/user/public-profile": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveAccount"
+                ],
+                "summary": "获取用户公开资料",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "对外账号编号",
+                        "name": "accountNo",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "获取成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.AccountPublicProfileResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/v1/app/live/user/register": {
             "post": {
-                "description": "创建独立于管理后台账号体系的客户端账号；用户名不区分大小写",
+                "description": "使用E.164手机号、6位超级验证码和密码注册；系统自动生成数字账号编号和内部用户名。当前为短信接入前的联调实现，验证码只允许注册。",
                 "consumes": [
                     "application/json"
                 ],
@@ -9499,7 +9956,7 @@
                 "summary": "客户端账号注册",
                 "parameters": [
                     {
-                        "description": "用户名、密码、昵称和头像",
+                        "description": "手机号、验证码、密码及可选昵称头像",
                         "name": "data",
                         "in": "body",
                         "required": true,
@@ -9510,7 +9967,53 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "参数错误或用户名已注册",
+                        "description": "参数错误、验证码错误或手机号已注册",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "请求过于频繁",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/user/sms/send": {
+            "post": {
+                "description": "校验参数和限流后等待2秒返回ok，不发送短信、不生成或保存验证码；purpose可省略或为register。请求取消时立即停止等待。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveAccount"
+                ],
+                "summary": "注册短信占位接口",
+                "parameters": [
+                    {
+                        "description": "手机号及可选注册用途",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.AccountSMSSendReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "请求过于频繁",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -10933,6 +11436,187 @@
                 "userID": {
                     "description": "作者",
                     "type": "integer"
+                }
+            }
+        },
+        "request.AccountAdminActionReq": {
+            "type": "object",
+            "required": [
+                "accountId"
+            ],
+            "properties": {
+                "accountId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "request.AccountAdminProfileUpdateReq": {
+            "type": "object",
+            "required": [
+                "accountId",
+                "nickname"
+            ],
+            "properties": {
+                "accountId": {
+                    "type": "integer"
+                },
+                "avatar": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "birthday": {
+                    "type": "string"
+                },
+                "cityCode": {
+                    "type": "string",
+                    "maxLength": 32
+                },
+                "countryCode": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1,
+                        2,
+                        3
+                    ]
+                },
+                "language": {
+                    "type": "string",
+                    "maxLength": 16
+                },
+                "nickname": {
+                    "type": "string",
+                    "maxLength": 64
+                },
+                "phone": {
+                    "description": "Phone为nil表示不修改；提供时必须为非空E.164格式，后台设置后视为已验证。",
+                    "type": "string",
+                    "maxLength": 20
+                },
+                "regionCode": {
+                    "type": "string",
+                    "maxLength": 32
+                },
+                "signature": {
+                    "type": "string",
+                    "maxLength": 255
+                }
+            }
+        },
+        "request.AccountAdminStatusUpdateReq": {
+            "type": "object",
+            "required": [
+                "accountId",
+                "status"
+            ],
+            "properties": {
+                "accountId": {
+                    "type": "integer"
+                },
+                "banUntil": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "integer",
+                    "enum": [
+                        1,
+                        2,
+                        3,
+                        4
+                    ]
+                },
+                "statusReason": {
+                    "type": "string",
+                    "maxLength": 255
+                }
+            }
+        },
+        "request.AccountPasswordChangeReq": {
+            "type": "object",
+            "required": [
+                "newPassword",
+                "oldPassword"
+            ],
+            "properties": {
+                "newPassword": {
+                    "type": "string",
+                    "maxLength": 72,
+                    "minLength": 8
+                },
+                "oldPassword": {
+                    "type": "string",
+                    "maxLength": 72,
+                    "minLength": 8
+                }
+            }
+        },
+        "request.AccountProfileUpdateReq": {
+            "type": "object",
+            "required": [
+                "nickname"
+            ],
+            "properties": {
+                "avatar": {
+                    "type": "string",
+                    "maxLength": 500
+                },
+                "birthday": {
+                    "type": "string"
+                },
+                "cityCode": {
+                    "type": "string",
+                    "maxLength": 32
+                },
+                "countryCode": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "integer",
+                    "enum": [
+                        0,
+                        1,
+                        2,
+                        3
+                    ]
+                },
+                "language": {
+                    "type": "string",
+                    "maxLength": 16
+                },
+                "nickname": {
+                    "type": "string",
+                    "maxLength": 64
+                },
+                "regionCode": {
+                    "type": "string",
+                    "maxLength": 32
+                },
+                "signature": {
+                    "type": "string",
+                    "maxLength": 255
+                }
+            }
+        },
+        "request.AccountSMSSendReq": {
+            "type": "object",
+            "required": [
+                "phone"
+            ],
+            "properties": {
+                "phone": {
+                    "type": "string",
+                    "maxLength": 20,
+                    "example": "+60123456789"
+                },
+                "purpose": {
+                    "type": "string",
+                    "enum": [
+                        "register"
+                    ],
+                    "example": "register"
                 }
             }
         },
@@ -12374,8 +13058,162 @@
         "response.Account": {
             "type": "object",
             "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
                 "avatar": {
                     "type": "string"
+                },
+                "banUntil": {
+                    "type": "integer"
+                },
+                "birthday": {
+                    "type": "string"
+                },
+                "cityCode": {
+                    "type": "string"
+                },
+                "countryCode": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "lastLoginAt": {
+                    "type": "integer"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "phoneMasked": {
+                    "type": "string"
+                },
+                "phoneVerified": {
+                    "type": "boolean"
+                },
+                "realNameStatus": {
+                    "type": "integer"
+                },
+                "realNameVerifiedAt": {
+                    "type": "integer"
+                },
+                "regionCode": {
+                    "type": "string"
+                },
+                "signature": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.AccountAdminDetailResp": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "banUntil": {
+                    "type": "integer"
+                },
+                "birthday": {
+                    "type": "string"
+                },
+                "cityCode": {
+                    "type": "string"
+                },
+                "countryCode": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "lastLoginAt": {
+                    "type": "integer"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "passwordChangedAt": {
+                    "type": "integer"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "phoneMasked": {
+                    "type": "string"
+                },
+                "phoneVerifiedAt": {
+                    "type": "integer"
+                },
+                "realNameStatus": {
+                    "type": "integer"
+                },
+                "realNameVerifiedAt": {
+                    "type": "integer"
+                },
+                "regionCode": {
+                    "type": "string"
+                },
+                "registerChannelId": {
+                    "type": "integer"
+                },
+                "registerSource": {
+                    "type": "string"
+                },
+                "signature": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "statusReason": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.AccountAdminListItemResp": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "banUntil": {
+                    "type": "integer"
                 },
                 "createdAt": {
                     "type": "string"
@@ -12383,13 +13221,74 @@
                 "id": {
                     "type": "integer"
                 },
+                "lastLoginAt": {
+                    "type": "integer"
+                },
                 "nickname": {
+                    "type": "string"
+                },
+                "phoneMasked": {
+                    "type": "string"
+                },
+                "phoneVerified": {
+                    "type": "boolean"
+                },
+                "realNameStatus": {
+                    "type": "integer"
+                },
+                "registerChannelId": {
+                    "type": "integer"
+                },
+                "registerSource": {
                     "type": "string"
                 },
                 "status": {
                     "type": "integer"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.AccountAdminListResp": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.AccountAdminListItemResp"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.AccountPublicProfileResp": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "countryCode": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "signature": {
                     "type": "string"
                 }
             }
@@ -13797,6 +14696,17 @@
                 }
             }
         },
+        "response.PasswordChangeResponse": {
+            "type": "object",
+            "properties": {
+                "expiresAt": {
+                    "type": "integer"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "response.PluginInfo": {
             "type": "object",
             "properties": {
@@ -14782,7 +15692,7 @@
             "type": "object",
             "required": [
                 "password",
-                "username"
+                "phone"
             ],
             "properties": {
                 "password": {
@@ -14791,11 +15701,10 @@
                     "minLength": 8,
                     "example": "password123"
                 },
-                "username": {
+                "phone": {
                     "type": "string",
-                    "maxLength": 32,
-                    "minLength": 3,
-                    "example": "demo_user"
+                    "maxLength": 20,
+                    "example": "+60123456789"
                 }
             }
         },
@@ -14803,7 +15712,8 @@
             "type": "object",
             "required": [
                 "password",
-                "username"
+                "phone",
+                "smsCode"
             ],
             "properties": {
                 "avatar": {
@@ -14822,11 +15732,14 @@
                     "minLength": 8,
                     "example": "password123"
                 },
-                "username": {
+                "phone": {
                     "type": "string",
-                    "maxLength": 32,
-                    "minLength": 3,
-                    "example": "demo_user"
+                    "maxLength": 20,
+                    "example": "+60123456789"
+                },
+                "smsCode": {
+                    "type": "string",
+                    "example": "123456"
                 }
             }
         },

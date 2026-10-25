@@ -39,10 +39,20 @@ func Gorm() *gorm.DB {
 func RegisterTables() {
 	if global.GVA_CONFIG.System.DisableAutoMigrate {
 		global.GVA_LOG.Info("auto-migrate is disabled, skipping table registration")
+		// 菜单和接口元数据不属于表结构迁移。生产环境执行SQL迁移后，
+		// 仍需同步这些数据，确保新后台功能可见且可分配权限。
+		if err := syncLiveAccountAdminMetadata(global.GVA_DB); err != nil {
+			global.GVA_LOG.Error("sync live account admin metadata failed", zap.Error(err))
+			os.Exit(1)
+		}
 		return
 	}
 
 	db := global.GVA_DB
+	if err := prepareLiveAccountAutoMigration(db); err != nil {
+		global.GVA_LOG.Error("prepare live account migration failed", zap.Error(err))
+		os.Exit(1)
+	}
 	err := db.AutoMigrate(
 
 		system.SysApi{},
@@ -73,6 +83,8 @@ func RegisterTables() {
 		example.ExaAttachmentCategory{},
 
 		live.LiveAccount{},
+		live.LiveAccountNumberSequence{},
+		live.LiveAccountRealName{},
 		live.LiveAnchor{},
 		live.LiveCategory{},
 		live.LiveRoom{},
@@ -82,6 +94,14 @@ func RegisterTables() {
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = ensureLiveAccountPerformanceIndexes(db); err != nil {
+		global.GVA_LOG.Error("create live account performance indexes failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = ensureLiveAccountNumberSequence(db); err != nil {
+		global.GVA_LOG.Error("initialize live account number sequence failed", zap.Error(err))
 		os.Exit(1)
 	}
 	if err = db.Where("id = ?", 1).FirstOrCreate(&live.LiveSRSRuntime{ID: 1}).Error; err != nil {
@@ -120,6 +140,10 @@ func RegisterTables() {
 	}
 	if err = syncLiveRoomAdminMetadata(db); err != nil {
 		global.GVA_LOG.Error("sync live room admin metadata failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = syncLiveAccountAdminMetadata(db); err != nil {
+		global.GVA_LOG.Error("sync live account admin metadata failed", zap.Error(err))
 		os.Exit(1)
 	}
 

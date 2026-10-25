@@ -29,7 +29,7 @@ func setupAppJWTConfig(t *testing.T) {
 func TestAppJWTCreateAndParse(t *testing.T) {
 	setupAppJWTConfig(t)
 
-	token, createdClaims, err := NewAppJWT().CreateToken(12, "demo")
+	token, createdClaims, err := NewAppJWT().CreateToken(12, "demo", 1)
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
 	require.Equal(t, uint(12), createdClaims.AccountID)
@@ -44,7 +44,7 @@ func TestAppJWTRejectsAdminKeyReuse(t *testing.T) {
 	setupAppJWTConfig(t)
 	global.GVA_CONFIG.JWTApp.SigningKey = global.GVA_CONFIG.JWT.SigningKey
 
-	_, _, err := NewAppJWT().CreateToken(12, "demo")
+	_, _, err := NewAppJWT().CreateToken(12, "demo", 1)
 	require.ErrorIs(t, err, ErrAppJWTSigningKeyNotSplit)
 }
 
@@ -56,7 +56,7 @@ func TestAppAndAdminTokensAreNotInterchangeable(t *testing.T) {
 	_, err = NewAppJWT().ParseToken(adminToken)
 	require.ErrorIs(t, err, ErrAppTokenInvalid)
 
-	appToken, _, err := NewAppJWT().CreateToken(12, "demo")
+	appToken, _, err := NewAppJWT().CreateToken(12, "demo", 1)
 	require.NoError(t, err)
 	_, err = NewJWT().ParseToken(appToken)
 	require.Error(t, err)

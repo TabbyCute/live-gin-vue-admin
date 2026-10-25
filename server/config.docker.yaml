@@ -7,6 +7,10 @@ jwt:
     buffer-time: 1d
     issuer: qmPlus
 # app jwt configuration (must use a key different from admin jwt)
+live-account-auth:
+    # 6位数字字符串，空值禁用注册；联调时配置或设置 LIVE_ACCOUNT_SUPER_CODE。
+    super-code: ""
+    trusted-proxies: []
 jwt-app:
     signing-key: qmPlus-live-app-key
     expires-time: 30d

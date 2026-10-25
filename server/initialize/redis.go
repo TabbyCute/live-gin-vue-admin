@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"context"
+	"fmt"
 
 	"tb_live_module/config"
 	"tb_live_module/global"
@@ -33,6 +34,7 @@ func initRedisClient(redisCfg config.Redis) (redis.UniversalClient, error) {
 	}
 
 	global.GVA_LOG.Info("redis connect ping response:", zap.String("name", redisCfg.Name), zap.String("pong", pong))
+	fmt.Printf("redis[%s] 连接成功\n", redisCfg.Addr)
 	return client, nil
 }
 

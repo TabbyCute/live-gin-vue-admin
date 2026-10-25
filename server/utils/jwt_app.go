@@ -29,7 +29,7 @@ func NewAppJWT() *AppJWT {
 	return &AppJWT{SigningKey: []byte(global.GVA_CONFIG.JWTApp.SigningKey)}
 }
 
-func (j *AppJWT) CreateToken(accountID uint, username string) (string, liveReq.AppClaims, error) {
+func (j *AppJWT) CreateToken(accountID uint, username string, tokenVersion uint64) (string, liveReq.AppClaims, error) {
 	if err := j.validateConfig(); err != nil {
 		return "", liveReq.AppClaims{}, err
 	}
@@ -40,9 +40,10 @@ func (j *AppJWT) CreateToken(accountID uint, username string) (string, liveReq.A
 
 	now := time.Now()
 	claims := liveReq.AppClaims{
-		AccountID: accountID,
-		Username:  username,
-		TokenType: liveReq.AppTokenType,
+		AccountID:    accountID,
+		Username:     username,
+		TokenVersion: tokenVersion,
+		TokenType:    liveReq.AppTokenType,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Audience:  jwt.ClaimStrings{appJWTAudience},
 			ExpiresAt: jwt.NewNumericDate(now.Add(expiresIn)),

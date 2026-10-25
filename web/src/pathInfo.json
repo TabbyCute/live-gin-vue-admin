@@ -74,6 +74,7 @@
   "/src/view/systemTools/sysError/sysError.vue": "SysError",
   "/src/view/systemTools/system/system.vue": "Config",
   "/src/view/systemTools/version/version.vue": "SysVersion",
+  "/src/view/user/account/index.vue": "Index",
   "/src/plugin/announcement/form/info.vue": "InfoForm",
   "/src/plugin/auto/view/aiWorkflow/index.vue": "Index",
   "/src/plugin/auto/view/autoCode/index.vue": "Index",

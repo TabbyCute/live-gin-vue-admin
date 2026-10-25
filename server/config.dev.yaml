@@ -99,6 +99,12 @@ jwt:
     expires-time: 90d
     buffer-time: 30d
     issuer: tblive
+live-account-auth:
+    # 短信接入前的6位注册超级验证码；必须加引号。空值禁用注册。
+    # LIVE_ACCOUNT_SUPER_CODE 环境变量优先，显式空值也会禁用注册。
+    super-code: "123456"
+    # 仅信任实际反向代理的IP/CIDR；空列表忽略所有转发IP请求头。
+    trusted-proxies: []
 jwt-app:
     signing-key: 7ec6580e-2528-4d50-9b50-4e707dd142d9
     expires-time: 30d

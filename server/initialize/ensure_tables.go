@@ -35,6 +35,9 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 	if !ok {
 		return ctx, system.ErrMissingDBContext
 	}
+	if err := prepareLiveAccountAutoMigration(db); err != nil {
+		return ctx, err
+	}
 	tables := []interface{}{
 		sysModel.SysApi{},
 		sysModel.SysUser{},
@@ -64,6 +67,8 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 		example.ExaAttachmentCategory{},
 
 		liveModel.LiveAccount{},
+		liveModel.LiveAccountNumberSequence{},
+		liveModel.LiveAccountRealName{},
 		liveModel.LiveAnchor{},
 		liveModel.LiveCategory{},
 		liveModel.LiveRoom{},
@@ -77,6 +82,12 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 		_ = db.AutoMigrate(&t)
 		// 视图 authority_menu 会被当成表来创建，引发冲突错误（更新版本的gorm似乎不会）
 		// 由于 AutoMigrate() 基本无需考虑错误，因此显式忽略
+	}
+	if err := ensureLiveAccountPerformanceIndexes(db); err != nil {
+		return ctx, err
+	}
+	if err := ensureLiveAccountNumberSequence(db); err != nil {
+		return ctx, err
 	}
 	_ = db.Where("id = ?", 1).FirstOrCreate(&liveModel.LiveSRSRuntime{ID: 1}).Error
 	return ctx, nil
@@ -112,6 +123,8 @@ func (e *ensureTables) TableCreated(ctx context.Context) bool {
 		example.ExaAttachmentCategory{},
 
 		liveModel.LiveAccount{},
+		liveModel.LiveAccountNumberSequence{},
+		liveModel.LiveAccountRealName{},
 		liveModel.LiveAnchor{},
 		liveModel.LiveCategory{},
 		liveModel.LiveRoom{},

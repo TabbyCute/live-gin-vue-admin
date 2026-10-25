@@ -253,6 +253,13 @@ func (i *initApi) InitializeData(ctx context.Context) (context.Context, error) {
 		{ApiGroup: "主播管理", Method: "POST", Path: "/live/anchor/remark/update", Description: "修改主播后台备注"},
 		{ApiGroup: "主播管理", Method: "POST", Path: "/live/anchor/cert/update", Description: "修改主播认证状态"},
 
+		{ApiGroup: "客户端用户", Method: "GET", Path: "/live/account/list", Description: "分页查询客户端用户"},
+		{ApiGroup: "客户端用户", Method: "GET", Path: "/live/account/detail", Description: "获取客户端用户详情"},
+		{ApiGroup: "客户端用户", Method: "POST", Path: "/live/account/profile/update", Description: "后台修改客户端用户资料"},
+		{ApiGroup: "客户端用户", Method: "POST", Path: "/live/account/status/update", Description: "修改客户端用户状态"},
+		{ApiGroup: "客户端用户", Method: "POST", Path: "/live/account/phone/unbind", Description: "解绑客户端用户手机号"},
+		{ApiGroup: "客户端用户", Method: "POST", Path: "/live/account/logout-all", Description: "强制客户端用户全部登录失效"},
+
 		{ApiGroup: "直播分类", Method: "GET", Path: "/live/category/list", Description: "分页查询直播分类"},
 		{ApiGroup: "直播分类", Method: "GET", Path: "/live/category/tree", Description: "获取后台直播分类树"},
 		{ApiGroup: "直播分类", Method: "POST", Path: "/live/category/create", Description: "创建直播分类"},

@@ -8,6 +8,7 @@ import (
 
 	"tb_live_module/core/internal"
 	"tb_live_module/global"
+
 	"github.com/fsnotify/fsnotify"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -30,15 +31,28 @@ func Viper() *viper.Viper {
 		fmt.Println("config file changed:", e.Name)
 		if err = v.Unmarshal(&global.GVA_CONFIG); err != nil {
 			fmt.Println(err)
+			return
 		}
+		loadLiveAccountSuperCode(v)
 	})
 	if err = v.Unmarshal(&global.GVA_CONFIG); err != nil {
 		panic(fmt.Errorf("fatal error unmarshal config: %w", err))
 	}
+	loadLiveAccountSuperCode(v)
 
 	// root 适配性 根据root位置去找到对应迁移位置,保证root路径有效
 	global.GVA_CONFIG.AutoCode.Root, _ = filepath.Abs("..")
 	return v
+}
+
+func loadLiveAccountSuperCode(v *viper.Viper) {
+	// 直接读当前配置，删除该配置项时不能沿用结构体残留的旧凭证。
+	code := v.GetString("live-account-auth.super-code")
+	// 显式设置为空时禁用注册，不回退到文件中的联调验证码。
+	if value, exists := os.LookupEnv("LIVE_ACCOUNT_SUPER_CODE"); exists {
+		code = value
+	}
+	global.SetLiveAccountSuperCode(code)
 }
 
 // getConfigPath 获取配置文件路径, 优先级: 命令行 > 环境变量 > 默认值

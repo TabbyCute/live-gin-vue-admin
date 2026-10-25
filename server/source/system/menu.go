@@ -61,6 +61,7 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "example", Name: "example", Component: "view/example/index.vue", Sort: 7, Meta: Meta{Title: "示例文件", Icon: "management"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "systemTools", Name: "systemTools", Component: "view/systemTools/index.vue", Sort: 5, Meta: Meta{Title: "编程辅助", Icon: "tools"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "liveManagement", Name: "liveManagement", Component: "view/routerHolder.vue", Sort: 4, Meta: Meta{Title: "直播管理", Icon: "video-camera"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "appUserManagement", Name: "appUserManagement", Component: "view/routerHolder.vue", Sort: 4, Meta: Meta{Title: "用户管理", Icon: "user-filled"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "state", Name: "state", Component: "view/system/state.vue", Sort: 8, Meta: Meta{Title: "服务器状态", Icon: "cloudy"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "plugin", Name: "plugin", Component: "view/routerHolder.vue", Sort: 6, Meta: Meta{Title: "插件系统", Icon: "cherry"}},
 	}
@@ -96,6 +97,9 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["liveManagement"], Path: "category", Name: "liveCategory", Component: "view/live/category/index.vue", Sort: 2, Meta: Meta{Title: "直播分类", Icon: "collection-tag", KeepAlive: true}},
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["liveManagement"], Path: "room", Name: "liveRoom", Component: "view/live/room/index.vue", Sort: 3, Meta: Meta{Title: "直播间管理", Icon: "video-play", KeepAlive: true}},
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["liveManagement"], Path: "session", Name: "liveSession", Component: "view/live/session/index.vue", Sort: 4, Meta: Meta{Title: "直播场次", Icon: "data-analysis", KeepAlive: true}},
+
+		// appUserManagement 子菜单
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["appUserManagement"], Path: "account", Name: "liveAccount", Component: "view/user/account/index.vue", Sort: 1, Meta: Meta{Title: "用户列表", Icon: "user", KeepAlive: true}},
 
 		// example子菜单
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["example"], Path: "upload", Name: "upload", Component: "view/example/upload/upload.vue", Sort: 5, Meta: Meta{Title: "媒体库（上传下载）", Icon: "upload"}},

@@ -4,6 +4,7 @@ import "tb_live_module/service"
 
 type ApiGroup struct {
 	UserApi
+	AccountAdminApi
 	AnchorApi
 	AnchorAdminApi
 	CategoryApi
