@@ -222,6 +222,7 @@ func (u *UserApi) ChangePassword(c *gin.Context) {
 // PublicProfile
 // @Tags LiveAccount
 // @Summary 获取用户公开资料
+// @Description 复用UserPublicProfile；isLive表示当前用户可访问的有效直播，为false时省略roomNo和sessionNo。不含内部ID、手机号、实名等私密字段。
 // @Security AppBearerAuth
 // @Produce application/json
 // @Param accountNo query string true "对外账号编号"
@@ -233,7 +234,8 @@ func (u *UserApi) PublicProfile(c *gin.Context) {
 		response.FailWithMessage("查询参数错误: "+err.Error(), c)
 		return
 	}
-	profile, err := accountService.GetPublicProfile(req.AccountNo)
+	viewer, _ := middleware.GetAppAccountID(c)
+	profile, err := accountService.GetViewerPublicProfile(c.Request.Context(), uint64(viewer), req.AccountNo)
 	if err != nil {
 		if errors.Is(err, liveService.ErrAccountNotFound) {
 			response.FailWithMessage(err.Error(), c)

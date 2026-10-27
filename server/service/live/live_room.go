@@ -20,6 +20,7 @@ import (
 	liveModel "tb_live_module/model/live"
 	liveReq "tb_live_module/model/live/request"
 	liveRes "tb_live_module/model/live/response"
+	socialService "tb_live_module/service/social"
 
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -163,6 +164,9 @@ func (s *RoomService) GetOwnerRoom(userID uint64) (liveRes.LiveRoomOwnerInfoResp
 }
 
 func (s *RoomService) SaveOwnerRoom(userID uint64, req liveReq.LiveRoomSaveReq) (liveRes.LiveRoomInfo, error) {
+	if err := requireProtectedMedia(req.Visibility); err != nil {
+		return liveRes.LiveRoomInfo{}, err
+	}
 	anchor, err := (&AnchorService{}).getAnchorByUserID(global.GVA_DB, userID)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return liveRes.LiveRoomInfo{}, ErrAnchorNotFound
@@ -233,6 +237,9 @@ func (s *RoomService) UpdateOwnerRoomStatus(userID uint64, status uint8) error {
 }
 
 func (s *RoomService) PrepareSession(userID uint64, req liveReq.LiveSessionPrepareReq) (liveRes.LiveSessionPrepareResp, error) {
+	if err := requireProtectedMedia(req.Visibility); err != nil {
+		return liveRes.LiveSessionPrepareResp{}, err
+	}
 	if global.GVA_DB == nil {
 		return liveRes.LiveSessionPrepareResp{}, errors.New("数据库未初始化")
 	}
@@ -556,6 +563,9 @@ func (s *RoomService) OnPublish(req liveReq.SRSHookReq) (liveRes.LiveSessionInfo
 		}
 		if publishToken == "" || !secureStringEqual(room.PublishSecretHash, secretHash(publishToken)) {
 			return ErrLivePublishTokenInvalid
+		}
+		if err := requireProtectedMedia(&room.Visibility); err != nil {
+			return err
 		}
 		if room.Status != liveModel.LiveRoomStatusNormal || room.CurrentSessionId == 0 {
 			return ErrLiveRoomUnavailable
@@ -2160,7 +2170,7 @@ func (s *RoomService) applyReadyPublisherSnapshot(
 			if roomUpdate.RowsAffected != 1 {
 				return ErrLiveSessionStateInvalid
 			}
-			return nil
+			return socialService.Default.RecordLiveStarted(tx, anchor.UserId, session.SessionNo)
 		case liveModel.LiveSessionLiving:
 			if session.StreamReadyDeadlineAt <= 0 || session.StreamReadyDeadlineAt <= now {
 				return ErrLiveSessionStateInvalid
@@ -2656,15 +2666,24 @@ func truncateRunes(value string, limit int) string {
 }
 
 func (s *RoomService) GetPublicRoom(roomNo string) (liveRes.LiveRoomPublicItemV2, error) {
+	return s.GetViewerRoom(context.Background(), 0, roomNo)
+}
+
+func (s *RoomService) GetViewerRoom(ctx context.Context, viewer uint64, roomNo string) (liveRes.LiveRoomPublicItemV2, error) {
+	access, err := (&LiveAccessService{}).CheckLiveAccess(ctx, viewer, roomNo, false)
+	if err != nil {
+		return liveRes.LiveRoomPublicItemV2{}, err
+	}
 	// 详情按 room_no 唯一索引命中，主播和场次都按主键关联。
 	// current_session_id 优先返回活动场次；没有活动场次时通过 last_session_id 返回最近一次已结束直播。
 	// 一次 SQL 只选择公开 DTO 需要的数据，避免 COUNT、分页排序、内部控制字段和大 JSON 扩展字段。
 	var row struct {
 		Room    liveModel.LiveRoom    `gorm:"embedded;embeddedPrefix:room_"`
 		Anchor  liveModel.LiveAnchor  `gorm:"embedded;embeddedPrefix:anchor_"`
+		Account liveModel.LiveAccount `gorm:"embedded;embeddedPrefix:account_"`
 		Session liveModel.LiveSession `gorm:"embedded;embeddedPrefix:session_"`
 	}
-	result := global.GVA_DB.Table("live_room AS r").
+	result := global.GVA_DB.WithContext(ctx).Table("live_room AS r").
 		Select(`
 			r.room_no AS room_room_no,
 			r.category_id AS room_category_id,
@@ -2672,7 +2691,14 @@ func (s *RoomService) GetPublicRoom(roomNo string) (liveRes.LiveRoomPublicItemV2
 			r.cover_url AS room_cover_url,
 			r.notice AS room_notice,
 			r.stream_name AS room_stream_name,
+			a.user_id AS anchor_user_id,
 			r.live_status AS room_live_status,
+			u.account_no AS account_account_no,
+			u.nickname AS account_nickname,
+			u.avatar AS account_avatar,
+			u.signature AS account_signature,
+			u.gender AS account_gender,
+			u.country_code AS account_country_code,
 			a.anchor_no AS anchor_anchor_no,
 			a.nickname AS anchor_nickname,
 			a.avatar AS anchor_avatar,
@@ -2712,12 +2738,14 @@ func (s *RoomService) GetPublicRoom(roomNo string) (liveRes.LiveRoomPublicItemV2
 			COALESCE(ls.peak_online_count, 0) AS session_peak_online_count,
 			COALESCE(ls.like_count, 0) AS session_like_count`).
 		Joins("JOIN live_anchor AS a ON a.id = r.anchor_id AND a.deleted_at IS NULL").
+		Joins("JOIN live_account AS u ON u.id = a.user_id AND u.deleted_at IS NULL").
 		Joins(`LEFT JOIN live_session AS ls
 			ON ls.id = CASE WHEN r.current_session_id > 0 THEN r.current_session_id ELSE r.last_session_id END
 			AND ls.deleted_at IS NULL`).
 		Where("r.deleted_at IS NULL AND r.room_no = ?", strings.TrimSpace(roomNo)).
-		Where("r.status = ? AND r.visibility = ?", liveModel.LiveRoomStatusNormal, liveModel.LiveRoomVisibilityPublic).
+		Where("r.status = ?", liveModel.LiveRoomStatusNormal).
 		Where("a.status = ? AND a.apply_status = ?", liveModel.AnchorStatusNormal, liveModel.AnchorApplyStatusApproved).
+		Where("u.status = ?", liveModel.LiveAccountStatusNormal).
 		Limit(1).
 		Scan(&row)
 	if result.Error != nil {
@@ -2727,6 +2755,11 @@ func (s *RoomService) GetPublicRoom(roomNo string) (liveRes.LiveRoomPublicItemV2
 		return liveRes.LiveRoomPublicItemV2{}, ErrLiveRoomNotFound
 	}
 
+	a := []liveModel.LiveAnchor{row.Anchor}
+	if err := applySocialFansCounts(ctx, global.GVA_DB, a); err != nil {
+		return liveRes.LiveRoomPublicItemV2{}, err
+	}
+	row.Anchor = a[0]
 	var latestSession liveRes.LiveSessionPublicSummary
 	if row.Session.SessionNo != "" {
 		latestSession = liveRes.LiveSessionPublicSummary{
@@ -2738,28 +2771,64 @@ func (s *RoomService) GetPublicRoom(roomNo string) (liveRes.LiveRoomPublicItemV2
 			PeakOnlineCount: row.Session.PeakOnlineCount, LikeCount: row.Session.LikeCount,
 		}
 	}
+	userInfo := toAccountPublicProfile(row.Account)
+	userInfo.AnchorNo = row.Anchor.AnchorNo
+	userInfo.IsLive = access.IsLive
+	if access.IsLive {
+		userInfo.RoomNo, userInfo.SessionNo = access.RoomNo, access.SessionNo
+	}
 	return liveRes.LiveRoomPublicItemV2{
 		RoomNo: row.Room.RoomNo, CategoryId: row.Room.CategoryId, Title: row.Room.Title,
 		CoverURL: row.Room.CoverURL, Notice: row.Room.Notice, StreamName: row.Room.StreamName,
-		LiveStatus: row.Room.LiveStatus, AnchorInfo: toAnchorPublicDetail(row.Anchor),
+		LiveStatus: row.Room.LiveStatus, UserInfo: userInfo,
+		AnchorInfo:    toAnchorPublicDetail(row.Anchor),
 		LatestSession: latestSession,
 	}, nil
 }
 
 func (s *RoomService) GetPublicRoomList(req liveReq.LiveRoomPublicListReq) ([]liveRes.LiveRoomPublicItem, int64, error) {
-	return s.getPublicRooms("", req.CategoryId, req.Page, req.PageSize, true)
+	return s.GetViewerRoomList(context.Background(), 0, req)
+}
+func (s *RoomService) GetViewerRoomList(ctx context.Context, actor uint64, req liveReq.LiveRoomPublicListReq) ([]liveRes.LiveRoomPublicItem, int64, error) {
+	if req.PageSize > 100 {
+		req.PageSize = 100
+	}
+	list, total, err := s.getPublicRoomsWithContext(ctx, "", req.CategoryId, req.Page, req.PageSize, true)
+	if err != nil {
+		return list, total, err
+	}
+	nos := make([]string, 0, len(list))
+	for _, r := range list {
+		nos = append(nos, r.RoomNo)
+	}
+	visible, err := (&LiveAccessService{}).BatchCheckLiveAccess(ctx, global.GVA_DB, actor, nos, true)
+	if err != nil {
+		return nil, 0, err
+	}
+	out := make([]liveRes.LiveRoomPublicItem, 0, len(list))
+	for _, r := range list {
+		if _, ok := visible[r.RoomNo]; ok {
+			out = append(out, r)
+		}
+	}
+	return out, total, nil
 }
 
 func (s *RoomService) getPublicRooms(roomNo string, categoryID uint64, page, pageSize int, livingOnly bool) ([]liveRes.LiveRoomPublicItem, int64, error) {
+	return s.getPublicRoomsWithContext(context.Background(), roomNo, categoryID, page, pageSize, livingOnly)
+}
+func (s *RoomService) getPublicRoomsWithContext(ctx context.Context, roomNo string, categoryID uint64, page, pageSize int, livingOnly bool) ([]liveRes.LiveRoomPublicItem, int64, error) {
 	sessionJoin := "LEFT JOIN live_session AS s ON s.id = r.current_session_id AND s.deleted_at IS NULL"
 	if livingOnly {
 		sessionJoin = "JOIN live_session AS s ON s.id = r.current_session_id AND s.deleted_at IS NULL"
 	}
-	db := global.GVA_DB.Table("live_room AS r").
+	db := global.GVA_DB.WithContext(ctx).Table("live_room AS r").
 		Joins("JOIN live_anchor AS a ON a.id = r.anchor_id AND a.deleted_at IS NULL").
+		Joins("JOIN live_account AS u ON u.id = a.user_id AND u.deleted_at IS NULL").
 		Joins(sessionJoin).
 		Where("r.deleted_at IS NULL AND r.status = ? AND r.visibility = ?", liveModel.LiveRoomStatusNormal, liveModel.LiveRoomVisibilityPublic).
-		Where("a.status = ? AND a.apply_status = ?", liveModel.AnchorStatusNormal, liveModel.AnchorApplyStatusApproved)
+		Where("a.status = ? AND a.apply_status = ?", liveModel.AnchorStatusNormal, liveModel.AnchorApplyStatusApproved).
+		Where("u.status = ?", liveModel.LiveAccountStatusNormal)
 	if livingOnly {
 		db = db.Where("r.live_status = ?", liveModel.LiveRoomLiving)
 	}
@@ -2780,21 +2849,21 @@ func (s *RoomService) getPublicRooms(roomNo string, categoryID uint64, page, pag
 		pageSize = 20
 	}
 	var rows []struct {
-		RoomNo         string
-		AnchorNo       string
-		AnchorNickname string
-		AnchorAvatar   string
-		CategoryId     uint64
-		Title          string
-		CoverURL       string
-		Notice         string
-		LiveStatus     uint8
-		LiveStartedAt  int64
-		SessionNo      string
-		ViewCount      uint64
-		LikeCount      uint64
+		RoomNo        string
+		AnchorNo      string
+		Nickname      string
+		Avatar        string
+		CategoryId    uint64
+		Title         string
+		CoverURL      string
+		Notice        string
+		LiveStatus    uint8
+		LiveStartedAt int64
+		SessionNo     string
+		ViewCount     uint64
+		LikeCount     uint64
 	}
-	err := db.Select("r.room_no, a.anchor_no, a.nickname AS anchor_nickname, a.avatar AS anchor_avatar, r.category_id, r.title, r.cover_url, r.notice, r.live_status, r.live_started_at, COALESCE(s.session_no, '') AS session_no, COALESCE(s.view_count, 0) AS view_count, COALESCE(s.like_count, 0) AS like_count").
+	err := db.Select("r.room_no, a.anchor_no, u.nickname, u.avatar, r.category_id, r.title, r.cover_url, r.notice, r.live_status, r.live_started_at, COALESCE(s.session_no, '') AS session_no, COALESCE(s.view_count, 0) AS view_count, COALESCE(s.like_count, 0) AS like_count").
 		Offset((page - 1) * pageSize).Limit(pageSize).
 		Order("r.recommend_weight DESC, r.live_started_at DESC, r.id DESC").Scan(&rows).Error
 	if err != nil {
@@ -2803,7 +2872,7 @@ func (s *RoomService) getPublicRooms(roomNo string, categoryID uint64, page, pag
 	list := make([]liveRes.LiveRoomPublicItem, 0, len(rows))
 	for _, row := range rows {
 		list = append(list, liveRes.LiveRoomPublicItem{
-			RoomNo: row.RoomNo, AnchorNo: row.AnchorNo, AnchorNickname: row.AnchorNickname, AnchorAvatar: row.AnchorAvatar,
+			RoomNo: row.RoomNo, AnchorNo: row.AnchorNo, Nickname: row.Nickname, Avatar: row.Avatar,
 			CategoryId: row.CategoryId, Title: row.Title, CoverURL: row.CoverURL, Notice: row.Notice,
 			LiveStatus: row.LiveStatus, LiveStartedAt: row.LiveStartedAt,
 			SessionNo: row.SessionNo, ViewCount: row.ViewCount, LikeCount: row.LikeCount,
@@ -2884,6 +2953,9 @@ func (s *RoomService) GetAdminRoomDetail(roomID uint) (liveRes.LiveRoomAdminDeta
 }
 
 func (s *RoomService) UpdateAdminRoom(req liveReq.LiveRoomAdminUpdateReq) error {
+	if err := requireProtectedMedia(req.Visibility); err != nil {
+		return err
+	}
 	roomNo := strings.TrimSpace(req.RoomNo)
 	if roomNo == "" {
 		return ErrLiveRoomNoRequired

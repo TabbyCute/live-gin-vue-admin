@@ -1,12 +1,17 @@
 package initialize
 
 import (
+	"errors"
 	"go.uber.org/zap"
 	"tb_live_module/global"
+	socialService "tb_live_module/service/social"
 )
 
 // Reload 优雅地重新加载系统配置
 func Reload() error {
+	if socialService.Default.DB != nil {
+		return errors.New("社交模块默认启用时请通过进程重启应用数据库配置，避免关闭运行中Worker的连接池")
+	}
 	global.GVA_LOG.Info("正在重新加载系统配置...")
 
 	// 重新加载配置文件

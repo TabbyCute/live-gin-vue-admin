@@ -1,6 +1,9 @@
 package response
 
-import "time"
+import (
+	commonRes "tb_live_module/model/common/response"
+	"time"
+)
 
 // Account 是可返回给客户端的安全账号信息，不包含密码哈希。
 type Account struct {
@@ -45,14 +48,7 @@ type PasswordChangeResponse struct {
 	ExpiresAt int64  `json:"expiresAt"`
 }
 
-type AccountPublicProfileResp struct {
-	AccountNo   string `json:"accountNo"`
-	Nickname    string `json:"nickname"`
-	Avatar      string `json:"avatar"`
-	Signature   string `json:"signature"`
-	Gender      uint8  `json:"gender"`
-	CountryCode string `json:"countryCode"`
-}
+type AccountPublicProfileResp = commonRes.UserPublicProfile
 
 type AccountAdminListItemResp struct {
 	ID                uint      `json:"id"`

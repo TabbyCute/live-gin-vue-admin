@@ -1,6 +1,7 @@
 package live
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -49,6 +50,11 @@ func (s *AnchorService) GetMyAnchorInfo(userID uint64) (liveRes.MyAnchorInfoResp
 	if err != nil {
 		return liveRes.MyAnchorInfoResp{}, err
 	}
+	a := []liveModel.LiveAnchor{*anchor}
+	if err := applySocialFansCounts(context.Background(), global.GVA_DB, a); err != nil {
+		return liveRes.MyAnchorInfoResp{}, err
+	}
+	*anchor = a[0]
 	info := toMyAnchorInfo(*anchor)
 	return liveRes.MyAnchorInfoResp{IsAnchor: true, Anchor: &info}, nil
 }
@@ -249,6 +255,11 @@ func (s *AnchorService) GetAnchorPublicDetail(anchorNo string) (liveRes.AnchorPu
 	if err != nil {
 		return liveRes.AnchorPublicDetailResp{}, err
 	}
+	a := []liveModel.LiveAnchor{anchor}
+	if err := applySocialFansCounts(context.Background(), global.GVA_DB, a); err != nil {
+		return liveRes.AnchorPublicDetailResp{}, err
+	}
+	anchor = a[0]
 	return toAnchorPublicDetail(anchor), nil
 }
 
@@ -400,6 +411,9 @@ func (s *AnchorService) GetAnchorList(req *liveReq.AnchorAdminListReq) ([]liveRe
 	if err = db.Scopes(req.PageInfo.Paginate()).Order("id DESC").Find(&anchors).Error; err != nil {
 		return nil, 0, err
 	}
+	if err := applySocialFansCounts(context.Background(), global.GVA_DB, anchors); err != nil {
+		return nil, 0, err
+	}
 	list := make([]liveRes.AnchorAdminListItemResp, 0, len(anchors))
 	for _, anchor := range anchors {
 		list = append(list, toAnchorAdminListItem(anchor))
@@ -415,6 +429,11 @@ func (s *AnchorService) GetAnchorAdminDetail(anchorID uint) (liveRes.AnchorAdmin
 	if err != nil {
 		return liveRes.AnchorAdminDetailResp{}, err
 	}
+	a := []liveModel.LiveAnchor{*anchor}
+	if err := applySocialFansCounts(context.Background(), global.GVA_DB, a); err != nil {
+		return liveRes.AnchorAdminDetailResp{}, err
+	}
+	*anchor = a[0]
 	return toAnchorAdminDetail(*anchor), nil
 }
 

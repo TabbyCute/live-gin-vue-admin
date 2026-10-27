@@ -12,7 +12,7 @@ import (
 )
 
 // prepareLiveAccountAutoMigration 在GORM创建account_no唯一索引前回填存量账号，
-// 避免多行空值导致唯一索引创建失败。生产环境关闭AutoMigrate时应执行配套SQL迁移。
+// 避免多行空值导致唯一索引创建失败。
 func prepareLiveAccountAutoMigration(db *gorm.DB) error {
 	if db == nil || !db.Migrator().HasTable(&live.LiveAccount{}) {
 		return nil

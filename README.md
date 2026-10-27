@@ -310,4 +310,4 @@ live-account-auth:
 
 经过 Nginx/网关时，`trusted-proxies` 需填写实际连接来源的代理 IP/CIDR（修改后重启），以便安全读取 `X-Forwarded-For`；空列表按 TCP 对端 IP 限流，代理后的用户会共用该 IP 配额。不能填写全网地址段。
 后台允许直接更换手机号，换号后旧登录令牌失效；纯手机号登录下禁止清空或解绑手机号。已删除账号占用的手机号也不会被新注册复用。
-已有 `phone` 唯一索引、`phone_verified_at` 和账号序列表足够支撑本次改造，无需额外数据迁移；尚未执行此前账号迁移的环境仍需先执行 `server/migrations/` 中对应 SQL。
+已有 `phone` 唯一索引、`phone_verified_at` 和账号序列表足够支撑本次改造，无需额外迁移文件；服务启动时由 GORM 自动迁移并幂等补齐存量账号数据。

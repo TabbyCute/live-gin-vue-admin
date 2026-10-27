@@ -137,7 +137,7 @@ live:
     srs-hook-token: 2dc10269440172b81721de543dd13fbcd6ebcc7f64f0046a91f264e2a192765a
     srs:
         app: TB_LIVE_PRO
-        http_apis: http://127.0.0.1:12985
+        http_apis: http://140.210.12.162:12985
         api-username: ""
         api-password: ""
         api-request-timeout-seconds: 3
@@ -295,10 +295,10 @@ system:
     iplimit-count: 15000
     iplimit-time: 3600
     use-multipoint: false
-    use-redis: false
+    use-redis: true
     use-mongo: false
     use-strict-auth: true
-    disable-auto-migrate: true
+    disable-auto-migrate: false
 tencent-cos:
     bucket: xxxxx-10005608
     region: ap-shanghai
@@ -316,3 +316,13 @@ zap:
     show-line: true
     log-in-console: true
     retention-day: -1
+
+# 社交关系默认启用；相关表、索引和约束由GORM在启动时自动迁移。
+social:
+  auto-subscribe: false
+  history-retention-days: 90
+  # 必须完成源站封闭、逐请求鉴权和长连接寿命限制后才能打开。
+  protected-playback-enabled: false
+  media-gateway-verified: false
+  playback-signing-key: ""
+  playback-base-url: ""

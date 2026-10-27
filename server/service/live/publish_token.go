@@ -213,6 +213,9 @@ func (cfg livePublishTokenConfig) streamURL(stream, publishToken string) string 
 }
 
 func (cfg livePublishTokenConfig) playURL(stream string) string {
+	if mediaGatewayReady() {
+		return ""
+	} // 媒体URL统一由已登录观众的playback接口签发。
 	return buildConfiguredLiveStreamURL(cfg.playBaseURL, cfg.app, stream, "", "")
 }
 

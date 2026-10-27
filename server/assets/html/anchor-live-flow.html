@@ -723,7 +723,7 @@
       for (const room of list) {
         const row = document.createElement('tr');
         appendCell(row, room.roomNo);
-        appendCell(row, room.anchorNickname || room.anchorNo);
+        appendCell(row, room.nickname || room.anchorNo);
         appendCell(row, room.title);
         appendCell(row, publicLiveStatusLabel(room.liveStatus));
         appendCell(row, `${Number(room.viewCount || 0)} / ${Number(room.likeCount || 0)}`);

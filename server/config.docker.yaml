@@ -163,7 +163,7 @@ system:
     addr: 8888
     db-type: mysql
     oss-type: local # 控制oss选择走本地还是 七牛等其他仓 自行增加其他oss仓可以在 server/utils/upload/upload.go 中 NewOss函数配置
-    use-redis: false # 使用redis
+    use-redis: true # 社交关系模块依赖Redis
     use-mongo: false     # 使用mongo
     use-multipoint: false
     # IP限制次数 一个小时15000次
@@ -376,3 +376,13 @@ mcp:
     version: v1.0.0
     addr: 8889
     separate: false
+
+# 社交关系默认启用；相关表、索引和约束由GORM在启动时自动迁移。
+social:
+  auto-subscribe: false
+  history-retention-days: 90
+  # 必须完成源站封闭、逐请求鉴权和长连接寿命限制后才能打开。
+  protected-playback-enabled: false
+  media-gateway-verified: false
+  playback-signing-key: ""
+  playback-base-url: ""

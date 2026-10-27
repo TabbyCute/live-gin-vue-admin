@@ -9,6 +9,7 @@ import (
 	"tb_live_module/global"
 	commonRes "tb_live_module/model/common/response"
 	liveModel "tb_live_module/model/live"
+	socialModel "tb_live_module/model/social"
 
 	"github.com/gin-gonic/gin"
 	"github.com/glebarez/sqlite"
@@ -21,7 +22,7 @@ func TestAnchorPublicDetailUsesAnchorNoAndHidesPrimaryKey(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	db, err := gorm.Open(sqlite.Open("file:"+t.Name()+"?mode=memory&cache=shared"), &gorm.Config{})
 	require.NoError(t, err)
-	require.NoError(t, db.AutoMigrate(&liveModel.LiveAnchor{}))
+	require.NoError(t, db.AutoMigrate(&liveModel.LiveAnchor{}, &socialModel.SocialUserCounter{}))
 
 	previousDB := global.GVA_DB
 	previousLog := global.GVA_LOG

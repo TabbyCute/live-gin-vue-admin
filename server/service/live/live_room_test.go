@@ -17,6 +17,7 @@ import (
 	liveModel "tb_live_module/model/live"
 	liveReq "tb_live_module/model/live/request"
 	liveRes "tb_live_module/model/live/response"
+	socialModel "tb_live_module/model/social"
 
 	"github.com/glebarez/sqlite"
 	"github.com/stretchr/testify/require"
@@ -274,8 +275,9 @@ func setupRoomTestDB(t *testing.T) {
 	// SQLite没有MySQL的行锁语义；单连接让并发测试稳定地验证服务层幂等和最终状态不变量。
 	sqlDB.SetMaxOpenConns(1)
 	require.NoError(t, db.AutoMigrate(
-		&liveModel.LiveCategory{}, &liveModel.LiveAnchor{}, &liveModel.LiveRoom{}, &liveModel.LiveSession{},
+		&liveModel.LiveAccount{}, &liveModel.LiveCategory{}, &liveModel.LiveAnchor{}, &liveModel.LiveRoom{}, &liveModel.LiveSession{},
 		&liveModel.LiveSRSRuntime{}, &liveModel.LiveSessionMediaAudit{},
+		&socialModel.SocialUserCounter{},
 	))
 	require.NoError(t, db.Create(&liveModel.LiveSRSRuntime{ID: liveSRSRuntimeSingletonID}).Error)
 	previousDB, previousLive := global.GVA_DB, global.GVA_CONFIG.Live
@@ -309,6 +311,13 @@ func setupRoomTestDB(t *testing.T) {
 
 func createRoomTestAnchor(t *testing.T) (liveModel.LiveAnchor, liveModel.LiveCategory) {
 	t.Helper()
+	account := liveModel.LiveAccount{
+		GVA_MODEL: global.GVA_MODEL{ID: 501}, AccountNo: "10000501", Username: "room-test-501",
+		Password: "test", Nickname: "测试用户", Avatar: "https://example.com/user-avatar.png",
+		Signature: "用户签名", Gender: 1, CountryCode: "MY",
+		Status: liveModel.LiveAccountStatusNormal, TokenVersion: 1,
+	}
+	require.NoError(t, global.GVA_DB.FirstOrCreate(&account, account.ID).Error)
 	category := liveModel.LiveCategory{Code: "talk", Name: "聊天", Status: liveModel.LiveCategoryStatusEnabled}
 	require.NoError(t, global.GVA_DB.Create(&category).Error)
 	anchor := liveModel.LiveAnchor{
@@ -1949,18 +1958,30 @@ func TestPublicRoomDetailIncludesOfflineRoomButDiscoveryListDoesNot(t *testing.T
 	detail, err := service.GetPublicRoom(room.RoomNo)
 	require.NoError(t, global.GVA_DB.Callback().Row().Remove(queryCounterCallback))
 	require.NoError(t, err)
-	require.Equal(t, 1, queryCount, "公开直播间详情应只执行一次查询")
+	require.Equal(t, 2, queryCount, "默认启用社交后，公开直播间详情应固定执行一次集中鉴权和一次详情查询")
 	require.Equal(t, room.RoomNo, detail.RoomNo)
 	require.Equal(t, liveModel.LiveRoomOffline, detail.LiveStatus)
 	require.Equal(t, anchor.AnchorNo, detail.AnchorInfo.AnchorNo)
 	require.Equal(t, anchor.Nickname, detail.AnchorInfo.Nickname)
+	require.Equal(t, "10000501", detail.UserInfo.AccountNo)
+	require.Equal(t, "测试用户", detail.UserInfo.Nickname)
+	require.Equal(t, "https://example.com/user-avatar.png", detail.UserInfo.Avatar)
+	require.Equal(t, "用户签名", detail.UserInfo.Signature)
+	require.Equal(t, uint8(1), detail.UserInfo.Gender)
+	require.Equal(t, "MY", detail.UserInfo.CountryCode)
 	require.Empty(t, detail.LatestSession.SessionNo)
 	detailJSON, err := json.Marshal(detail)
 	require.NoError(t, err)
 	var detailObject map[string]interface{}
 	require.NoError(t, json.Unmarshal(detailJSON, &detailObject))
 	require.Contains(t, detailObject, "anchorInfo")
+	require.Contains(t, detailObject, "userInfo")
 	require.Contains(t, detailObject, "latestSession")
+	userInfo, ok := detailObject["userInfo"].(map[string]interface{})
+	require.True(t, ok)
+	for _, sensitive := range []string{"id", "username", "phone", "phoneMasked", "realNameStatus", "status", "banUntil"} {
+		require.NotContains(t, userInfo, sensitive)
+	}
 	require.Equal(t, map[string]interface{}{}, detailObject["latestSession"], "从未完成直播时应返回空对象")
 	for _, internalOrDuplicate := range []string{
 		"currentSession", "sessionNo", "statusReason", "statusChangedAt", "visibility", "extra", "liveStartedAt",
@@ -2032,6 +2053,8 @@ func TestPublicRoomDetailIncludesOfflineRoomButDiscoveryListDoesNot(t *testing.T
 	require.NoError(t, err)
 	require.Len(t, list, 1)
 	require.Equal(t, int64(1), total)
+	require.Equal(t, detail.UserInfo.Nickname, list[0].Nickname, "直播列表昵称应与详情中的账户昵称一致")
+	require.Equal(t, detail.UserInfo.Avatar, list[0].Avatar, "直播列表头像应与详情中的账户头像一致")
 	listJSON, err := json.Marshal(list)
 	require.NoError(t, err)
 	require.NotContains(t, string(listJSON), "streamInfo", "公开发现列表保持轻量，不携带流信息JSON")
@@ -2050,7 +2073,7 @@ func TestPublicRoomDetailIncludesOfflineRoomButDiscoveryListDoesNot(t *testing.T
 	detail, err = service.GetPublicRoom(room.RoomNo)
 	require.NoError(t, global.GVA_DB.Callback().Row().Remove(queryCounterCallback))
 	require.NoError(t, err)
-	require.Equal(t, 1, queryCount, "读取最近一次已结束直播也应只执行一次查询")
+	require.Equal(t, 2, queryCount, "读取最近一次已结束直播也应固定执行一次集中鉴权和一次详情查询")
 	require.Equal(t, liveModel.LiveRoomOffline, detail.LiveStatus)
 	require.Equal(t, prepared.SessionNo, detail.LatestSession.SessionNo)
 	require.Equal(t, liveModel.LiveSessionEnded, detail.LatestSession.Status)
@@ -2069,6 +2092,48 @@ func TestPublicRoomDetailIncludesOfflineRoomButDiscoveryListDoesNot(t *testing.T
 	require.NoError(t, err)
 	require.Equal(t, prepared.SessionNo, detail.LatestSession.SessionNo,
 		"准备后取消的场次不能覆盖最近一次真正完成的直播")
+}
+
+func TestPublicRoomListReflectsAccountProfileChanges(t *testing.T) {
+	setupRoomTestDB(t)
+	anchor, category := createRoomTestAnchor(t)
+	require.NoError(t, global.GVA_DB.Model(&anchor).Update("avatar", "https://example.com/anchor-avatar.png").Error)
+	service := newRoomTestService()
+	prepared := prepareRoomTestSession(t, &service, category.ID)
+	_, err := service.OnPublish(roomTestPublishRequest(prepared, "?pt="+prepared.Token))
+	require.NoError(t, err)
+	promoteReadyPublisher(t, &service, prepared.SessionNo)
+
+	listReq := liveReq.LiveRoomPublicListReq{CategoryId: uint64(category.ID)}
+	listReq.Page, listReq.PageSize = 1, 20
+	for _, tc := range []struct {
+		name     string
+		nickname string
+		avatar   string
+	}{
+		{name: "updated", nickname: "更新后的账户昵称", avatar: "https://example.com/updated-account-avatar.png"},
+		{name: "cleared", nickname: "", avatar: ""},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			require.NoError(t, global.GVA_DB.Model(&liveModel.LiveAccount{}).Where("id = ?", anchor.UserId).
+				Updates(map[string]interface{}{"nickname": tc.nickname, "avatar": tc.avatar}).Error)
+			list, total, err := service.GetPublicRoomList(listReq)
+			require.NoError(t, err)
+			require.Equal(t, int64(1), total)
+			require.Len(t, list, 1)
+			require.Equal(t, anchor.AnchorNo, list[0].AnchorNo)
+			require.Equal(t, tc.nickname, list[0].Nickname)
+			require.Equal(t, tc.avatar, list[0].Avatar)
+			itemJSON, err := json.Marshal(list[0])
+			require.NoError(t, err)
+			var item map[string]interface{}
+			require.NoError(t, json.Unmarshal(itemJSON, &item))
+			require.Equal(t, tc.nickname, item["nickname"])
+			require.Equal(t, tc.avatar, item["avatar"])
+			require.NotContains(t, item, "anchorNickname")
+			require.NotContains(t, item, "anchorAvatar")
+		})
+	}
 }
 
 func TestAdminRoomDetailIncludesCurrentSessionSnapshot(t *testing.T) {

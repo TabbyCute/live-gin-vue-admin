@@ -1,0 +1,26 @@
+name: social-relationship-tests
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: social_test_only
+      MYSQL_DATABASE: social_test_relationship
+    ports:
+      - "127.0.0.1:13316:3306"
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-psocial_test_only"]
+      interval: 2s
+      timeout: 2s
+      retries: 60
+  redis:
+    image: redis:7.4
+    ports:
+      - "127.0.0.1:16389:6379"
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "64mb", "--maxmemory-policy", "noeviction"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 2s
+      retries: 20

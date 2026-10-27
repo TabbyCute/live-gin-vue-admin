@@ -95,19 +95,19 @@ type LiveSessionHistoryResp struct {
 // LiveRoomPublicItem 表示公开直播列表中的单个房间。
 // 使用接口：GET /api/v1/app/live/room/list 作为列表元素返回。
 type LiveRoomPublicItem struct {
-	RoomNo         string `json:"roomNo"`           // RoomNo 来源于 MySQL live_room.room_no，是直播间对外编号。
-	AnchorNo       string `json:"anchorNo"`         // AnchorNo 来源于 MySQL live_anchor.anchor_no，通过 live_room.anchor_id 关联主播。
-	AnchorNickname string `json:"anchorNickname"`   // AnchorNickname 来源于 MySQL live_anchor.nickname，通过 live_room.anchor_id 关联主播。
-	AnchorAvatar   string `json:"anchorAvatar"`     // AnchorAvatar 来源于 MySQL live_anchor.avatar，通过 live_room.anchor_id 关联主播。
-	CategoryId     uint64 `json:"categoryId"`       // CategoryId 来源于 MySQL live_room.category_id，表示直播间当前分类，不是场次快照。
-	Title          string `json:"title"`            // Title 来源于 MySQL live_room.title，表示直播间当前标题，不是场次快照。
-	CoverURL       string `json:"coverUrl"`         // CoverURL 来源于 MySQL live_room.cover_url，表示直播间当前封面，不是场次快照。
-	Notice         string `json:"notice,omitempty"` // Notice 来源于 MySQL live_room.notice；值为空时可能因 omitempty 不出现在 JSON 中。
-	LiveStatus     uint8  `json:"liveStatus"`       // LiveStatus 来源于 MySQL live_room.live_status：0未开播、1准备中、2直播中、3结束中。
-	LiveStartedAt  int64  `json:"liveStartedAt"`    // LiveStartedAt 来源于 MySQL live_room.live_started_at，是当前场次首次有效推流的毫秒时间戳。
-	SessionNo      string `json:"sessionNo"`        // SessionNo 来源于 MySQL live_session.session_no，通过 live_room.current_session_id 关联；没有当前场次时返回空字符串。
-	ViewCount      uint64 `json:"viewCount"`        // ViewCount 来源于 MySQL live_session.view_count，通过 live_room.current_session_id 关联；没有当前场次时返回 0。
-	LikeCount      uint64 `json:"likeCount"`        // LikeCount 来源于 MySQL live_session.like_count，通过 live_room.current_session_id 关联；没有当前场次时返回 0。
+	RoomNo        string `json:"roomNo"`           // RoomNo 来源于 MySQL live_room.room_no，是直播间对外编号。
+	AnchorNo      string `json:"anchorNo"`         // AnchorNo 来源于 MySQL live_anchor.anchor_no，通过 live_room.anchor_id 关联主播。
+	Nickname      string `json:"nickname"`         // Nickname 来源于 MySQL live_account.nickname，通过 live_anchor.user_id 关联账户。
+	Avatar        string `json:"avatar"`           // Avatar 来源于 MySQL live_account.avatar，通过 live_anchor.user_id 关联账户。
+	CategoryId    uint64 `json:"categoryId"`       // CategoryId 来源于 MySQL live_room.category_id，表示直播间当前分类，不是场次快照。
+	Title         string `json:"title"`            // Title 来源于 MySQL live_room.title，表示直播间当前标题，不是场次快照。
+	CoverURL      string `json:"coverUrl"`         // CoverURL 来源于 MySQL live_room.cover_url，表示直播间当前封面，不是场次快照。
+	Notice        string `json:"notice,omitempty"` // Notice 来源于 MySQL live_room.notice；值为空时可能因 omitempty 不出现在 JSON 中。
+	LiveStatus    uint8  `json:"liveStatus"`       // LiveStatus 来源于 MySQL live_room.live_status：0未开播、1准备中、2直播中、3结束中。
+	LiveStartedAt int64  `json:"liveStartedAt"`    // LiveStartedAt 来源于 MySQL live_room.live_started_at，是当前场次首次有效推流的毫秒时间戳。
+	SessionNo     string `json:"sessionNo"`        // SessionNo 来源于 MySQL live_session.session_no，通过 live_room.current_session_id 关联；没有当前场次时返回空字符串。
+	ViewCount     uint64 `json:"viewCount"`        // ViewCount 来源于 MySQL live_session.view_count，通过 live_room.current_session_id 关联；没有当前场次时返回 0。
+	LikeCount     uint64 `json:"likeCount"`        // LikeCount 来源于 MySQL live_session.like_count，通过 live_room.current_session_id 关联；没有当前场次时返回 0。
 }
 
 // LiveSessionPublicSummary 表示公开直播间详情中的当前场次或最近一次已结束场次。
@@ -150,6 +150,7 @@ type LiveRoomPublicItemV2 struct {
 	Notice        string                   `json:"notice"`        // Notice 来源于 live_room.notice。
 	StreamName    string                   `json:"streamName"`    // StreamName 来源于 live_room.stream_name，是稳定流名称，不是推流凭证。
 	LiveStatus    uint8                    `json:"liveStatus"`    // LiveStatus 来源于 live_room.live_status：0未开播、1准备中、2直播中、3结束中。
+	UserInfo      AccountPublicProfileResp `json:"userInfo"`      // UserInfo 来源于主播关联的 live_account，只包含允许公开的用户资料。
 	AnchorInfo    AnchorPublicDetailResp   `json:"anchorInfo"`    // AnchorInfo 来源于 live_anchor，保持完整公开主播详情结构。
 	LatestSession LiveSessionPublicSummary `json:"latestSession"` // LatestSession 优先取当前活动场次，否则取最近一次已结束直播；没有时返回 {}。
 }

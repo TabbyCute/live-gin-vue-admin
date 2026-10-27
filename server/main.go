@@ -63,6 +63,9 @@ func initializeSystem() {
 	initialize.SetupHandlers() // 注册全局函数
 	if global.GVA_DB != nil {
 		initialize.RegisterTables() // 初始化表
-		initialize.Timer()          // 表结构就绪后注册任务并立即执行一次直播生命周期扫描
+		if err := initialize.InitializeSocial(); err != nil {
+			panic(err)
+		}
+		initialize.Timer() // 表结构就绪后注册任务并立即执行一次直播生命周期扫描
 	}
 }

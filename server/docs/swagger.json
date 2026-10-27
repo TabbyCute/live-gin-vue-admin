@@ -8868,6 +8868,418 @@
                 }
             }
         },
+        "/v1/admin/social/block/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialAdmin"
+                ],
+                "summary": "授权管理员审计指定用户黑名单",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户公开编号，与anchorNo二选一",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "主播公开编号",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "不透明游标",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1至100，默认20",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.UserList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或角色无权限",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/social/counter/check": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialAdmin"
+                ],
+                "summary": "核对指定账号的关系事实与计数",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户公开编号，与anchorNo二选一",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "主播公开编号",
+                        "name": "anchorNo",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.CounterAudit"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或角色无权限",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/social/counter/repair": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialAdmin"
+                ],
+                "summary": "持锁重算计数，需REPAIR确认及审计原因",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CounterRepair"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.CounterAudit"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或角色无权限",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/social/event/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialAdmin"
+                ],
+                "summary": "有界查询事件积压和失败记录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "不透明游标",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1至100，默认20",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.EventList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或角色无权限",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/social/event/replay": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialAdmin"
+                ],
+                "summary": "重放失败事件，保留投递去重记录",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.EventReplay"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Change"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或角色无权限",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/social/health": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "每种状态最多统计1000条；countIsLowerBound=true表示总数大于1000，sampleOldestCreatedAt仅为样本最早毫秒时间，不是全局最早时间。\n仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialAdmin"
+                ],
+                "summary": "查询事件积压、投递渠道状态和实例指标",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或角色无权限",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/social/relationship/check": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialAdmin"
+                ],
+                "summary": "扫描拉黑与关注并存的异常关系",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "不透明游标",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1至100，默认20",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.UserList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或角色无权限",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/app/live/anchor/apply": {
             "post": {
                 "security": [
@@ -9289,7 +9701,7 @@
         },
         "/v1/app/live/room/detail": {
             "get": {
-                "description": "未开播也可以查询；只返回房间正常、公开且主播审核通过并状态正常的房间，不暴露内部主键和服务端控制字段。latestSession 在有活动场次时返回当前场次，否则返回最近一次已结束直播；从未完成过直播时返回空对象 {}。",
+                "description": "未开播也可以查询；只返回当前观众有权访问、关联用户与主播状态正常且主播审核通过的房间。userInfo 只包含用户公开资料，userInfo.accountNo 可作为社交接口目标；当前登录用户的关注、拉黑、屏蔽和订阅状态仍通过 /v1/app/social/follow/status 查询。详情不暴露内部主键、手机号、认证信息和服务端控制字段。latestSession 在有活动场次时返回当前场次，否则返回最近一次已结束直播；从未完成过直播时返回空对象 {}。",
                 "produces": [
                     "application/json"
                 ],
@@ -9367,6 +9779,7 @@
         },
         "/v1/app/live/room/list": {
             "get": {
+                "description": "nickname、avatar 返回主播关联账户的最新昵称和头像，与直播间详情的 userInfo 一致。",
                 "produces": [
                     "application/json"
                 ],
@@ -9414,6 +9827,96 @@
                                 }
                             ]
                         }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/room/playback": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "复用直播间权限入口。每个媒体请求必须同时携带APP Authorization和X-Playback-Token；只开放已验证网关的HLS，FLV/WebRTC受保护播放未开放。expiresAt为毫秒。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LiveRoomApp"
+                ],
+                "summary": "为当前已登录观众签发30秒HLS播放凭证",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "直播间公开编号，例如100001",
+                        "name": "roomNo",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/live.PlaybackAuthorization"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/room/playback/check": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "Nginx auth_request 专用HTTP状态契约：204允许，403拒绝。APP JWT仍须通过；复制URL不能代替Bearer。X-Media-Path必须是规范化媒体路径且仅支持HLS。",
+                "tags": [
+                    "LiveMediaGateway"
+                ],
+                "summary": "媒体网关逐请求鉴权适配（不返回业务JSON）",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "30秒播放凭证",
+                        "name": "X-Playback-Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "例如/tb_live/stream_name.m3u8",
+                        "name": "X-Media-Path",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "允许媒体代理读取当前资源"
+                    },
+                    "403": {
+                        "description": "拒绝或依赖不可用"
                     }
                 }
             }
@@ -9903,6 +10406,7 @@
                         "AppBearerAuth": []
                     }
                 ],
+                "description": "复用UserPublicProfile；isLive表示当前用户可访问的有效直播，为false时省略roomNo和sessionNo。不含内部ID、手机号、实名等私密字段。",
                 "produces": [
                     "application/json"
                 ],
@@ -10014,6 +10518,1879 @@
                     },
                     "429": {
                         "description": "请求过于频繁",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/block": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "拉黑并原子解除双向关注",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Target"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Change"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/block/batch-status": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "批量查询本人关系（最多100个目标，自动去重）",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.TargetBatch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/response.Relationship"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/block/list": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "查询本人黑名单游标列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "上页nextCursor",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1至100，默认20",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "资源类型过滤（仅收藏、历史列表使用）",
+                        "name": "resourceType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.UserList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/favorite": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "收藏或取消收藏公开编号指定的可访问资源",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Resource"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Change"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/favorite/batch-status": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "批量查询本人收藏状态；不可见资源返回false",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ResourceBatch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/response.FavoriteStatus"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/follow": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "关注用户或主播",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Target"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Change"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/follow/batch-status": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "批量查询本人关系（最多100个目标，自动去重）",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.TargetBatch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/response.Relationship"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/follow/common": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "查询本人和指定用户共同关注",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户公开编号（与anchorNo二选一）",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "主播公开编号",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "上页nextCursor",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1至100，默认20",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "资源类型过滤（仅收藏、历史列表使用）",
+                        "name": "resourceType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.UserList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/follow/counters": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "查询现存关系总计数（包含列表中被隐藏的不可用账号）",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户公开编号（与anchorNo二选一）",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "主播公开编号",
+                        "name": "anchorNo",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Counters"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/follow/mutual": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "查询本人互相关注游标列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "上页nextCursor",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1至100，默认20",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "资源类型过滤（仅收藏、历史列表使用）",
+                        "name": "resourceType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.UserList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/follow/status": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "查询本人和目标的关注、拉黑、屏蔽及提醒状态",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户公开编号（与anchorNo二选一）",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "主播公开编号",
+                        "name": "anchorNo",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/response.Relationship"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/followers/list": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "查询本人粉丝游标列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "上页nextCursor",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1至100，默认20",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "资源类型过滤（仅收藏、历史列表使用）",
+                        "name": "resourceType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.UserList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/following/list": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "查询本人关注游标列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "上页nextCursor",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1至100，默认20",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "资源类型过滤（仅收藏、历史列表使用）",
+                        "name": "resourceType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.UserList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/history/clear": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "清空本人观看历史并撤销旧缓冲代际",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/history/delete": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "删除本人的指定观看记录，旧缓冲不能重建",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Resource"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/history/list": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "列表项复用用户公开资料，isLive 仅表示当前观众可访问的有效直播。resourceId 保留用于删除观看记录。\n身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "查询本人最近观看的用户公开资料及当前直播状态",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "上页nextCursor",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1至100，默认20",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "默认live_room，目前仅支持live_room",
+                        "name": "resourceType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.HistoryUserList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/history/open": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "开启观看会话，服务端版本确定多设备写入权",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.HistoryOpen"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.WatchSession"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/history/progress/batch": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "批量获取本人已持久化观看进度",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ResourceBatch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ResourceList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/history/report": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "上报心跳或严格持久化checkpoint；seq递增，毫秒进度允许回退",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.HistoryReport"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.WatchAccepted"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/live/following-online": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "游标扫描本人关注中正在直播且有权访问的主播",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "上页nextCursor",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1至100，默认20",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "资源类型过滤（仅收藏、历史列表使用）",
+                        "name": "resourceType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.OnlineList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/live/subscribe": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "开启主播开播提醒",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Target"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Change"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/live/subscription/batch-status": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "批量查询本人关系（最多100个目标，自动去重）",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.TargetBatch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/response.Relationship"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/live/subscription/list": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "查询本人提醒订阅游标列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "上页nextCursor",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1至100，默认20",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "资源类型过滤（仅收藏、历史列表使用）",
+                        "name": "resourceType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.UserList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/live/unsubscribe": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "关闭主播开播提醒",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Target"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Change"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/mute": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "设置或取消指定范围屏蔽；不改变关注关系",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Mute"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Change"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/mute/batch-status": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "批量查询本人关系（最多100个目标，自动去重）",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.TargetBatch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/response.Relationship"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/mute/list": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "查询本人屏蔽游标列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "上页nextCursor",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1至100，默认20",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "资源类型过滤（仅收藏、历史列表使用）",
+                        "name": "resourceType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.UserList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/unblock": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "取消拉黑，不恢复关注",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Target"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Change"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/unfavorite": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "收藏或取消收藏公开编号指定的可访问资源",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Resource"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Change"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/unfollow": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "取消关注并关闭提醒",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Target"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Change"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/social/unmute": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "SocialApp"
+                ],
+                "summary": "设置或取消指定范围屏蔽；不改变关注关系",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Mute"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Change"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "未登录或JWT已撤销",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -10975,6 +13352,9 @@
                         "$ref": "#/definitions/config.Redis"
                     }
                 },
+                "social": {
+                    "$ref": "#/definitions/config.Social"
+                },
                 "sqlite": {
                     "$ref": "#/definitions/config.Sqlite"
                 },
@@ -10986,6 +13366,26 @@
                 },
                 "zap": {
                     "$ref": "#/definitions/config.Zap"
+                }
+            }
+        },
+        "config.Social": {
+            "type": "object",
+            "properties": {
+                "auto-subscribe": {
+                    "type": "boolean"
+                },
+                "history-retention-days": {
+                    "type": "integer"
+                },
+                "media-gateway-verified": {
+                    "type": "boolean"
+                },
+                "playback-base-url": {
+                    "type": "string"
+                },
+                "protected-playback-enabled": {
+                    "type": "boolean"
                 }
             }
         },
@@ -11134,7 +13534,7 @@
                     "type": "string"
                 },
                 "disable-auto-migrate": {
-                    "description": "自动迁移数据库表结构，生产环境建议设为false，手动迁移",
+                    "description": "是否禁用GORM自动迁移；本项目各环境保持false",
                     "type": "boolean"
                 },
                 "iplimit-count": {
@@ -11399,6 +13799,23 @@
                 },
                 "url": {
                     "description": "文件地址",
+                    "type": "string"
+                }
+            }
+        },
+        "live.PlaybackAuthorization": {
+            "type": "object",
+            "properties": {
+                "authorizationRequired": {
+                    "type": "boolean"
+                },
+                "expiresAt": {
+                    "type": "integer"
+                },
+                "playUrl": {
+                    "type": "string"
+                },
+                "sessionNo": {
                     "type": "string"
                 }
             }
@@ -12308,6 +14725,33 @@
                 }
             }
         },
+        "request.CounterRepair": {
+            "type": "object",
+            "required": [
+                "confirm",
+                "reason"
+            ],
+            "properties": {
+                "accountNo": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "example": "10000001"
+                },
+                "anchorNo": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "example": "100001"
+                },
+                "confirm": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "minLength": 4
+                }
+            }
+        },
         "request.DataSource": {
             "type": "object",
             "properties": {
@@ -12334,6 +14778,27 @@
         },
         "request.Empty": {
             "type": "object"
+        },
+        "request.EventReplay": {
+            "type": "object",
+            "required": [
+                "confirm",
+                "eventId",
+                "reason"
+            ],
+            "properties": {
+                "confirm": {
+                    "type": "string"
+                },
+                "eventId": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "minLength": 4
+                }
+            }
         },
         "request.ExaAttachmentCategorySearch": {
             "type": "object",
@@ -12442,6 +14907,99 @@
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "request.HistoryOpen": {
+            "type": "object",
+            "required": [
+                "requestId",
+                "resourceId",
+                "resourceType"
+            ],
+            "properties": {
+                "requestId": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "minLength": 8,
+                    "example": "watch-20261025-0001"
+                },
+                "resourceId": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "example": "100001"
+                },
+                "resourceType": {
+                    "enum": [
+                        "live_room",
+                        "live_replay",
+                        "short_video"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/social.ResourceType"
+                        }
+                    ],
+                    "example": "live_room"
+                }
+            }
+        },
+        "request.HistoryReport": {
+            "type": "object",
+            "required": [
+                "resourceId",
+                "resourceType",
+                "sequence",
+                "sessionToken",
+                "sessionVersion"
+            ],
+            "properties": {
+                "checkpoint": {
+                    "description": "true: 成功响应意味着 MySQL 提交；false: 有界可丢失心跳。",
+                    "type": "boolean"
+                },
+                "completed": {
+                    "type": "boolean"
+                },
+                "epoch": {
+                    "type": "integer",
+                    "maximum": 9007199254740991
+                },
+                "positionMs": {
+                    "type": "integer",
+                    "maximum": 604800000,
+                    "minimum": 0,
+                    "example": 10000
+                },
+                "resourceId": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "example": "100001"
+                },
+                "resourceType": {
+                    "enum": [
+                        "live_room",
+                        "live_replay",
+                        "short_video"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/social.ResourceType"
+                        }
+                    ],
+                    "example": "live_room"
+                },
+                "sequence": {
+                    "type": "integer",
+                    "maximum": 9007199254740991,
+                    "example": 1
+                },
+                "sessionToken": {
+                    "type": "string"
+                },
+                "sessionVersion": {
+                    "type": "integer",
+                    "maximum": 9007199254740991
                 }
             }
         },
@@ -12855,6 +15413,38 @@
                 }
             }
         },
+        "request.Mute": {
+            "type": "object",
+            "required": [
+                "scope"
+            ],
+            "properties": {
+                "accountNo": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "example": "10000001"
+                },
+                "anchorNo": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "example": "100001"
+                },
+                "scope": {
+                    "enum": [
+                        "content",
+                        "live_notification",
+                        "recommendation",
+                        "direct_message"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/social.MuteScope"
+                        }
+                    ],
+                    "example": "content"
+                }
+            }
+        },
         "request.PageInfo": {
             "type": "object",
             "properties": {
@@ -12869,6 +15459,49 @@
                 "pageSize": {
                     "description": "每页大小",
                     "type": "integer"
+                }
+            }
+        },
+        "request.Resource": {
+            "type": "object",
+            "required": [
+                "resourceId",
+                "resourceType"
+            ],
+            "properties": {
+                "resourceId": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "example": "100001"
+                },
+                "resourceType": {
+                    "enum": [
+                        "live_room",
+                        "live_replay",
+                        "short_video"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/social.ResourceType"
+                        }
+                    ],
+                    "example": "live_room"
+                }
+            }
+        },
+        "request.ResourceBatch": {
+            "type": "object",
+            "required": [
+                "resources"
+            ],
+            "properties": {
+                "resources": {
+                    "type": "array",
+                    "maxItems": 100,
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/request.Resource"
+                    }
                 }
             }
         },
@@ -13027,6 +15660,37 @@
                 "id": {
                     "description": "主键ID",
                     "type": "integer"
+                }
+            }
+        },
+        "request.Target": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "example": "10000001"
+                },
+                "anchorNo": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "example": "100001"
+                }
+            }
+        },
+        "request.TargetBatch": {
+            "type": "object",
+            "required": [
+                "targets"
+            ],
+            "properties": {
+                "targets": {
+                    "type": "array",
+                    "maxItems": 100,
+                    "minItems": 1,
+                    "items": {
+                        "$ref": "#/definitions/request.Target"
+                    }
                 }
             }
         },
@@ -13276,6 +15940,9 @@
                 "accountNo": {
                     "type": "string"
                 },
+                "anchorNo": {
+                    "type": "string"
+                },
                 "avatar": {
                     "type": "string"
                 },
@@ -13285,7 +15952,16 @@
                 "gender": {
                     "type": "integer"
                 },
+                "isLive": {
+                    "type": "boolean"
+                },
                 "nickname": {
+                    "type": "string"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "sessionNo": {
                     "type": "string"
                 },
                 "signature": {
@@ -13682,6 +16358,51 @@
                 }
             }
         },
+        "response.Change": {
+            "type": "object",
+            "properties": {
+                "changed": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.CounterAudit": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "actualFans": {
+                    "type": "integer"
+                },
+                "actualFollowing": {
+                    "type": "integer"
+                },
+                "fansCount": {
+                    "type": "integer"
+                },
+                "followingCount": {
+                    "type": "integer"
+                },
+                "mismatch": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.Counters": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "fansCount": {
+                    "type": "integer"
+                },
+                "followingCount": {
+                    "type": "integer"
+                }
+            }
+        },
         "response.Email": {
             "type": "object",
             "properties": {
@@ -13695,6 +16416,49 @@
                 },
                 "to": {
                     "description": "邮件发送给谁",
+                    "type": "string"
+                }
+            }
+        },
+        "response.Event": {
+            "type": "object",
+            "properties": {
+                "attempts": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "eventId": {
+                    "type": "string"
+                },
+                "eventType": {
+                    "type": "string"
+                },
+                "lastError": {
+                    "type": "string"
+                },
+                "nextAttemptAt": {
+                    "type": "integer"
+                },
+                "status": {
+                    "$ref": "#/definitions/social.EventStatus"
+                }
+            }
+        },
+        "response.EventList": {
+            "type": "object",
+            "properties": {
+                "hasMore": {
+                    "type": "boolean"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.Event"
+                    }
+                },
+                "nextCursor": {
                     "type": "string"
                 }
             }
@@ -13715,6 +16479,20 @@
                 }
             }
         },
+        "response.FavoriteStatus": {
+            "type": "object",
+            "properties": {
+                "favorite": {
+                    "type": "boolean"
+                },
+                "resourceId": {
+                    "type": "string"
+                },
+                "resourceType": {
+                    "$ref": "#/definitions/social.ResourceType"
+                }
+            }
+        },
         "response.FilePathResponse": {
             "type": "object",
             "properties": {
@@ -13728,6 +16506,70 @@
             "properties": {
                 "file": {
                     "$ref": "#/definitions/example.ExaFile"
+                }
+            }
+        },
+        "response.HistoryUserItem": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "anchorNo": {
+                    "type": "string"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "countryCode": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "isLive": {
+                    "type": "boolean"
+                },
+                "lastWatchedAt": {
+                    "type": "integer"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "resourceId": {
+                    "type": "string"
+                },
+                "resourceType": {
+                    "$ref": "#/definitions/social.ResourceType"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "sessionNo": {
+                    "type": "string"
+                },
+                "signature": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.HistoryUserList": {
+            "type": "object",
+            "properties": {
+                "hasMore": {
+                    "type": "boolean"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.HistoryUserItem"
+                    }
+                },
+                "nextCursor": {
+                    "type": "string"
                 }
             }
         },
@@ -14067,16 +16909,12 @@
         "response.LiveRoomPublicItem": {
             "type": "object",
             "properties": {
-                "anchorAvatar": {
-                    "description": "AnchorAvatar 来源于 MySQL live_anchor.avatar，通过 live_room.anchor_id 关联主播。",
-                    "type": "string"
-                },
-                "anchorNickname": {
-                    "description": "AnchorNickname 来源于 MySQL live_anchor.nickname，通过 live_room.anchor_id 关联主播。",
-                    "type": "string"
-                },
                 "anchorNo": {
                     "description": "AnchorNo 来源于 MySQL live_anchor.anchor_no，通过 live_room.anchor_id 关联主播。",
+                    "type": "string"
+                },
+                "avatar": {
+                    "description": "Avatar 来源于 MySQL live_account.avatar，通过 live_anchor.user_id 关联账户。",
                     "type": "string"
                 },
                 "categoryId": {
@@ -14098,6 +16936,10 @@
                 "liveStatus": {
                     "description": "LiveStatus 来源于 MySQL live_room.live_status：0未开播、1准备中、2直播中、3结束中。",
                     "type": "integer"
+                },
+                "nickname": {
+                    "description": "Nickname 来源于 MySQL live_account.nickname，通过 live_anchor.user_id 关联账户。",
+                    "type": "string"
                 },
                 "notice": {
                     "description": "Notice 来源于 MySQL live_room.notice；值为空时可能因 omitempty 不出现在 JSON 中。",
@@ -14167,6 +17009,14 @@
                 "title": {
                     "description": "Title 来源于 live_room.title，是房间当前标题。",
                     "type": "string"
+                },
+                "userInfo": {
+                    "description": "UserInfo 来源于主播关联的 live_account，只包含允许公开的用户资料。",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/response.AccountPublicProfileResp"
+                        }
+                    ]
                 }
             }
         },
@@ -14681,6 +17531,64 @@
                 }
             }
         },
+        "response.OnlineList": {
+            "type": "object",
+            "properties": {
+                "hasMore": {
+                    "type": "boolean"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.OnlineRoom"
+                    }
+                },
+                "nextCursor": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.OnlineRoom": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "anchorNo": {
+                    "type": "string"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "countryCode": {
+                    "type": "string"
+                },
+                "coverUrl": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "isLive": {
+                    "type": "boolean"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "sessionNo": {
+                    "type": "string"
+                },
+                "signature": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "response.PageResult": {
             "type": "object",
             "properties": {
@@ -14742,6 +17650,114 @@
             "properties": {
                 "account": {
                     "$ref": "#/definitions/response.Account"
+                }
+            }
+        },
+        "response.Relationship": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "anchorNo": {
+                    "type": "string"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "blocked": {
+                    "type": "boolean"
+                },
+                "blockedByMe": {
+                    "type": "boolean"
+                },
+                "countryCode": {
+                    "type": "string"
+                },
+                "following": {
+                    "type": "boolean"
+                },
+                "followsYou": {
+                    "type": "boolean"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "isLive": {
+                    "type": "boolean"
+                },
+                "mutedScopes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/social.MuteScope"
+                    }
+                },
+                "mutual": {
+                    "type": "boolean"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "sessionNo": {
+                    "type": "string"
+                },
+                "signature": {
+                    "type": "string"
+                },
+                "subscribed": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.ResourceItem": {
+            "type": "object",
+            "properties": {
+                "completed": {
+                    "type": "boolean"
+                },
+                "coverUrl": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "durationMs": {
+                    "type": "integer"
+                },
+                "lastWatchedAt": {
+                    "type": "integer"
+                },
+                "positionMs": {
+                    "type": "integer"
+                },
+                "resourceId": {
+                    "type": "string"
+                },
+                "resourceType": {
+                    "$ref": "#/definitions/social.ResourceType"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.ResourceList": {
+            "type": "object",
+            "properties": {
+                "hasMore": {
+                    "type": "boolean"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.ResourceItem"
+                    }
+                },
+                "nextCursor": {
+                    "type": "string"
                 }
             }
         },
@@ -14839,6 +17855,144 @@
                     "$ref": "#/definitions/system.SysUser"
                 }
             }
+        },
+        "response.UserItem": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "anchorNo": {
+                    "type": "string"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "countryCode": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "isLive": {
+                    "type": "boolean"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "scope": {
+                    "$ref": "#/definitions/social.MuteScope"
+                },
+                "sessionNo": {
+                    "type": "string"
+                },
+                "signature": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.UserList": {
+            "type": "object",
+            "properties": {
+                "hasMore": {
+                    "type": "boolean"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.UserItem"
+                    }
+                },
+                "nextCursor": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.WatchAccepted": {
+            "type": "object",
+            "properties": {
+                "accepted": {
+                    "type": "boolean"
+                },
+                "maxBufferAgeMs": {
+                    "type": "integer"
+                },
+                "persisted": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.WatchSession": {
+            "type": "object",
+            "properties": {
+                "completed": {
+                    "type": "boolean"
+                },
+                "epoch": {
+                    "type": "integer"
+                },
+                "positionMs": {
+                    "type": "integer"
+                },
+                "sessionToken": {
+                    "type": "string"
+                },
+                "sessionVersion": {
+                    "type": "integer"
+                }
+            }
+        },
+        "social.EventStatus": {
+            "type": "string",
+            "enum": [
+                "pending",
+                "done",
+                "failed",
+                "skipped"
+            ],
+            "x-enum-varnames": [
+                "EventPending",
+                "EventDone",
+                "EventFailed",
+                "EventSkipped"
+            ]
+        },
+        "social.MuteScope": {
+            "type": "string",
+            "enum": [
+                "content",
+                "live_notification",
+                "recommendation",
+                "direct_message"
+            ],
+            "x-enum-varnames": [
+                "MuteContent",
+                "MuteLiveNotification",
+                "MuteRecommendation",
+                "MuteDirectMessage"
+            ]
+        },
+        "social.ResourceType": {
+            "type": "string",
+            "enum": [
+                "live_room",
+                "live_replay",
+                "short_video"
+            ],
+            "x-enum-varnames": [
+                "ResourceLiveRoom",
+                "ResourceLiveReplay",
+                "ResourceShortVideo"
+            ]
         },
         "system.Condition": {
             "type": "object",

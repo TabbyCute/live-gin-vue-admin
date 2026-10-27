@@ -1,6 +1,7 @@
 package config
 
 type Server struct {
+	Social    Social  `mapstructure:"social" json:"social" yaml:"social"`
 	JWT       JWT     `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
 	JWTApp    JWTApp  `mapstructure:"jwt-app" json:"jwt-app" yaml:"jwt-app"`
 	Zap       Zap     `mapstructure:"zap" json:"zap" yaml:"zap"`

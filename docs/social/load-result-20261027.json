@@ -1,0 +1,303 @@
+{
+  "date": "2026-10-27",
+  "environment": {
+    "go": "1.24.5 darwin/amd64",
+    "mysql": "8.0.46",
+    "redis": "7.4.11",
+    "scope": "isolated local Docker; service calls, not HTTP; no concurrent race test during final public profile load"
+  },
+  "public_profiles_real_live_tables": {
+    "fixture": {
+      "accounts": 1001,
+      "anchors": 1000,
+      "rooms": 1000,
+      "sessions": 1000,
+      "pageSize": 100
+    },
+    "requests": 400,
+    "concurrency": 16,
+    "qps": 1336.21,
+    "p95Ms": 17.672666,
+    "p99Ms": 19.858416,
+    "errors": 0,
+    "explain": [
+      {
+        "Extra": "Using where",
+        "filtered": 10,
+        "id": 1,
+        "key": "PRIMARY",
+        "key_len": "8",
+        "partitions": null,
+        "possible_keys": "PRIMARY,idx_live_account_deleted_at,idx_live_account_status_ban",
+        "ref": null,
+        "rows": 100,
+        "select_type": "PRIMARY",
+        "table": "u",
+        "type": "range"
+      },
+      {
+        "Extra": "Using where",
+        "filtered": 5,
+        "id": 1,
+        "key": "uk_user_id",
+        "key_len": "8",
+        "partitions": null,
+        "possible_keys": "PRIMARY,uk_user_id,idx_live_anchor_deleted_at,idx_apply_created",
+        "ref": "social_test_public_profiles.u.id",
+        "rows": 1,
+        "select_type": "PRIMARY",
+        "table": "a",
+        "type": "eq_ref"
+      },
+      {
+        "Extra": "Using where; Not exists; Using index",
+        "filtered": 100,
+        "id": 1,
+        "key": "uk_social_block_pair",
+        "key_len": "16",
+        "partitions": null,
+        "possible_keys": "uk_social_block_pair,idx_social_block_list",
+        "ref": "const,social_test_public_profiles.u.id",
+        "rows": 1,
+        "select_type": "PRIMARY",
+        "table": "b",
+        "type": "eq_ref"
+      },
+      {
+        "Extra": "Using where; Not exists; Using index",
+        "filtered": 100,
+        "id": 1,
+        "key": "uk_social_block_pair",
+        "key_len": "16",
+        "partitions": null,
+        "possible_keys": "uk_social_block_pair,idx_social_block_list",
+        "ref": "social_test_public_profiles.u.id,const",
+        "rows": 1,
+        "select_type": "PRIMARY",
+        "table": "b",
+        "type": "eq_ref"
+      },
+      {
+        "Extra": "Using where",
+        "filtered": 35.20000076293945,
+        "id": 1,
+        "key": "uk_live_room_anchor",
+        "key_len": "8",
+        "partitions": null,
+        "possible_keys": "PRIMARY,uk_live_room_anchor,idx_live_room_deleted_at,idx_live_room_discovery",
+        "ref": "social_test_public_profiles.a.id",
+        "rows": 1,
+        "select_type": "PRIMARY",
+        "table": "r",
+        "type": "eq_ref"
+      },
+      {
+        "Extra": "Using where",
+        "filtered": 5,
+        "id": 1,
+        "key": "PRIMARY",
+        "key_len": "8",
+        "partitions": null,
+        "possible_keys": "PRIMARY",
+        "ref": "social_test_public_profiles.r.current_session_id",
+        "rows": 1,
+        "select_type": "PRIMARY",
+        "table": "s",
+        "type": "eq_ref"
+      },
+      {
+        "Extra": "Using index",
+        "filtered": 100,
+        "id": 4,
+        "key": "uk_social_follow_pair",
+        "key_len": "16",
+        "partitions": null,
+        "possible_keys": "uk_social_follow_pair,idx_social_follow_out,idx_social_follow_in",
+        "ref": "const,social_test_public_profiles.a.user_id",
+        "rows": 1,
+        "select_type": "DEPENDENT SUBQUERY",
+        "table": "f",
+        "type": "eq_ref"
+      }
+    ]
+  },
+  "social_logic_mysql_controlled_directory": {
+    "batch_status_100_no_redis": {
+      "concurrency": 16,
+      "elapsedSeconds": 0.306423167,
+      "errorRate": 0,
+      "errors": 0,
+      "p95Ms": 15.786,
+      "p99Ms": 24.659,
+      "qps": 1305.3843282025734,
+      "requests": 400
+    },
+    "explain": [
+      {
+        "plan": [
+          {
+            "Extra": "Using where; Backward index scan",
+            "filtered": 100,
+            "id": 1,
+            "key": "PRIMARY",
+            "key_len": "8",
+            "partitions": null,
+            "possible_keys": "PRIMARY,uk_social_follow_pair,idx_social_follow_in",
+            "ref": null,
+            "rows": 1000,
+            "select_type": "SIMPLE",
+            "table": "social_follow",
+            "type": "range"
+          }
+        ],
+        "query": "EXPLAIN SELECT id,user_id FROM social_follow WHERE target_user_id=2 AND id<100000 ORDER BY id DESC LIMIT 101"
+      },
+      {
+        "plan": [
+          {
+            "Extra": "Using where; Using index; Using filesort",
+            "filtered": 100,
+            "id": 1,
+            "key": "uk_social_follow_pair",
+            "key_len": "8",
+            "partitions": null,
+            "possible_keys": "PRIMARY,uk_social_follow_pair,idx_social_follow_out",
+            "ref": "const",
+            "rows": 1,
+            "select_type": "SIMPLE",
+            "table": "social_follow",
+            "type": "ref"
+          }
+        ],
+        "query": "EXPLAIN SELECT id,target_user_id FROM social_follow WHERE user_id=1000 AND id<100000 ORDER BY id DESC LIMIT 101"
+      },
+      {
+        "plan": [
+          {
+            "Extra": "Using where",
+            "filtered": 1,
+            "id": 1,
+            "key": "PRIMARY",
+            "key_len": "8",
+            "partitions": null,
+            "possible_keys": "PRIMARY,idx_social_subscription_fanout",
+            "ref": null,
+            "rows": 100,
+            "select_type": "SIMPLE",
+            "table": "social_live_subscription",
+            "type": "range"
+          }
+        ],
+        "query": "EXPLAIN SELECT * FROM social_live_subscription WHERE target_user_id=2 AND enabled=1 AND id>0 ORDER BY id LIMIT 20"
+      },
+      {
+        "plan": [
+          {
+            "Extra": "Using index condition",
+            "filtered": 100,
+            "id": 1,
+            "key": "idx_social_event_claim",
+            "key_len": "74",
+            "partitions": null,
+            "possible_keys": "idx_social_event_claim,idx_social_event_retention",
+            "ref": null,
+            "rows": 2,
+            "select_type": "SIMPLE",
+            "table": "social_outbox_event",
+            "type": "range"
+          }
+        ],
+        "query": "EXPLAIN SELECT * FROM social_outbox_event WHERE status='pending' AND next_attempt_at<=9999999999999 ORDER BY next_attempt_at,id LIMIT 1"
+      },
+      {
+        "plan": [
+          {
+            "Extra": null,
+            "filtered": 100,
+            "id": 1,
+            "key": "idx_social_history_recent",
+            "key_len": "8",
+            "partitions": null,
+            "possible_keys": "uk_social_history_resource,idx_social_history_recent",
+            "ref": "const",
+            "rows": 1,
+            "select_type": "SIMPLE",
+            "table": "social_watch_history",
+            "type": "ref"
+          }
+        ],
+        "query": "EXPLAIN SELECT * FROM social_watch_history WHERE user_id=1000 ORDER BY last_watched_at DESC,id DESC LIMIT 101"
+      }
+    ],
+    "fans_cursor_page_100": {
+      "concurrency": 16,
+      "elapsedSeconds": 0.100002042,
+      "errorRate": 0,
+      "errors": 0,
+      "p95Ms": 14.358,
+      "p99Ms": 15.263,
+      "qps": 2999.9387412509036,
+      "requests": 300
+    },
+    "history_strict_checkpoint": {
+      "concurrency": 16,
+      "elapsedSeconds": 0.060221666,
+      "errorRate": 0,
+      "errors": 0,
+      "p95Ms": 12.056,
+      "p99Ms": 12.541,
+      "qps": 1660.5319421086756,
+      "requests": 100
+    },
+    "hot_anchor_follow": {
+      "concurrency": 32,
+      "elapsedSeconds": 9.657874,
+      "errorRate": 0,
+      "errors": 0,
+      "p95Ms": 618.268,
+      "p99Ms": 691.123,
+      "qps": 103.54245665246823,
+      "requests": 1000
+    },
+    "hot_anchor_unfollow_refollow": {
+      "concurrency": 32,
+      "elapsedSeconds": 11.371034292,
+      "errorRate": 0,
+      "errors": 0,
+      "p95Ms": 397.247,
+      "p99Ms": 501.212,
+      "qps": 87.94274771500268,
+      "requests": 1000
+    },
+    "notification_fanout_page_20_fake_sink": {
+      "concurrency": 1,
+      "elapsedSeconds": 0.462455084,
+      "errorRate": 0,
+      "errors": 0,
+      "p95Ms": 96.551,
+      "p99Ms": 96.551,
+      "qps": 10.811860811978876,
+      "requests": 5
+    },
+    "pool": {
+      "maxOpen": 32,
+      "open": 32,
+      "waitCount": 0,
+      "waitDurationMs": 0
+    }
+  },
+  "redis_history_buffer": {
+    "requests": 1000,
+    "concurrency": 1,
+    "qps": 4146.92,
+    "p95Ms": 0.256,
+    "p99Ms": 0.312,
+    "errors": 0
+  },
+  "limitations": [
+    "Small local sample, not production capacity or SLO proof",
+    "Social logic load uses controlled test directory; only public_profiles_real_live_tables uses actual live account/anchor/room/session joins",
+    "Notification sink is fake; no media/CDN/push testing in scope",
+    "Hot anchor counters intentionally remain transactionally consistent and row-lock serialized"
+  ]
+}

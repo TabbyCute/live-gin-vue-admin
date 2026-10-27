@@ -51,6 +51,7 @@ func registerSystemRoutesV1(apiRoot *gin.RouterGroup, engine *gin.Engine) {
 	liveRouter.InitAnchorAdminRouter(adminPrivateGroup)
 	liveRouter.InitCategoryAdminRouter(adminPrivateGroup)
 	liveRouter.InitRoomAdminRouter(adminPrivateGroup)
+	router.RouterGroupApp.Social.InitSocialAdminRouter(adminPrivateGroup)
 
 	//注册：插件路由安装
 	InstallPlugin(adminPrivateGroup, adminPublicGroup, engine)

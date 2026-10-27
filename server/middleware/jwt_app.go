@@ -46,7 +46,7 @@ func JWTAppAuth() gin.HandlerFunc {
 			return
 		}
 		var account liveModel.LiveAccount
-		err = global.GVA_DB.Select("id", "status", "ban_until", "token_version").First(&account, claims.AccountID).Error
+		err = global.GVA_DB.WithContext(c.Request.Context()).Select("id", "status", "ban_until", "token_version").First(&account, claims.AccountID).Error
 		if err != nil {
 			if !errors.Is(err, gorm.ErrRecordNotFound) {
 				global.GVA_LOG.Error("客户端鉴权查询账号失败", zap.Error(err))
@@ -56,7 +56,7 @@ func JWTAppAuth() gin.HandlerFunc {
 			return
 		}
 		if account.Status == liveModel.LiveAccountStatusBanned && account.BanUntil > 0 && account.BanUntil <= time.Now().UnixMilli() {
-			result := global.GVA_DB.Model(&liveModel.LiveAccount{}).
+			result := global.GVA_DB.WithContext(c.Request.Context()).Model(&liveModel.LiveAccount{}).
 				Where("id = ? AND status = ? AND ban_until > 0 AND ban_until <= ?", account.ID, liveModel.LiveAccountStatusBanned, time.Now().UnixMilli()).
 				Updates(map[string]interface{}{"status": liveModel.LiveAccountStatusNormal, "status_reason": "", "ban_until": int64(0)})
 			if result.Error != nil {
@@ -103,4 +103,15 @@ func appBearerToken(header string) (string, bool) {
 		return "", false
 	}
 	return parts[1], true
+}
+
+// OptionalJWTAppAuth 公开资料允许匿名；一旦提供Bearer必须完整校验，不允许坏token降级成匿名。
+func OptionalJWTAppAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if c.GetHeader("Authorization") == "" {
+			c.Next()
+			return
+		}
+		JWTAppAuth()(c)
+	}
 }

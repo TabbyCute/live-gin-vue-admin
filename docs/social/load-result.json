@@ -1,0 +1,165 @@
+{
+  "batch_status_100_no_redis": {
+    "concurrency": 16,
+    "elapsedSeconds": 0.455113417,
+    "errorRate": 0,
+    "errors": 0,
+    "p95Ms": 23.768,
+    "p99Ms": 31.033,
+    "qps": 878.9017969118673,
+    "requests": 400
+  },
+  "explain": [
+    {
+      "plan": [
+        {
+          "Extra": "Using where; Backward index scan",
+          "filtered": 100,
+          "id": 1,
+          "key": "PRIMARY",
+          "key_len": "8",
+          "partitions": null,
+          "possible_keys": "PRIMARY,uk_social_follow_pair,idx_social_follow_in",
+          "ref": null,
+          "rows": 1000,
+          "select_type": "SIMPLE",
+          "table": "social_follow",
+          "type": "range"
+        }
+      ],
+      "query": "EXPLAIN SELECT id,user_id FROM social_follow WHERE target_user_id=2 AND id\u003c100000 ORDER BY id DESC LIMIT 101"
+    },
+    {
+      "plan": [
+        {
+          "Extra": "Using where; Using index; Using filesort",
+          "filtered": 100,
+          "id": 1,
+          "key": "uk_social_follow_pair",
+          "key_len": "8",
+          "partitions": null,
+          "possible_keys": "PRIMARY,uk_social_follow_pair,idx_social_follow_out",
+          "ref": "const",
+          "rows": 1,
+          "select_type": "SIMPLE",
+          "table": "social_follow",
+          "type": "ref"
+        }
+      ],
+      "query": "EXPLAIN SELECT id,target_user_id FROM social_follow WHERE user_id=1000 AND id\u003c100000 ORDER BY id DESC LIMIT 101"
+    },
+    {
+      "plan": [
+        {
+          "Extra": "Using where",
+          "filtered": 1,
+          "id": 1,
+          "key": "PRIMARY",
+          "key_len": "8",
+          "partitions": null,
+          "possible_keys": "PRIMARY,idx_social_subscription_fanout",
+          "ref": null,
+          "rows": 100,
+          "select_type": "SIMPLE",
+          "table": "social_live_subscription",
+          "type": "range"
+        }
+      ],
+      "query": "EXPLAIN SELECT * FROM social_live_subscription WHERE target_user_id=2 AND enabled=1 AND id\u003e0 ORDER BY id LIMIT 20"
+    },
+    {
+      "plan": [
+        {
+          "Extra": "Using index condition",
+          "filtered": 100,
+          "id": 1,
+          "key": "idx_social_event_claim",
+          "key_len": "74",
+          "partitions": null,
+          "possible_keys": "idx_social_event_claim,idx_social_event_retention",
+          "ref": null,
+          "rows": 2,
+          "select_type": "SIMPLE",
+          "table": "social_outbox_event",
+          "type": "range"
+        }
+      ],
+      "query": "EXPLAIN SELECT * FROM social_outbox_event WHERE status='pending' AND next_attempt_at\u003c=9999999999999 ORDER BY next_attempt_at,id LIMIT 1"
+    },
+    {
+      "plan": [
+        {
+          "Extra": null,
+          "filtered": 100,
+          "id": 1,
+          "key": "idx_social_history_recent",
+          "key_len": "8",
+          "partitions": null,
+          "possible_keys": "uk_social_history_resource,idx_social_history_recent",
+          "ref": "const",
+          "rows": 1,
+          "select_type": "SIMPLE",
+          "table": "social_watch_history",
+          "type": "ref"
+        }
+      ],
+      "query": "EXPLAIN SELECT * FROM social_watch_history WHERE user_id=1000 ORDER BY last_watched_at DESC,id DESC LIMIT 101"
+    }
+  ],
+  "fans_cursor_page_100": {
+    "concurrency": 16,
+    "elapsedSeconds": 0.104003917,
+    "errorRate": 0,
+    "errors": 0,
+    "p95Ms": 9.963,
+    "p99Ms": 12.625,
+    "qps": 2884.5067441065703,
+    "requests": 300
+  },
+  "history_strict_checkpoint": {
+    "concurrency": 16,
+    "elapsedSeconds": 0.066201125,
+    "errorRate": 0,
+    "errors": 0,
+    "p95Ms": 12.257,
+    "p99Ms": 13.108,
+    "qps": 1510.5483479321538,
+    "requests": 100
+  },
+  "hot_anchor_follow": {
+    "concurrency": 32,
+    "elapsedSeconds": 7.633733125,
+    "errorRate": 0,
+    "errors": 0,
+    "p95Ms": 263.551,
+    "p99Ms": 329.149,
+    "qps": 130.99750588936132,
+    "requests": 1000
+  },
+  "hot_anchor_unfollow_refollow": {
+    "concurrency": 32,
+    "elapsedSeconds": 14.021475292,
+    "errorRate": 0,
+    "errors": 0,
+    "p95Ms": 538.516,
+    "p99Ms": 553.383,
+    "qps": 71.31917142631585,
+    "requests": 1000
+  },
+  "notification_fanout_page_20_fake_sink": {
+    "concurrency": 1,
+    "elapsedSeconds": 0.479377958,
+    "errorRate": 0,
+    "errors": 0,
+    "p95Ms": 96.695,
+    "p99Ms": 96.695,
+    "qps": 10.430183358576533,
+    "requests": 5
+  },
+  "pool": {
+    "maxOpen": 32,
+    "open": 32,
+    "waitCount": 0,
+    "waitDurationMs": 0
+  }
+}

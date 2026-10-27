@@ -31,3 +31,10 @@
 - `deploy-runtime.md`
 
 模块说明要聚焦职责和边界，不要堆砌实现细节。
+
+## Social Relationship
+
+- 公开用户资料唯一DTO：server/model/common/response/user_public_profile.go；live/social类型别名复用，详情和关系列表仅扩展各自业务字段。
+- 模型/DTO：server/model/social；锁与计数：server/repository/social；业务/Worker：server/service/social。
+- API/Router分APP与_admin；live模块通过SocialDirectory、SocialRoomResource及LiveAccessService适配，不在social模块直接操作live表。
+- 九张社交表、索引和约束随服务启动由GORM自动迁移；外部资源/通知/媒体边界见docs/social/README.md。

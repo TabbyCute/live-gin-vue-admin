@@ -2,6 +2,7 @@ package live
 
 import (
 	"errors"
+	"tb_live_module/middleware"
 
 	"tb_live_module/global"
 	"tb_live_module/model/common/response"
@@ -204,7 +205,7 @@ func (a *RoomApi) History(c *gin.Context) {
 		return
 	}
 	var req liveReq.LiveSessionHistoryReq
-	if err := c.ShouldBindQuery(&req); err != nil || req.Page <= 0 || req.PageSize <= 0 {
+	if err := c.ShouldBindQuery(&req); err != nil || req.Page <= 0 || req.PageSize <= 0 || req.PageSize > 100 {
 		response.FailWithMessage("分页参数错误", c)
 		return
 	}
@@ -219,7 +220,7 @@ func (a *RoomApi) History(c *gin.Context) {
 // PublicDetail
 // @Tags LiveRoomApp
 // @Summary 按房间号获取公开直播间
-// @Description 未开播也可以查询；只返回房间正常、公开且主播审核通过并状态正常的房间，不暴露内部主键和服务端控制字段。latestSession 在有活动场次时返回当前场次，否则返回最近一次已结束直播；从未完成过直播时返回空对象 {}。
+// @Description 未开播也可以查询；只返回当前观众有权访问、关联用户与主播状态正常且主播审核通过的房间。userInfo 只包含用户公开资料，userInfo.accountNo 可作为社交接口目标；当前登录用户的关注、拉黑、屏蔽和订阅状态仍通过 /v1/app/social/follow/status 查询。详情不暴露内部主键、手机号、认证信息和服务端控制字段。latestSession 在有活动场次时返回当前场次，否则返回最近一次已结束直播；从未完成过直播时返回空对象 {}。
 // @Produce application/json
 // @Param roomNo query string true "直播间对外编号"
 // @Success 200 {object} response.Response{data=liveRes.LiveRoomPublicItemV2}
@@ -230,7 +231,8 @@ func (a *RoomApi) PublicDetail(c *gin.Context) {
 		response.FailWithMessage("查询参数错误: "+err.Error(), c)
 		return
 	}
-	result, err := roomService.GetPublicRoom(req.RoomNo)
+	viewer, _ := middleware.GetAppAccountID(c)
+	result, err := roomService.GetViewerRoom(c.Request.Context(), uint64(viewer), req.RoomNo)
 	if err != nil {
 		respondLiveRoomError(c, "获取直播间失败", err)
 		return
@@ -241,6 +243,7 @@ func (a *RoomApi) PublicDetail(c *gin.Context) {
 // PublicList
 // @Tags LiveRoomApp
 // @Summary 分页获取公开直播列表
+// @Description nickname、avatar 返回主播关联账户的最新昵称和头像，与直播间详情的 userInfo 一致。
 // @Produce application/json
 // @Param page query int true "页码"
 // @Param pageSize query int true "每页数量"
@@ -249,11 +252,12 @@ func (a *RoomApi) PublicDetail(c *gin.Context) {
 // @Router /v1/app/live/room/list [get]
 func (a *RoomApi) PublicList(c *gin.Context) {
 	var req liveReq.LiveRoomPublicListReq
-	if err := c.ShouldBindQuery(&req); err != nil || req.Page <= 0 || req.PageSize <= 0 {
+	if err := c.ShouldBindQuery(&req); err != nil || req.Page <= 0 || req.PageSize <= 0 || req.PageSize > 100 {
 		response.FailWithMessage("分页参数错误", c)
 		return
 	}
-	list, total, err := roomService.GetPublicRoomList(req)
+	viewer, _ := middleware.GetAppAccountID(c)
+	list, total, err := roomService.GetViewerRoomList(c.Request.Context(), uint64(viewer), req)
 	if err != nil {
 		respondLiveRoomError(c, "获取直播列表失败", err)
 		return
@@ -264,7 +268,7 @@ func (a *RoomApi) PublicList(c *gin.Context) {
 func respondLiveRoomError(c *gin.Context, operation string, err error) {
 	known := []error{
 		liveService.ErrLiveRoomNotFound, liveService.ErrLiveRoomNoRequired, liveService.ErrLiveRoomNoExists,
-		liveService.ErrLiveRoomUnavailable,
+		liveService.ErrLiveRoomUnavailable, liveService.ErrLiveAccessDenied, liveService.ErrMediaGatewayRequired,
 		liveService.ErrLiveRoomActiveSessionExists, liveService.ErrLiveRoomActiveSessionNotFound,
 		liveService.ErrLiveRoomStatusReasonRequired,
 		liveService.ErrLiveSessionNotFound, liveService.ErrLiveSessionStateInvalid,

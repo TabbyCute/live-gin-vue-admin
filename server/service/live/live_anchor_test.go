@@ -9,6 +9,7 @@ import (
 	"tb_live_module/global"
 	liveModel "tb_live_module/model/live"
 	liveReq "tb_live_module/model/live/request"
+	socialModel "tb_live_module/model/social"
 
 	"github.com/glebarez/sqlite"
 	"github.com/stretchr/testify/require"
@@ -19,7 +20,7 @@ func setupAnchorTestDB(t *testing.T) {
 	t.Helper()
 	db, err := gorm.Open(sqlite.Open("file:"+t.Name()+"?mode=memory&cache=shared"), &gorm.Config{})
 	require.NoError(t, err)
-	require.NoError(t, db.AutoMigrate(&liveModel.LiveAnchor{}, &liveModel.LiveCategory{}, &liveModel.LiveRoom{}))
+	require.NoError(t, db.AutoMigrate(&liveModel.LiveAnchor{}, &liveModel.LiveCategory{}, &liveModel.LiveRoom{}, &socialModel.SocialUserCounter{}))
 	previousDB := global.GVA_DB
 	global.GVA_DB = db
 	t.Cleanup(func() { global.GVA_DB = previousDB })

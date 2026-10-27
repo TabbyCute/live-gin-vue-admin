@@ -83,6 +83,9 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 		// 视图 authority_menu 会被当成表来创建，引发冲突错误（更新版本的gorm似乎不会）
 		// 由于 AutoMigrate() 基本无需考虑错误，因此显式忽略
 	}
+	if err := autoMigrateSocial(db); err != nil {
+		return ctx, err
+	}
 	if err := ensureLiveAccountPerformanceIndexes(db); err != nil {
 		return ctx, err
 	}
@@ -134,6 +137,7 @@ func (e *ensureTables) TableCreated(ctx context.Context) bool {
 
 		model.Info{},
 	}
+	tables = append(tables, socialModels()...)
 	yes := true
 	for _, t := range tables {
 		yes = yes && db.Migrator().HasTable(t)

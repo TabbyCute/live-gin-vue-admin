@@ -52,4 +52,20 @@
 - 主播端 `POST /api/v1/app/live/room/session/end` 不传请求体或 `sessionNo`；服务端根据 APP JWT 结束当前登录主播的活动场次。
 - 礼物统计字段 `giftCount`、`giftCoinAmount`、`giftUserCount` 是汇总快照，不代替礼物和钱包流水。
 - 公开详情 `GET /api/v1/app/live/room/detail` 始终返回房间资料和完整 `anchorInfo`；`latestSession` 有活动场次时表示当前场次，否则表示最近一次已结束直播，从未完成直播时固定返回空对象 `{}`。
+- 公开详情同时返回主播关联账号的公开 `userInfo`；`userInfo.accountNo` 是关注、拉黑、屏蔽和开播订阅的首选目标编号。`anchorInfo.anchorNo` 仍可作为社交目标兼容入口，两者最终解析到同一个 `live_account.id`，不得形成两套关系。
+- `userInfo` 不承载当前观众的关系状态。登录用户进入直播间后使用 `GET /api/v1/app/social/follow/status?accountNo=<userInfo.accountNo>` 初始化关注等状态；匿名用户不调用受保护的社交状态接口。
 - 公开详情不返回房间/场次内部主键、房间状态原因、断流重连控制字段、失败原因、结算时间或礼物金额。
+
+## 社交关系契约
+
+- APP `/api/v1/app/social` 使用独立APP Bearer，操作者只取JWT；目标使用accountNo/anchorNo二选一，资源使用公开编号。
+- 公开用户资料唯一结构为 `model/common/response.UserPublicProfile`；live/social使用类型别名及嵌入复用，JSON字段平铺。账号字段为accountNo/nickname/avatar/signature/gender/countryCode，主播身份anchorNo可选；isLive表示当前观众可访问的有效直播，只有true时提供roomNo/sessionNo。禁止返回账号实体或私密字段。
+- 关注/粉丝/互关/共同关注/黑名单/屏蔽/订阅、关系批量状态、历史、关注中在线主播、用户详情和房间详情userInfo共用该结构。历史list新增资源键及观看时间，移除旧房间卡片/进度字段；progress/batch保持原契约。
+- 2026-10-27删除GET `/api/v1/app/social/favorite/list`（404），其余收藏操作保留；前端应移除收藏列表入口。
+- 新列表采用limit/cursor/nextCursor/hasMore；过滤后空页仍可能有nextCursor。旧PageInfo接口不改为游标。
+- 所有新社交时间与进度为毫秒；业务错误46001—46010，统一code/data/msg。
+- 管理接口`/api/v1/admin/social`同时校验后台JWT与角色888，写修复需确认词及原因。
+- 仅在受保护媒体网关就绪时prepare的旧playUrl为空，公开房间未启用媒体网关时沿用现有播放链路；受保护HLS需先调用现有room/playback，并为playlist/segment附加Authorization与X-Playback-Token。私密和仅关注者开播在媒体网关验收前禁止。
+- 当前生产资源适配仅live_room；short_video/live_replay明确返回未接入。通知偏好可管理，实际投递渠道尚未注册。
+- 管理health每状态count最多1000；countIsLowerBound=true表示总数大于1000，sampleOldestCreatedAt仅为样本时间。
+- 完整契约与部署边界见docs/social/README.md、api.md及production-review-20261027.md。

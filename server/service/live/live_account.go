@@ -274,19 +274,30 @@ func (s *AccountService) ChangePassword(accountID uint, req liveReq.AccountPassw
 }
 
 func (s *AccountService) GetPublicProfile(accountNo string) (liveRes.AccountPublicProfileResp, error) {
+	return s.GetViewerPublicProfile(context.Background(), 0, accountNo)
+}
+func (s *AccountService) GetViewerPublicProfile(ctx context.Context, viewer uint64, accountNo string) (liveRes.AccountPublicProfileResp, error) {
 	var account liveModel.LiveAccount
-	err := global.GVA_DB.Select("account_no, nickname, avatar, signature, gender, country_code, status").
-		Where("account_no = ?", strings.ToUpper(strings.TrimSpace(accountNo))).First(&account).Error
+	err := global.GVA_DB.WithContext(ctx).Select("id").Where("account_no = ? AND status = ?", strings.ToUpper(strings.TrimSpace(accountNo)), liveModel.LiveAccountStatusNormal).First(&account).Error
 	if err != nil {
 		return liveRes.AccountPublicProfileResp{}, normalizeAccountLookupError(err)
 	}
-	if account.Status == liveModel.LiveAccountStatusCancelled {
+	profiles, err := (SocialDirectory{}).Profiles(ctx, global.GVA_DB, viewer, []uint64{uint64(account.ID)})
+	if err != nil {
+		return liveRes.AccountPublicProfileResp{}, err
+	}
+	profile, ok := profiles[uint64(account.ID)]
+	if !ok {
 		return liveRes.AccountPublicProfileResp{}, ErrAccountNotFound
 	}
+	return profile, nil
+}
+
+func toAccountPublicProfile(account liveModel.LiveAccount) liveRes.AccountPublicProfileResp {
 	return liveRes.AccountPublicProfileResp{
 		AccountNo: account.AccountNo, Nickname: account.Nickname, Avatar: account.Avatar,
 		Signature: account.Signature, Gender: account.Gender, CountryCode: account.CountryCode,
-	}, nil
+	}
 }
 
 func (s *AccountService) GetAdminList(req *liveReq.AccountAdminListReq) ([]liveRes.AccountAdminListItemResp, int64, error) {

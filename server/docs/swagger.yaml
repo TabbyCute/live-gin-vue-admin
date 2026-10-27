@@ -653,6 +653,8 @@ definitions:
         items:
           $ref: '#/definitions/config.Redis'
         type: array
+      social:
+        $ref: '#/definitions/config.Social'
       sqlite:
         $ref: '#/definitions/config.Sqlite'
       system:
@@ -661,6 +663,19 @@ definitions:
         $ref: '#/definitions/config.TencentCOS'
       zap:
         $ref: '#/definitions/config.Zap'
+    type: object
+  config.Social:
+    properties:
+      auto-subscribe:
+        type: boolean
+      history-retention-days:
+        type: integer
+      media-gateway-verified:
+        type: boolean
+      playback-base-url:
+        type: string
+      protected-playback-enabled:
+        type: boolean
     type: object
   config.SpecializedDB:
     properties:
@@ -769,7 +784,7 @@ definitions:
         description: 数据库类型:mysql(默认)|sqlite|sqlserver|postgresql
         type: string
       disable-auto-migrate:
-        description: 自动迁移数据库表结构，生产环境建议设为false，手动迁移
+        description: 是否禁用GORM自动迁移；本项目各环境保持false
         type: boolean
       iplimit-count:
         type: integer
@@ -955,6 +970,17 @@ definitions:
         type: string
       url:
         description: 文件地址
+        type: string
+    type: object
+  live.PlaybackAuthorization:
+    properties:
+      authorizationRequired:
+        type: boolean
+      expiresAt:
+        type: integer
+      playUrl:
+        type: string
+      sessionNo:
         type: string
     type: object
   model.Info:
@@ -1616,6 +1642,26 @@ definitions:
         description: 密码
         type: string
     type: object
+  request.CounterRepair:
+    properties:
+      accountNo:
+        example: "10000001"
+        maxLength: 32
+        type: string
+      anchorNo:
+        example: "100001"
+        maxLength: 32
+        type: string
+      confirm:
+        type: string
+      reason:
+        maxLength: 200
+        minLength: 4
+        type: string
+    required:
+    - confirm
+    - reason
+    type: object
   request.DataSource:
     properties:
       association:
@@ -1633,6 +1679,21 @@ definitions:
         type: string
     type: object
   request.Empty:
+    type: object
+  request.EventReplay:
+    properties:
+      confirm:
+        type: string
+      eventId:
+        type: string
+      reason:
+        maxLength: 200
+        minLength: 4
+        type: string
+    required:
+    - confirm
+    - eventId
+    - reason
     type: object
   request.ExaAttachmentCategorySearch:
     properties:
@@ -1710,6 +1771,73 @@ definitions:
         type: string
       username:
         type: string
+    type: object
+  request.HistoryOpen:
+    properties:
+      requestId:
+        example: watch-20261025-0001
+        maxLength: 64
+        minLength: 8
+        type: string
+      resourceId:
+        example: "100001"
+        maxLength: 64
+        type: string
+      resourceType:
+        allOf:
+        - $ref: '#/definitions/social.ResourceType'
+        enum:
+        - live_room
+        - live_replay
+        - short_video
+        example: live_room
+    required:
+    - requestId
+    - resourceId
+    - resourceType
+    type: object
+  request.HistoryReport:
+    properties:
+      checkpoint:
+        description: 'true: 成功响应意味着 MySQL 提交；false: 有界可丢失心跳。'
+        type: boolean
+      completed:
+        type: boolean
+      epoch:
+        maximum: 9007199254740991
+        type: integer
+      positionMs:
+        example: 10000
+        maximum: 604800000
+        minimum: 0
+        type: integer
+      resourceId:
+        example: "100001"
+        maxLength: 64
+        type: string
+      resourceType:
+        allOf:
+        - $ref: '#/definitions/social.ResourceType'
+        enum:
+        - live_room
+        - live_replay
+        - short_video
+        example: live_room
+      sequence:
+        example: 1
+        maximum: 9007199254740991
+        type: integer
+      sessionToken:
+        type: string
+      sessionVersion:
+        maximum: 9007199254740991
+        type: integer
+    required:
+    - resourceId
+    - resourceType
+    - sequence
+    - sessionToken
+    - sessionVersion
     type: object
   request.IdsReq:
     properties:
@@ -1998,6 +2126,28 @@ definitions:
     required:
     - sessionNo
     type: object
+  request.Mute:
+    properties:
+      accountNo:
+        example: "10000001"
+        maxLength: 32
+        type: string
+      anchorNo:
+        example: "100001"
+        maxLength: 32
+        type: string
+      scope:
+        allOf:
+        - $ref: '#/definitions/social.MuteScope'
+        enum:
+        - content
+        - live_notification
+        - recommendation
+        - direct_message
+        example: content
+    required:
+    - scope
+    type: object
   request.PageInfo:
     properties:
       keyword:
@@ -2009,6 +2159,35 @@ definitions:
       pageSize:
         description: 每页大小
         type: integer
+    type: object
+  request.Resource:
+    properties:
+      resourceId:
+        example: "100001"
+        maxLength: 64
+        type: string
+      resourceType:
+        allOf:
+        - $ref: '#/definitions/social.ResourceType'
+        enum:
+        - live_room
+        - live_replay
+        - short_video
+        example: live_room
+    required:
+    - resourceId
+    - resourceType
+    type: object
+  request.ResourceBatch:
+    properties:
+      resources:
+        items:
+          $ref: '#/definitions/request.Resource'
+        maxItems: 100
+        minItems: 1
+        type: array
+    required:
+    - resources
     type: object
   request.SRSHookReq:
     properties:
@@ -2121,6 +2300,28 @@ definitions:
       id:
         description: 主键ID
         type: integer
+    type: object
+  request.Target:
+    properties:
+      accountNo:
+        example: "10000001"
+        maxLength: 32
+        type: string
+      anchorNo:
+        example: "100001"
+        maxLength: 32
+        type: string
+    type: object
+  request.TargetBatch:
+    properties:
+      targets:
+        items:
+          $ref: '#/definitions/request.Target'
+        maxItems: 100
+        minItems: 1
+        type: array
+    required:
+    - targets
     type: object
   request.VersionInfo:
     properties:
@@ -2286,13 +2487,21 @@ definitions:
     properties:
       accountNo:
         type: string
+      anchorNo:
+        type: string
       avatar:
         type: string
       countryCode:
         type: string
       gender:
         type: integer
+      isLive:
+        type: boolean
       nickname:
+        type: string
+      roomNo:
+        type: string
+      sessionNo:
         type: string
       signature:
         type: string
@@ -2554,6 +2763,35 @@ definitions:
       totalViewCount:
         type: integer
     type: object
+  response.Change:
+    properties:
+      changed:
+        type: boolean
+    type: object
+  response.CounterAudit:
+    properties:
+      accountNo:
+        type: string
+      actualFans:
+        type: integer
+      actualFollowing:
+        type: integer
+      fansCount:
+        type: integer
+      followingCount:
+        type: integer
+      mismatch:
+        type: boolean
+    type: object
+  response.Counters:
+    properties:
+      accountNo:
+        type: string
+      fansCount:
+        type: integer
+      followingCount:
+        type: integer
+    type: object
   response.Email:
     properties:
       body:
@@ -2566,6 +2804,34 @@ definitions:
         description: 邮件发送给谁
         type: string
     type: object
+  response.Event:
+    properties:
+      attempts:
+        type: integer
+      createdAt:
+        type: integer
+      eventId:
+        type: string
+      eventType:
+        type: string
+      lastError:
+        type: string
+      nextAttemptAt:
+        type: integer
+      status:
+        $ref: '#/definitions/social.EventStatus'
+    type: object
+  response.EventList:
+    properties:
+      hasMore:
+        type: boolean
+      list:
+        items:
+          $ref: '#/definitions/response.Event'
+        type: array
+      nextCursor:
+        type: string
+    type: object
   response.ExaCustomerResponse:
     properties:
       customer:
@@ -2576,6 +2842,15 @@ definitions:
       file:
         $ref: '#/definitions/example.ExaFileUploadAndDownload'
     type: object
+  response.FavoriteStatus:
+    properties:
+      favorite:
+        type: boolean
+      resourceId:
+        type: string
+      resourceType:
+        $ref: '#/definitions/social.ResourceType'
+    type: object
   response.FilePathResponse:
     properties:
       filePath:
@@ -2585,6 +2860,48 @@ definitions:
     properties:
       file:
         $ref: '#/definitions/example.ExaFile'
+    type: object
+  response.HistoryUserItem:
+    properties:
+      accountNo:
+        type: string
+      anchorNo:
+        type: string
+      avatar:
+        type: string
+      countryCode:
+        type: string
+      createdAt:
+        type: integer
+      gender:
+        type: integer
+      isLive:
+        type: boolean
+      lastWatchedAt:
+        type: integer
+      nickname:
+        type: string
+      resourceId:
+        type: string
+      resourceType:
+        $ref: '#/definitions/social.ResourceType'
+      roomNo:
+        type: string
+      sessionNo:
+        type: string
+      signature:
+        type: string
+    type: object
+  response.HistoryUserList:
+    properties:
+      hasMore:
+        type: boolean
+      list:
+        items:
+          $ref: '#/definitions/response.HistoryUserItem'
+        type: array
+      nextCursor:
+        type: string
     type: object
   response.LiveCategoryAdminItem:
     properties:
@@ -2807,17 +3124,12 @@ definitions:
     type: object
   response.LiveRoomPublicItem:
     properties:
-      anchorAvatar:
-        description: AnchorAvatar 来源于 MySQL live_anchor.avatar，通过 live_room.anchor_id
-          关联主播。
-        type: string
-      anchorNickname:
-        description: AnchorNickname 来源于 MySQL live_anchor.nickname，通过 live_room.anchor_id
-          关联主播。
-        type: string
       anchorNo:
         description: AnchorNo 来源于 MySQL live_anchor.anchor_no，通过 live_room.anchor_id
           关联主播。
+        type: string
+      avatar:
+        description: Avatar 来源于 MySQL live_account.avatar，通过 live_anchor.user_id 关联账户。
         type: string
       categoryId:
         description: CategoryId 来源于 MySQL live_room.category_id，表示直播间当前分类，不是场次快照。
@@ -2835,6 +3147,10 @@ definitions:
       liveStatus:
         description: LiveStatus 来源于 MySQL live_room.live_status：0未开播、1准备中、2直播中、3结束中。
         type: integer
+      nickname:
+        description: Nickname 来源于 MySQL live_account.nickname，通过 live_anchor.user_id
+          关联账户。
+        type: string
       notice:
         description: Notice 来源于 MySQL live_room.notice；值为空时可能因 omitempty 不出现在 JSON
           中。
@@ -2885,6 +3201,10 @@ definitions:
       title:
         description: Title 来源于 live_room.title，是房间当前标题。
         type: string
+      userInfo:
+        allOf:
+        - $ref: '#/definitions/response.AccountPublicProfileResp'
+        description: UserInfo 来源于主播关联的 live_account，只包含允许公开的用户资料。
     type: object
   response.LiveRoomPublicListResp:
     properties:
@@ -3229,6 +3549,44 @@ definitions:
       isAnchor:
         type: boolean
     type: object
+  response.OnlineList:
+    properties:
+      hasMore:
+        type: boolean
+      list:
+        items:
+          $ref: '#/definitions/response.OnlineRoom'
+        type: array
+      nextCursor:
+        type: string
+    type: object
+  response.OnlineRoom:
+    properties:
+      accountNo:
+        type: string
+      anchorNo:
+        type: string
+      avatar:
+        type: string
+      countryCode:
+        type: string
+      coverUrl:
+        type: string
+      gender:
+        type: integer
+      isLive:
+        type: boolean
+      nickname:
+        type: string
+      roomNo:
+        type: string
+      sessionNo:
+        type: string
+      signature:
+        type: string
+      title:
+        type: string
+    type: object
   response.PageResult:
     properties:
       list: {}
@@ -3270,6 +3628,77 @@ definitions:
     properties:
       account:
         $ref: '#/definitions/response.Account'
+    type: object
+  response.Relationship:
+    properties:
+      accountNo:
+        type: string
+      anchorNo:
+        type: string
+      avatar:
+        type: string
+      blocked:
+        type: boolean
+      blockedByMe:
+        type: boolean
+      countryCode:
+        type: string
+      following:
+        type: boolean
+      followsYou:
+        type: boolean
+      gender:
+        type: integer
+      isLive:
+        type: boolean
+      mutedScopes:
+        items:
+          $ref: '#/definitions/social.MuteScope'
+        type: array
+      mutual:
+        type: boolean
+      nickname:
+        type: string
+      roomNo:
+        type: string
+      sessionNo:
+        type: string
+      signature:
+        type: string
+      subscribed:
+        type: boolean
+    type: object
+  response.ResourceItem:
+    properties:
+      completed:
+        type: boolean
+      coverUrl:
+        type: string
+      createdAt:
+        type: integer
+      durationMs:
+        type: integer
+      lastWatchedAt:
+        type: integer
+      positionMs:
+        type: integer
+      resourceId:
+        type: string
+      resourceType:
+        $ref: '#/definitions/social.ResourceType'
+      title:
+        type: string
+    type: object
+  response.ResourceList:
+    properties:
+      hasMore:
+        type: boolean
+      list:
+        items:
+          $ref: '#/definitions/response.ResourceItem'
+        type: array
+      nextCursor:
+        type: string
     type: object
   response.Response:
     properties:
@@ -3332,6 +3761,102 @@ definitions:
       user:
         $ref: '#/definitions/system.SysUser'
     type: object
+  response.UserItem:
+    properties:
+      accountNo:
+        type: string
+      anchorNo:
+        type: string
+      avatar:
+        type: string
+      countryCode:
+        type: string
+      createdAt:
+        type: integer
+      enabled:
+        type: boolean
+      gender:
+        type: integer
+      isLive:
+        type: boolean
+      nickname:
+        type: string
+      roomNo:
+        type: string
+      scope:
+        $ref: '#/definitions/social.MuteScope'
+      sessionNo:
+        type: string
+      signature:
+        type: string
+    type: object
+  response.UserList:
+    properties:
+      hasMore:
+        type: boolean
+      list:
+        items:
+          $ref: '#/definitions/response.UserItem'
+        type: array
+      nextCursor:
+        type: string
+    type: object
+  response.WatchAccepted:
+    properties:
+      accepted:
+        type: boolean
+      maxBufferAgeMs:
+        type: integer
+      persisted:
+        type: boolean
+    type: object
+  response.WatchSession:
+    properties:
+      completed:
+        type: boolean
+      epoch:
+        type: integer
+      positionMs:
+        type: integer
+      sessionToken:
+        type: string
+      sessionVersion:
+        type: integer
+    type: object
+  social.EventStatus:
+    enum:
+    - pending
+    - done
+    - failed
+    - skipped
+    type: string
+    x-enum-varnames:
+    - EventPending
+    - EventDone
+    - EventFailed
+    - EventSkipped
+  social.MuteScope:
+    enum:
+    - content
+    - live_notification
+    - recommendation
+    - direct_message
+    type: string
+    x-enum-varnames:
+    - MuteContent
+    - MuteLiveNotification
+    - MuteRecommendation
+    - MuteDirectMessage
+  social.ResourceType:
+    enum:
+    - live_room
+    - live_replay
+    - short_video
+    type: string
+    x-enum-varnames:
+    - ResourceLiveRoom
+    - ResourceLiveReplay
+    - ResourceShortVideo
   system.Condition:
     properties:
       ID:
@@ -9267,6 +9792,248 @@ paths:
       summary: 设置用户信息
       tags:
       - SysUser
+  /v1/admin/social/block/list:
+    get:
+      consumes:
+      - application/json
+      description: 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+      parameters:
+      - description: 用户公开编号，与anchorNo二选一
+        in: query
+        name: accountNo
+        type: string
+      - description: 主播公开编号
+        in: query
+        name: anchorNo
+        type: string
+      - description: 不透明游标
+        in: query
+        name: cursor
+        type: string
+      - description: 1至100，默认20
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.UserList'
+              type: object
+        "401":
+          description: 未登录或角色无权限
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 授权管理员审计指定用户黑名单
+      tags:
+      - SocialAdmin
+  /v1/admin/social/counter/check:
+    get:
+      consumes:
+      - application/json
+      description: 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+      parameters:
+      - description: 用户公开编号，与anchorNo二选一
+        in: query
+        name: accountNo
+        type: string
+      - description: 主播公开编号
+        in: query
+        name: anchorNo
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.CounterAudit'
+              type: object
+        "401":
+          description: 未登录或角色无权限
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 核对指定账号的关系事实与计数
+      tags:
+      - SocialAdmin
+  /v1/admin/social/counter/repair:
+    post:
+      consumes:
+      - application/json
+      description: 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+      parameters:
+      - description: 参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.CounterRepair'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.CounterAudit'
+              type: object
+        "401":
+          description: 未登录或角色无权限
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 持锁重算计数，需REPAIR确认及审计原因
+      tags:
+      - SocialAdmin
+  /v1/admin/social/event/list:
+    get:
+      consumes:
+      - application/json
+      description: 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+      parameters:
+      - description: 不透明游标
+        in: query
+        name: cursor
+        type: string
+      - description: 1至100，默认20
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.EventList'
+              type: object
+        "401":
+          description: 未登录或角色无权限
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 有界查询事件积压和失败记录
+      tags:
+      - SocialAdmin
+  /v1/admin/social/event/replay:
+    post:
+      consumes:
+      - application/json
+      description: 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+      parameters:
+      - description: 参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.EventReplay'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Change'
+              type: object
+        "401":
+          description: 未登录或角色无权限
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 重放失败事件，保留投递去重记录
+      tags:
+      - SocialAdmin
+  /v1/admin/social/health:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        每种状态最多统计1000条；countIsLowerBound=true表示总数大于1000，sampleOldestCreatedAt仅为样本最早毫秒时间，不是全局最早时间。
+        仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: 未登录或角色无权限
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 查询事件积压、投递渠道状态和实例指标
+      tags:
+      - SocialAdmin
+  /v1/admin/social/relationship/check:
+    get:
+      consumes:
+      - application/json
+      description: 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+      parameters:
+      - description: 不透明游标
+        in: query
+        name: cursor
+        type: string
+      - description: 1至100，默认20
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.UserList'
+              type: object
+        "401":
+          description: 未登录或角色无权限
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 扫描拉黑与关注并存的异常关系
+      tags:
+      - SocialAdmin
   /v1/app/live/anchor/apply:
     post:
       consumes:
@@ -9557,7 +10324,8 @@ paths:
       - LiveHook
   /v1/app/live/room/detail:
     get:
-      description: 未开播也可以查询；只返回房间正常、公开且主播审核通过并状态正常的房间，不暴露内部主键和服务端控制字段。latestSession
+      description: 未开播也可以查询；只返回当前观众有权访问、关联用户与主播状态正常且主播审核通过的房间。userInfo 只包含用户公开资料，userInfo.accountNo
+        可作为社交接口目标；当前登录用户的关注、拉黑、屏蔽和订阅状态仍通过 /v1/app/social/follow/status 查询。详情不暴露内部主键、手机号、认证信息和服务端控制字段。latestSession
         在有活动场次时返回当前场次，否则返回最近一次已结束直播；从未完成过直播时返回空对象 {}。
       parameters:
       - description: 直播间对外编号
@@ -9602,6 +10370,7 @@ paths:
       - LiveRoomApp
   /v1/app/live/room/list:
     get:
+      description: nickname、avatar 返回主播关联账户的最新昵称和头像，与直播间详情的 userInfo 一致。
       parameters:
       - description: 页码
         in: query
@@ -9632,6 +10401,60 @@ paths:
       summary: 分页获取公开直播列表
       tags:
       - LiveRoomApp
+  /v1/app/live/room/playback:
+    get:
+      description: 复用直播间权限入口。每个媒体请求必须同时携带APP Authorization和X-Playback-Token；只开放已验证网关的HLS，FLV/WebRTC受保护播放未开放。expiresAt为毫秒。
+      parameters:
+      - description: 直播间公开编号，例如100001
+        in: query
+        name: roomNo
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/live.PlaybackAuthorization'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 为当前已登录观众签发30秒HLS播放凭证
+      tags:
+      - LiveRoomApp
+  /v1/app/live/room/playback/check:
+    get:
+      description: Nginx auth_request 专用HTTP状态契约：204允许，403拒绝。APP JWT仍须通过；复制URL不能代替Bearer。X-Media-Path必须是规范化媒体路径且仅支持HLS。
+      parameters:
+      - description: 30秒播放凭证
+        in: header
+        name: X-Playback-Token
+        required: true
+        type: string
+      - description: 例如/tb_live/stream_name.m3u8
+        in: header
+        name: X-Media-Path
+        required: true
+        type: string
+      responses:
+        "204":
+          description: 允许媒体代理读取当前资源
+        "403":
+          description: 拒绝或依赖不可用
+      security:
+      - AppBearerAuth: []
+      summary: 媒体网关逐请求鉴权适配（不返回业务JSON）
+      tags:
+      - LiveMediaGateway
   /v1/app/live/room/save:
     post:
       consumes:
@@ -9917,6 +10740,7 @@ paths:
       - LiveAccount
   /v1/app/live/user/public-profile:
     get:
+      description: 复用UserPublicProfile；isLive表示当前用户可访问的有效直播，为false时省略roomNo和sessionNo。不含内部ID、手机号、实名等私密字段。
       parameters:
       - description: 对外账号编号
         in: query
@@ -9992,6 +10816,1102 @@ paths:
       summary: 注册短信占位接口
       tags:
       - LiveAccount
+  /v1/app/social/block:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Target'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Change'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 拉黑并原子解除双向关注
+      tags:
+      - SocialApp
+  /v1/app/social/block/batch-status:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.TargetBatch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/response.Relationship'
+                  type: array
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 批量查询本人关系（最多100个目标，自动去重）
+      tags:
+      - SocialApp
+  /v1/app/social/block/list:
+    get:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 上页nextCursor
+        in: query
+        name: cursor
+        type: string
+      - description: 1至100，默认20
+        in: query
+        name: limit
+        type: integer
+      - description: 资源类型过滤（仅收藏、历史列表使用）
+        in: query
+        name: resourceType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.UserList'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 查询本人黑名单游标列表
+      tags:
+      - SocialApp
+  /v1/app/social/favorite:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Resource'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Change'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 收藏或取消收藏公开编号指定的可访问资源
+      tags:
+      - SocialApp
+  /v1/app/social/favorite/batch-status:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ResourceBatch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/response.FavoriteStatus'
+                  type: array
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 批量查询本人收藏状态；不可见资源返回false
+      tags:
+      - SocialApp
+  /v1/app/social/follow:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Target'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Change'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 关注用户或主播
+      tags:
+      - SocialApp
+  /v1/app/social/follow/batch-status:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.TargetBatch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/response.Relationship'
+                  type: array
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 批量查询本人关系（最多100个目标，自动去重）
+      tags:
+      - SocialApp
+  /v1/app/social/follow/common:
+    get:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 用户公开编号（与anchorNo二选一）
+        in: query
+        name: accountNo
+        type: string
+      - description: 主播公开编号
+        in: query
+        name: anchorNo
+        type: string
+      - description: 上页nextCursor
+        in: query
+        name: cursor
+        type: string
+      - description: 1至100，默认20
+        in: query
+        name: limit
+        type: integer
+      - description: 资源类型过滤（仅收藏、历史列表使用）
+        in: query
+        name: resourceType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.UserList'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 查询本人和指定用户共同关注
+      tags:
+      - SocialApp
+  /v1/app/social/follow/counters:
+    get:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 用户公开编号（与anchorNo二选一）
+        in: query
+        name: accountNo
+        type: string
+      - description: 主播公开编号
+        in: query
+        name: anchorNo
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Counters'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 查询现存关系总计数（包含列表中被隐藏的不可用账号）
+      tags:
+      - SocialApp
+  /v1/app/social/follow/mutual:
+    get:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 上页nextCursor
+        in: query
+        name: cursor
+        type: string
+      - description: 1至100，默认20
+        in: query
+        name: limit
+        type: integer
+      - description: 资源类型过滤（仅收藏、历史列表使用）
+        in: query
+        name: resourceType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.UserList'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 查询本人互相关注游标列表
+      tags:
+      - SocialApp
+  /v1/app/social/follow/status:
+    get:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 用户公开编号（与anchorNo二选一）
+        in: query
+        name: accountNo
+        type: string
+      - description: 主播公开编号
+        in: query
+        name: anchorNo
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/response.Relationship'
+                  type: array
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 查询本人和目标的关注、拉黑、屏蔽及提醒状态
+      tags:
+      - SocialApp
+  /v1/app/social/followers/list:
+    get:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 上页nextCursor
+        in: query
+        name: cursor
+        type: string
+      - description: 1至100，默认20
+        in: query
+        name: limit
+        type: integer
+      - description: 资源类型过滤（仅收藏、历史列表使用）
+        in: query
+        name: resourceType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.UserList'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 查询本人粉丝游标列表
+      tags:
+      - SocialApp
+  /v1/app/social/following/list:
+    get:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 上页nextCursor
+        in: query
+        name: cursor
+        type: string
+      - description: 1至100，默认20
+        in: query
+        name: limit
+        type: integer
+      - description: 资源类型过滤（仅收藏、历史列表使用）
+        in: query
+        name: resourceType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.UserList'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 查询本人关注游标列表
+      tags:
+      - SocialApp
+  /v1/app/social/history/clear:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 清空本人观看历史并撤销旧缓冲代际
+      tags:
+      - SocialApp
+  /v1/app/social/history/delete:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Resource'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 删除本人的指定观看记录，旧缓冲不能重建
+      tags:
+      - SocialApp
+  /v1/app/social/history/list:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        列表项复用用户公开资料，isLive 仅表示当前观众可访问的有效直播。resourceId 保留用于删除观看记录。
+        身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 上页nextCursor
+        in: query
+        name: cursor
+        type: string
+      - description: 1至100，默认20
+        in: query
+        name: limit
+        type: integer
+      - description: 默认live_room，目前仅支持live_room
+        in: query
+        name: resourceType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.HistoryUserList'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 查询本人最近观看的用户公开资料及当前直播状态
+      tags:
+      - SocialApp
+  /v1/app/social/history/open:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.HistoryOpen'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.WatchSession'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 开启观看会话，服务端版本确定多设备写入权
+      tags:
+      - SocialApp
+  /v1/app/social/history/progress/batch:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ResourceBatch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ResourceList'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 批量获取本人已持久化观看进度
+      tags:
+      - SocialApp
+  /v1/app/social/history/report:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.HistoryReport'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.WatchAccepted'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 上报心跳或严格持久化checkpoint；seq递增，毫秒进度允许回退
+      tags:
+      - SocialApp
+  /v1/app/social/live/following-online:
+    get:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 上页nextCursor
+        in: query
+        name: cursor
+        type: string
+      - description: 1至100，默认20
+        in: query
+        name: limit
+        type: integer
+      - description: 资源类型过滤（仅收藏、历史列表使用）
+        in: query
+        name: resourceType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.OnlineList'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 游标扫描本人关注中正在直播且有权访问的主播
+      tags:
+      - SocialApp
+  /v1/app/social/live/subscribe:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Target'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Change'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 开启主播开播提醒
+      tags:
+      - SocialApp
+  /v1/app/social/live/subscription/batch-status:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.TargetBatch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/response.Relationship'
+                  type: array
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 批量查询本人关系（最多100个目标，自动去重）
+      tags:
+      - SocialApp
+  /v1/app/social/live/subscription/list:
+    get:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 上页nextCursor
+        in: query
+        name: cursor
+        type: string
+      - description: 1至100，默认20
+        in: query
+        name: limit
+        type: integer
+      - description: 资源类型过滤（仅收藏、历史列表使用）
+        in: query
+        name: resourceType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.UserList'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 查询本人提醒订阅游标列表
+      tags:
+      - SocialApp
+  /v1/app/social/live/unsubscribe:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Target'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Change'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 关闭主播开播提醒
+      tags:
+      - SocialApp
+  /v1/app/social/mute:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Mute'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Change'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 设置或取消指定范围屏蔽；不改变关注关系
+      tags:
+      - SocialApp
+  /v1/app/social/mute/batch-status:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.TargetBatch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/response.Relationship'
+                  type: array
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 批量查询本人关系（最多100个目标，自动去重）
+      tags:
+      - SocialApp
+  /v1/app/social/mute/list:
+    get:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 上页nextCursor
+        in: query
+        name: cursor
+        type: string
+      - description: 1至100，默认20
+        in: query
+        name: limit
+        type: integer
+      - description: 资源类型过滤（仅收藏、历史列表使用）
+        in: query
+        name: resourceType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.UserList'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 查询本人屏蔽游标列表
+      tags:
+      - SocialApp
+  /v1/app/social/unblock:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Target'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Change'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 取消拉黑，不恢复关注
+      tags:
+      - SocialApp
+  /v1/app/social/unfavorite:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Resource'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Change'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 收藏或取消收藏公开编号指定的可访问资源
+      tags:
+      - SocialApp
+  /v1/app/social/unfollow:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Target'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Change'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 取消关注并关闭提醒
+      tags:
+      - SocialApp
+  /v1/app/social/unmute:
+    post:
+      consumes:
+      - application/json
+      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      parameters:
+      - description: 请求参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Mute'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Change'
+              type: object
+        "401":
+          description: 未登录或JWT已撤销
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 设置或取消指定范围屏蔽；不改变关注关系
+      tags:
+      - SocialApp
 securityDefinitions:
   ApiKeyAuth:
     in: header

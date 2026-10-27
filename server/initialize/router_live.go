@@ -10,6 +10,7 @@ const MODULE_LIVE = "/app/live"
 
 func registerLiveRoutes(publicRoot *gin.RouterGroup) {
 	registerLiveRoutesV1(publicRoot)
+	router.RouterGroupApp.Social.InitSocialRouter(publicRoot.Group("/v1/app"))
 }
 
 func registerLiveRoutesV1(publicRoot *gin.RouterGroup) {

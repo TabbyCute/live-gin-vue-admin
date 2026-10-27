@@ -39,7 +39,7 @@ func Gorm() *gorm.DB {
 func RegisterTables() {
 	if global.GVA_CONFIG.System.DisableAutoMigrate {
 		global.GVA_LOG.Info("auto-migrate is disabled, skipping table registration")
-		// 菜单和接口元数据不属于表结构迁移。生产环境执行SQL迁移后，
+		// 菜单和接口元数据不属于表结构迁移。即使外部明确关闭自动迁移，
 		// 仍需同步这些数据，确保新后台功能可见且可分配权限。
 		if err := syncLiveAccountAdminMetadata(global.GVA_DB); err != nil {
 			global.GVA_LOG.Error("sync live account admin metadata failed", zap.Error(err))
@@ -94,6 +94,10 @@ func RegisterTables() {
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = autoMigrateSocial(db); err != nil {
+		global.GVA_LOG.Error("auto-migrate social tables failed", zap.Error(err))
 		os.Exit(1)
 	}
 	if err = ensureLiveAccountPerformanceIndexes(db); err != nil {

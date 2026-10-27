@@ -1,7 +1,9 @@
 package core
 
 import (
+	"context"
 	"fmt"
+	socialService "tb_live_module/service/social"
 	"time"
 
 	"tb_live_module/global"
@@ -20,6 +22,19 @@ func RunServer() {
 
 	if global.GVA_DB != nil {
 		system.LoadAll()
+	}
+	if socialService.Default.DB != nil && socialService.Default.Redis != nil {
+		ctx, cancel := context.WithCancel(context.Background())
+		done := make(chan struct{})
+		go func() { defer close(done); socialService.Default.Run(ctx) }()
+		defer func() {
+			cancel()
+			select {
+			case <-done:
+			case <-time.After(5 * time.Second):
+				zap.L().Warn("social worker shutdown timed out")
+			}
+		}()
 	}
 	Router := initialize.Routers()
 	address := fmt.Sprintf(":%d", global.GVA_CONFIG.System.Addr)

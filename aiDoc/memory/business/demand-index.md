@@ -2,6 +2,8 @@
 
 ## Active
 
+- [社交关系模块](active/social-relationship.md)：统一公开用户资料与直播状态、用户历史列表及生产性能审查（2026-10-27）。
+
 - [仓库许可证迁移到 BSL 1.1](active/license-migrate-to-bsl.md)
 - [管理后台品牌配置化](active/frontend-branding-customization.md)
 

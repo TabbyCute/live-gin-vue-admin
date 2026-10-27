@@ -11,6 +11,9 @@ type RoomRouter struct{}
 func (r *RoomRouter) InitRoomRouter(publicGroup, privateGroup *gin.RouterGroup) {
 	public := publicGroup.Group("room")
 	private := privateGroup.Group("room").Use(middleware.JWTAppAuth())
+	public.Use(middleware.OptionalJWTAppAuth())
+	private.GET("playback", roomApi.Playback)
+	private.GET("playback/check", roomApi.PlaybackCheck)
 	{
 		public.GET("detail", roomApi.PublicDetail) // [不鉴权] 按房间号获取公开直播间。返回：直播间信息 + 场次号；
 		public.GET("list", roomApi.PublicList)     // [不鉴权] 分页获取公开直播列表。

@@ -112,8 +112,9 @@ func Routers() *gin.Engine {
 	// Router.Use(middleware.LoadTls())  // 如果需要使用https 请打开此中间件 然后前往 core/server.go 将启动模式 更变为 Router.RunTLS("端口","你的cre/pem文件","你的key文件")
 
 	//swagger
-	docs.SwaggerInfo.BasePath = global.GVA_CONFIG.System.RouterPrefix + adminV1RoutePrefix
-	Router.GET(global.GVA_CONFIG.System.RouterPrefix+"/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	docs.SwaggerInfo.BasePath = global.GVA_CONFIG.System.RouterPrefix
+	registerProjectSwagger()
+	Router.GET(global.GVA_CONFIG.System.RouterPrefix+"/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.InstanceName(projectSwaggerInstance)))
 	global.GVA_LOG.Info("register swagger handler")
 
 	//App主要是为了提供前缀。
