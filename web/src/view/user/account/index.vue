@@ -68,7 +68,7 @@
     <div class="gva-table-box">
       <div class="gva-btn-list account-toolbar">
         <el-button :loading="loading" @click="loadData">刷新</el-button>
-        <span>手机号仅脱敏展示；完整号码只支持精确查询。</span>
+        <span>本页显示完整绑定手机号和当前可用余额，请仅用于必要的后台业务处理。</span>
       </div>
       <el-table v-loading="loading" :data="tableData" stripe row-key="id">
         <el-table-column label="用户" min-width="230">
@@ -85,8 +85,15 @@
         </el-table-column>
         <el-table-column label="手机号" min-width="145">
           <template #default="scope">
-            <span>{{ scope.row.phoneMasked || '未绑定' }}</span>
+            <span>{{ scope.row.phone || '未绑定' }}</span>
             <el-tag v-if="scope.row.phoneVerified" class="inline-tag" size="small" type="success">已验证</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="当前余额" min-width="145">
+          <template #default="scope">
+            <div class="balance-cell"><strong>{{ formatWalletAmount(scope.row.walletAvailableBalance || '0') }}</strong><span>COIN</span></div>
+            <el-tag v-if="!scope.row.walletOpened" size="small" type="info" effect="plain">未开户</el-tag>
+            <el-tag v-else-if="scope.row.walletStatus === 'disabled'" size="small" type="danger" effect="plain">钱包停用</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="账号状态" width="105">
@@ -111,11 +118,14 @@
         <el-table-column label="注册时间" width="175">
           <template #default="scope">{{ formatDateTime(scope.row.createdAt) }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="320" fixed="right">
+        <el-table-column label="操作" width="500" fixed="right">
           <template #default="scope">
             <el-button link type="primary" @click="openDetail(scope.row)">详情</el-button>
             <el-button link type="primary" @click="openProfile(scope.row)">编辑资料</el-button>
             <el-button link :type="scope.row.status === 1 ? 'danger' : 'warning'" @click="openStatus(scope.row)">状态</el-button>
+            <el-button link type="primary" @click="goWallet(scope.row, 'walletAccount')">钱包账户</el-button>
+            <el-button link type="primary" @click="goWallet(scope.row, 'walletLedger')">余额流水</el-button>
+            <el-button link type="primary" @click="goWallet(scope.row, 'walletRecharge')">充值单</el-button>
             <el-dropdown trigger="click" @command="(command) => handleCommand(command, scope.row)">
               <el-button link type="primary">更多<el-icon class="el-icon--right"><arrow-down /></el-icon></el-button>
               <template #dropdown>
@@ -214,7 +224,8 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onActivated, onDeactivated, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { formatDate } from '@/utils/format'
 import {
@@ -224,6 +235,10 @@ import {
   updateLiveAccountProfile,
   updateLiveAccountStatus
 } from '@/api/live-account'
+import { formatWalletAmount } from '@/view/wallet/shared'
+import { createRequestScope } from '@/view/wallet/requestScope'
+
+const router = useRouter()
 
 const statusMap = {
   1: { label: '正常', type: 'success' }, 2: { label: '禁用', type: 'warning' },
@@ -276,6 +291,7 @@ const pageMetrics = computed(() => ({
 const firstChar = (value) => value?.trim()?.slice(0, 1) || '用'
 const formatDateTime = (value) => value ? (formatDate(value) || '-') : '-'
 const formatTimestamp = (value, empty = '-') => Number(value) > 0 ? formatDateTime(Number(value)) : empty
+const goWallet = (row, name) => router.push({ name, query: { accountNo: row.accountNo } })
 
 const buildParams = () => {
   const params = { page: page.value, pageSize: pageSize.value }
@@ -285,18 +301,25 @@ const buildParams = () => {
   return params
 }
 
+const listRequests = createRequestScope()
+let needsRefresh = false
 const loadData = async () => {
+  const current = listRequests.begin()
+  const params = buildParams()
   loading.value = true
   try {
-    const res = await getLiveAccountList(buildParams())
-    if (res.code === 0) {
+    const res = await getLiveAccountList(params)
+    if (current() && res.code === 0) {
       tableData.value = res.data.list || []
       total.value = Number(res.data.total || 0)
       page.value = Number(res.data.page || page.value)
       pageSize.value = Number(res.data.pageSize || pageSize.value)
     }
-  } finally { loading.value = false }
+  } finally { if (current()) loading.value = false }
 }
+onDeactivated(() => { listRequests.invalidate(); loading.value = false; needsRefresh = true })
+onBeforeUnmount(() => listRequests.invalidate())
+onActivated(() => { if (needsRefresh) { needsRefresh = false; loadData() } })
 const onSubmit = () => { page.value = 1; loadData() }
 const onReset = () => { Object.assign(searchInfo, defaultSearch()); page.value = 1; loadData() }
 const handleSizeChange = () => { page.value = 1; loadData() }
@@ -379,6 +402,9 @@ onMounted(loadData)
   .user-copy { display: flex; flex-direction: column; min-width: 0; }
   .user-copy span, .muted-text, .detail-head p { color: var(--el-text-color-secondary); font-size: 12px; }
   .inline-tag { margin-left: 6px; }
+  .balance-cell { display: flex; align-items: baseline; gap: 5px; }
+  .balance-cell strong { color: var(--el-color-success); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .balance-cell span { color: var(--el-text-color-secondary); font-size: 11px; }
   .detail-head { margin-bottom: 20px; }
   .detail-head h3, .detail-head p { margin: 0; }
   .detail-head p { margin-top: 5px; }

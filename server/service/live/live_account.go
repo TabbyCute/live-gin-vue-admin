@@ -17,6 +17,7 @@ import (
 	liveModel "tb_live_module/model/live"
 	liveReq "tb_live_module/model/live/request"
 	liveRes "tb_live_module/model/live/response"
+	walletModel "tb_live_module/model/wallet"
 	"tb_live_module/utils"
 
 	"golang.org/x/crypto/bcrypt"
@@ -346,8 +347,29 @@ func (s *AccountService) GetAdminList(req *liveReq.AccountAdminListReq) ([]liveR
 		return nil, 0, err
 	}
 	list := make([]liveRes.AccountAdminListItemResp, 0, len(accounts))
+	wallets := make(map[uint64]walletModel.WalletAccount, len(accounts))
+	if len(accounts) > 0 {
+		ids := make([]uint64, 0, len(accounts))
+		for i := range accounts {
+			ids = append(ids, uint64(accounts[i].ID))
+		}
+		var rows []walletModel.WalletAccount
+		if err = global.GVA_DB.Select("account_id", "available_balance", "status").
+			Where("currency_code = ? AND account_id IN ?", walletModel.CurrencyCOIN, ids).Find(&rows).Error; err != nil {
+			return nil, 0, err
+		}
+		for _, row := range rows {
+			wallets[row.AccountID] = row
+		}
+	}
 	for i := range accounts {
-		list = append(list, toAccountAdminListItem(accounts[i]))
+		item := toAccountAdminListItem(accounts[i])
+		if wallet, ok := wallets[uint64(accounts[i].ID)]; ok {
+			item.WalletAvailableBalance = strconv.FormatInt(wallet.AvailableBalance, 10)
+			item.WalletStatus = wallet.Status
+			item.WalletOpened = true
+		}
+		list = append(list, item)
 	}
 	return list, total, nil
 }
@@ -578,12 +600,18 @@ func MaskAccountPhone(phone *string) string { return maskPhone(phone) }
 func FormatAccountBirthday(value *time.Time) string { return formatBirthday(value) }
 
 func toAccountAdminListItem(account liveModel.LiveAccount) liveRes.AccountAdminListItemResp {
+	phone := ""
+	if account.Phone != nil {
+		phone = *account.Phone
+	}
 	return liveRes.AccountAdminListItemResp{
 		ID: account.ID, AccountNo: account.AccountNo, Username: account.Username,
+		Phone:       phone,
 		PhoneMasked: maskPhone(account.Phone), PhoneVerified: account.Phone != nil && account.PhoneVerifiedAt > 0,
 		Nickname: account.Nickname, Avatar: account.Avatar, Status: account.Status, BanUntil: account.BanUntil,
 		RealNameStatus: account.RealNameStatus, RegisterSource: account.RegisterSource,
-		RegisterChannelID: account.RegisterChannelID, LastLoginAt: account.LastLoginAt, CreatedAt: account.CreatedAt,
+		RegisterChannelID: account.RegisterChannelID, WalletAvailableBalance: "0",
+		LastLoginAt: account.LastLoginAt, CreatedAt: account.CreatedAt,
 	}
 }
 

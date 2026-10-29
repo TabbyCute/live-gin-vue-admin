@@ -88,7 +88,7 @@ func TestOperationRecordDoesNotDrainUnreadLargeRequest(t *testing.T) {
 func TestOperationRecordRedactsSensitiveJSONWithoutChangingHandlerBody(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	db := setupOperationRecordTest(t)
-	requestBody := `{"accountId":7,"phone":"+60123456789","smsCode":"012345","nested":{"newPassword":"secret123","super-code":"654321"}}`
+	requestBody := `{"accountId":7,"phone":"+60123456789","smsCode":"012345","evidenceRef":"private-proof","externalOrderNo":"BANK-PRIVATE-001","nested":{"newPassword":"secret123","super-code":"654321","requestHash":"private-digest"}}`
 	var handlerBody string
 	router := gin.New()
 	router.Use(OperationRecord())
@@ -96,7 +96,7 @@ func TestOperationRecordRedactsSensitiveJSONWithoutChangingHandlerBody(t *testin
 		body, err := io.ReadAll(c.Request.Body)
 		require.NoError(t, err)
 		handlerBody = string(body)
-		c.JSON(http.StatusOK, gin.H{"phone": "+60123456789", "result": "ok"})
+		c.JSON(http.StatusOK, gin.H{"phone": "+60123456789", "result": "ok", "data": gin.H{"evidenceRef": "private-proof", "externalOrderNo": "BANK-PRIVATE-001"}})
 	})
 
 	recorder := httptest.NewRecorder()
@@ -112,6 +112,10 @@ func TestOperationRecordRedactsSensitiveJSONWithoutChangingHandlerBody(t *testin
 	require.NotContains(t, record.Body, "012345")
 	require.NotContains(t, record.Body, "654321")
 	require.NotContains(t, record.Resp, "+60123456789")
+	for _, value := range []string{"private-proof", "BANK-PRIVATE-001", "private-digest"} {
+		require.NotContains(t, record.Body, value)
+		require.NotContains(t, record.Resp, value)
+	}
 	require.Contains(t, record.Body, operationRecordRedacted)
 }
 

@@ -62,6 +62,7 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "systemTools", Name: "systemTools", Component: "view/systemTools/index.vue", Sort: 5, Meta: Meta{Title: "编程辅助", Icon: "tools"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "liveManagement", Name: "liveManagement", Component: "view/routerHolder.vue", Sort: 4, Meta: Meta{Title: "直播管理", Icon: "video-camera"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "appUserManagement", Name: "appUserManagement", Component: "view/routerHolder.vue", Sort: 4, Meta: Meta{Title: "用户管理", Icon: "user-filled"}},
+		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "walletManagement", Name: "walletManagement", Component: "view/routerHolder.vue", Sort: 5, Meta: Meta{Title: "钱包管理", Icon: "wallet"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "state", Name: "state", Component: "view/system/state.vue", Sort: 8, Meta: Meta{Title: "服务器状态", Icon: "cloudy"}},
 		{MenuLevel: 0, Hidden: false, ParentId: 0, Path: "plugin", Name: "plugin", Component: "view/routerHolder.vue", Sort: 6, Meta: Meta{Title: "插件系统", Icon: "cherry"}},
 	}
@@ -100,6 +101,12 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 
 		// appUserManagement 子菜单
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["appUserManagement"], Path: "account", Name: "liveAccount", Component: "view/user/account/index.vue", Sort: 1, Meta: Meta{Title: "用户列表", Icon: "user", KeepAlive: true}},
+
+		// walletManagement 子菜单
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["walletManagement"], Path: "introduction", Name: "walletIntroduction", Component: "view/wallet/introduction/index.vue", Sort: 0, Meta: Meta{Title: "钱包介绍", Icon: "reading", KeepAlive: true}},
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["walletManagement"], Path: "account", Name: "walletAccount", Component: "view/wallet/account/index.vue", Sort: 2, Meta: Meta{Title: "钱包账户", Icon: "credit-card", KeepAlive: true}},
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["walletManagement"], Path: "ledger", Name: "walletLedger", Component: "view/wallet/ledger/index.vue", Sort: 3, Meta: Meta{Title: "余额流水", Icon: "tickets", KeepAlive: true}},
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["walletManagement"], Path: "recharge", Name: "walletRecharge", Component: "view/wallet/recharge/index.vue", Sort: 4, Meta: Meta{Title: "人工充值单", Icon: "coin", KeepAlive: true}},
 
 		// example子菜单
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["example"], Path: "upload", Name: "upload", Component: "view/example/upload/upload.vue", Sort: 5, Meta: Meta{Title: "媒体库（上传下载）", Icon: "upload"}},

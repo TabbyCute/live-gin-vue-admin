@@ -13,6 +13,7 @@ import (
 	commonReq "tb_live_module/model/common/request"
 	liveModel "tb_live_module/model/live"
 	liveReq "tb_live_module/model/live/request"
+	walletModel "tb_live_module/model/wallet"
 
 	"github.com/glebarez/sqlite"
 	"github.com/stretchr/testify/require"
@@ -23,7 +24,7 @@ func setupAccountTestDB(t *testing.T) {
 	t.Helper()
 	db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 	require.NoError(t, err)
-	require.NoError(t, db.AutoMigrate(&liveModel.LiveAccount{}, &liveModel.LiveAccountNumberSequence{}, &liveModel.LiveAnchor{}))
+	require.NoError(t, db.AutoMigrate(&liveModel.LiveAccount{}, &liveModel.LiveAccountNumberSequence{}, &liveModel.LiveAnchor{}, &walletModel.WalletAccount{}))
 	previousDB := global.GVA_DB
 	previousCode := global.LiveAccountSuperCode()
 	global.GVA_DB = db
@@ -156,8 +157,16 @@ func TestAccountProfilePasswordAndAdminSecurityActions(t *testing.T) {
 	require.NoError(t, err)
 	require.EqualValues(t, 1, total)
 	require.Len(t, list, 1)
-	require.NotEqual(t, phone, list[0].PhoneMasked)
+	require.Equal(t, phone, list[0].Phone)
 	require.Contains(t, list[0].PhoneMasked, "****")
+	require.Equal(t, "0", list[0].WalletAvailableBalance)
+	require.False(t, list[0].WalletOpened)
+	require.NoError(t, global.GVA_DB.Create(&walletModel.WalletAccount{AccountID: uint64(account.ID), CurrencyCode: walletModel.CurrencyCOIN, AvailableBalance: 123456, Status: walletModel.AccountNormal}).Error)
+	list, _, err = service.GetAdminList(&liveReq.AccountAdminListReq{PageInfo: commonPage(1, 20), AccountNo: account.AccountNo})
+	require.NoError(t, err)
+	require.Equal(t, "123456", list[0].WalletAvailableBalance)
+	require.Equal(t, walletModel.AccountNormal, list[0].WalletStatus)
+	require.True(t, list[0].WalletOpened)
 
 	banUntil := time.Now().Add(time.Hour).UnixMilli()
 	status := liveModel.LiveAccountStatusBanned

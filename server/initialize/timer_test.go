@@ -37,10 +37,11 @@ func TestTimerImmediatelyProcessesPendingLiveSessions(t *testing.T) {
 	previousDB, previousLive, previousTimer := global.GVA_DB, global.GVA_CONFIG.Live, global.GVA_Timer
 	testTimer := timerutil.NewTimerTask()
 	global.GVA_DB = db
-	global.GVA_CONFIG.Live = config.Live{EndScanIntervalSeconds: 3600, EndScanBatchSize: 100}
+	global.GVA_CONFIG.Live = config.Live{EndScanIntervalSeconds: 3600, EndScanBatchSize: 100, StreamReadyScanIntervalSeconds: 3600, StreamReconcileIntervalSeconds: 3600}
 	global.GVA_Timer = testTimer
 	t.Cleanup(func() {
 		testTimer.Close()
+		liveStartupTasks.Wait()
 		global.GVA_DB, global.GVA_CONFIG.Live, global.GVA_Timer = previousDB, previousLive, previousTimer
 		require.NoError(t, sqlDB.Close())
 	})

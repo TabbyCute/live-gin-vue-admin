@@ -184,7 +184,8 @@ func isSensitiveOperationRecordKey(key string) bool {
 	normalized := strings.NewReplacer("_", "", "-", "").Replace(strings.ToLower(key))
 	switch normalized {
 	case "password", "oldpassword", "newpassword", "confirmpassword", "phone", "legalname", "documentno",
-		"token", "accesstoken", "refreshtoken", "authorization", "secret", "privatekey", "smscode", "supercode":
+		"token", "accesstoken", "refreshtoken", "authorization", "secret", "privatekey", "smscode", "supercode",
+		"evidenceref", "externalorderno", "requesthash":
 		return true
 	default:
 		return false

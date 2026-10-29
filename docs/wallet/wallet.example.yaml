@@ -1,0 +1,11 @@
+# 合并到实际运行的配置文件；无需配置也采用以下默认值。
+# 生产限额应按运营规则审核后调整，所有实例保持一致并重启。
+wallet:
+  max-grant-amount: 1000000
+  account-daily-limit: 10000000
+  operator-daily-limit: 10000000
+  # 仅兼容旧配置，不再控制必填：所有人工充值均须资金凭证。
+  evidence-threshold: 100000
+  read-authorities: [888]
+  create-authorities: [888]
+  review-authorities: [888]

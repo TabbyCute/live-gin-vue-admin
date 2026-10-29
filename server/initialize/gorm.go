@@ -38,6 +38,10 @@ func Gorm() *gorm.DB {
 
 func RegisterTables() {
 	if global.GVA_CONFIG.System.DisableAutoMigrate {
+		if err := syncWalletMetadata(global.GVA_DB); err != nil {
+			global.GVA_LOG.Error("sync wallet metadata failed", zap.Error(err))
+			os.Exit(1)
+		}
 		global.GVA_LOG.Info("auto-migrate is disabled, skipping table registration")
 		// 菜单和接口元数据不属于表结构迁移。即使外部明确关闭自动迁移，
 		// 仍需同步这些数据，确保新后台功能可见且可分配权限。
@@ -94,6 +98,14 @@ func RegisterTables() {
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = MigrateWallet(db); err != nil {
+		global.GVA_LOG.Error("migrate wallet failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = syncWalletMetadata(db); err != nil {
+		global.GVA_LOG.Error("sync wallet metadata failed", zap.Error(err))
 		os.Exit(1)
 	}
 	if err = autoMigrateSocial(db); err != nil {

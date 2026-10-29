@@ -69,3 +69,13 @@
 - 当前生产资源适配仅live_room；short_video/live_replay明确返回未接入。通知偏好可管理，实际投递渠道尚未注册。
 - 管理health每状态count最多1000；countIsLowerBound=true表示总数大于1000，sampleOldestCreatedAt仅为样本时间。
 - 完整契约与部署边界见docs/social/README.md、api.md及production-review-20261027.md。
+
+## 钱包账务契约
+
+- APP `/api/v1/app/wallet`仅本人Bearer，后台`/api/v1/admin/wallet`校验后台JWT及当前数据库角色；默认888，申请与审核必须不同管理员。
+- 金额、版本、后台管理员ID为十进制字符串；毫秒时间戳为数字。当前币种仅COIN，不定义兑换率，不提供消费/支付接口。
+- 订单列表沿用page/pageSize/total/list；不可变流水采用limit/cursor/nextCursor/hasMore，按钱包版本游标避免大偏移扫描。
+- 创建申请和冲正使用稳定requestId；approve成功才变余额；超时复用原参数重试。冲正仅创建待审核申请，不直接扣减。
+- APP流水隐藏原因、凭证和管理员。完整契约见`docs/wallet/api.md`，业务错误47001—47015。
+
+- 系统人工充值创建必须带externalOrderNo及evidenceRef，sourceType仅manual（默认）；凭证统一大写、跨管理员永久唯一。订单DTO增加sourceType/externalOrderNo，列表支持精确凭证检索；状态接口不再隐式开户。

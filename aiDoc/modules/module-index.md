@@ -38,3 +38,7 @@
 - 模型/DTO：server/model/social；锁与计数：server/repository/social；业务/Worker：server/service/social。
 - API/Router分APP与_admin；live模块通过SocialDirectory、SocialRoomResource及LiveAccessService适配，不在social模块直接操作live表。
 - 九张社交表、索引和约束随服务启动由GORM自动迁移；外部资源/通知/媒体边界见docs/social/README.md。
+
+## Wallet
+
+- [钱包账务模块](wallet.md)：人工入账、双人复核、不可变流水、冲正、额度和分批对账。

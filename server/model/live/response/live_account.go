@@ -51,20 +51,24 @@ type PasswordChangeResponse struct {
 type AccountPublicProfileResp = commonRes.UserPublicProfile
 
 type AccountAdminListItemResp struct {
-	ID                uint      `json:"id"`
-	AccountNo         string    `json:"accountNo"`
-	Username          string    `json:"username"`
-	PhoneMasked       string    `json:"phoneMasked"`
-	PhoneVerified     bool      `json:"phoneVerified"`
-	Nickname          string    `json:"nickname"`
-	Avatar            string    `json:"avatar"`
-	Status            uint8     `json:"status"`
-	BanUntil          int64     `json:"banUntil"`
-	RealNameStatus    uint8     `json:"realNameStatus"`
-	RegisterSource    string    `json:"registerSource"`
-	RegisterChannelID uint64    `json:"registerChannelId"`
-	LastLoginAt       int64     `json:"lastLoginAt"`
-	CreatedAt         time.Time `json:"createdAt"`
+	ID                     uint      `json:"id"`
+	AccountNo              string    `json:"accountNo"`
+	Username               string    `json:"username"`
+	Phone                  string    `json:"phone"`
+	PhoneMasked            string    `json:"phoneMasked"`
+	PhoneVerified          bool      `json:"phoneVerified"`
+	Nickname               string    `json:"nickname"`
+	Avatar                 string    `json:"avatar"`
+	Status                 uint8     `json:"status"`
+	BanUntil               int64     `json:"banUntil"`
+	RealNameStatus         uint8     `json:"realNameStatus"`
+	RegisterSource         string    `json:"registerSource"`
+	RegisterChannelID      uint64    `json:"registerChannelId"`
+	WalletAvailableBalance string    `json:"walletAvailableBalance"`
+	WalletStatus           string    `json:"walletStatus"`
+	WalletOpened           bool      `json:"walletOpened"`
+	LastLoginAt            int64     `json:"lastLoginAt"`
+	CreatedAt              time.Time `json:"createdAt"`
 }
 
 type AccountAdminListResp struct {

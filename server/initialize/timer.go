@@ -14,6 +14,7 @@ import (
 )
 
 var (
+	liveStartupTasks            sync.WaitGroup
 	liveSessionTimerMu          sync.Mutex
 	liveSessionStopTimerMu      sync.Mutex
 	liveStreamReadyTimerMu      sync.Mutex
@@ -98,13 +99,15 @@ func Timer() {
 	}
 
 	// 表结构已经初始化完成；异步立即补偿一次，服务重启无需再等待首个扫描周期。
+	liveStartupTasks.Add(3)
 	go func() {
+		defer liveStartupTasks.Done()
 		// 启动时先推进纯数据库状态，再立即处理由此产生或上次遗留的结束中场次。
 		runLiveSessionLifecycle()
 		runLiveSessionStop()
 	}()
-	go runLiveStreamReadiness()
-	go runLiveStreamReconciliation()
+	go func() { defer liveStartupTasks.Done(); runLiveStreamReadiness() }()
+	go func() { defer liveStartupTasks.Done(); runLiveStreamReconciliation() }()
 
 	// 其他定时任务定在这里 参考上方使用方法
 

@@ -9288,6 +9288,661 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/admin/wallet/account/check": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "校验当前管理员及钱包读权限，默认888；accountNo和phone至少提供一个，两者同时提供时必须属于同一用户。金额和版本字符串，时间毫秒。业务错误47001至47015。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WalletAdmin"
+                ],
+                "summary": "分批只读对账",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "公开用户编号",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "E.164完整手机号",
+                        "name": "phone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "仅COIN",
+                        "name": "currencyCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "起始订单内部游标，首次0；后续使用nextOrderId",
+                        "name": "afterOrderId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "起始版本，首次0；后续使用nextVersion",
+                        "name": "afterVersion",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "默认100，最大1000",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Check"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/wallet/account/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "校验当前管理员及钱包读权限，默认888；accountNo和phone至少提供一个，两者同时提供时必须属于同一用户。金额和版本字符串，时间毫秒。业务错误47001至47015。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WalletAdmin"
+                ],
+                "summary": "查询指定用户钱包",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "公开用户编号",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "E.164完整手机号",
+                        "name": "phone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "仅COIN",
+                        "name": "currencyCode",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Balance"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/wallet/account/status": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "需review-authorities权限；normal或disabled，停用阻止入账和冲正；仅操作已开户钱包，无钱包返回47014；注销/软删除账号不能启用。不会修改余额。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WalletAdmin"
+                ],
+                "summary": "启用或停用钱包并记录事务审计",
+                "parameters": [
+                    {
+                        "description": "状态和原因",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.AccountStatus"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Balance"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/wallet/adjustment/approve": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "普通管理员需review-authorities权限且申请人与审核人必须不同；固定顶级超级管理员userId=1不受钱包角色列表和自审限制。相同审核人、同原因重试幂等；余额、流水、额度、审计及订单原子提交。 默认授权角色888，业务错误47001至47015；金额字符串，时间毫秒。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WalletAdmin"
+                ],
+                "summary": "双人审核通过并原子入账",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ReviewAdjustment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Order"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/wallet/adjustment/create": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "需create-authorities权限；requestId为8至64位字母数字下划线横线，同管理员重复提交相同内容幂等。amount必须为正整数字符串；sourceType仅manual（可省略）；externalOrderNo及evidenceRef必填，资金凭证号全局防重、统一大写，驳回或冲正不释放。 默认授权角色888，业务错误47001至47015；金额字符串，时间毫秒。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WalletAdmin"
+                ],
+                "summary": "创建系统人工充值申请",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateAdjustment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Order"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/wallet/adjustment/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "校验当前管理员及钱包读权限，默认888；金额和版本字符串，时间毫秒。业务错误47001至47015。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WalletAdmin"
+                ],
+                "summary": "查询入账单及流水和事务审计",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "入账单号",
+                        "name": "orderNo",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.OrderDetail"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/wallet/adjustment/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "校验当前管理员及钱包读权限，默认888；accountNo和phone可选并可同时交叉确认用户。金额和版本字符串，时间毫秒。业务错误47001至47015。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WalletAdmin"
+                ],
+                "summary": "分页查询人工入账和冲正单",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "默认1，最大偏移10000",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "默认20，最大100",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "公开用户编号",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "E.164完整手机号；可替代accountNo，两者同时提供时必须属于同一用户",
+                        "name": "phone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "精确单号",
+                        "name": "orderNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "pending/credited/rejected/reversed",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "grant/reverse",
+                        "name": "kind",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "manual/legacy/reversal",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "精确凭证号，省略sourceType时默认manual",
+                        "name": "externalOrderNo",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.PageResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/wallet/adjustment/reject": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "普通管理员需review-authorities权限且不能自审；固定顶级超级管理员userId=1不受钱包角色列表和自审限制。冲正申请被驳回后可另建申请。 默认授权角色888，业务错误47001至47015；金额字符串，时间毫秒。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WalletAdmin"
+                ],
+                "summary": "双人审核驳回申请",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ReviewAdjustment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Order"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/wallet/adjustment/reverse": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "需create-authorities权限；此接口不立即扣减余额。另一管理员approve后全额冲正，不支持部分冲正或再次冲正。 默认授权角色888，业务错误47001至47015；金额字符串，时间毫秒。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WalletAdmin"
+                ],
+                "summary": "创建全额冲正申请",
+                "parameters": [
+                    {
+                        "description": "请求参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ReverseAdjustment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Order"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/wallet/ledger/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "校验当前管理员及钱包读权限，默认888；accountNo和phone至少提供一个，两者同时提供时必须属于同一用户。金额和版本字符串，时间毫秒。业务错误47001至47015。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WalletAdmin"
+                ],
+                "summary": "游标查询指定用户流水",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "公开用户编号",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "E.164完整手机号",
+                        "name": "phone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "仅COIN",
+                        "name": "currencyCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "默认20，最大100",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "不透明游标",
+                        "name": "cursor",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.LedgerList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/app/live/anchor/apply": {
             "post": {
                 "security": [
@@ -12405,6 +13060,120 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/app/wallet/balance": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "仅APP Bearer本人身份；整数金额和版本均为十进制字符串，时间为毫秒。未开户返回零余额。业务错误47001至47012。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Wallet"
+                ],
+                "summary": "查询本人COIN余额",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "仅COIN，默认COIN",
+                        "name": "currencyCode",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Balance"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/wallet/ledger": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "limit=1至100，默认20；cursor使用上页nextCursor。无内部备注、凭证和管理员身份。业务错误47001至47012。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Wallet"
+                ],
+                "summary": "游标查询本人余额流水",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "仅COIN",
+                        "name": "currencyCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "默认20，最大100",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "不透明游标",
+                        "name": "cursor",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.LedgerList"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -13372,6 +14141,9 @@ const docTemplate = `{
                 "tencent-cos": {
                     "$ref": "#/definitions/config.TencentCOS"
                 },
+                "wallet": {
+                    "$ref": "#/definitions/config.Wallet"
+                },
                 "zap": {
                     "$ref": "#/definitions/config.Zap"
                 }
@@ -13596,6 +14368,42 @@ const docTemplate = `{
                 },
                 "secret-key": {
                     "type": "string"
+                }
+            }
+        },
+        "config.Wallet": {
+            "type": "object",
+            "properties": {
+                "account-daily-limit": {
+                    "type": "integer"
+                },
+                "create-authorities": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "evidence-threshold": {
+                    "description": "EvidenceThreshold 兼容旧配置；人工充值现在无论金额大小都要求凭证。",
+                    "type": "integer"
+                },
+                "max-grant-amount": {
+                    "type": "integer"
+                },
+                "operator-daily-limit": {
+                    "type": "integer"
+                },
+                "read-authorities": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "review-authorities": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -14042,6 +14850,30 @@ const docTemplate = `{
                         "register"
                     ],
                     "example": "register"
+                }
+            }
+        },
+        "request.AccountStatus": {
+            "type": "object",
+            "required": [
+                "reason",
+                "status"
+            ],
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         },
@@ -14757,6 +15589,46 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 200,
                     "minLength": 4
+                }
+            }
+        },
+        "request.CreateAdjustment": {
+            "type": "object",
+            "required": [
+                "accountNo",
+                "amount",
+                "evidenceRef",
+                "externalOrderNo",
+                "reason",
+                "requestId"
+            ],
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "string",
+                    "example": "100"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "evidenceRef": {
+                    "type": "string"
+                },
+                "externalOrderNo": {
+                    "type": "string",
+                    "example": "BANK-20261028-0001"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "sourceType": {
+                    "type": "string",
+                    "example": "manual"
                 }
             }
         },
@@ -15513,6 +16385,43 @@ const docTemplate = `{
                 }
             }
         },
+        "request.ReverseAdjustment": {
+            "type": "object",
+            "required": [
+                "orderNo",
+                "reason",
+                "requestId"
+            ],
+            "properties": {
+                "evidenceRef": {
+                    "type": "string"
+                },
+                "orderNo": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.ReviewAdjustment": {
+            "type": "object",
+            "required": [
+                "orderNo",
+                "reason"
+            ],
+            "properties": {
+                "orderNo": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                }
+            }
+        },
         "request.SRSHookReq": {
             "type": "object",
             "required": [
@@ -15899,6 +16808,9 @@ const docTemplate = `{
                 "nickname": {
                     "type": "string"
                 },
+                "phone": {
+                    "type": "string"
+                },
                 "phoneMasked": {
                     "type": "string"
                 },
@@ -15918,6 +16830,15 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "username": {
+                    "type": "string"
+                },
+                "walletAvailableBalance": {
+                    "type": "string"
+                },
+                "walletOpened": {
+                    "type": "boolean"
+                },
+                "walletStatus": {
                     "type": "string"
                 }
             }
@@ -16366,11 +17287,102 @@ const docTemplate = `{
                 }
             }
         },
+        "response.Audit": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "operatorDisplay": {
+                    "type": "string"
+                },
+                "operatorId": {
+                    "type": "string"
+                },
+                "operatorIp": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Balance": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "description": "AccountNo和Phone仅由后台查询接口填充；客户端余额接口不暴露这些字段。",
+                    "type": "string"
+                },
+                "availableBalance": {
+                    "type": "string"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "frozenBalance": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
         "response.Change": {
             "type": "object",
             "properties": {
                 "changed": {
                     "type": "boolean"
+                }
+            }
+        },
+        "response.Check": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "checked": {
+                    "type": "integer"
+                },
+                "checkedOrders": {
+                    "type": "integer"
+                },
+                "consistent": {
+                    "type": "boolean"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "hasMore": {
+                    "type": "boolean"
+                },
+                "issues": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "nextOrderId": {
+                    "type": "string"
+                },
+                "nextVersion": {
+                    "type": "string"
+                },
+                "snapshotVersion": {
+                    "type": "string"
                 }
             }
         },
@@ -16574,6 +17586,68 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/response.HistoryUserItem"
+                    }
+                },
+                "nextCursor": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Ledger": {
+            "type": "object",
+            "properties": {
+                "balanceAfter": {
+                    "type": "string"
+                },
+                "balanceBefore": {
+                    "type": "string"
+                },
+                "businessNo": {
+                    "type": "string"
+                },
+                "businessType": {
+                    "type": "string"
+                },
+                "changeAmount": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "ledgerNo": {
+                    "type": "string"
+                },
+                "operatorDisplay": {
+                    "type": "string"
+                },
+                "operatorId": {
+                    "description": "内部备注、凭证和管理员身份只在管理端提供。",
+                    "type": "string"
+                },
+                "originalLedgerNo": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "walletVersion": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.LedgerList": {
+            "type": "object",
+            "properties": {
+                "hasMore": {
+                    "type": "boolean"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.Ledger"
                     }
                 },
                 "nextCursor": {
@@ -17594,6 +18668,115 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "response.Order": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "string"
+                },
+                "approvedAt": {
+                    "type": "integer"
+                },
+                "approvedBy": {
+                    "type": "string"
+                },
+                "approvedByDisplay": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "createdByDisplay": {
+                    "type": "string"
+                },
+                "createdIp": {
+                    "type": "string"
+                },
+                "creditedAt": {
+                    "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "evidenceRef": {
+                    "type": "string"
+                },
+                "externalOrderNo": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "ledgerNo": {
+                    "type": "string"
+                },
+                "orderNo": {
+                    "type": "string"
+                },
+                "originalOrderNo": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "rejectedAt": {
+                    "type": "integer"
+                },
+                "rejectedBy": {
+                    "type": "string"
+                },
+                "rejectedByDisplay": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "reversalOrderNo": {
+                    "type": "string"
+                },
+                "reversedAt": {
+                    "type": "integer"
+                },
+                "reviewReason": {
+                    "type": "string"
+                },
+                "reviewedIp": {
+                    "type": "string"
+                },
+                "sourceType": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.OrderDetail": {
+            "type": "object",
+            "properties": {
+                "audit": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.Audit"
+                    }
+                },
+                "ledger": {
+                    "$ref": "#/definitions/response.Ledger"
+                },
+                "order": {
+                    "$ref": "#/definitions/response.Order"
                 }
             }
         },

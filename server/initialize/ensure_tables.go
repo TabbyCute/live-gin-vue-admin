@@ -6,6 +6,7 @@ import (
 	"tb_live_module/model/example"
 	liveModel "tb_live_module/model/live"
 	sysModel "tb_live_module/model/system"
+	walletModel "tb_live_module/model/wallet"
 	"tb_live_module/plugin/announcement/model"
 	"tb_live_module/service/system"
 )
@@ -83,6 +84,9 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 		// 视图 authority_menu 会被当成表来创建，引发冲突错误（更新版本的gorm似乎不会）
 		// 由于 AutoMigrate() 基本无需考虑错误，因此显式忽略
 	}
+	if err := MigrateWallet(db); err != nil {
+		return ctx, err
+	}
 	if err := autoMigrateSocial(db); err != nil {
 		return ctx, err
 	}
@@ -138,6 +142,7 @@ func (e *ensureTables) TableCreated(ctx context.Context) bool {
 		model.Info{},
 	}
 	tables = append(tables, socialModels()...)
+	tables = append(tables, walletModel.Models()...)
 	yes := true
 	for _, t := range tables {
 		yes = yes && db.Migrator().HasTable(t)

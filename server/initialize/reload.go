@@ -40,6 +40,9 @@ func Reload() error {
 	if global.GVA_DB != nil {
 		// 确保数据库表结构是最新的
 		RegisterTables()
+		if err := InitializeWallet(); err != nil {
+			return err
+		}
 		// 表结构就绪后重新注册任务并立即执行一次直播生命周期扫描。
 		Timer()
 	}

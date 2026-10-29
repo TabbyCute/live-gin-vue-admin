@@ -4,25 +4,26 @@ import (
 	"context"
 	"fmt"
 	"github.com/mark3labs/mcp-go/mcp"
+	"os"
 	"testing"
 )
 
 // 测试 MCP 客户端连接
 func TestMcpClientConnection(t *testing.T) {
-	c, err := NewClient("http://localhost:8888/sse", "test-client", "1.0.0", "gin-vue-admin MCP服务")
-	defer c.Close()
+	c, err := NewClient(mcpTestURL(t), "test-client", "1.0.0", "gin-vue-admin MCP服务")
 	if err != nil {
-		t.Fatalf(err.Error())
+		t.Fatal(err)
 	}
+	defer c.Close()
 }
 
 func TestTools(t *testing.T) {
 	t.Run("currentTime", func(t *testing.T) {
-		c, err := NewClient("http://localhost:8888/sse", "test-client", "1.0.0", "gin-vue-admin MCP服务")
-		defer c.Close()
+		c, err := NewClient(mcpTestURL(t), "test-client", "1.0.0", "gin-vue-admin MCP服务")
 		if err != nil {
 			t.Fatalf("Failed to create client: %v", err)
 		}
+		t.Cleanup(func() { c.Close() })
 		ctx := context.Background()
 
 		request := mcp.CallToolRequest{}
@@ -48,11 +49,11 @@ func TestTools(t *testing.T) {
 
 	t.Run("getNickname", func(t *testing.T) {
 
-		c, err := NewClient("http://localhost:8888/sse", "test-client", "1.0.0", "gin-vue-admin MCP服务")
-		defer c.Close()
+		c, err := NewClient(mcpTestURL(t), "test-client", "1.0.0", "gin-vue-admin MCP服务")
 		if err != nil {
 			t.Fatalf("Failed to create client: %v", err)
 		}
+		t.Cleanup(func() { c.Close() })
 		ctx := context.Background()
 
 		// Initialize
@@ -91,11 +92,11 @@ func TestTools(t *testing.T) {
 }
 
 func TestGetTools(t *testing.T) {
-	c, err := NewClient("http://localhost:8888/sse", "test-client", "1.0.0", "gin-vue-admin MCP服务")
-	defer c.Close()
+	c, err := NewClient(mcpTestURL(t), "test-client", "1.0.0", "gin-vue-admin MCP服务")
 	if err != nil {
 		t.Fatalf("Failed to create client: %v", err)
 	}
+	t.Cleanup(func() { c.Close() })
 	ctx := context.Background()
 
 	toolsRequest := mcp.ListToolsRequest{}
@@ -129,4 +130,14 @@ func TestGetTools(t *testing.T) {
 		}
 		fmt.Println("-------------------")
 	}
+}
+
+// 依赖运行中的MCP服务，单元测试不得隐式访问开发者localhost服务。
+func mcpTestURL(t *testing.T) string {
+	t.Helper()
+	url := os.Getenv("MCP_TEST_URL")
+	if url == "" {
+		t.Skip("set MCP_TEST_URL to run external MCP integration tests")
+	}
+	return url
 }
