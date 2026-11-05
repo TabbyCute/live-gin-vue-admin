@@ -4,6 +4,8 @@ import "fmt"
 
 // Wallet 配置在启动时冻结，限额调整须滚动重启；零值采用保守默认，负数拒绝启动。
 type Wallet struct {
+	AppMaxInflight     int   `mapstructure:"app-max-inflight" json:"app-max-inflight" yaml:"app-max-inflight"`
+	AdminMaxInflight   int   `mapstructure:"admin-max-inflight" json:"admin-max-inflight" yaml:"admin-max-inflight"`
 	MaxGrantAmount     int64 `mapstructure:"max-grant-amount" json:"max-grant-amount" yaml:"max-grant-amount"`
 	AccountDailyLimit  int64 `mapstructure:"account-daily-limit" json:"account-daily-limit" yaml:"account-daily-limit"`
 	OperatorDailyLimit int64 `mapstructure:"operator-daily-limit" json:"operator-daily-limit" yaml:"operator-daily-limit"`
@@ -15,6 +17,15 @@ type Wallet struct {
 }
 
 func (c Wallet) Normalize() (Wallet, error) {
+	if c.AppMaxInflight < 0 || c.AppMaxInflight > 4096 || c.AdminMaxInflight < 0 || c.AdminMaxInflight > 4096 {
+		return c, fmt.Errorf("wallet inflight limits must be within 1..4096, or zero for defaults")
+	}
+	if c.AppMaxInflight == 0 {
+		c.AppMaxInflight = 64
+	}
+	if c.AdminMaxInflight == 0 {
+		c.AdminMaxInflight = 16
+	}
 	if c.MaxGrantAmount < 0 || c.AccountDailyLimit < 0 || c.OperatorDailyLimit < 0 || c.EvidenceThreshold < 0 {
 		return c, fmt.Errorf("wallet limits must be positive")
 	}

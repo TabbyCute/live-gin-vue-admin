@@ -4,6 +4,7 @@ import (
 	"tb_live_module/global"
 	"tb_live_module/model/common/request"
 	"tb_live_module/model/example"
+	"tb_live_module/model/system"
 )
 
 type CustomerService struct{}
@@ -60,16 +61,19 @@ func (exa *CustomerService) GetExaCustomer(id uint) (customer example.ExaCustome
 //@param: sysUserAuthorityID string, info request.PageInfo
 //@return: list interface{}, total int64, err error
 
-func (exa *CustomerService) GetCustomerInfoList(sysUserAuthorityID uint, info request.PageInfo) (list interface{}, total int64, err error) {
+func (exa *CustomerService) GetCustomerInfoList(sysUserAuthorityID uint, info request.PageInfo, userID ...uint) (list interface{}, total int64, err error) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	db := global.GVA_DB.Model(&example.ExaCustomer{})
+	if !system.IsSuperAdmin(userID...) {
+		db = db.Where("sys_user_authority_id = ?", sysUserAuthorityID)
+	}
 	var CustomerList []example.ExaCustomer
-	err = db.Where("sys_user_authority_id = ?", sysUserAuthorityID).Count(&total).Error
+	err = db.Count(&total).Error
 	if err != nil {
 		return CustomerList, total, err
 	} else {
-		err = db.Limit(limit).Offset(offset).Preload("SysUser").Where("sys_user_authority_id = ?", sysUserAuthorityID).Find(&CustomerList).Error
+		err = db.Limit(limit).Offset(offset).Preload("SysUser").Find(&CustomerList).Error
 	}
 	return CustomerList, total, err
 }

@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"tb_live_module/model/common/response"
+	"tb_live_module/model/system"
 	"tb_live_module/utils"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,7 @@ func RequireAuthority(authorityIDs ...uint) gin.HandlerFunc {
 		allowed[authorityID] = struct{}{}
 	}
 	return func(c *gin.Context) {
-		if _, ok := allowed[utils.GetUserAuthorityId(c)]; !ok {
+		if _, ok := allowed[utils.GetUserAuthorityId(c)]; !ok && !system.IsSuperAdmin(utils.GetUserID(c)) {
 			response.NoAuth("权限不足：该操作仅限受信任的高级管理员", c)
 			c.Abort()
 			return

@@ -479,7 +479,7 @@ func TestLiveRoomLifecycleReconnectAndFinalize(t *testing.T) {
 	require.Equal(t, liveModel.LiveSessionEnded, session.Status)
 	require.Equal(t, lastUnpublishAt, session.EndedAt, "最终重连等待窗口不能计入逻辑直播时长")
 	require.Equal(t, uint64(session.EndedAt-session.StartedAt), session.DurationMs)
-	require.Equal(t, uint64(660), session.GiftCoinAmount)
+	require.Equal(t, uint64(0), session.GiftCoinAmount) // SRS cannot write financial facts
 	require.NoError(t, global.GVA_DB.First(&anchor, anchor.ID).Error)
 	require.Equal(t, uint64(1), anchor.TotalLiveCount)
 	require.Equal(t, session.DurationMs, anchor.TotalLiveDurationMs)

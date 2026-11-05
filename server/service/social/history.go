@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
@@ -37,6 +38,11 @@ func historyKeys(actor uint64, r req.Resource) (string, string) {
 // 有界每分片最多1000条，首次入队5秒后可消费，后续心跳合并而不延长写入期限。
 var bufferHistoryScript = redis.NewScript(`
 local old=redis.call('GET',KEYS[1]);local incoming=cjson.decode(ARGV[1]);
+if ARGV[2]~='1' then
+ if not old then return -2 end
+ local prev=cjson.decode(old)
+ if prev.report.sessionToken~=incoming.report.sessionToken or prev.report.sessionVersion~=incoming.report.sessionVersion or prev.report.epoch~=incoming.report.epoch then return -2 end
+end
 if old then local prev=cjson.decode(old);if prev.report.epoch>incoming.report.epoch or (prev.report.epoch==incoming.report.epoch and (prev.report.sessionVersion>incoming.report.sessionVersion or (prev.report.sessionVersion==incoming.report.sessionVersion and prev.report.sequence>=incoming.report.sequence))) then return 0 end end
 if not redis.call('ZSCORE',KEYS[2],KEYS[1]) and redis.call('ZCARD',KEYS[2])>=1000 then return -1 end
 local now=redis.call('TIME');local ms=now[1]*1000+math.floor(now[2]/1000)
@@ -140,9 +146,25 @@ func (s *Service) ReportHistory(ctx context.Context, actor uint64, r req.History
 	}
 	key, queue := historyKeys(actor, r.Resource)
 	raw, _ := json.Marshal(bufferedHistory{Actor: actor, Report: r, ReceivedAt: time.Now().UnixMilli()})
-	ctx, cancel := context.WithTimeout(ctx, 150*time.Millisecond)
+	ctx, cancel := context.WithTimeout(ctx, redisRequestTimeout)
 	defer cancel()
-	n, err := bufferHistoryScript.Run(ctx, s.Redis, []string{key, queue}, string(raw)).Int()
+	n, err := bufferHistoryScript.Eval(ctx, s.Redis, []string{key, queue}, string(raw), "0").Int()
+	if err == nil && n == -2 {
+		// 仅首次入队/会话切换/缓冲过期查唯一资源索引；连续心跳直接复用
+		// 已核验的缓冲会话，不能用任意UUID或伪造版本占满全局队列。
+		var session struct{ ID uint64 }
+		err = s.db(ctx).Table("social_watch_history h").Select("h.id").
+			Joins("JOIN social_user_counter c ON c.user_id=h.user_id AND c.history_epoch=h.epoch").
+			Where("h.user_id = ? AND h.resource_type = ? AND h.resource_id = ? AND h.session_token = ? AND h.session_version = ? AND h.epoch = ? AND h.hidden = ?", actor, r.ResourceType, r.ResourceID, r.SessionToken, r.SessionVersion, r.Epoch, false).
+			Limit(1).Find(&session).Error
+		if err != nil {
+			return res.WatchAccepted{}, err
+		}
+		if session.ID == 0 {
+			return res.WatchAccepted{}, ErrConflict
+		}
+		n, err = bufferHistoryScript.Eval(ctx, s.Redis, []string{key, queue}, string(raw), "1").Int()
+	}
 	if err != nil {
 		return res.WatchAccepted{}, ErrUnavailable
 	}
@@ -223,14 +245,52 @@ func (s *Service) FlushHistory(ctx context.Context) error {
 	}
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
-	for shard := 0; shard < historyShards; shard++ {
+	// 空队列不能串行执行16次加锁/查询/解锁：远端Redis下数十次往返
+	// 会耗尽整轮10秒预算。一次pipeline只读探测，Cluster客户端按节点分组。
+	ready := make([]*redis.StringSliceCmd, historyShards)
+	_, err := s.Redis.Pipelined(ctx, func(pipe redis.Pipeliner) error {
+		for shard := range ready {
+			queue := fmt.Sprintf("%s{history-%02d}:pending", redisPrefix, shard)
+			ready[shard] = pipe.ZRangeByScore(ctx, queue, &redis.ZRangeBy{Min: "-inf", Max: fmt.Sprint(time.Now().UnixMilli()), Count: 1})
+		}
+		return nil
+	})
+	// 单个坏分片不能使其余分片永远得不到消费机会。保留全部失败供worker报告。
+	var failures []error
+	if err != nil {
+		failedShard := -1
+		for shard, cmd := range ready {
+			if cmd != nil && cmd.Err() != nil {
+				failedShard = shard
+				break
+			}
+		}
+		failures = append(failures, &workerStepError{stage: "history_probe", shard: failedShard, err: err})
+	}
+	// 轮转起点，避免高延迟/繁忙的前几个分片耗尽预算后饿死后面的分片。
+	start := int(s.historyNextShard.Add(1)-1) % historyShards
+	for offset := 0; offset < historyShards; offset++ {
+		shard := (start + offset) % historyShards
+		if ctx.Err() != nil {
+			failures = append(failures, &workerStepError{stage: "history_flush", shard: shard, err: ctx.Err()})
+			break
+		}
+		if ready[shard] == nil || ready[shard].Err() != nil || len(ready[shard].Val()) == 0 {
+			continue
+		}
 		if err := s.flushHistoryShard(ctx, shard); err != nil {
-			return err
+			failures = append(failures, err)
 		}
 	}
-	return nil
+	return errors.Join(failures...)
 }
-func (s *Service) flushHistoryShard(ctx context.Context, shard int) error {
+func (s *Service) flushHistoryShard(ctx context.Context, shard int) (err error) {
+	stage := "history_lease"
+	defer func() {
+		if err != nil {
+			err = &workerStepError{stage: stage, shard: shard, err: err}
+		}
+	}()
 	queue := fmt.Sprintf("%s{history-%02d}:pending", redisPrefix, shard)
 	lease := fmt.Sprintf("%s{history-%02d}:lease", redisPrefix, shard)
 	token := uuid.NewString()
@@ -242,10 +302,15 @@ func (s *Service) flushHistoryShard(ctx context.Context, shard int) error {
 		return nil
 	}
 	defer func() {
-		cleanup, cancel := context.WithTimeout(context.WithoutCancel(ctx), 150*time.Millisecond)
+		cleanup, cancel := context.WithTimeout(context.WithoutCancel(ctx), time.Second)
 		defer cancel()
-		_ = releaseHistoryLease.Run(cleanup, s.Redis, []string{lease}, token).Err()
+		// 小脚本直接EVAL，冷缓存也只需一次往返；150ms不足以覆盖远端延迟。
+		// 比较token后删除，绝不释放其他实例的租约。清理失败仍保留TTL兜底。
+		if releaseErr := releaseHistoryLease.Eval(cleanup, s.Redis, []string{lease}, token).Err(); releaseErr != nil && err == nil {
+			stage, err = "history_release", releaseErr
+		}
 	}()
+	stage = "history_queue"
 	keys, err := s.Redis.ZRangeByScore(ctx, queue, &redis.ZRangeBy{Min: "-inf", Max: fmt.Sprint(time.Now().UnixMilli()), Count: 32}).Result()
 	if err != nil {
 		return err
@@ -253,14 +318,43 @@ func (s *Service) flushHistoryShard(ctx context.Context, shard int) error {
 	if len(keys) == 0 {
 		return nil
 	}
+	stage = "history_read"
 	values, err := s.Redis.MGet(ctx, keys...).Result()
 	if err != nil {
 		return err
 	}
+	processed := 0
+	// 已提交的记录批量CAS确认；中途失败也确认前缀，未提交/已被新心跳
+	// 替换的记录保留。每条脚本key均在同一分片，Cluster也可pipeline。
+	defer func() {
+		if processed == 0 {
+			return
+		}
+		ackCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), time.Second)
+		defer cancel()
+		_, ackErr := s.Redis.Pipelined(ackCtx, func(pipe redis.Pipeliner) error {
+			for i := 0; i < processed; i++ {
+				raw, _ := values[i].(string)
+				ackHistoryScript.Eval(ackCtx, pipe, []string{keys[i], queue}, raw)
+			}
+			return nil
+		})
+		if ackErr != nil && err == nil {
+			stage, err = "history_ack", ackErr
+		}
+	}()
 	for i, key := range keys {
 		raw, _ := values[i].(string)
 		var p bufferedHistory
 		if raw != "" && json.Unmarshal([]byte(raw), &p) == nil && validReport(p.Report) {
+			expectedKey, expectedQueue := historyKeys(p.Actor, p.Report.Resource)
+			if p.Actor == 0 || key != expectedKey || queue != expectedQueue {
+				// 损坏的缓冲不能指向其他用户，也不能卡住同分片后续合法记录。
+				s.Metrics.HistoryDropped.Add(1)
+				processed++
+				continue
+			}
+			stage = "history_persist"
 			_, err = s.persistHistory(ctx, p)
 			if err != nil && !isBusiness(err) {
 				return err
@@ -269,9 +363,7 @@ func (s *Service) flushHistoryShard(ctx context.Context, shard int) error {
 				s.Metrics.HistoryDropped.Add(1)
 			}
 		}
-		if err = ackHistoryScript.Run(ctx, s.Redis, []string{key, queue}, raw).Err(); err != nil {
-			return err
-		}
+		processed++
 	}
 	return nil
 }

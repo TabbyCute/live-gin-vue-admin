@@ -1,9 +1,9 @@
 package system
 
 import (
+	"github.com/google/uuid"
 	"tb_live_module/global"
 	"tb_live_module/model/common"
-	"github.com/google/uuid"
 )
 
 type Login interface {
@@ -59,4 +59,12 @@ func (s *SysUser) GetAuthorityId() uint {
 
 func (s *SysUser) GetUserInfo() any {
 	return *s
+}
+
+// SuperAdminUserID is the fixed backend root account, independent of role assignments.
+const SuperAdminUserID = 1
+
+// IsSuperAdmin accepts only a trusted backend user ID, never an APP account ID.
+func IsSuperAdmin[T ~uint | ~uint64](userIDs ...T) bool {
+	return len(userIDs) > 0 && userIDs[0] == SuperAdminUserID
 }

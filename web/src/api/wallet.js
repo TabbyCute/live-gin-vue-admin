@@ -1,5 +1,7 @@
 import service from '@/utils/request'
 
+export const getWalletTrace = (params) => service({ url: '/wallet/transaction/trace', method: 'get', params })
+
 // 后台钱包账户
 export const getWalletAccount = (params) => service({ url: '/wallet/account/detail', method: 'get', params })
 export const setWalletAccountStatus = (data) => service({ url: '/wallet/account/status', method: 'post', data })

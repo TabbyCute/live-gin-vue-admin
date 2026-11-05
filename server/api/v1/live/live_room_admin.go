@@ -59,7 +59,7 @@ func (a *RoomAdminApi) RoomDetail(c *gin.Context) {
 		response.FailWithMessage("查询参数错误: "+err.Error(), c)
 		return
 	}
-	result, err := roomService.GetAdminRoomDetail(req.RoomID)
+	result, err := roomService.GetAdminRoomDetail(req.RoomID, canReadGiftRevenue(c))
 	if err != nil {
 		respondLiveRoomError(c, "获取直播间详情失败", err)
 		return
@@ -134,7 +134,7 @@ func (a *RoomAdminApi) SessionList(c *gin.Context) {
 		response.FailWithMessage("查询参数错误", c)
 		return
 	}
-	list, total, err := roomService.GetAdminSessionList(req)
+	list, total, err := roomService.GetAdminSessionList(req, canReadGiftRevenue(c))
 	if err != nil {
 		respondLiveRoomError(c, "获取直播场次列表失败", err)
 		return
@@ -156,7 +156,7 @@ func (a *RoomAdminApi) SessionDetail(c *gin.Context) {
 		response.FailWithMessage("查询参数错误: "+err.Error(), c)
 		return
 	}
-	result, err := roomService.GetAdminSessionDetail(req.SessionID)
+	result, err := roomService.GetAdminSessionDetail(req.SessionID, canReadGiftRevenue(c))
 	if err != nil {
 		respondLiveRoomError(c, "获取直播场次详情失败", err)
 		return

@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	model "tb_live_module/model/wallet"
 )
 
@@ -51,17 +52,34 @@ func validOrderLedger(o model.WalletAdjustmentOrder, l model.WalletLedger, walle
 	} else if o.Kind != model.KindGrant {
 		return false
 	}
+	if l.Reason != o.Reason || l.BalanceBefore < 0 || l.BalanceAfter < 0 ||
+		(delta > 0 && (l.BalanceAfter < delta || l.BalanceAfter-delta != l.BalanceBefore)) ||
+		(delta < 0 && (l.BalanceBefore < -delta || l.BalanceBefore+delta != l.BalanceAfter)) ||
+		(o.Kind == model.KindGrant && l.OriginalLedgerNo != "") {
+		return false
+	}
 	return o.Amount > 0 && walletID > 0 && l.WalletAccountID == walletID && l.LedgerNo == o.LedgerNo && l.BusinessNo == o.OrderNo && l.ChangeAmount == delta && l.BusinessType == business && l.OperatorID == o.ApprovedBy && o.ApprovedBy > 0 && (o.CreatedBy != o.ApprovedBy || o.ApprovedBy == topSuperAdminUserID) && o.ApprovedAt > 0 && o.CreditedAt == o.ApprovedAt && l.CreatedAt == o.CreditedAt
 }
 
 // 重试可以返回成功的前提是已提交事实齐全，不能仅凭可更新的订单status判定成功。
-func validateReviewReplay(tx *gorm.DB, o model.WalletAdjustmentOrder) error {
+func validateOrderAudit(tx *gorm.DB, o model.WalletAdjustmentOrder) error {
 	var logs []model.WalletAuditLog
 	if err := tx.Where("object_no = ?", o.OrderNo).Order("id").Limit(3).Find(&logs).Error; err != nil {
 		return err
 	}
 	if !validOrderAudit(o, logs) {
 		return ErrInvariant
+	}
+	return nil
+}
+
+func validateReviewReplay(tx *gorm.DB, o model.WalletAdjustmentOrder) error {
+	// legacy没有可重算的新摘要，仍须核实原有流水和审计；不可用于新充值。
+	if o.SourceType != model.SourceLegacy && !validOrderRequest(o) {
+		return ErrInvariant
+	}
+	if err := validateOrderAudit(tx, o); err != nil {
+		return err
 	}
 	if o.Status == model.StatusRejected {
 		if o.LedgerNo != "" || o.ApprovedBy != 0 {
@@ -70,7 +88,8 @@ func validateReviewReplay(tx *gorm.DB, o model.WalletAdjustmentOrder) error {
 		return nil
 	}
 	var w model.WalletAccount
-	if err := tx.Where("account_id = ? AND currency_code = ?", o.AccountID, o.CurrencyCode).Take(&w).Error; err != nil {
+	// review处于RC事务；核对余额与尾流水期间要阻止其他消费推进版本。
+	if err := tx.Clauses(clause.Locking{Strength: "SHARE"}).Where("account_id = ? AND currency_code = ?", o.AccountID, o.CurrencyCode).Take(&w).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return ErrInvariant
 		}
@@ -86,5 +105,20 @@ func validateReviewReplay(tx *gorm.DB, o model.WalletAdjustmentOrder) error {
 	if !validOrderLedger(o, l, w.ID) || l.WalletVersion < 1 || l.WalletVersion > w.Version {
 		return ErrInvariant
 	}
-	return nil
+	if o.Kind == model.KindReverse {
+		var original model.WalletAdjustmentOrder
+		if err := tx.Where("order_no = ?", o.OriginalOrderNo).Take(&original).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return ErrInvariant
+			}
+			return err
+		}
+		if original.Kind != model.KindGrant || original.Status != model.StatusReversed || original.ReversalOrderNo != o.OrderNo || original.AccountID != o.AccountID || original.CurrencyCode != o.CurrencyCode || original.Amount != o.Amount || l.OriginalLedgerNo != original.LedgerNo {
+			return ErrInvariant
+		}
+		if err := validateReviewReplay(tx, original); err != nil {
+			return err
+		}
+	}
+	return validateWalletTail(tx, w)
 }

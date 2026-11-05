@@ -90,6 +90,7 @@
     <el-drawer v-model="detailVisible" title="充值单详情" size="820px" destroy-on-close>
       <div v-loading="detailLoading">
         <template v-if="detail">
+		  <el-alert v-if="detail.issues?.length" type="error" :closable="false" show-icon title="账务记录存在异常，请暂停资金操作并联系技术人员核查" :description="detail.issues.join('、')" class="mb-4" />
           <el-descriptions :column="2" border>
             <el-descriptions-item label="订单号" :span="2"><span class="wallet-code">{{ detail.order.orderNo }}</span></el-descriptions-item>
             <el-descriptions-item label="请求编号"><span class="wallet-code">{{ detail.order.requestId }}</span></el-descriptions-item><el-descriptions-item label="来源">{{ sourceLabel(detail.order.sourceType) }}</el-descriptions-item>
@@ -117,6 +118,7 @@
 import { computed, onDeactivated, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { isSuperAdmin } from '@/utils/superAdmin'
 import { useUserStore } from '@/pinia'
 import { CreateUUID } from '@/utils/format'
 import { approveWalletAdjustment, createWalletRecharge, getWalletAccount, getWalletAdjustmentDetail, getWalletAdjustmentList, rejectWalletAdjustment, reverseWalletAdjustment } from '@/api/wallet'
@@ -152,7 +154,7 @@ const submitSearch = () => {
 }
 const resetSearch = () => { Object.assign(search, defaultSearch()); page.value = 1; loadData() }
 const changePageSize = () => { page.value = 1; loadData() }
-const isOwnOrder = (order) => currentUserID.value !== '1' && currentUserID.value && currentUserID.value === String(order.createdBy)
+const isOwnOrder = (order) => !isSuperAdmin(userStore.userInfo) && currentUserID.value && currentUserID.value === String(order.createdBy)
 
 const createVisible = ref(false); const createFormRef = ref(); const createForm = reactive({ requestId: '', accountNo: '', externalOrderNo: '', amount: '', evidenceRef: '', reason: '', fundsVerified: false })
 const createRules = {

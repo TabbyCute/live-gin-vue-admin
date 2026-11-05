@@ -85,7 +85,7 @@ func (a *AnchorAdminApi) Detail(c *gin.Context) {
 		response.FailWithMessage("查询参数错误: "+err.Error(), c)
 		return
 	}
-	result, err := anchorService.GetAnchorAdminDetail(req.AnchorId)
+	result, err := anchorService.GetAnchorAdminDetail(req.AnchorId, canReadGiftRevenue(c))
 	if err != nil {
 		respondAnchorError(c, "获取主播详情失败", err)
 		return

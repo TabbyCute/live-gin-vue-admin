@@ -191,6 +191,7 @@ func (s *Service) ledger(ctx context.Context, id uint64, r req.LedgerSearch, adm
 		result.NextCursor = base64.RawURLEncoding.EncodeToString([]byte(fmt.Sprintf("%d:%d", w.ID, rows[len(rows)-1].WalletVersion)))
 	}
 	displays := map[uint64]string{}
+	transactionDisplays := map[string]string{}
 	if admin {
 		ids := make([]uint64, 0, len(rows))
 		for _, row := range rows {
@@ -200,11 +201,29 @@ func (s *Service) ledger(ctx context.Context, id uint64, r req.LedgerSearch, adm
 		if err != nil {
 			return result, err
 		}
+		nos := []string{}
+		for _, l := range rows {
+			if l.BusinessType == model.BusinessDebit || l.BusinessType == model.BusinessRefund {
+				nos = append(nos, l.BusinessNo)
+			}
+		}
+		if len(nos) > 0 {
+			var ts []model.WalletTransaction
+			if err = s.db(ctx).Where("transaction_no IN ?", nos).Find(&ts).Error; err != nil {
+				return result, err
+			}
+			for _, t := range ts {
+				transactionDisplays[t.TransactionNo] = transactionDTO(t, displays).ActorDisplay
+			}
+		}
 	}
 	for _, l := range rows {
 		dto := ledgerDTO(l, code, admin)
 		if admin {
 			dto.OperatorDisplay = displays[l.OperatorID]
+			if label := transactionDisplays[l.BusinessNo]; label != "" {
+				dto.OperatorDisplay = label
+			}
 		}
 		result.List = append(result.List, dto)
 	}
@@ -303,7 +322,7 @@ func (s *Service) Orders(ctx context.Context, a Actor, r req.OrderSearch) (commo
 	return result, nil
 }
 func (s *Service) Detail(ctx context.Context, a Actor, no string) (res.OrderDetail, error) {
-	result := res.OrderDetail{Audit: []res.Audit{}}
+	result := res.OrderDetail{Audit: []res.Audit{}, Issues: []string{}}
 	if err := s.Authorize(ctx, a, "read"); err != nil {
 		return result, err
 	}
@@ -321,19 +340,45 @@ func (s *Service) Detail(ctx context.Context, a Actor, no string) (res.OrderDeta
 		result.Order = orderDTO(o)
 		operatorIDs := []uint64{o.CreatedBy, o.ApprovedBy, o.RejectedBy}
 		var ledgerOperatorID uint64
+		var ledger model.WalletLedger
 		if o.LedgerNo != "" {
 			var l model.WalletLedger
-			if e := tx.Where("ledger_no = ?", o.LedgerNo).Take(&l).Error; e != nil {
+			if e := tx.Where("ledger_no = ?", o.LedgerNo).Take(&l).Error; e != nil && !errors.Is(e, gorm.ErrRecordNotFound) {
 				return e
 			}
-			dto := ledgerDTO(l, o.CurrencyCode, true)
-			result.Ledger = &dto
-			ledgerOperatorID = l.OperatorID
-			operatorIDs = append(operatorIDs, l.OperatorID)
+			ledger = l
+			if l.ID != 0 {
+				dto := ledgerDTO(l, o.CurrencyCode, true)
+				result.Ledger = &dto
+				ledgerOperatorID = l.OperatorID
+				operatorIDs = append(operatorIDs, l.OperatorID)
+			}
 		}
 		var logs []model.WalletAuditLog
 		if e := tx.Where("object_no = ?", no).Order("id ASC").Limit(100).Find(&logs).Error; e != nil {
 			return e
+		}
+		// 溯源是故障时的兜底：保留仍存在的订单/审计，同时显式标出缺失事实。
+		if !validOrderAudit(o, logs) {
+			result.Issues = append(result.Issues, "order_audit")
+		}
+		if o.SourceType == model.SourceLegacy {
+			if o.Status != model.StatusRejected {
+				result.Issues = append(result.Issues, "legacy_source_unverified")
+			}
+		} else if !validOrderRequest(o) {
+			result.Issues = append(result.Issues, "order_request_hash")
+		}
+		if o.Status == model.StatusCredited || o.Status == model.StatusReversed {
+			var w model.WalletAccount
+			if e := tx.Where("account_id = ? AND currency_code = ?", o.AccountID, o.CurrencyCode).Take(&w).Error; e != nil && !errors.Is(e, gorm.ErrRecordNotFound) {
+				return e
+			}
+			if !validOrderLedger(o, ledger, w.ID) || ledger.WalletVersion < 1 || ledger.WalletVersion > w.Version {
+				result.Issues = append(result.Issues, "order_ledger")
+			}
+		} else if o.LedgerNo != "" || o.ApprovedBy != 0 {
+			result.Issues = append(result.Issues, "order_ledger")
 		}
 		result.Audit = []res.Audit{}
 		for _, log := range logs {
@@ -382,6 +427,13 @@ func (s *Service) Check(ctx context.Context, a Actor, r req.CheckSearch) (res.Ch
 		}
 	}
 	var afterOrder uint64
+	var afterTransaction uint64
+	if r.AfterTransactionID != "" {
+		afterTransaction, err = strconv.ParseUint(r.AfterTransactionID, 10, 64)
+		if err != nil {
+			return result, ErrInvalid
+		}
+	}
 	if r.AfterOrderID != "" {
 		afterOrder, err = strconv.ParseUint(r.AfterOrderID, 10, 64)
 		if err != nil {
@@ -406,6 +458,11 @@ func (s *Service) Check(ctx context.Context, a Actor, r req.CheckSearch) (res.Ch
 		if errors.Is(e, gorm.ErrRecordNotFound) {
 			if after != 0 {
 				return ErrInvalid
+			}
+			w.AccountID = uint64(user.ID)
+			w.CurrencyCode = code
+			if e = checkTransactions(tx, w, afterTransaction, r.Limit, &result); e != nil {
+				return e
 			}
 			return checkOrders(tx, uint64(user.ID), w.ID, code, afterOrder, r.Limit, &result)
 		}
@@ -443,7 +500,15 @@ func (s *Service) Check(ctx context.Context, a Actor, r req.CheckSearch) (res.Ch
 			nos = append(nos, l.BusinessNo)
 		}
 		orders := map[string]model.WalletAdjustmentOrder{}
+		transactions := map[string]model.WalletTransaction{}
 		if len(nos) > 0 {
+			var ts []model.WalletTransaction
+			if e = tx.Where("transaction_no IN ?", nos).Find(&ts).Error; e != nil {
+				return e
+			}
+			for _, t := range ts {
+				transactions[t.TransactionNo] = t
+			}
 			var os []model.WalletAdjustmentOrder
 			if e = tx.Where("order_no IN ?", nos).Find(&os).Error; e != nil {
 				return e
@@ -469,7 +534,11 @@ func (s *Service) Check(ctx context.Context, a Actor, r req.CheckSearch) (res.Ch
 				expected = -o.Amount
 				business = model.BusinessReverse
 			}
-			if !ok || o.AccountID != w.AccountID || o.CurrencyCode != code || o.LedgerNo != l.LedgerNo || (o.Status != model.StatusCredited && o.Status != model.StatusReversed) || o.ApprovedBy == 0 || (o.CreatedBy == o.ApprovedBy && o.ApprovedBy != topSuperAdminUserID) || o.ApprovedBy != l.OperatorID || expected != l.ChangeAmount || business != l.BusinessType {
+			if l.BusinessType == model.BusinessDebit || l.BusinessType == model.BusinessRefund {
+				if t, found := transactions[l.BusinessNo]; !found || !validTransactionLedger(t, l, w) {
+					issue("ledger_transaction:" + l.LedgerNo)
+				}
+			} else if !ok || o.AccountID != w.AccountID || o.CurrencyCode != code || o.LedgerNo != l.LedgerNo || (o.Status != model.StatusCredited && o.Status != model.StatusReversed) || o.ApprovedBy == 0 || (o.CreatedBy == o.ApprovedBy && o.ApprovedBy != topSuperAdminUserID) || o.ApprovedBy != l.OperatorID || expected != l.ChangeAmount || business != l.BusinessType {
 				issue("ledger_order:" + l.LedgerNo)
 			}
 			before = l.BalanceAfter
@@ -478,6 +547,9 @@ func (s *Service) Check(ctx context.Context, a Actor, r req.CheckSearch) (res.Ch
 		result.NextVersion = strconv.FormatInt(version, 10)
 		if !result.HasMore && (version != w.Version || before != w.AvailableBalance) {
 			issue("wallet_tail_mismatch")
+		}
+		if e = checkTransactions(tx, w, afterTransaction, r.Limit, &result); e != nil {
+			return e
 		}
 		return checkOrders(tx, uint64(user.ID), w.ID, code, afterOrder, r.Limit, &result)
 	})

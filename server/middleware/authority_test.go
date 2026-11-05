@@ -49,3 +49,14 @@ func TestRequireAuthorityAllowsTrustedAdmin(t *testing.T) {
 	require.Equal(t, http.StatusNoContent, recorder.Code)
 	require.True(t, reached)
 }
+
+func TestRequireAuthorityAllowsRootWithoutRole(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
+	router.GET("/root", func(c *gin.Context) {
+		c.Set("claims", &systemReq.CustomClaims{BaseClaims: systemReq.BaseClaims{ID: 1}})
+	}, RequireAuthority(888), func(c *gin.Context) { c.Status(http.StatusNoContent) })
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, "/root", nil))
+	require.Equal(t, http.StatusNoContent, recorder.Code)
+}

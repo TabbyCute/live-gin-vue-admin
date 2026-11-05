@@ -2,6 +2,8 @@
 
 APP前缀 `/api/v1/app/social`，仅 GET/POST，Authorization Bearer；操作者没有请求 userId 参数。accountNo、anchorNo 二选一。批量 targets 最多100个，内部去重；资源参数为 `{resourceType:"live_room",resourceId:"公开roomNo"}`。正文32KiB；游标 limit 默认20、最大100，nextCursor为空代表结束。过滤不可见资源可能产生空页但 nextCursor 非空。
 
+2026-10-30加固：JSON正文须完整解析，禁止合法对象后再拼接第二个对象或垃圾内容；query最多4KiB、Authorization最多8KiB。APP请求从鉴权前开始使用5秒context预算，返回Cache-Control: no-store。超限/格式错误返回46001。Worker背压或不可用请求也可能消耗限流额度，46008/46009必须退避。
+
 | 方法 | 路径 | 参数 / 结果 |
 |---|---|---|
 | POST | follow、unfollow、block、unblock | Target / changed |
@@ -30,7 +32,7 @@ APP前缀 `/api/v1/app/social`，仅 GET/POST，Authorization Bearer；操作者
 
 关系返回只含公开资料与本人相关标志：following、followsYou、mutual、blocked、blockedByMe、mutedScopes、subscribed。blocked表示任意方向，未把无权访问账号的资料塞入DTO。已关闭/封禁账号可能从批量结果省略。
 
-后台前缀 `/api/v1/admin/social`：全部后台JWT + 角色888 + 操作审计，普通管理员不能调用。
+后台前缀 `/api/v1/admin/social`：全部后台JWT + 角色888 + 数据库当前账号/角色校验 + 操作审计，普通管理员不能调用。账号被禁用、软删除或移除888归属后，旧JWT不能通过下一次社交管理鉴权；数据库校验失败时拒绝访问。
 
 | 方法 | 路径 | 规则 |
 |---|---|---|
@@ -69,3 +71,5 @@ APP前缀 `/api/v1/app/social`，仅 GET/POST，Authorization Bearer；操作者
 ```
 
 观看协议：先open，心跳复用响应里的token/version/epoch，sequence在当前会话内递增；重新open后使用新的服务端版本。positionMs可回退；直播不接受点播进度语义。checkpoint成功才可认为已落库。分页、收藏和进度响应不暴露live_room/live_session/live_anchor内部主键。
+
+普通心跳首次入队、会话切换或缓冲过期需核验本人数据库会话；不存在或已失效时返回46010。同一已验证缓冲会话的连续心跳不逐次查询数据库。accepted=true/persisted=false仍只表示临时聚合；删除或切换会话后尚存的旧缓冲会在落库时再次校验并丢弃。46010后根据当前观看行为重新open，不重试旧token。

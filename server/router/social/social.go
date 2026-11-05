@@ -14,7 +14,7 @@ type RouterGroup struct {
 type SocialRouter struct{}
 
 func (r *SocialRouter) InitSocialRouter(root *gin.RouterGroup) {
-	group := root.Group("social").Use(middleware.JWTAppAuth(), socialAPI.Guard())
+	group := root.Group("social").Use(socialAPI.RequestBudget(), middleware.JWTAppAuth(), socialAPI.Guard())
 	a := api.ApiGroupApp.SocialApiGroup.SocialApi
 	group.POST("follow", a.Follow)
 	group.POST("unfollow", a.Unfollow)

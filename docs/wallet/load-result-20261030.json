@@ -1,0 +1,72 @@
+{
+  "arch": "amd64",
+  "checkedTransactions": 1153,
+  "cpus": 12,
+  "go": "go1.26.10",
+  "maxOpenConnections": 24,
+  "mysql": "8.0.46",
+  "os": "darwin",
+  "profiles": [
+    {
+      "name": "single_wallet_debit",
+      "requests": 512,
+      "concurrency": 32,
+      "errors": 0,
+      "seconds": 2.474765791,
+      "qps": 206.88826468427615,
+      "p50Ms": 141.354791,
+      "p95Ms": 226.356709,
+      "p99Ms": 260.447542,
+      "poolWaits": 488
+    },
+    {
+      "name": "sixteen_wallet_debit",
+      "requests": 512,
+      "concurrency": 32,
+      "errors": 0,
+      "seconds": 0.547162792,
+      "qps": 935.7361419414646,
+      "p50Ms": 31.986792,
+      "p95Ms": 51.844208,
+      "p99Ms": 58.957917,
+      "poolWaits": 488
+    },
+    {
+      "name": "same_original_partial_refund",
+      "requests": 128,
+      "concurrency": 32,
+      "errors": 0,
+      "seconds": 0.972885125,
+      "qps": 131.567434541668,
+      "p50Ms": 208.159625,
+      "p95Ms": 333.138416,
+      "p99Ms": 373.891208,
+      "poolWaits": 104
+    },
+    {
+      "name": "single_wallet_idempotent_replay",
+      "requests": 256,
+      "concurrency": 32,
+      "errors": 0,
+      "seconds": 0.839697,
+      "qps": 304.87187640303586,
+      "p50Ms": 85.134125,
+      "p95Ms": 129.629625,
+      "p99Ms": 179.283375,
+      "poolWaits": 232
+    },
+    {
+      "name": "balance_and_ledger",
+      "requests": 512,
+      "concurrency": 32,
+      "errors": 0,
+      "seconds": 0.255069458,
+      "qps": 2007.2963812076628,
+      "p50Ms": 14.131333,
+      "p95Ms": 26.966958,
+      "p99Ms": 30.970084,
+      "poolWaits": 2470
+    }
+  ],
+  "scope": "isolated local service/MySQL sample; not HTTP or production capacity; sync_binlog=1 innodb_flush_log_at_trx_commit=1"
+}

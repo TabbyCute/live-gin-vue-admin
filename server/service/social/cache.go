@@ -15,6 +15,8 @@ import (
 )
 
 const redisPrefix = "social:v1:"
+const redisRequestTimeout = time.Second
+const redisCacheTimeout = 500 * time.Millisecond
 
 var fallbackReadLimiter = rate.NewLimiter(100, 100)
 
@@ -48,7 +50,7 @@ func (s *Service) cacheGet(ctx context.Context, key string, out interface{}) boo
 	if s.Redis == nil {
 		return false
 	}
-	ctx, cancel := context.WithTimeout(ctx, 100*time.Millisecond)
+	ctx, cancel := context.WithTimeout(ctx, redisCacheTimeout)
 	defer cancel()
 	raw, err := s.Redis.Get(ctx, key).Bytes()
 	if err != nil || json.Unmarshal(raw, out) != nil {
@@ -66,7 +68,7 @@ func (s *Service) cacheSet(ctx context.Context, key string, value interface{}) {
 	if err != nil || len(raw) > 65536 {
 		return
 	}
-	ctx, cancel := context.WithTimeout(ctx, 100*time.Millisecond)
+	ctx, cancel := context.WithTimeout(ctx, redisCacheTimeout)
 	defer cancel()
 	_ = s.Redis.Set(ctx, key, raw, time.Duration(5+rand.IntN(6))*time.Second).Err()
 }
@@ -86,28 +88,42 @@ func (s *Service) RateLimitRequest(ctx context.Context, actor uint64, read, work
 		}
 		return ErrUnavailable
 	}
-	ctx, cancel := context.WithTimeout(ctx, 150*time.Millisecond)
+	ctx, cancel := context.WithTimeout(ctx, redisRequestTimeout)
 	defer cancel()
-	if !read && workerRequired {
-		pressure, err := s.Redis.Get(ctx, redisPrefix+"worker:pressure").Int()
-		if err != nil {
-			return ErrUnavailable
-		}
-		if pressure > 0 {
-			return ErrRateLimited
-		}
-	}
 	limit := 60
 	bucket := "write"
 	if read {
 		limit = 600
 		bucket = "read"
 	}
-	n, err := rateScript.Run(ctx, s.Redis, []string{fmt.Sprintf("%srate:%s:%d", redisPrefix, bucket, actor)}, limit, 60000).Int()
+	// 单次pipeline；两条命令各自单key，兼容Redis Cluster不同hash slot。
+	// 失败/背压请求同样消耗限额，避免依赖异常时反复冲击服务。
+	var pressure *redis.StringCmd
+	var rateResult *redis.Cmd
+	_, err := s.Redis.Pipelined(ctx, func(pipe redis.Pipeliner) error {
+		if !read && workerRequired {
+			pressure = pipe.Get(ctx, redisPrefix+"worker:pressure")
+		}
+		rateResult = rateScript.Eval(ctx, pipe, []string{fmt.Sprintf("%srate:%s:%d", redisPrefix, bucket, actor)}, limit, 60000)
+		return nil
+	})
 	if err != nil {
 		if read {
 			return fallbackReadLimit()
 		}
+		return ErrUnavailable
+	}
+	if pressure != nil {
+		value, e := pressure.Int()
+		if e != nil {
+			return ErrUnavailable
+		}
+		if value > 0 {
+			return ErrRateLimited
+		}
+	}
+	n, err := rateResult.Int()
+	if err != nil {
 		return ErrUnavailable
 	}
 	if n != 1 {

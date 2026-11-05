@@ -72,19 +72,53 @@ type Audit struct {
 	CreatedAt       int64  `json:"createdAt"`
 }
 type OrderDetail struct {
-	Order  Order   `json:"order"`
-	Ledger *Ledger `json:"ledger"`
-	Audit  []Audit `json:"audit"`
+	Issues []string `json:"issues"`
+	Order  Order    `json:"order"`
+	Ledger *Ledger  `json:"ledger"`
+	Audit  []Audit  `json:"audit"`
 }
 type Check struct {
-	AccountNo       string   `json:"accountNo"`
-	CurrencyCode    string   `json:"currencyCode"`
-	Consistent      bool     `json:"consistent"`
-	Issues          []string `json:"issues"`
-	Checked         int      `json:"checked"`
-	NextVersion     string   `json:"nextVersion"`
-	HasMore         bool     `json:"hasMore"`
-	NextOrderID     string   `json:"nextOrderId"`
-	CheckedOrders   int      `json:"checkedOrders"`
-	SnapshotVersion string   `json:"snapshotVersion"`
+	NextTransactionID   string   `json:"nextTransactionId"`
+	CheckedTransactions int      `json:"checkedTransactions"`
+	AccountNo           string   `json:"accountNo"`
+	CurrencyCode        string   `json:"currencyCode"`
+	Consistent          bool     `json:"consistent"`
+	Issues              []string `json:"issues"`
+	Checked             int      `json:"checked"`
+	NextVersion         string   `json:"nextVersion"`
+	HasMore             bool     `json:"hasMore"`
+	NextOrderID         string   `json:"nextOrderId"`
+	CheckedOrders       int      `json:"checkedOrders"`
+	SnapshotVersion     string   `json:"snapshotVersion"`
+}
+
+type Transaction struct {
+	TransactionNo  string `json:"transactionNo"`
+	Kind           string `json:"kind"`
+	BusinessType   string `json:"businessType"`
+	BusinessNo     string `json:"businessNo"`
+	AccountNo      string `json:"accountNo"`
+	CurrencyCode   string `json:"currencyCode"`
+	Amount         string `json:"amount"`
+	RefundedAmount string `json:"refundedAmount"`
+	OriginalNo     string `json:"originalNo"`
+	LedgerNo       string `json:"ledgerNo"`
+	ActorType      string `json:"actorType"`
+	ActorID        string `json:"actorId"`
+	ActorDisplay   string `json:"actorDisplay"`
+	ActorIP        string `json:"actorIp"`
+	TraceID        string `json:"traceId"`
+	Reason         string `json:"reason"`
+	CreatedAt      int64  `json:"createdAt"`
+}
+type Trace struct {
+	Issues       []string      `json:"issues"`
+	Ledger       *Ledger       `json:"ledger"`
+	Transaction  *Transaction  `json:"transaction"`
+	Original     *Transaction  `json:"original"`
+	Refunds      []Transaction `json:"refunds"`
+	NextRefundID string        `json:"nextRefundId"`
+	HasMore      bool          `json:"hasMore"`
+	Audit        []Audit       `json:"audit"`
+	Adjustment   *OrderDetail  `json:"adjustment"`
 }

@@ -421,7 +421,7 @@ func (s *AnchorService) GetAnchorList(req *liveReq.AnchorAdminListReq) ([]liveRe
 	return list, total, nil
 }
 
-func (s *AnchorService) GetAnchorAdminDetail(anchorID uint) (liveRes.AnchorAdminDetailResp, error) {
+func (s *AnchorService) GetAnchorAdminDetail(anchorID uint, includeGift ...bool) (liveRes.AnchorAdminDetailResp, error) {
 	anchor, err := s.getAnchorByID(global.GVA_DB, anchorID)
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return liveRes.AnchorAdminDetailResp{}, ErrAnchorNotFound
@@ -434,7 +434,9 @@ func (s *AnchorService) GetAnchorAdminDetail(anchorID uint) (liveRes.AnchorAdmin
 		return liveRes.AnchorAdminDetailResp{}, err
 	}
 	*anchor = a[0]
-	return toAnchorAdminDetail(*anchor), nil
+	result := toAnchorAdminDetail(*anchor)
+	result.GiftSummary, err = authorizedGiftSummary(global.GVA_DB, "anchor_id", anchorID, includeGift)
+	return result, err
 }
 
 func (s *AnchorService) AuditAnchor(adminID uint64, req liveReq.AnchorAuditReq) error {

@@ -1,0 +1,30 @@
+name: Wallet regression
+on:
+  push:
+    paths: ['server/**', 'web/src/view/wallet/**', 'web/tests/wallet*.test.mjs', 'web/package.json', 'web/pnpm-lock.yaml', 'web/src/api/wallet.js', 'web/src/utils/request.js', '.github/workflows/wallet.yaml']
+  pull_request:
+    paths: ['server/**', 'web/src/view/wallet/**', 'web/tests/wallet*.test.mjs', 'web/package.json', 'web/pnpm-lock.yaml', 'web/src/api/wallet.js', 'web/src/utils/request.js', '.github/workflows/wallet.yaml']
+  workflow_dispatch:
+jobs:
+  wallet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: server/go.mod
+          cache-dependency-path: server/go.sum
+      - name: MySQL, race, fuzz and build
+        run: bash server/tests/wallet/run.sh
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.19.0'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.0
+      - name: Admin wallet logic
+        working-directory: web
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm run test:wallet

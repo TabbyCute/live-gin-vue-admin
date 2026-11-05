@@ -1,4 +1,4 @@
-FROM golang:alpine as builder
+FROM golang:1.26.10-alpine as builder
 
 WORKDIR /go/src/tb_live_module
 COPY . .

@@ -1,0 +1,101 @@
+
+> player@0.0.0 build /Users/tabby/Desktop/IM/H5Player
+> pnpm run build:prod
+
+
+> player@0.0.0 build:prod /Users/tabby/Desktop/IM/H5Player
+> vite build --mode production
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 527 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                   4.93 kB │ gzip:   2.13 kB
+dist/assets/lottie/loading-DY2-ygU2.lottie        4.95 kB
+dist/assets/png/hero-CLDdwZDr.png                13.05 kB
+dist/assets/css/test-BU2PywDm.css                 0.37 kB │ gzip:   0.22 kB
+dist/assets/css/index2-e1VgPjBr.css               0.45 kB │ gzip:   0.22 kB
+dist/assets/css/page-B4nwCqkQ.css                 2.65 kB │ gzip:   0.67 kB
+dist/assets/css/social_center-D64bc1xa.css        2.83 kB │ gzip:   0.85 kB
+dist/assets/css/home-qBfMwPv_.css                 3.40 kB │ gzip:   1.01 kB
+dist/assets/css/live_rank-CiEM-5v7.css            3.53 kB │ gzip:   0.99 kB
+dist/assets/css/social_profile-Z97YqCYw.css       3.75 kB │ gzip:   0.94 kB
+dist/assets/css/user_set-B9Fq4Jhj.css             4.05 kB │ gzip:   1.14 kB
+dist/assets/css/vendor-Bdbi0viN.css               4.82 kB │ gzip:   1.13 kB
+dist/assets/css/gift_history-D9yGYBt4.css         4.90 kB │ gzip:   1.23 kB
+dist/assets/css/user_to_anchor-C2GTCBsx.css       6.14 kB │ gzip:   1.60 kB
+dist/assets/css/play-BnzInbND.css                 6.61 kB │ gzip:   1.74 kB
+dist/assets/css/test_video-BKhQCNAF.css           6.61 kB │ gzip:   1.74 kB
+dist/assets/css/wallet_home-CL3FK2az.css          6.76 kB │ gzip:   1.74 kB
+dist/assets/css/login-DmXyujzZ.css                7.09 kB │ gzip:   1.98 kB
+dist/assets/css/test_video_swiper-AqmB_dj-.css    8.34 kB │ gzip:   2.19 kB
+dist/assets/css/ui-COmU4oUD.css                   8.36 kB │ gzip:   2.09 kB
+dist/assets/css/live_home-CFVNhScY.css            9.26 kB │ gzip:   2.17 kB
+dist/assets/css/user_live-0ITA3Rg-.css            9.30 kB │ gzip:   2.07 kB
+dist/assets/css/earning_home-BIDDfgrP.css         9.55 kB │ gzip:   2.18 kB
+dist/assets/css/index-VqV1WGll.css               14.63 kB │ gzip:   3.47 kB
+dist/assets/css/live_room-CICo-sM_.css           16.81 kB │ gzip:   3.51 kB
+dist/assets/css/vant-DBe6gjvH.css                90.84 kB │ gzip:  37.31 kB
+dist/assets/js/loading-COIJ7ASy.js                0.05 kB │ gzip:   0.07 kB
+dist/assets/js/about-POzC2k0_.js                  0.20 kB │ gzip:   0.18 kB
+dist/assets/js/enums-CrAqIzbA.js                  0.24 kB │ gzip:   0.18 kB
+dist/assets/js/not-found-BaLSI-sa.js              0.47 kB │ gzip:   0.31 kB
+dist/assets/js/temp_data-C4jtGsER.js              0.91 kB │ gzip:   0.69 kB
+dist/assets/js/security-CO0WqYB5.js               1.30 kB │ gzip:   0.82 kB
+dist/assets/js/index2-D4kGkvcn.js                 1.56 kB │ gzip:   0.87 kB
+dist/assets/js/test-BKS1Ttxo.js                   1.79 kB │ gzip:   0.92 kB
+dist/assets/js/live_rank-CPqer4B1.js              2.13 kB │ gzip:   1.24 kB
+dist/assets/js/home-BQ-guOtc.js                   2.65 kB │ gzip:   1.35 kB
+dist/assets/js/gift_history-NFjaXKXt.js           5.25 kB │ gzip:   2.41 kB
+dist/assets/js/social_profile-D6m6DD0e.js         6.03 kB │ gzip:   2.71 kB
+dist/assets/js/wallet_home-DUYDhK3u.js            6.69 kB │ gzip:   3.00 kB
+dist/assets/js/live_home-DUBOaq4j.js              7.10 kB │ gzip:   3.20 kB
+dist/assets/js/social_center-Dm_s94Fl.js          7.42 kB │ gzip:   3.13 kB
+dist/assets/js/page-DVXvfW4d.js                   8.44 kB │ gzip:   2.55 kB
+dist/assets/js/play-C-5b8MU-.js                   8.60 kB │ gzip:   3.43 kB
+dist/assets/js/svg-icon-C4MyRYWG.js               8.61 kB │ gzip:   2.68 kB
+dist/assets/js/test_video-NtwAxNFL.js             8.62 kB │ gzip:   3.44 kB
+dist/assets/js/login-CSTgOlJc.js                  9.64 kB │ gzip:   4.06 kB
+dist/assets/js/test_video_swiper-DiQteqTK.js      9.82 kB │ gzip:   4.17 kB
+dist/assets/js/user_set-Cj2aWknp.js              10.25 kB │ gzip:   3.88 kB
+dist/assets/js/ui-tknI5dqP.js                    10.97 kB │ gzip:   3.93 kB
+dist/assets/js/user_to_anchor-M_wxydZM.js        13.39 kB │ gzip:   5.42 kB
+dist/assets/js/user_live-Bumd489n.js             19.41 kB │ gzip:   7.57 kB
+dist/assets/js/earning_home-CvdxW7xL.js          23.12 kB │ gzip:   8.44 kB
+dist/assets/js/live_room-Ke4hPxKJ.js             29.60 kB │ gzip:  10.82 kB
+dist/assets/js/lottie-B5Z5U7f3.js                63.01 kB │ gzip:  13.92 kB
+dist/assets/js/vue-vendor-Ba81gMJ5.js            82.91 kB │ gzip:  29.13 kB
+dist/assets/js/vendor-XuxNUv8G.js                92.02 kB │ gzip:  27.00 kB
+dist/assets/js/index-C1OPkDvk.js                139.00 kB │ gzip:  42.28 kB
+dist/assets/js/vant-Cc-awwI6.js                 162.44 kB │ gzip:  59.37 kB
+dist/assets/js/moives-DUW6etAo.js               615.45 kB │ gzip: 189.99 kB
+
+✓ built in 3.65s
+
+✨ [vite-plugin-compression]:algorithm=gzip - compressed file successfully: 
+dist//Users/tabby/Desktop/IM/H5Player/assets/css/index-VqV1WGll.css.gz          14.29kb / gzip: 3.38kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/css/live_room-CICo-sM_.css.gz      16.42kb / gzip: 3.40kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/earning_home-CvdxW7xL.js.gz     22.59kb / gzip: 8.20kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/ui-tknI5dqP.js.gz               10.72kb / gzip: 3.82kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/live_room-Ke4hPxKJ.js.gz        28.91kb / gzip: 10.51kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/user_set-Cj2aWknp.js.gz         10.01kb / gzip: 3.79kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/user_to_anchor-M_wxydZM.js.gz   13.08kb / gzip: 5.29kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/user_live-Bumd489n.js.gz        18.96kb / gzip: 7.36kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/lottie-B5Z5U7f3.js.gz           61.54kb / gzip: 13.52kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/css/vant-DBe6gjvH.css.gz           88.72kb / gzip: 36.37kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/vendor-XuxNUv8G.js.gz           89.87kb / gzip: 26.09kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/index-C1OPkDvk.js.gz            135.74kb / gzip: 41.02kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/vue-vendor-Ba81gMJ5.js.gz       80.98kb / gzip: 28.11kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/vant-Cc-awwI6.js.gz             158.63kb / gzip: 57.39kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/moives-DUW6etAo.js.gz           601.03kb / gzip: 183.33kb
+dist//Users/tabby/Desktop/IM/H5Player/cdn_scripts/hls.js.gz                     2106.99kb / gzip: 378.03kb
+
+
+[33m[PLUGIN_TIMINGS] [0mJavaScript callbacks ran for 3.7s. The build took 3.6s. Callbacks such as `closeBundle` run after the build ends, so callback time can be more than build time.
+3 callbacks are listed without a time. Their calls overlapped, so the time inside one call includes work from other calls. To find their cost, profile the build with `node --cpu-prof`:
+  - plugin vite:terser renderChunk (33 calls)
+  - plugin vite:css transform (67 calls)
+  - plugin vite:asset load (2 calls)
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+

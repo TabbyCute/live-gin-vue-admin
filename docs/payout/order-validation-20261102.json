@@ -1,0 +1,47 @@
+{
+  "scope": "Immutable ready payout orders; no real payment",
+  "fullCommand": "PAYOUT_H5_DIR=/Users/tabby/Desktop/IM/H5Player bash server/tests/payout/run.sh",
+  "exitCode": 0,
+  "fullLogSha256": "2521da4a8a0a29d3a37a205aba7db022b75373ebb9393dde30f53bd42e916122",
+  "adminTests": 40,
+  "h5Tests": 49,
+  "loads": {
+    "EARNING_LOAD_RESULT": {
+      "allMoneyChecksPassed": true,
+      "concurrency": 16,
+      "databasePayee": true,
+      "elapsedMs": 3465,
+      "incomeFacts": 500,
+      "maxMs": 894,
+      "p50Ms": 856,
+      "p95Ms": 875,
+      "settlementCreateAndApproveMs": 131,
+      "withdrawals": 64
+    },
+    "PAYOUT_LOAD_RESULT": {
+      "concurrency": 16,
+      "elapsedMs": 3863,
+      "incomeFacts": 500,
+      "maxMs": 995,
+      "p50Ms": 958,
+      "p95Ms": 966,
+      "readyOrders": 64,
+      "unchangedBalances": true
+    }
+  },
+  "passed": [
+    "go test ./...",
+    "targeted Go race with three real MySQL databases",
+    "clientFoundRows MySQL binding concurrency",
+    "four fuzz targets, 10s each",
+    "go vet ./...",
+    "go build ./...",
+    "admin and H5 production builds",
+    "final service/API/router race regression after error classification",
+    "final MySQL and SQLite payout race suite including immutable UPDATE and initial-state INSERT",
+    "migration fast-path MySQL/SQLite lifecycle plus vet/build",
+    "final MySQL race schema drift checks: varchar length, weakened same-name CHECK, reordered composite primary key",
+    "final strict query allowlist router/API/service tests and Go build; unsupported inherited keyword query rejected"
+  ],
+  "goVulnerabilityScan": "order-go-vulnerability-20261102.txt"
+}

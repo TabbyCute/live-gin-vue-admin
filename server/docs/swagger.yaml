@@ -116,6 +116,11 @@ definitions:
       dir:
         type: string
     type: object
+  config.Gift:
+    properties:
+      guardEnabled:
+        type: boolean
+    type: object
   config.HuaWeiObs:
     properties:
       access-key:
@@ -541,6 +546,11 @@ definitions:
         description: 存储区域
         type: string
     type: object
+  config.Ranking:
+    properties:
+      timezone:
+        type: string
+    type: object
   config.Redis:
     properties:
       addr:
@@ -615,6 +625,8 @@ definitions:
         $ref: '#/definitions/tb_live_module_config.Email'
       excel:
         $ref: '#/definitions/config.Excel'
+      gift:
+        $ref: '#/definitions/config.Gift'
       hua-wei-obs:
         $ref: '#/definitions/config.HuaWeiObs'
       jwt:
@@ -647,6 +659,8 @@ definitions:
         $ref: '#/definitions/config.Pgsql'
       qiniu:
         $ref: '#/definitions/config.Qiniu'
+      ranking:
+        $ref: '#/definitions/config.Ranking'
       redis:
         $ref: '#/definitions/config.Redis'
       redis-list:
@@ -829,6 +843,10 @@ definitions:
     properties:
       account-daily-limit:
         type: integer
+      admin-max-inflight:
+        type: integer
+      app-max-inflight:
+        type: integer
       create-authorities:
         items:
           type: integer
@@ -877,6 +895,337 @@ definitions:
         type: boolean
       stacktrace-key:
         description: 栈名
+        type: string
+    type: object
+  earning.AccountLedger:
+    properties:
+      availableAfter:
+        example: "0"
+        type: string
+      availableBefore:
+        example: "0"
+        type: string
+      businessNo:
+        type: string
+      changeAmount:
+        example: "0"
+        type: string
+      createdAt:
+        type: integer
+      currency:
+        type: string
+      debtAfter:
+        example: "0"
+        type: string
+      debtBefore:
+        example: "0"
+        type: string
+      entryType:
+        type: string
+      frozenAfter:
+        example: "0"
+        type: string
+      frozenBefore:
+        example: "0"
+        type: string
+      ledgerNo:
+        type: string
+      paidAfter:
+        example: "0"
+        type: string
+      paidBefore:
+        example: "0"
+        type: string
+      version:
+        example: "0"
+        type: string
+    type: object
+  earning.FinanceAudit:
+    properties:
+      action:
+        type: string
+      actorId:
+        example: "0"
+        type: string
+      actorIp:
+        type: string
+      actorType:
+        type: string
+      createdAt:
+        type: integer
+      objectNo:
+        type: string
+      snapshot:
+        type: string
+    type: object
+  earning.Ledger:
+    properties:
+      businessNo:
+        type: string
+      createdAt:
+        type: integer
+      earningCoinAmount:
+        example: "0"
+        type: string
+      earningNo:
+        type: string
+      entryType:
+        type: string
+      giftOrderNo:
+        type: string
+      revenueRuleNo:
+        type: string
+      shareBps:
+        example: "0"
+        type: string
+      status:
+        type: string
+    type: object
+  earning.Reconciliation:
+    properties:
+      createdAt:
+        type: integer
+      createdBy:
+        example: "0"
+        type: string
+      currency:
+        type: string
+      reconciliationNo:
+        type: string
+      snapshot:
+        type: string
+      snapshotHash:
+        type: string
+      status:
+        type: string
+      withdrawalNo:
+        type: string
+    type: object
+  earning.RevenueRule:
+    properties:
+      anchorShareBps:
+        example: "0"
+        type: string
+      approvedAt:
+        type: integer
+      approvedBy:
+        example: "0"
+        type: string
+      createdAt:
+        type: integer
+      createdBy:
+        example: "0"
+        type: string
+      effectiveFrom:
+        type: integer
+      effectiveTo:
+        type: integer
+      name:
+        type: string
+      priority:
+        type: integer
+      ruleNo:
+        type: string
+      scopeNo:
+        type: string
+      scopeType:
+        type: string
+      status:
+        type: string
+      version:
+        example: "0"
+        type: string
+    type: object
+  earning.RuleTermination:
+    properties:
+      createdAt:
+        type: integer
+      createdBy:
+        example: "0"
+        type: string
+      reason:
+        type: string
+      requestId:
+        type: string
+      reviewedAt:
+        type: integer
+      reviewedBy:
+        example: "0"
+        type: string
+      ruleNo:
+        type: string
+      status:
+        type: string
+      terminationNo:
+        type: string
+    type: object
+  earning.Settlement:
+    properties:
+      amount:
+        example: "0"
+        type: string
+      anchorNo:
+        type: string
+      approvedAt:
+        type: integer
+      approvedBy:
+        example: "0"
+        type: string
+      createdAt:
+        type: integer
+      createdBy:
+        example: "0"
+        type: string
+      currency:
+        type: string
+      earningCoin:
+        example: "0"
+        type: string
+      grossCoin:
+        example: "0"
+        type: string
+      itemCount:
+        example: "0"
+        type: string
+      itemsHash:
+        type: string
+      periodEnd:
+        type: integer
+      periodStart:
+        type: integer
+      refundCoin:
+        example: "0"
+        type: string
+      requestId:
+        type: string
+      reviewReason:
+        type: string
+      ruleNo:
+        type: string
+      ruleSnapshot:
+        type: string
+      settlementNo:
+        type: string
+      status:
+        type: string
+    type: object
+  earning.SettlementItem:
+    properties:
+      amount:
+        example: "0"
+        type: string
+      coinUnits:
+        example: "0"
+        type: string
+      currency:
+        type: string
+      incomeHash:
+        type: string
+      incomeNo:
+        type: string
+      minorUnits:
+        example: "0"
+        type: string
+      remainderAfter:
+        example: "0"
+        type: string
+      remainderBefore:
+        example: "0"
+        type: string
+      roundingVersion:
+        example: "0"
+        type: string
+      ruleNo:
+        type: string
+      sequence:
+        example: "0"
+        type: string
+      settlementNo:
+        type: string
+    type: object
+  earning.SettlementRule:
+    properties:
+      approvedAt:
+        type: integer
+      approvedBy:
+        example: "0"
+        type: string
+      coinUnits:
+        example: "0"
+        type: string
+      createdAt:
+        type: integer
+      createdBy:
+        example: "0"
+        type: string
+      currency:
+        type: string
+      effectiveFrom:
+        type: integer
+      effectiveTo:
+        type: integer
+      minorUnits:
+        example: "0"
+        type: string
+      name:
+        type: string
+      requestId:
+        type: string
+      reviewReason:
+        type: string
+      roundingMode:
+        type: string
+      ruleNo:
+        type: string
+      sourceUnit:
+        type: string
+      status:
+        type: string
+      version:
+        example: "0"
+        type: string
+    type: object
+  earning.Withdrawal:
+    properties:
+      accountMasked:
+        type: string
+      accountName:
+        type: string
+      amount:
+        example: "0"
+        type: string
+      anchorNo:
+        type: string
+      createdAt:
+        type: integer
+      currency:
+        type: string
+      payeeMethod:
+        type: string
+      payeeRef:
+        type: string
+      payeeVersion:
+        type: string
+      payoutNo:
+        type: string
+      payoutStatus:
+        type: string
+      reconciliationNo:
+        type: string
+      reconciliationStatus:
+        type: string
+      requestId:
+        type: string
+      reviewReason:
+        type: string
+      reviewedAt:
+        type: integer
+      reviewedBy:
+        example: "0"
+        type: string
+      status:
+        type: string
+      withdrawalNo:
         type: string
     type: object
   example.ExaAttachmentCategory:
@@ -998,6 +1347,263 @@ definitions:
         description: 文件地址
         type: string
     type: object
+  gift.BenefitCompensation:
+    properties:
+      compensationNo:
+        type: string
+      completedAt:
+        type: integer
+      createdAt:
+        type: integer
+      durationDays:
+        example: "0"
+        type: string
+      giftOrderNo:
+        type: string
+      lastError:
+        type: string
+      leaseUntil:
+        type: integer
+      refundNo:
+        type: string
+      retryCount:
+        example: "0"
+        type: string
+      status:
+        type: string
+      updatedAt:
+        type: integer
+    type: object
+  gift.BenefitGrant:
+    properties:
+      benefitSnapshot:
+        type: string
+      benefitType:
+        type: string
+      createdAt:
+        type: integer
+      giftOrderNo:
+        type: string
+      grantNo:
+        type: string
+      lastError:
+        type: string
+      retryCount:
+        type: integer
+      status:
+        type: string
+      updatedAt:
+        type: integer
+    type: object
+  gift.Category:
+    properties:
+      categoryNo:
+        type: string
+      createdAt:
+        type: integer
+      description:
+        type: string
+      iconUrl:
+        type: string
+      name:
+        type: string
+      sortOrder:
+        type: integer
+      status:
+        type: string
+      updatedAt:
+        type: integer
+      version:
+        example: "0"
+        type: string
+    type: object
+  gift.Event:
+    properties:
+      createdAt:
+        type: integer
+      deliveredAt:
+        type: integer
+      deliveryStatus:
+        type: string
+      eventId:
+        type: string
+      eventType:
+        type: string
+      giftOrderNo:
+        type: string
+      lastError:
+        type: string
+      payload:
+        type: string
+      retryCount:
+        type: integer
+      roomNo:
+        type: string
+      sessionNo:
+        type: string
+    type: object
+  gift.Item:
+    properties:
+      animationType:
+        type: string
+      animationUrl:
+        type: string
+      benefitStatus:
+        type: string
+      benefitType:
+        type: string
+      categoryNo:
+        type: string
+      coinPrice:
+        example: "0"
+        type: string
+      createdAt:
+        type: integer
+      description:
+        type: string
+      effectiveFrom:
+        type: integer
+      effectiveTo:
+        type: integer
+      giftNo:
+        type: string
+      guardDurationDays:
+        example: "0"
+        type: string
+      guardPlanNo:
+        type: string
+      iconUrl:
+        type: string
+      isPremium:
+        type: boolean
+      maxQuantityPerOrder:
+        example: "0"
+        type: string
+      name:
+        type: string
+      sortOrder:
+        type: integer
+      status:
+        type: string
+      updatedAt:
+        type: integer
+      version:
+        example: "0"
+        type: string
+    type: object
+  gift.Order:
+    properties:
+      anchorNo:
+        type: string
+      anchorShareBps:
+        example: "0"
+        type: string
+      animationType:
+        type: string
+      animationUrl:
+        type: string
+      benefitSnapshot:
+        type: string
+      categoryName:
+        type: string
+      categoryNo:
+        type: string
+      createdAt:
+        type: integer
+      estimatedAnchorEarningCoin:
+        example: "0"
+        type: string
+      estimatedPlatformIncomeCoin:
+        example: "0"
+        type: string
+      giftName:
+        type: string
+      giftNo:
+        type: string
+      grossCoinAmount:
+        example: "0"
+        type: string
+      iconUrl:
+        type: string
+      orderNo:
+        type: string
+      quantity:
+        example: "0"
+        type: string
+      refundedCoinAmount:
+        example: "0"
+        type: string
+      requestId:
+        type: string
+      revenueRuleNo:
+        type: string
+      roomNo:
+        type: string
+      senderAccountNo:
+        type: string
+      sessionNo:
+        type: string
+      status:
+        type: string
+      unitPrice:
+        example: "0"
+        type: string
+      walletLedgerNo:
+        type: string
+      walletTransactionNo:
+        type: string
+    type: object
+  gift.Refund:
+    properties:
+      benefitCompensationStatus:
+        type: string
+      createdAt:
+        type: integer
+      earningReversalNo:
+        type: string
+      giftOrderNo:
+        type: string
+      operatorId:
+        example: "0"
+        type: string
+      reason:
+        type: string
+      refundCoinAmount:
+        example: "0"
+        type: string
+      refundNo:
+        type: string
+      refundQuantity:
+        example: "0"
+        type: string
+      requestId:
+        type: string
+      status:
+        type: string
+      walletRefundLedgerNo:
+        type: string
+      walletRefundTransactionNo:
+        type: string
+    type: object
+  gift.Revenue:
+    properties:
+      businessNo:
+        type: string
+      createdAt:
+        type: integer
+      entryType:
+        type: string
+      giftOrderNo:
+        type: string
+      grossCoinAmount:
+        example: "0"
+        type: string
+      quantity:
+        example: "0"
+        type: string
+      revenueNo:
+        type: string
+    type: object
   live.PlaybackAuthorization:
     properties:
       authorizationRequired:
@@ -1033,6 +1639,228 @@ definitions:
         type: string
       userID:
         description: 作者
+        type: integer
+    type: object
+  payout.AttemptEvent:
+    properties:
+      action:
+        type: string
+      actorId:
+        example: "0"
+        type: string
+      attemptNo:
+        type: string
+      createdAt:
+        type: integer
+      eventNo:
+        type: string
+      fromStatus:
+        type: string
+      payoutNo:
+        type: string
+      reason:
+        type: string
+      snapshotHash:
+        type: string
+      toStatus:
+        type: string
+      transitionNo:
+        type: string
+      version:
+        example: "0"
+        type: string
+    type: object
+  payout.Investigation:
+    properties:
+      actorId:
+        example: "0"
+        type: string
+      attemptNo:
+        type: string
+      createdAt:
+        type: integer
+      evidenceNo:
+        type: string
+      investigationNo:
+        type: string
+      note:
+        type: string
+      payoutNo:
+        type: string
+    type: object
+  payout.OrderAudit:
+    properties:
+      action:
+        type: string
+      actorId:
+        example: "0"
+        type: string
+      createdAt:
+        type: integer
+      eventNo:
+        type: string
+      objectNo:
+        type: string
+      payoutNo:
+        type: string
+      snapshot:
+        type: string
+      traceId:
+        type: string
+      transitionNo:
+        type: string
+    type: object
+  payout.OrderReconciliation:
+    properties:
+      createdAt:
+        type: integer
+      createdBy:
+        example: "0"
+        type: string
+      payoutNo:
+        type: string
+      reconciliationNo:
+        type: string
+      snapshot:
+        type: string
+      snapshotHash:
+        type: string
+      status:
+        type: string
+    type: object
+  payout.StatusHistory:
+    properties:
+      actorId:
+        example: "0"
+        type: string
+      attemptNo:
+        type: string
+      createdAt:
+        type: integer
+      eventNo:
+        type: string
+      fromStatus:
+        type: string
+      payoutNo:
+        type: string
+      reason:
+        type: string
+      requestId:
+        type: string
+      sequence:
+        example: "0"
+        type: string
+      toStatus:
+        type: string
+    type: object
+  payout.orderDetailResult:
+    properties:
+      allowedActions:
+        additionalProperties:
+          type: boolean
+        type: object
+      attemptEvents:
+        items:
+          $ref: '#/definitions/payout.AttemptEvent'
+        type: array
+      attempts:
+        items:
+          $ref: '#/definitions/response.Attempt'
+        type: array
+      audit:
+        items:
+          $ref: '#/definitions/payout.OrderAudit'
+        type: array
+      auditTruncated:
+        type: boolean
+      check:
+        $ref: '#/definitions/response.Reconciliation'
+      checkedAt:
+        type: integer
+      consistent:
+        type: boolean
+      creationReconciliation:
+        type: string
+      currentPayee:
+        $ref: '#/definitions/response.Current'
+      evidence:
+        items:
+          $ref: '#/definitions/response.EvidenceInfo'
+        type: array
+      history:
+        items:
+          $ref: '#/definitions/payout.StatusHistory'
+        type: array
+      investigations:
+        items:
+          $ref: '#/definitions/payout.Investigation'
+        type: array
+      investigationsTruncated:
+        type: boolean
+      order:
+        $ref: '#/definitions/tb_live_module_model_payout_response.Order'
+      reconciliations:
+        items:
+          $ref: '#/definitions/payout.OrderReconciliation'
+        type: array
+      withdrawal:
+        $ref: '#/definitions/earning.Withdrawal'
+    type: object
+  payout.orderEnvelope:
+    properties:
+      code:
+        type: integer
+      data: {}
+      msg:
+        type: string
+    type: object
+  payout.orderListResult:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/tb_live_module_model_payout_response.Order'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        example: "0"
+        type: string
+    type: object
+  payout.orderResult:
+    properties:
+      accountMasked:
+        type: string
+      amount:
+        example: "0"
+        type: string
+      anchorNo:
+        type: string
+      businessNo:
+        type: string
+      businessType:
+        type: string
+      createdAt:
+        type: integer
+      createdBy:
+        example: "0"
+        type: string
+      currency:
+        type: string
+      payeeAccountNo:
+        type: string
+      payeeMethod:
+        type: string
+      payeeSnapshotHash:
+        type: string
+      payeeVersion:
+        type: string
+      payoutNo:
+        type: string
+      status:
+        type: string
+      updatedAt:
         type: integer
     type: object
   request.AccountAdminActionReq:
@@ -1515,6 +2343,26 @@ definitions:
     - anchorId
     - status
     type: object
+  request.ApplyWithdrawal:
+    properties:
+      amount:
+        type: string
+      currency:
+        type: string
+      payeeAccountNo:
+        type: string
+      requestId:
+        type: string
+    type: object
+  request.AttemptAction:
+    properties:
+      attemptNo:
+        type: string
+      reason:
+        type: string
+      requestId:
+        type: string
+    type: object
   request.AutoCode:
     properties:
       abbreviation:
@@ -1675,6 +2523,34 @@ definitions:
         description: 是否前端表格列
         type: boolean
     type: object
+  request.CancelOrder:
+    properties:
+      confirmNoTransfer:
+        type: boolean
+      payoutNo:
+        type: string
+      reason:
+        type: string
+      requestId:
+        type: string
+    type: object
+  request.Category:
+    properties:
+      categoryNo:
+        type: string
+      description:
+        type: string
+      iconUrl:
+        type: string
+      name:
+        type: string
+      sortOrder:
+        type: integer
+      status:
+        type: string
+      version:
+        type: string
+    type: object
   request.ChangePasswordReq:
     properties:
       newPassword:
@@ -1682,6 +2558,15 @@ definitions:
         type: string
       password:
         description: 密码
+        type: string
+    type: object
+  request.ChannelAccountAction:
+    properties:
+      channelAccountNo:
+        type: string
+      reason:
+        type: string
+      requestId:
         type: string
     type: object
   request.CounterRepair:
@@ -1733,6 +2618,64 @@ definitions:
     - reason
     - requestId
     type: object
+  request.CreateChannelAccount:
+    properties:
+      account:
+        type: string
+      accountName:
+        type: string
+      channelCode:
+        type: string
+      currency:
+        type: string
+      dailyLimit:
+        type: string
+      institutionName:
+        type: string
+      requestId:
+        type: string
+      singleLimit:
+        type: string
+    type: object
+  request.CreateOrder:
+    properties:
+      requestId:
+        type: string
+      withdrawalNo:
+        type: string
+    type: object
+  request.CreatePayee:
+    properties:
+      account:
+        type: string
+      accountName:
+        type: string
+      appId:
+        type: string
+      bankCode:
+        type: string
+      currency:
+        type: string
+      identifierType:
+        type: string
+      method:
+        type: string
+      requestId:
+        type: string
+    type: object
+  request.CreateSettlement:
+    properties:
+      anchorNo:
+        type: string
+      periodEnd:
+        type: integer
+      periodStart:
+        type: integer
+      requestId:
+        type: string
+      ruleNo:
+        type: string
+    type: object
   request.DataSource:
     properties:
       association:
@@ -1747,6 +2690,15 @@ definitions:
       table:
         type: string
       value:
+        type: string
+    type: object
+  request.Delete:
+    properties:
+      kind:
+        type: string
+      "no":
+        type: string
+      version:
         type: string
     type: object
   request.Empty:
@@ -1780,6 +2732,27 @@ definitions:
         description: 每页大小
         type: integer
     type: object
+  request.ExchangeRule:
+    properties:
+      coinUnits:
+        type: string
+      currency:
+        type: string
+      effectiveFrom:
+        type: integer
+      effectiveTo:
+        type: integer
+      minorUnits:
+        type: string
+      name:
+        type: string
+      requestId:
+        type: string
+      roundingMode:
+        type: string
+      sourceUnit:
+        type: string
+    type: object
   request.ExportVersionRequest:
     properties:
       description:
@@ -1804,6 +2777,15 @@ definitions:
     required:
     - versionCode
     - versionName
+    type: object
+  request.FinanceReview:
+    properties:
+      approve:
+        type: boolean
+      "no":
+        type: string
+      reason:
+        type: string
     type: object
   request.GetAuthorityId:
     properties:
@@ -1975,6 +2957,58 @@ definitions:
     required:
     - adminPassword
     - dbName
+    type: object
+  request.Investigate:
+    properties:
+      evidenceNo:
+        type: string
+      note:
+        type: string
+      payoutNo:
+        type: string
+      requestId:
+        type: string
+    type: object
+  request.Item:
+    properties:
+      animationType:
+        type: string
+      animationUrl:
+        type: string
+      benefitStatus:
+        type: string
+      benefitType:
+        type: string
+      categoryNo:
+        type: string
+      coinPrice:
+        type: string
+      description:
+        type: string
+      effectiveFrom:
+        type: integer
+      effectiveTo:
+        type: integer
+      giftNo:
+        type: string
+      guardDurationDays:
+        type: string
+      guardPlanNo:
+        type: string
+      iconUrl:
+        type: string
+      isPremium:
+        type: boolean
+      maxQuantityPerOrder:
+        type: string
+      name:
+        type: string
+      sortOrder:
+        type: integer
+      status:
+        type: string
+      version:
+        type: string
     type: object
   request.LiveCategoryCreateReq:
     properties:
@@ -2219,6 +3253,15 @@ definitions:
     required:
     - scope
     type: object
+  request.OrderAction:
+    properties:
+      payoutNo:
+        type: string
+      reason:
+        type: string
+      requestId:
+        type: string
+    type: object
   request.PageInfo:
     properties:
       keyword:
@@ -2230,6 +3273,74 @@ definitions:
       pageSize:
         description: 每页大小
         type: integer
+    type: object
+  request.PayeeAction:
+    properties:
+      payeeAccountNo:
+        type: string
+    type: object
+  request.Plan:
+    properties:
+      benefitConfig:
+        type: string
+      defaultDurationDays:
+        type: string
+      level:
+        type: integer
+      name:
+        type: string
+      planNo:
+        type: string
+      priority:
+        type: integer
+      requestId:
+        type: string
+      sortOrder:
+        type: integer
+      status:
+        type: string
+      version:
+        type: string
+    type: object
+  request.ReadEvidence:
+    properties:
+      evidenceNo:
+        type: string
+      reason:
+        type: string
+      requestId:
+        type: string
+    type: object
+  request.Reconcile:
+    properties:
+      withdrawalNo:
+        type: string
+    type: object
+  request.Refund:
+    properties:
+      orderNo:
+        type: string
+      quantity:
+        type: string
+      reason:
+        type: string
+      requestId:
+        type: string
+    type: object
+  request.ResolveAttempt:
+    properties:
+      attemptNo:
+        type: string
+      confirmExternalResult:
+        type: boolean
+      decision:
+        type: string
+      investigationNo:
+        type: string
+      reason:
+        type: string
+      requestId:
+        type: string
     type: object
   request.Resource:
     properties:
@@ -2260,6 +3371,24 @@ definitions:
     required:
     - resources
     type: object
+  request.RevealConsume:
+    properties:
+      grantNo:
+        type: string
+      requestId:
+        type: string
+      token:
+        type: string
+    type: object
+  request.RevealGrant:
+    properties:
+      reason:
+        type: string
+      requestId:
+        type: string
+      targetNo:
+        type: string
+    type: object
   request.ReverseAdjustment:
     properties:
       evidenceRef:
@@ -2275,6 +3404,13 @@ definitions:
     - reason
     - requestId
     type: object
+  request.Review:
+    properties:
+      approve:
+        type: boolean
+      ruleNo:
+        type: string
+    type: object
   request.ReviewAdjustment:
     properties:
       orderNo:
@@ -2284,6 +3420,41 @@ definitions:
     required:
     - orderNo
     - reason
+    type: object
+  request.ReviewAttempt:
+    properties:
+      attemptNo:
+        type: string
+      confirmExternalResult:
+        type: boolean
+      reason:
+        type: string
+      requestId:
+        type: string
+    type: object
+  request.ReviewTermination:
+    properties:
+      approve:
+        type: boolean
+      terminationNo:
+        type: string
+    type: object
+  request.Rule:
+    properties:
+      anchorShareBps:
+        type: string
+      effectiveFrom:
+        type: integer
+      effectiveTo:
+        type: integer
+      name:
+        type: string
+      priority:
+        type: integer
+      scopeNo:
+        type: string
+      scopeType:
+        type: string
     type: object
   request.SRSHookReq:
     properties:
@@ -2329,6 +3500,17 @@ definitions:
     - action
     - stream
     type: object
+  request.Send:
+    properties:
+      giftNo:
+        type: string
+      quantity:
+        type: string
+      requestId:
+        type: string
+      roomNo:
+        type: string
+    type: object
   request.SetMenuAuthorities:
     properties:
       authorityIds:
@@ -2366,6 +3548,47 @@ definitions:
         type: array
       id:
         type: integer
+    type: object
+  request.Sort:
+    properties:
+      categoryNo:
+        type: string
+      kind:
+        type: string
+      numbers:
+        items:
+          type: string
+        type: array
+      version:
+        type: string
+    type: object
+  request.StartOrder:
+    properties:
+      channelAccountNo:
+        type: string
+      payoutNo:
+        type: string
+      reason:
+        type: string
+      requestId:
+        type: string
+    type: object
+  request.SubmitAttempt:
+    properties:
+      attemptNo:
+        type: string
+      confirmRealTransfer:
+        type: boolean
+      evidenceNo:
+        type: string
+      operatorNote:
+        type: string
+      paymentReference:
+        type: string
+      paymentTime:
+        type: integer
+      requestId:
+        type: string
     type: object
   request.SysAutoCodePackageCreate:
     properties:
@@ -2418,6 +3641,37 @@ definitions:
         type: array
     required:
     - targets
+    type: object
+  request.TerminateRule:
+    properties:
+      reason:
+        type: string
+      requestId:
+        type: string
+      ruleNo:
+        type: string
+    type: object
+  request.UnpaidAction:
+    properties:
+      attemptNo:
+        type: string
+      confirmNoTransfer:
+        type: boolean
+      reason:
+        type: string
+      requestId:
+        type: string
+    type: object
+  request.UploadEvidence:
+    properties:
+      attemptNo:
+        type: string
+      content:
+        type: string
+      mime:
+        type: string
+      requestId:
+        type: string
     type: object
   request.VersionInfo:
     properties:
@@ -2615,6 +3869,29 @@ definitions:
       account:
         $ref: '#/definitions/response.Account'
     type: object
+  response.ActionResult:
+    properties:
+      attemptNo:
+        type: string
+      channelAccountNo:
+        type: string
+      evidenceHash:
+        type: string
+      evidenceNo:
+        type: string
+      expiresAt:
+        type: integer
+      grantNo:
+        type: string
+      investigationNo:
+        type: string
+      payoutNo:
+        type: string
+      reconciliationNo:
+        type: string
+      status:
+        type: string
+    type: object
   response.AnchorAdminDetailResp:
     properties:
       agencyId:
@@ -2663,6 +3940,8 @@ definitions:
         type: integer
       gender:
         type: integer
+      giftSummary:
+        $ref: '#/definitions/response.GiftSummary'
       id:
         type: integer
       isRecommended:
@@ -2867,6 +4146,132 @@ definitions:
       totalViewCount:
         type: integer
     type: object
+  response.AppOrder:
+    properties:
+      anchorNo:
+        type: string
+      animationType:
+        type: string
+      animationUrl:
+        type: string
+      categoryName:
+        type: string
+      categoryNo:
+        type: string
+      createdAt:
+        type: integer
+      giftName:
+        type: string
+      giftNo:
+        type: string
+      grossCoinAmount:
+        example: "0"
+        type: string
+      iconUrl:
+        type: string
+      orderNo:
+        type: string
+      quantity:
+        example: "0"
+        type: string
+      refundedCoinAmount:
+        example: "0"
+        type: string
+      requestId:
+        type: string
+      roomNo:
+        type: string
+      sessionNo:
+        type: string
+      status:
+        type: string
+      unitPrice:
+        example: "0"
+        type: string
+    type: object
+  response.AppWithdrawal:
+    properties:
+      accountMasked:
+        type: string
+      amount:
+        example: "0"
+        type: string
+      createdAt:
+        type: integer
+      currency:
+        type: string
+      payeeAccountNo:
+        type: string
+      payeeMethod:
+        type: string
+      payeeVersion:
+        type: string
+      requestId:
+        type: string
+      reviewedAt:
+        type: integer
+      status:
+        type: string
+      withdrawalNo:
+        type: string
+    type: object
+  response.Attempt:
+    properties:
+      amount:
+        example: "0"
+        type: string
+      attemptNo:
+        type: string
+      bankSubmittedAt:
+        type: integer
+      channelAccountNo:
+        type: string
+      channelCode:
+        type: string
+      companyMasked:
+        type: string
+      completedAt:
+        type: integer
+      createdAt:
+        type: integer
+      currency:
+        type: string
+      evidenceHash:
+        type: string
+      evidenceReference:
+        type: string
+      failureCode:
+        type: string
+      failureReason:
+        type: string
+      operatorId:
+        example: "0"
+        type: string
+      operatorNote:
+        type: string
+      paymentReference:
+        type: string
+      paymentTime:
+        type: integer
+      payoutNo:
+        type: string
+      reviewReason:
+        type: string
+      reviewedAt:
+        type: integer
+      reviewerId:
+        example: "0"
+        type: string
+      sequence:
+        example: "0"
+        type: string
+      status:
+        type: string
+      submittedAt:
+        type: integer
+      updatedAt:
+        type: integer
+    type: object
   response.Audit:
     properties:
       action:
@@ -2882,30 +4287,56 @@ definitions:
       reason:
         type: string
     type: object
-  response.Balance:
+  response.Change:
     properties:
-      accountNo:
-        description: AccountNo和Phone仅由后台查询接口填充；客户端余额接口不暴露这些字段。
+      changed:
+        type: boolean
+    type: object
+  response.ChannelAccount:
+    properties:
+      accountName:
         type: string
-      availableBalance:
+      channelAccountNo:
         type: string
-      currencyCode:
+      channelCode:
         type: string
-      frozenBalance:
+      createdAt:
+        type: integer
+      createdBy:
+        example: "0"
         type: string
-      phone:
+      currency:
+        type: string
+      dailyLimit:
+        example: "0"
+        type: string
+      disabledAt:
+        type: integer
+      institutionName:
+        type: string
+      maskedAccount:
+        type: string
+      singleLimit:
+        example: "0"
         type: string
       status:
         type: string
       updatedAt:
         type: integer
-      version:
-        type: string
     type: object
-  response.Change:
+  response.ChannelAccountPage:
     properties:
-      changed:
-        type: boolean
+      list:
+        items:
+          $ref: '#/definitions/response.ChannelAccount'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        example: "0"
+        type: string
     type: object
   response.Check:
     properties:
@@ -2914,6 +4345,8 @@ definitions:
       checked:
         type: integer
       checkedOrders:
+        type: integer
+      checkedTransactions:
         type: integer
       consistent:
         type: boolean
@@ -2926,6 +4359,8 @@ definitions:
           type: string
         type: array
       nextOrderId:
+        type: string
+      nextTransactionId:
         type: string
       nextVersion:
         type: string
@@ -2955,6 +4390,52 @@ definitions:
         type: integer
       followingCount:
         type: integer
+    type: object
+  response.Current:
+    properties:
+      account:
+        $ref: '#/definitions/response.Payee'
+      matchesSnapshot:
+        type: boolean
+      state:
+        type: string
+      usable:
+        type: boolean
+    type: object
+  response.Detail:
+    properties:
+      benefits:
+        items:
+          $ref: '#/definitions/gift.BenefitGrant'
+        type: array
+      compensations:
+        items:
+          $ref: '#/definitions/gift.BenefitCompensation'
+        type: array
+      consistent:
+        type: boolean
+      earnings:
+        items:
+          $ref: '#/definitions/earning.Ledger'
+        type: array
+      events:
+        items:
+          $ref: '#/definitions/gift.Event'
+        type: array
+      issues:
+        items:
+          type: string
+        type: array
+      order:
+        $ref: '#/definitions/gift.Order'
+      refunds:
+        items:
+          $ref: '#/definitions/gift.Refund'
+        type: array
+      revenue:
+        items:
+          $ref: '#/definitions/gift.Revenue'
+        type: array
     type: object
   response.Email:
     properties:
@@ -2996,6 +4477,25 @@ definitions:
       nextCursor:
         type: string
     type: object
+  response.EvidenceInfo:
+    properties:
+      attemptNo:
+        type: string
+      createdAt:
+        type: integer
+      createdBy:
+        example: "0"
+        type: string
+      evidenceNo:
+        type: string
+      mime:
+        type: string
+      sha256:
+        type: string
+      size:
+        example: "0"
+        type: string
+    type: object
   response.ExaCustomerResponse:
     properties:
       customer:
@@ -3024,6 +4524,44 @@ definitions:
     properties:
       file:
         $ref: '#/definitions/example.ExaFile'
+    type: object
+  response.FinanceOverview:
+    properties:
+      anchorNo:
+        type: string
+      balances:
+        items:
+          $ref: '#/definitions/tb_live_module_model_earning_response.Balance'
+        type: array
+      payoutEnabled:
+        type: boolean
+      pendingCoin:
+        type: string
+      settledCoin:
+        type: string
+      withdrawalEnabled:
+        type: boolean
+    type: object
+  response.GiftSummary:
+    properties:
+      grossCoin:
+        type: string
+      grossQuantity:
+        type: string
+      netCoin:
+        type: string
+      orders:
+        type: string
+      pendingEarningCoin:
+        type: string
+      quantity:
+        type: string
+      refundCoin:
+        type: string
+      refundQuantity:
+        type: string
+      users:
+        type: string
     type: object
   response.HistoryUserItem:
     properties:
@@ -3202,6 +4740,8 @@ definitions:
         $ref: '#/definitions/response.LiveSessionAdminItem'
       currentSessionId:
         type: integer
+      giftSummary:
+        $ref: '#/definitions/response.GiftSummary'
       id:
         type: integer
       liveStartedAt:
@@ -3452,12 +4992,8 @@ definitions:
         type: integer
       failureReason:
         type: string
-      giftCoinAmount:
-        type: integer
-      giftCount:
-        type: integer
-      giftUserCount:
-        type: integer
+      giftSummary:
+        $ref: '#/definitions/response.GiftSummary'
       id:
         type: integer
       lastUnpublishAt:
@@ -3565,12 +5101,6 @@ definitions:
         type: integer
       failureReason:
         type: string
-      giftCoinAmount:
-        type: integer
-      giftCount:
-        type: integer
-      giftUserCount:
-        type: integer
       lastUnpublishAt:
         type: integer
       likeCount:
@@ -3792,78 +5322,6 @@ definitions:
       title:
         type: string
     type: object
-  response.Order:
-    properties:
-      accountNo:
-        type: string
-      amount:
-        type: string
-      approvedAt:
-        type: integer
-      approvedBy:
-        type: string
-      approvedByDisplay:
-        type: string
-      createdAt:
-        type: integer
-      createdBy:
-        type: string
-      createdByDisplay:
-        type: string
-      createdIp:
-        type: string
-      creditedAt:
-        type: integer
-      currencyCode:
-        type: string
-      evidenceRef:
-        type: string
-      externalOrderNo:
-        type: string
-      kind:
-        type: string
-      ledgerNo:
-        type: string
-      orderNo:
-        type: string
-      originalOrderNo:
-        type: string
-      reason:
-        type: string
-      rejectedAt:
-        type: integer
-      rejectedBy:
-        type: string
-      rejectedByDisplay:
-        type: string
-      requestId:
-        type: string
-      reversalOrderNo:
-        type: string
-      reversedAt:
-        type: integer
-      reviewReason:
-        type: string
-      reviewedIp:
-        type: string
-      sourceType:
-        type: string
-      status:
-        type: string
-      updatedAt:
-        type: integer
-    type: object
-  response.OrderDetail:
-    properties:
-      audit:
-        items:
-          $ref: '#/definitions/response.Audit'
-        type: array
-      ledger:
-        $ref: '#/definitions/response.Ledger'
-      order:
-        $ref: '#/definitions/response.Order'
-    type: object
   response.PageResult:
     properties:
       list: {}
@@ -3879,6 +5337,28 @@ definitions:
       expiresAt:
         type: integer
       token:
+        type: string
+    type: object
+  response.Payee:
+    properties:
+      createdAt:
+        type: integer
+      currency:
+        type: string
+      isDefault:
+        type: boolean
+      maskedAccount:
+        type: string
+      method:
+        type: string
+      payeeAccountNo:
+        type: string
+      status:
+        type: string
+      updatedAt:
+        type: integer
+      version:
+        example: "0"
         type: string
     type: object
   response.PluginInfo:
@@ -3899,6 +5379,21 @@ definitions:
         type: string
       pluginType:
         description: web, server, full
+        type: string
+    type: object
+  response.Reconciliation:
+    properties:
+      checkedAt:
+        type: integer
+      consistent:
+        type: boolean
+      issues:
+        items:
+          type: string
+        type: array
+      payoutNo:
+        type: string
+      status:
         type: string
     type: object
   response.RegisterResponse:
@@ -3985,6 +5480,53 @@ definitions:
       msg:
         type: string
     type: object
+  response.RevealTicket:
+    properties:
+      expiresAt:
+        type: integer
+      grantNo:
+        type: string
+      token:
+        type: string
+    type: object
+  response.RevealedAccount:
+    properties:
+      account:
+        type: string
+      accountName:
+        type: string
+      appId:
+        type: string
+      bankCode:
+        type: string
+      clearAfterSeconds:
+        type: integer
+      currency:
+        type: string
+      identifierType:
+        type: string
+      institutionName:
+        type: string
+      method:
+        type: string
+      targetNo:
+        type: string
+    type: object
+  response.SettlementDetail:
+    properties:
+      audit:
+        items:
+          $ref: '#/definitions/earning.FinanceAudit'
+        type: array
+      consistent:
+        type: boolean
+      items:
+        items:
+          $ref: '#/definitions/earning.SettlementItem'
+        type: array
+      settlement:
+        $ref: '#/definitions/earning.Settlement'
+    type: object
   response.SysAuthorityCopyResponse:
     properties:
       authority:
@@ -4037,6 +5579,70 @@ definitions:
     properties:
       user:
         $ref: '#/definitions/system.SysUser'
+    type: object
+  response.Trace:
+    properties:
+      adjustment:
+        $ref: '#/definitions/tb_live_module_model_wallet_response.OrderDetail'
+      audit:
+        items:
+          $ref: '#/definitions/response.Audit'
+        type: array
+      hasMore:
+        type: boolean
+      issues:
+        items:
+          type: string
+        type: array
+      ledger:
+        $ref: '#/definitions/response.Ledger'
+      nextRefundId:
+        type: string
+      original:
+        $ref: '#/definitions/response.Transaction'
+      refunds:
+        items:
+          $ref: '#/definitions/response.Transaction'
+        type: array
+      transaction:
+        $ref: '#/definitions/response.Transaction'
+    type: object
+  response.Transaction:
+    properties:
+      accountNo:
+        type: string
+      actorDisplay:
+        type: string
+      actorId:
+        type: string
+      actorIp:
+        type: string
+      actorType:
+        type: string
+      amount:
+        type: string
+      businessNo:
+        type: string
+      businessType:
+        type: string
+      createdAt:
+        type: integer
+      currencyCode:
+        type: string
+      kind:
+        type: string
+      ledgerNo:
+        type: string
+      originalNo:
+        type: string
+      reason:
+        type: string
+      refundedAmount:
+        type: string
+      traceId:
+        type: string
+      transactionNo:
+        type: string
     type: object
   response.UserItem:
     properties:
@@ -4099,6 +5705,27 @@ definitions:
         type: string
       sessionVersion:
         type: integer
+    type: object
+  response.WithdrawalDetail:
+    properties:
+      audit:
+        items:
+          $ref: '#/definitions/earning.FinanceAudit'
+        type: array
+      currentPayee:
+        $ref: '#/definitions/response.Current'
+      ledger:
+        items:
+          $ref: '#/definitions/earning.AccountLedger'
+        type: array
+      payoutEnabled:
+        type: boolean
+      reconciliations:
+        items:
+          $ref: '#/definitions/earning.Reconciliation'
+        type: array
+      withdrawal:
+        $ref: '#/definitions/earning.Withdrawal'
     type: object
   social.EventStatus:
     enum:
@@ -4735,6 +6362,52 @@ definitions:
         description: 收件人:多个以英文逗号分隔 例：a@qq.com b@qq.com 正式开发中请把此项目作为参数使用
         type: string
     type: object
+  tb_live_module_model_earning_response.Balance:
+    properties:
+      available:
+        type: string
+      currency:
+        type: string
+      debt:
+        type: string
+      frozen:
+        type: string
+      paid:
+        type: string
+      version:
+        type: string
+    type: object
+  tb_live_module_model_earning_response.Page:
+    properties:
+      list: {}
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        example: "0"
+        type: string
+    type: object
+  tb_live_module_model_gift_response.Page:
+    properties:
+      list: {}
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        example: "0"
+        type: string
+      version:
+        type: string
+    type: object
+  tb_live_module_model_guard_request.Action:
+    properties:
+      number:
+        type: string
+      requestId:
+        type: string
+    type: object
   tb_live_module_model_live_request.Login:
     properties:
       password:
@@ -4784,6 +6457,62 @@ definitions:
       expiresAt:
         type: integer
       token:
+        type: string
+    type: object
+  tb_live_module_model_payout_response.Order:
+    properties:
+      accountMasked:
+        type: string
+      amount:
+        example: "0"
+        type: string
+      anchorNo:
+        type: string
+      businessNo:
+        type: string
+      businessType:
+        type: string
+      createdAt:
+        type: integer
+      createdBy:
+        example: "0"
+        type: string
+      currency:
+        type: string
+      payeeAccountNo:
+        type: string
+      payeeMethod:
+        type: string
+      payeeSnapshotHash:
+        type: string
+      payeeVersion:
+        type: string
+      payoutNo:
+        type: string
+      status:
+        type: string
+      updatedAt:
+        type: integer
+    type: object
+  tb_live_module_model_payout_response.Page:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/response.Payee'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        example: "0"
+        type: string
+    type: object
+  tb_live_module_model_ranking_request.Action:
+    properties:
+      requestId:
+        type: string
+      scope:
         type: string
     type: object
   tb_live_module_model_system_request.Login:
@@ -4839,6 +6568,102 @@ definitions:
         type: string
       user:
         $ref: '#/definitions/system.SysUser'
+    type: object
+  tb_live_module_model_wallet_response.Balance:
+    properties:
+      accountNo:
+        description: AccountNo和Phone仅由后台查询接口填充；客户端余额接口不暴露这些字段。
+        type: string
+      availableBalance:
+        type: string
+      currencyCode:
+        type: string
+      frozenBalance:
+        type: string
+      phone:
+        type: string
+      status:
+        type: string
+      updatedAt:
+        type: integer
+      version:
+        type: string
+    type: object
+  tb_live_module_model_wallet_response.Order:
+    properties:
+      accountNo:
+        type: string
+      amount:
+        type: string
+      approvedAt:
+        type: integer
+      approvedBy:
+        type: string
+      approvedByDisplay:
+        type: string
+      createdAt:
+        type: integer
+      createdBy:
+        type: string
+      createdByDisplay:
+        type: string
+      createdIp:
+        type: string
+      creditedAt:
+        type: integer
+      currencyCode:
+        type: string
+      evidenceRef:
+        type: string
+      externalOrderNo:
+        type: string
+      kind:
+        type: string
+      ledgerNo:
+        type: string
+      orderNo:
+        type: string
+      originalOrderNo:
+        type: string
+      reason:
+        type: string
+      rejectedAt:
+        type: integer
+      rejectedBy:
+        type: string
+      rejectedByDisplay:
+        type: string
+      requestId:
+        type: string
+      reversalOrderNo:
+        type: string
+      reversedAt:
+        type: integer
+      reviewReason:
+        type: string
+      reviewedIp:
+        type: string
+      sourceType:
+        type: string
+      status:
+        type: string
+      updatedAt:
+        type: integer
+    type: object
+  tb_live_module_model_wallet_response.OrderDetail:
+    properties:
+      audit:
+        items:
+          $ref: '#/definitions/response.Audit'
+        type: array
+      issues:
+        items:
+          type: string
+        type: array
+      ledger:
+        $ref: '#/definitions/response.Ledger'
+      order:
+        $ref: '#/definitions/tb_live_module_model_wallet_response.Order'
     type: object
 info:
   contact: {}
@@ -10069,11 +11894,2956 @@ paths:
       summary: 设置用户信息
       tags:
       - SysUser
+  /v1/admin/earning/account/check:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: currency
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: from
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: payeeAccountNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sourceType
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 只读核查独立账户全链路账务
+      tags:
+      - Earning
+  /v1/admin/earning/account/ledger:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: currency
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: from
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: payeeAccountNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sourceType
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_earning_response.Page'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 可提现账户不可变流水
+      tags:
+      - Earning
+  /v1/admin/earning/account/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: currency
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: from
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: payeeAccountNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sourceType
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_earning_response.Page'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查询可提现账户
+      tags:
+      - Earning
+  /v1/admin/earning/exchange/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数，金额与版本使用十进制字符串
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ExchangeRule'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/earning.SettlementRule'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 创建兑换规则新版本
+      tags:
+      - Earning
+  /v1/admin/earning/exchange/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: currency
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: from
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: payeeAccountNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sourceType
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_earning_response.Page'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查询结算兑换规则
+      tags:
+      - Earning
+  /v1/admin/earning/exchange/review:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数，金额与版本使用十进制字符串
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.FinanceReview'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/earning.SettlementRule'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 复核兑换规则（超级 root ID 1 可自审）
+      tags:
+      - Earning
+  /v1/admin/earning/income/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: currency
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: from
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: payeeAccountNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sourceType
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_earning_response.Page'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查询统一收益事实
+      tags:
+      - Earning
+  /v1/admin/earning/overview:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: currency
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: from
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: payeeAccountNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sourceType
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.FinanceOverview'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 收益与各币种可提现余额概览
+      tags:
+      - Earning
+  /v1/admin/earning/reconciliation/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: currency
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: from
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: payeeAccountNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sourceType
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_earning_response.Page'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查询不可变对账快照
+      tags:
+      - Earning
+  /v1/admin/earning/reconciliation/run:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数，金额与版本使用十进制字符串
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Reconcile'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/earning.Reconciliation'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 生成不可变提现对账快照
+      tags:
+      - Earning
+  /v1/admin/earning/settlement/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数，金额与版本使用十进制字符串
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateSettlement'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/earning.Settlement'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 生成结算申请和不可变来源明细
+      tags:
+      - Earning
+  /v1/admin/earning/settlement/detail:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: currency
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: from
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: payeeAccountNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sourceType
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.SettlementDetail'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 结算明细、审计及来源核验
+      tags:
+      - Earning
+  /v1/admin/earning/settlement/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: currency
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: from
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: payeeAccountNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sourceType
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_earning_response.Page'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查询收益结算
+      tags:
+      - Earning
+  /v1/admin/earning/settlement/review:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数，金额与版本使用十进制字符串
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.FinanceReview'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/earning.Settlement'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 结算复核，超级 root ID 1 可自审并原子记入独立账户
+      tags:
+      - Earning
+  /v1/admin/earning/withdrawal/detail:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: currency
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: from
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: payeeAccountNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sourceType
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.WithdrawalDetail'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 提现详情、冻结流水、审计与对账快照
+      tags:
+      - Earning
+  /v1/admin/earning/withdrawal/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: currency
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: from
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: payeeAccountNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sourceType
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_earning_response.Page'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查询提现申请
+      tags:
+      - Earning
+  /v1/admin/earning/withdrawal/review:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数，金额与版本使用十进制字符串
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.FinanceReview'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/earning.Withdrawal'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 自动对账后审核；通过保持冻结，驳回释放
+      tags:
+      - Earning
+  /v1/admin/gift/category/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: categoryNo
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: dimension
+        type: string
+      - in: query
+        name: from
+        type: integer
+      - in: query
+        name: giftNo
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: maxAmount
+        type: string
+      - in: query
+        name: minAmount
+        type: string
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: period
+        type: string
+      - in: query
+        name: refunded
+        type: string
+      - in: query
+        name: requestId
+        type: string
+      - in: query
+        name: roomNo
+        type: string
+      - in: query
+        name: sessionNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统一响应，金额和大整数为十进制字符串
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_gift_response.Page'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 后台礼物分类
+      tags:
+      - Gift
+  /v1/admin/gift/category/save:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Category'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统一响应，金额和大整数为十进制字符串
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gift.Category'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 新增或修改分类，更新须传版本
+      tags:
+      - Gift
+  /v1/admin/gift/delete:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Delete'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统一响应，金额和大整数为十进制字符串
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 删除未被使用的分类或礼物
+      tags:
+      - Gift
+  /v1/admin/gift/item/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: categoryNo
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: dimension
+        type: string
+      - in: query
+        name: from
+        type: integer
+      - in: query
+        name: giftNo
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: maxAmount
+        type: string
+      - in: query
+        name: minAmount
+        type: string
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: period
+        type: string
+      - in: query
+        name: refunded
+        type: string
+      - in: query
+        name: requestId
+        type: string
+      - in: query
+        name: roomNo
+        type: string
+      - in: query
+        name: sessionNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统一响应，金额和大整数为十进制字符串
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_gift_response.Page'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 后台礼物配置
+      tags:
+      - Gift
+  /v1/admin/gift/item/save:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Item'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统一响应，金额和大整数为十进制字符串
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gift.Item'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 新增或修改礼物，守护履约关闭
+      tags:
+      - Gift
+  /v1/admin/gift/order/detail:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: categoryNo
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: dimension
+        type: string
+      - in: query
+        name: from
+        type: integer
+      - in: query
+        name: giftNo
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: maxAmount
+        type: string
+      - in: query
+        name: minAmount
+        type: string
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: period
+        type: string
+      - in: query
+        name: refunded
+        type: string
+      - in: query
+        name: requestId
+        type: string
+      - in: query
+        name: roomNo
+        type: string
+      - in: query
+        name: sessionNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统一响应，金额和大整数为十进制字符串
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Detail'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 订单关联事实和一致性检查
+      tags:
+      - Gift
+  /v1/admin/gift/order/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: categoryNo
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: dimension
+        type: string
+      - in: query
+        name: from
+        type: integer
+      - in: query
+        name: giftNo
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: maxAmount
+        type: string
+      - in: query
+        name: minAmount
+        type: string
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: period
+        type: string
+      - in: query
+        name: refunded
+        type: string
+      - in: query
+        name: requestId
+        type: string
+      - in: query
+        name: roomNo
+        type: string
+      - in: query
+        name: sessionNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统一响应，金额和大整数为十进制字符串
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_gift_response.Page'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 后台礼物消费记录
+      tags:
+      - Gift
+  /v1/admin/gift/ranking:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: categoryNo
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: dimension
+        type: string
+      - in: query
+        name: from
+        type: integer
+      - in: query
+        name: giftNo
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: maxAmount
+        type: string
+      - in: query
+        name: minAmount
+        type: string
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: period
+        type: string
+      - in: query
+        name: refunded
+        type: string
+      - in: query
+        name: requestId
+        type: string
+      - in: query
+        name: roomNo
+        type: string
+      - in: query
+        name: sessionNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统一响应，金额和大整数为十进制字符串
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_gift_response.Page'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 净消费排行和收入统计（UTC）
+      tags:
+      - Gift
+  /v1/admin/gift/refund:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Refund'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统一响应，金额和大整数为十进制字符串
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/gift.Refund'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 授权后台部分或全部退款
+      tags:
+      - Gift
+  /v1/admin/gift/rule/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Rule'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统一响应，金额和大整数为十进制字符串
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/earning.RevenueRule'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 提交新的分成规则版本
+      tags:
+      - Gift
+  /v1/admin/gift/rule/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: categoryNo
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: dimension
+        type: string
+      - in: query
+        name: from
+        type: integer
+      - in: query
+        name: giftNo
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: maxAmount
+        type: string
+      - in: query
+        name: minAmount
+        type: string
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: period
+        type: string
+      - in: query
+        name: refunded
+        type: string
+      - in: query
+        name: requestId
+        type: string
+      - in: query
+        name: roomNo
+        type: string
+      - in: query
+        name: sessionNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统一响应，金额和大整数为十进制字符串
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_gift_response.Page'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分成规则版本列表
+      tags:
+      - Gift
+  /v1/admin/gift/rule/review:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Review'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统一响应，金额和大整数为十进制字符串
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/earning.RevenueRule'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 复核分成规则（超级 root ID 1 可自审）
+      tags:
+      - Gift
+  /v1/admin/gift/rule/terminate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 规则编号、幂等键、终止原因
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.TerminateRule'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/earning.RuleTermination'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 申请提前终止分成规则，原规则和历史订单保持可追溯
+      tags:
+      - GiftAdmin
+  /v1/admin/gift/rule/terminate/review:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 终止申请编号、是否通过
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ReviewTermination'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/earning.RuleTermination'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 复核提前终止；超级 root ID 1 可自审，通过后立即停止匹配新订单
+      tags:
+      - GiftAdmin
+  /v1/admin/gift/sort:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Sort'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统一响应，金额和大整数为十进制字符串
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 完整集合事务排序，须传目录版本
+      tags:
+      - Gift
+  /v1/admin/guard/compensation/list:
+    get:
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: membershipNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 守护来源/补偿/流水/任务
+      tags:
+      - guard
+  /v1/admin/guard/grant/list:
+    get:
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: membershipNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 守护来源/补偿/流水/任务
+      tags:
+      - guard
+  /v1/admin/guard/ledger/list:
+    get:
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: membershipNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 守护来源/补偿/流水/任务
+      tags:
+      - guard
+  /v1/admin/guard/member/detail:
+    get:
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: membershipNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 管理守护会员
+      tags:
+      - guard
+  /v1/admin/guard/member/list:
+    get:
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: membershipNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 管理守护会员
+      tags:
+      - guard
+  /v1/admin/guard/plan/list:
+    get:
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: membershipNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 管理守护方案
+      tags:
+      - guard
+  /v1/admin/guard/plan/save:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 永久幂等请求
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Plan'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 保存/启停/排序守护方案
+      tags:
+      - guard
+  /v1/admin/guard/rebuild:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 永久幂等请求
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/tb_live_module_model_guard_request.Action'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 守护重试/重建/核验
+      tags:
+      - guard
+  /v1/admin/guard/reconcile:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 永久幂等请求
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/tb_live_module_model_guard_request.Action'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 守护重试/重建/核验
+      tags:
+      - guard
+  /v1/admin/guard/task/list:
+    get:
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: membershipNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 守护来源/补偿/流水/任务
+      tags:
+      - guard
+  /v1/admin/guard/task/retry:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 永久幂等请求
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/tb_live_module_model_guard_request.Action'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 守护重试/重建/核验
+      tags:
+      - guard
+  /v1/admin/payout/attempt/bank-submitted:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AttemptAction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 标记已提交银行并禁止释放
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/attempt/fail-unpaid:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.UnpaidAction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 确认未执行转账
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/attempt/resolve-unknown:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ResolveAttempt'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 通过新调查和新凭证解决未知结果
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/attempt/review-failure:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ReviewAttempt'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 独立确认未付款成功
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/attempt/review-success:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ReviewAttempt'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 独立确认成功并原子入账
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/attempt/review-unknown:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ReviewAttempt'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 结果未知并继续冻结
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/attempt/submit:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.SubmitAttempt'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 提交真实流水及私有凭证待独立复核
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/capabilities:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  additionalProperties:
+                    type: boolean
+                  type: object
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 当前启用管理员的出款权限
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/channel-account/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateChannelAccount'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 创建公司人工出款账户
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/channel-account/disable:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ChannelAccountAction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 停用公司出款账户
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/channel-account/enable:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ChannelAccountAction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 启用公司出款账户
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/channel-account/list:
+    get:
+      parameters:
+      - description: 默认1，最多100
+        in: query
+        name: page
+        type: integer
+      - description: 默认20，最多100
+        in: query
+        name: pageSize
+        type: integer
+      - description: 币种
+        in: query
+        name: currency
+        type: string
+      - description: active/disabled
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ChannelAccountPage'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 公司出款账户列表（限额为平台风控限制）
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/channel-account/reveal:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.RevealConsume'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.RevealedAccount'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 消耗单次凭证查看公司完整账号
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/channel-account/reveal-grant:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.RevealGrant'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.RevealTicket'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 申请45秒单次公司账户查看凭证
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/evidence/read:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 凭证编号与查看原因
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ReadEvidence'
+      produces:
+      - image/png
+      - image/jpeg
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      security:
+      - ApiKeyAuth: []
+      summary: 审计读取私有凭证（成功返回图片，失败返回JSON）
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/evidence/upload:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.UploadEvidence'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 上传私有加密PNG或JPEG（原图最多2MiB）
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/order/cancel:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.CancelOrder'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 确认无付款并取消提现释放冻结
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/order/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId与withdrawalNo
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreateOrder'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/payout.orderEnvelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/payout.orderResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 提交打款中心（只创建待出款订单，不实际打款）
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/order/detail:
+    get:
+      parameters:
+      - description: 出款单号
+        in: query
+        name: payoutNo
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/payout.orderEnvelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/payout.orderDetailResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 只读出款详情、状态历史、审计及账务核验
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/order/investigate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Investigate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 追加未知结果调查记录
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/order/list:
+    get:
+      parameters:
+      - description: 页码，默认1，最多10000
+        in: query
+        name: page
+        type: integer
+      - description: 每页1—100，默认20
+        in: query
+        name: pageSize
+        type: integer
+      - description: 出款单号
+        in: query
+        name: payoutNo
+        type: string
+      - description: 提现单号
+        in: query
+        name: withdrawalNo
+        type: string
+      - description: 主播编号
+        in: query
+        name: anchorNo
+        type: string
+      - description: 币种
+        in: query
+        name: currency
+        type: string
+      - description: bank_card/alipay/wechat
+        in: query
+        name: payeeMethod
+        type: string
+      - description: ready/processing/pending_confirmation/succeeded/failed/unknown/cancelled
+        in: query
+        name: status
+        type: string
+      - description: 公司出款账户编号，匹配历史尝试
+        in: query
+        name: channelAccountNo
+        type: string
+      - description: 操作人ID字符串
+        in: query
+        name: operatorId
+        type: string
+      - description: 复核人ID字符串
+        in: query
+        name: reviewerId
+        type: string
+      - description: 银行流水号，须同时指定公司账户编号
+        in: query
+        name: paymentReference
+        type: string
+      - description: 创建时间起（毫秒，包含）
+        in: query
+        name: from
+        type: integer
+      - description: 创建时间止（毫秒，不包含）
+        in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/payout.orderEnvelope'
+            - properties:
+                data:
+                  $ref: '#/definitions/payout.orderListResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 出款订单分页筛选
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/order/reconcile:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.OrderAction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 执行内部账务对账（非银行对账）
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/order/release:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.UnpaidAction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 未转账且无凭证时释放领取
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/order/retry:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.StartOrder'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 明确失败后新建尝试
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/order/reveal-payee:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.RevealConsume'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.RevealedAccount'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 消耗单次凭证查看当前领取订单的收款资料
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/order/reveal-payee-grant:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.RevealGrant'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.RevealTicket'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 申请45秒单次收款资料查看凭证
+      tags:
+      - PayoutAdmin
+  /v1/admin/payout/order/start:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId；参数不可改变
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.StartOrder'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.ActionResult'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 领取人工出款
+      tags:
+      - PayoutAdmin
+  /v1/admin/ranking/admin/board:
+    get:
+      parameters:
+      - in: query
+        name: giftNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: period
+        type: string
+      - in: query
+        name: periodKey
+        type: string
+      - in: query
+        name: rankType
+        type: string
+      - in: query
+        name: scopeNo
+        type: string
+      - in: query
+        name: scopeType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 管理员查询净礼物消费榜
+      tags:
+      - ranking
+  /v1/admin/ranking/admin/job/list:
+    get:
+      parameters:
+      - in: query
+        name: giftNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: period
+        type: string
+      - in: query
+        name: periodKey
+        type: string
+      - in: query
+        name: rankType
+        type: string
+      - in: query
+        name: scopeNo
+        type: string
+      - in: query
+        name: scopeType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 榜单重建任务
+      tags:
+      - ranking
+  /v1/admin/ranking/admin/rebuild:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 永久幂等请求
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/tb_live_module_model_ranking_request.Action'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 重建/核验礼物榜单
+      tags:
+      - ranking
+  /v1/admin/ranking/admin/reconcile:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 永久幂等请求
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/tb_live_module_model_ranking_request.Action'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 重建/核验礼物榜单
+      tags:
+      - ranking
+  /v1/admin/ranking/admin/status:
+    get:
+      parameters:
+      - in: query
+        name: giftNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: period
+        type: string
+      - in: query
+        name: periodKey
+        type: string
+      - in: query
+        name: rankType
+        type: string
+      - in: query
+        name: scopeNo
+        type: string
+      - in: query
+        name: scopeType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 榜单进度与积压
+      tags:
+      - ranking
   /v1/admin/social/block/list:
     get:
       consumes:
       - application/json
-      description: 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+      description: 超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
       parameters:
       - description: 用户公开编号，与anchorNo二选一
         in: query
@@ -10116,7 +14886,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+      description: 超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
       parameters:
       - description: 用户公开编号，与anchorNo二选一
         in: query
@@ -10151,7 +14921,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+      description: 超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
       parameters:
       - description: 参数
         in: body
@@ -10184,7 +14954,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+      description: 超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
       parameters:
       - description: 不透明游标
         in: query
@@ -10219,7 +14989,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+      description: 超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
       parameters:
       - description: 参数
         in: body
@@ -10254,7 +15024,7 @@ paths:
       - application/json
       description: |-
         每种状态最多统计1000条；countIsLowerBound=true表示总数大于1000，sampleOldestCreatedAt仅为样本最早毫秒时间，不是全局最早时间。
-        仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+        超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
       produces:
       - application/json
       responses:
@@ -10280,7 +15050,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+      description: 超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
       parameters:
       - description: 不透明游标
         in: query
@@ -10330,6 +15100,10 @@ paths:
       - description: 起始订单内部游标，首次0；后续使用nextOrderId
         in: query
         name: afterOrderId
+        type: string
+      - description: 消费交易游标，首次0；后续使用nextTransactionId
+        in: query
+        name: afterTransactionId
         type: string
       - description: 起始版本，首次0；后续使用nextVersion
         in: query
@@ -10386,7 +15160,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.Balance'
+                  $ref: '#/definitions/tb_live_module_model_wallet_response.Balance'
               type: object
         "401":
           description: Unauthorized
@@ -10419,7 +15193,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.Balance'
+                  $ref: '#/definitions/tb_live_module_model_wallet_response.Balance'
               type: object
         "401":
           description: Unauthorized
@@ -10453,7 +15227,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.Order'
+                  $ref: '#/definitions/tb_live_module_model_wallet_response.Order'
               type: object
         "401":
           description: Unauthorized
@@ -10487,7 +15261,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.Order'
+                  $ref: '#/definitions/tb_live_module_model_wallet_response.Order'
               type: object
         "401":
           description: Unauthorized
@@ -10517,7 +15291,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.OrderDetail'
+                  $ref: '#/definitions/tb_live_module_model_wallet_response.OrderDetail'
               type: object
         "401":
           description: Unauthorized
@@ -10612,7 +15386,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.Order'
+                  $ref: '#/definitions/tb_live_module_model_wallet_response.Order'
               type: object
         "401":
           description: Unauthorized
@@ -10646,7 +15420,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.Order'
+                  $ref: '#/definitions/tb_live_module_model_wallet_response.Order'
               type: object
         "401":
           description: Unauthorized
@@ -10702,6 +15476,882 @@ paths:
       summary: 游标查询指定用户流水
       tags:
       - WalletAdmin
+  /v1/admin/wallet/transaction/trace:
+    get:
+      parameters:
+      - description: 流水号、账务交易号或人工充值单号
+        in: query
+        name: "no"
+        type: string
+      - description: 业务命名空间，与businessNo和kind同时提供
+        in: query
+        name: businessType
+        type: string
+      - description: 外部业务单号
+        in: query
+        name: businessNo
+        type: string
+      - description: debit或refund
+        in: query
+        name: kind
+        type: string
+      - description: 退款游标，首次0，每页50条
+        in: query
+        name: afterRefundId
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Trace'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 查询交易及原扣款、消费退款和审计
+      tags:
+      - WalletAdmin
+  /v1/app/earning/balance:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: currency
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: from
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: payeeAccountNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sourceType
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.FinanceOverview'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 本人主播收益与分币种余额
+      tags:
+      - Earning
+  /v1/app/earning/overview:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: currency
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: from
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: payeeAccountNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sourceType
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.FinanceOverview'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 本人主播收益与分币种余额
+      tags:
+      - Earning
+  /v1/app/earning/settlement/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: currency
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: from
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: payeeAccountNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sourceType
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_earning_response.Page'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 本人主播结算记录
+      tags:
+      - Earning
+  /v1/app/earning/withdrawal/apply:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: requestId/currency/amount/payeeAccountNo；金额为最小单位字符串，禁止提交姓名、账号、版本或风险结果
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ApplyWithdrawal'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.AppWithdrawal'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 本人选择有效收款账户申请提现，原子保存快照并冻结余额
+      tags:
+      - Earning
+  /v1/app/earning/withdrawal/detail:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: "no"
+        type: string
+      - in: query
+        name: requestId
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.AppWithdrawal'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 本人提现详情，隐藏内部审计及财务快照
+      tags:
+      - Earning
+  /v1/app/earning/withdrawal/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: currency
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: from
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: payeeAccountNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sourceType
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_earning_response.Page'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 本人主播提现记录
+      tags:
+      - Earning
+  /v1/app/gift/category/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: categoryNo
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: dimension
+        type: string
+      - in: query
+        name: from
+        type: integer
+      - in: query
+        name: giftNo
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: maxAmount
+        type: string
+      - in: query
+        name: minAmount
+        type: string
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: period
+        type: string
+      - in: query
+        name: refunded
+        type: string
+      - in: query
+        name: requestId
+        type: string
+      - in: query
+        name: roomNo
+        type: string
+      - in: query
+        name: sessionNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统一响应，金额和大整数为十进制字符串
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_gift_response.Page'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: APP礼物分类列表
+      tags:
+      - Gift
+  /v1/app/gift/item/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: categoryNo
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: dimension
+        type: string
+      - in: query
+        name: from
+        type: integer
+      - in: query
+        name: giftNo
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: maxAmount
+        type: string
+      - in: query
+        name: minAmount
+        type: string
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: period
+        type: string
+      - in: query
+        name: refunded
+        type: string
+      - in: query
+        name: requestId
+        type: string
+      - in: query
+        name: roomNo
+        type: string
+      - in: query
+        name: sessionNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统一响应，金额和大整数为十进制字符串
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_gift_response.Page'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: APP启用礼物列表，可按直播间筛选
+      tags:
+      - Gift
+  /v1/app/gift/order/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: categoryNo
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: dimension
+        type: string
+      - in: query
+        name: from
+        type: integer
+      - in: query
+        name: giftNo
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: maxAmount
+        type: string
+      - in: query
+        name: minAmount
+        type: string
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: period
+        type: string
+      - in: query
+        name: refunded
+        type: string
+      - in: query
+        name: requestId
+        type: string
+      - in: query
+        name: roomNo
+        type: string
+      - in: query
+        name: sessionNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 统一响应，金额和大整数为十进制字符串
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_gift_response.Page'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 本人礼物消费记录
+      tags:
+      - Gift
+  /v1/app/gift/result:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: categoryNo
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: dimension
+        type: string
+      - in: query
+        name: from
+        type: integer
+      - in: query
+        name: giftNo
+        type: string
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: maxAmount
+        type: string
+      - in: query
+        name: minAmount
+        type: string
+      - in: query
+        name: name
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: period
+        type: string
+      - in: query
+        name: refunded
+        type: string
+      - in: query
+        name: requestId
+        type: string
+      - in: query
+        name: roomNo
+        type: string
+      - in: query
+        name: sessionNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 仅返回本人公开订单
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.AppOrder'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 本人送礼结果（订单号或幂等键）
+      tags:
+      - Gift
+  /v1/app/gift/send:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Send'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 公开订单号可供客服核验；不返回内部财务字段
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.AppOrder'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 送礼：服务端定价、永久幂等
+      tags:
+      - Gift
+  /v1/app/guard/anchor/members:
+    get:
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: membershipNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 当前用户守护/公开成员列表
+      tags:
+      - guard
+  /v1/app/guard/mine:
+    get:
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: membershipNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 当前用户守护/公开成员列表
+      tags:
+      - guard
+  /v1/app/guard/plan/list:
+    get:
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: membershipNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 可用守护方案
+      tags:
+      - guard
+  /v1/app/guard/status:
+    get:
+      parameters:
+      - in: query
+        name: accountNo
+        type: string
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: membershipNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 当前用户守护/公开成员列表
+      tags:
+      - guard
   /v1/app/live/anchor/apply:
     post:
       consumes:
@@ -11484,6 +17134,243 @@ paths:
       summary: 注册短信占位接口
       tags:
       - LiveAccount
+  /v1/app/payout/payee/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 加密保存的绑定资料；禁止提交ownerNo、anchorNo、认证或版本
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.CreatePayee'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Payee'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 新增本人收款账户；同requestId须保持原参数
+      tags:
+      - PayoutApp
+  /v1/app/payout/payee/disable:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 内部收款账户编号
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.PayeeAction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Payee'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 停用本人收款账户（不可恢复或删除历史快照）
+      tags:
+      - PayoutApp
+  /v1/app/payout/payee/list:
+    get:
+      parameters:
+      - description: 页码，默认1
+        in: query
+        name: page
+        type: integer
+      - description: 每页1—100，默认20
+        in: query
+        name: pageSize
+        type: integer
+      - description: 币种
+        in: query
+        name: currency
+        type: string
+      - description: active/disabled
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_payout_response.Page'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 本人脱敏收款账户（绑定不代表渠道认证）
+      tags:
+      - PayoutApp
+  /v1/app/payout/payee/set-default:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 内部收款账户编号
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.PayeeAction'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Payee'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 设置本人同币种唯一默认收款账户
+      tags:
+      - PayoutApp
+  /v1/app/ranking/charm:
+    get:
+      parameters:
+      - in: query
+        name: giftNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: period
+        type: string
+      - in: query
+        name: periodKey
+        type: string
+      - in: query
+        name: rankType
+        type: string
+      - in: query
+        name: scopeNo
+        type: string
+      - in: query
+        name: scopeType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 净礼物消费榜
+      tags:
+      - ranking
+  /v1/app/ranking/gift:
+    get:
+      parameters:
+      - in: query
+        name: giftNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: period
+        type: string
+      - in: query
+        name: periodKey
+        type: string
+      - in: query
+        name: rankType
+        type: string
+      - in: query
+        name: scopeNo
+        type: string
+      - in: query
+        name: scopeType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 净礼物消费榜
+      tags:
+      - ranking
+  /v1/app/ranking/wealth:
+    get:
+      parameters:
+      - in: query
+        name: giftNo
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: period
+        type: string
+      - in: query
+        name: periodKey
+        type: string
+      - in: query
+        name: rankType
+        type: string
+      - in: query
+        name: scopeNo
+        type: string
+      - in: query
+        name: scopeType
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 净礼物消费榜
+      tags:
+      - ranking
   /v1/app/social/block:
     post:
       consumes:
@@ -12133,7 +18020,9 @@ paths:
     post:
       consumes:
       - application/json
-      description: 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+      description: |-
+        身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+        普通心跳首次入队或切换会话时校验本人已打开的资源会话；不存在、被删除或已替换的会话返回46010。同一已验证缓冲会话连续心跳不逐次查询MySQL。persisted=false仅表示缓冲受理；严格持久化请使用checkpoint。JSON须为单个对象且正文不超过32KiB。
       parameters:
       - description: 请求参数
         in: body
@@ -12598,7 +18487,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.Balance'
+                  $ref: '#/definitions/tb_live_module_model_wallet_response.Balance'
               type: object
         "401":
           description: Unauthorized

@@ -92,7 +92,7 @@ func Routers() *gin.Engine {
 	// 使用自定义的 Recovery 中间件，记录 panic 并入库
 	Router.Use(middleware.GinRecovery(true))
 	if gin.Mode() == gin.DebugMode {
-		Router.Use(gin.Logger())
+		Router.Use(middleware.FinancialSafeLogger())
 	}
 	// 浏览器跨域请求统一按配置处理；无 Origin 的 SRS hook 和原生客户端不受 CORS 限制。
 	Router.Use(middleware.Cors())

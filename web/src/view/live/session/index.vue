@@ -34,8 +34,8 @@
         <el-table-column label="断流次数" prop="disconnectCount" width="100" />
         <el-table-column label="观看 / 峰值" width="125"><template #default="scope">{{ scope.row.viewCount }} / {{ scope.row.peakOnlineCount }}</template></el-table-column>
         <el-table-column label="点赞" prop="likeCount" width="90" />
-        <el-table-column label="礼物件数" prop="giftCount" width="100" />
-        <el-table-column label="礼物金币" prop="giftCoinAmount" width="110" />
+        <el-table-column label="礼物数（件）" min-width="165"><template #default="{ row }"><div v-if="row.giftSummary" class="main-cell"><strong>{{ row.giftSummary.grossQuantity }}</strong><span>退款 {{ row.giftSummary.refundQuantity }} · 有效 {{ row.giftSummary.quantity }}</span></div><span v-else title="礼物统计未就绪或当前账号无礼物财务查看权限">—</span></template></el-table-column>
+        <el-table-column label="礼物价值（COIN）" min-width="200"><template #default="{ row }"><div v-if="row.giftSummary" class="main-cell"><strong>{{ row.giftSummary.grossCoin }}</strong><span>退款 {{ row.giftSummary.refundCoin }} · 有效 {{ row.giftSummary.netCoin }}</span></div><span v-else title="礼物统计未就绪或当前账号无礼物财务查看权限">—</span></template></el-table-column>
         <el-table-column label="操作" width="230" fixed="right"><template #default="scope"><el-button link type="primary" @click="showDetail(scope.row)">详情</el-button><el-button v-if="[0, 1].includes(scope.row.status)" link type="danger" @click="openEnd(scope.row)">强制结束</el-button><el-button v-if="canConfirmStopped(scope.row)" link type="warning" @click="openConfirmStopped(scope.row)">确认已停流</el-button></template></el-table-column>
       </el-table>
       <div class="gva-pagination"><el-pagination v-model:current-page="page" v-model:page-size="pageSize" :page-sizes="[10, 20, 50, 100]" :total="total" layout="total, sizes, prev, pager, next, jumper" @current-change="getTableData" @size-change="handleSizeChange" /></div>
@@ -62,6 +62,16 @@
 
     <el-drawer v-model="detailVisible" title="直播场次详情" size="680px">
       <template v-if="detail">
+<el-descriptions v-if="detail.giftSummary" title="礼物收入（COIN）" :column="2" border>
+ <el-descriptions-item label="原始收入">{{ detail.giftSummary.grossCoin }}</el-descriptions-item>
+ <el-descriptions-item label="退款">{{ detail.giftSummary.refundCoin }}</el-descriptions-item>
+ <el-descriptions-item label="有效收入">{{ detail.giftSummary.netCoin }}</el-descriptions-item>
+ <el-descriptions-item label="主播礼物分成（含已结算）">{{ detail.giftSummary.pendingEarningCoin }}</el-descriptions-item>
+ <el-descriptions-item label="赠送总件数">{{ detail.giftSummary.grossQuantity }}</el-descriptions-item>
+ <el-descriptions-item label="退款件数">{{ detail.giftSummary.refundQuantity }}</el-descriptions-item>
+ <el-descriptions-item label="有效件数">{{ detail.giftSummary.quantity }}</el-descriptions-item>
+ <el-descriptions-item label="去重送礼人数">{{ detail.giftSummary.users }}</el-descriptions-item>
+ </el-descriptions>
         <el-descriptions :column="2" border>
           <el-descriptions-item label="内部场次 ID">{{ detail.id }}</el-descriptions-item><el-descriptions-item label="场次编号">{{ detail.sessionNo }}</el-descriptions-item>
           <el-descriptions-item label="内部房间 ID">{{ detail.roomId }}</el-descriptions-item><el-descriptions-item label="房间编号">{{ detail.roomNo }}</el-descriptions-item>
@@ -82,7 +92,7 @@
         <div class="detail-section-title">本场统计快照</div>
         <div class="stat-grid">
           <div><strong>{{ detail.viewCount }}</strong><span>进入次数</span></div><div><strong>{{ detail.viewerCount }}</strong><span>去重观众</span></div><div><strong>{{ detail.peakOnlineCount }}</strong><span>峰值在线</span></div>
-          <div><strong>{{ detail.likeCount }}</strong><span>点赞</span></div><div><strong>{{ detail.giftCount }}</strong><span>礼物件数</span></div><div><strong>{{ detail.giftCoinAmount }}</strong><span>礼物金币</span></div><div><strong>{{ detail.giftUserCount }}</strong><span>送礼人数</span></div>
+          <div><strong>{{ detail.likeCount }}</strong><span>点赞</span></div><div><strong>{{ detail.giftSummary?.grossQuantity ?? '—' }}</strong><span>礼物总件数</span></div><div><strong>{{ detail.giftSummary?.grossCoin ?? '—' }}</strong><span>礼物总价值 COIN</span></div><div><strong>{{ detail.giftSummary?.users ?? '—' }}</strong><span>有效送礼人数</span></div>
         </div>
         <div class="detail-section-title">公开流媒体信息</div>
         <pre class="stream-info">{{ streamInfoText(detail.streamInfo) }}</pre>
@@ -97,6 +107,7 @@ import { ElMessage } from 'element-plus'
 import { formatDate } from '@/utils/format'
 import { getCategoryTree } from '@/api/live-category'
 import { confirmLiveSessionMediaStopped, endLiveSession, getLiveSessionDetail, getLiveSessionList } from '@/api/live-room'
+import { isSuperAdmin } from '@/utils/superAdmin'
 import { useUserStore } from '@/pinia/modules/user'
 
 const statuses = [{ value: 0, label: '准备中', type: 'warning' }, { value: 1, label: '直播中', type: 'success' }, { value: 2, label: '结束中', type: 'warning' }, { value: 3, label: '已结束', type: 'info' }, { value: 4, label: '已取消', type: 'info' }, { value: 5, label: '失败', type: 'danger' }]
@@ -131,7 +142,7 @@ const onSubmit = () => { page.value = 1; getTableData() }; const onReset = () =>
 const showDetail = async (row) => { const res = await getLiveSessionDetail({ sessionId: row.id }); if (res.code === 0) { detail.value = res.data; detailVisible.value = true } }
 const openEnd = (row) => { Object.assign(endForm, { sessionId: row.id, sessionNo: row.sessionNo, reason: '' }); endVisible.value = true }
 const submitEnd = async () => { if (!endForm.reason) return ElMessage.warning('请填写强制结束原因'); submitting.value = true; try { const res = await endLiveSession({ sessionId: endForm.sessionId, reason: endForm.reason }); if (res.code === 0) { ElMessage.success('场次已进入结束流程'); endVisible.value = false; getTableData() } } finally { submitting.value = false } }
-const canConfirmStopped = (row) => Number(userStore.userInfo?.authorityId) === 888 && row.status === 2 && row.stopRecoveryState === 1
+const canConfirmStopped = (row) => (isSuperAdmin(userStore.userInfo) || Number(userStore.userInfo?.authorityId) === 888) && row.status === 2 && row.stopRecoveryState === 1
 const openConfirmStopped = (row) => { Object.assign(confirmStoppedForm, { sessionId: row.id, sessionNo: row.sessionNo, expectedPublisherEpoch: Number(row.publisherEpoch || 0), reason: '', evidence: '' }); confirmStoppedVisible.value = true }
 const submitConfirmStopped = async () => { if (confirmStoppedForm.reason.length < 5) return ElMessage.warning('确认原因至少需要 5 个字符'); if (confirmStoppedForm.evidence.length < 5) return ElMessage.warning('外部证据至少需要 5 个字符'); submitting.value = true; try { const res = await confirmLiveSessionMediaStopped({ sessionId: confirmStoppedForm.sessionId, expectedPublisherEpoch: confirmStoppedForm.expectedPublisherEpoch, reason: confirmStoppedForm.reason, evidence: confirmStoppedForm.evidence }); if (res.code === 0) { ElMessage.success('媒体停止已确认，场次结算完成'); confirmStoppedVisible.value = false; await getTableData(); if (detail.value?.id === confirmStoppedForm.sessionId) await showDetail({ id: confirmStoppedForm.sessionId }) } } finally { submitting.value = false } }
 onMounted(refreshData)

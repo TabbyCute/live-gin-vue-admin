@@ -8876,6 +8876,5081 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/admin/earning/account/check": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "只读核查独立账户全链路账务",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payeeAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/account/ledger": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "可提现账户不可变流水",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payeeAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_earning_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/account/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "分页查询可提现账户",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payeeAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_earning_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/exchange/create": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "创建兑换规则新版本",
+                "parameters": [
+                    {
+                        "description": "参数，金额与版本使用十进制字符串",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ExchangeRule"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/earning.SettlementRule"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/exchange/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "分页查询结算兑换规则",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payeeAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_earning_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/exchange/review": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "复核兑换规则（超级 root ID 1 可自审）",
+                "parameters": [
+                    {
+                        "description": "参数，金额与版本使用十进制字符串",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.FinanceReview"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/earning.SettlementRule"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/income/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "分页查询统一收益事实",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payeeAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_earning_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/overview": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "收益与各币种可提现余额概览",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payeeAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.FinanceOverview"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/reconciliation/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "分页查询不可变对账快照",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payeeAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_earning_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/reconciliation/run": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "生成不可变提现对账快照",
+                "parameters": [
+                    {
+                        "description": "参数，金额与版本使用十进制字符串",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Reconcile"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/earning.Reconciliation"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/settlement/create": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "生成结算申请和不可变来源明细",
+                "parameters": [
+                    {
+                        "description": "参数，金额与版本使用十进制字符串",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateSettlement"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/earning.Settlement"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/settlement/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "结算明细、审计及来源核验",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payeeAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.SettlementDetail"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/settlement/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "分页查询收益结算",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payeeAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_earning_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/settlement/review": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "结算复核，超级 root ID 1 可自审并原子记入独立账户",
+                "parameters": [
+                    {
+                        "description": "参数，金额与版本使用十进制字符串",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.FinanceReview"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/earning.Settlement"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/withdrawal/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "提现详情、冻结流水、审计与对账快照",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payeeAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.WithdrawalDetail"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/withdrawal/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "分页查询提现申请",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payeeAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_earning_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/withdrawal/review": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "自动对账后审核；通过保持冻结，驳回释放",
+                "parameters": [
+                    {
+                        "description": "参数，金额与版本使用十进制字符串",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.FinanceReview"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/earning.Withdrawal"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/gift/category/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "后台礼物分类",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "categoryNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimension",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "giftNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "maxAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "minAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "refunded",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "requestId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "roomNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sessionNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "统一响应，金额和大整数为十进制字符串",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_gift_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/gift/category/save": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "新增或修改分类，更新须传版本",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Category"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "统一响应，金额和大整数为十进制字符串",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/gift.Category"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/gift/delete": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "删除未被使用的分类或礼物",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Delete"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "统一响应，金额和大整数为十进制字符串",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/gift/item/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "后台礼物配置",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "categoryNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimension",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "giftNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "maxAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "minAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "refunded",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "requestId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "roomNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sessionNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "统一响应，金额和大整数为十进制字符串",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_gift_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/gift/item/save": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "新增或修改礼物，守护履约关闭",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Item"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "统一响应，金额和大整数为十进制字符串",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/gift.Item"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/gift/order/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "订单关联事实和一致性检查",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "categoryNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimension",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "giftNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "maxAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "minAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "refunded",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "requestId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "roomNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sessionNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "统一响应，金额和大整数为十进制字符串",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Detail"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/gift/order/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "后台礼物消费记录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "categoryNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimension",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "giftNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "maxAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "minAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "refunded",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "requestId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "roomNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sessionNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "统一响应，金额和大整数为十进制字符串",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_gift_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/gift/ranking": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "净消费排行和收入统计（UTC）",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "categoryNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimension",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "giftNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "maxAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "minAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "refunded",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "requestId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "roomNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sessionNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "统一响应，金额和大整数为十进制字符串",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_gift_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/gift/refund": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "授权后台部分或全部退款",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Refund"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "统一响应，金额和大整数为十进制字符串",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/gift.Refund"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/gift/rule/create": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "提交新的分成规则版本",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Rule"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "统一响应，金额和大整数为十进制字符串",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/earning.RevenueRule"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/gift/rule/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "分成规则版本列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "categoryNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimension",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "giftNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "maxAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "minAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "refunded",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "requestId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "roomNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sessionNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "统一响应，金额和大整数为十进制字符串",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_gift_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/gift/rule/review": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "复核分成规则（超级 root ID 1 可自审）",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Review"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "统一响应，金额和大整数为十进制字符串",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/earning.RevenueRule"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/gift/rule/terminate": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GiftAdmin"
+                ],
+                "summary": "申请提前终止分成规则，原规则和历史订单保持可追溯",
+                "parameters": [
+                    {
+                        "description": "规则编号、幂等键、终止原因",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.TerminateRule"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/earning.RuleTermination"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/gift/rule/terminate/review": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GiftAdmin"
+                ],
+                "summary": "复核提前终止；超级 root ID 1 可自审，通过后立即停止匹配新订单",
+                "parameters": [
+                    {
+                        "description": "终止申请编号、是否通过",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ReviewTermination"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/earning.RuleTermination"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/gift/sort": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "完整集合事务排序，须传目录版本",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Sort"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "统一响应，金额和大整数为十进制字符串",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/guard/compensation/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guard"
+                ],
+                "summary": "守护来源/补偿/流水/任务",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "membershipNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/guard/grant/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guard"
+                ],
+                "summary": "守护来源/补偿/流水/任务",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "membershipNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/guard/ledger/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guard"
+                ],
+                "summary": "守护来源/补偿/流水/任务",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "membershipNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/guard/member/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guard"
+                ],
+                "summary": "管理守护会员",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "membershipNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/guard/member/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guard"
+                ],
+                "summary": "管理守护会员",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "membershipNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/guard/plan/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guard"
+                ],
+                "summary": "管理守护方案",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "membershipNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/guard/plan/save": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guard"
+                ],
+                "summary": "保存/启停/排序守护方案",
+                "parameters": [
+                    {
+                        "description": "永久幂等请求",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Plan"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/guard/rebuild": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guard"
+                ],
+                "summary": "守护重试/重建/核验",
+                "parameters": [
+                    {
+                        "description": "永久幂等请求",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tb_live_module_model_guard_request.Action"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/guard/reconcile": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guard"
+                ],
+                "summary": "守护重试/重建/核验",
+                "parameters": [
+                    {
+                        "description": "永久幂等请求",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tb_live_module_model_guard_request.Action"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/guard/task/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guard"
+                ],
+                "summary": "守护来源/补偿/流水/任务",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "membershipNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/guard/task/retry": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guard"
+                ],
+                "summary": "守护重试/重建/核验",
+                "parameters": [
+                    {
+                        "description": "永久幂等请求",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tb_live_module_model_guard_request.Action"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/attempt/bank-submitted": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "标记已提交银行并禁止释放",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.AttemptAction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/attempt/fail-unpaid": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "确认未执行转账",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UnpaidAction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/attempt/resolve-unknown": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "通过新调查和新凭证解决未知结果",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ResolveAttempt"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/attempt/review-failure": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "独立确认未付款成功",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ReviewAttempt"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/attempt/review-success": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "独立确认成功并原子入账",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ReviewAttempt"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/attempt/review-unknown": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "结果未知并继续冻结",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ReviewAttempt"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/attempt/submit": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "提交真实流水及私有凭证待独立复核",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.SubmitAttempt"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/capabilities": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "当前启用管理员的出款权限",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "boolean"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/channel-account/create": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "创建公司人工出款账户",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateChannelAccount"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/channel-account/disable": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "停用公司出款账户",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ChannelAccountAction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/channel-account/enable": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "启用公司出款账户",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ChannelAccountAction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/channel-account/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "公司出款账户列表（限额为平台风控限制）",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "默认1，最多100",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "默认20，最多100",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "币种",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "active/disabled",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ChannelAccountPage"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/channel-account/reveal": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "消耗单次凭证查看公司完整账号",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.RevealConsume"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.RevealedAccount"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/channel-account/reveal-grant": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "申请45秒单次公司账户查看凭证",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.RevealGrant"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.RevealTicket"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/evidence/read": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "image/png",
+                    "image/jpeg",
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "审计读取私有凭证（成功返回图片，失败返回JSON）",
+                "parameters": [
+                    {
+                        "description": "凭证编号与查看原因",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ReadEvidence"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/evidence/upload": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "上传私有加密PNG或JPEG（原图最多2MiB）",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UploadEvidence"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/order/cancel": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "确认无付款并取消提现释放冻结",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CancelOrder"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/order/create": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "提交打款中心（只创建待出款订单，不实际打款）",
+                "parameters": [
+                    {
+                        "description": "固定requestId与withdrawalNo",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreateOrder"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/payout.orderEnvelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/payout.orderResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/order/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "只读出款详情、状态历史、审计及账务核验",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "出款单号",
+                        "name": "payoutNo",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/payout.orderEnvelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/payout.orderDetailResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/order/investigate": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "追加未知结果调查记录",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Investigate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/order/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "出款订单分页筛选",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码，默认1，最多10000",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页1—100，默认20",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "出款单号",
+                        "name": "payoutNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "提现单号",
+                        "name": "withdrawalNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "主播编号",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "币种",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "bank_card/alipay/wechat",
+                        "name": "payeeMethod",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ready/processing/pending_confirmation/succeeded/failed/unknown/cancelled",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "公司出款账户编号，匹配历史尝试",
+                        "name": "channelAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "操作人ID字符串",
+                        "name": "operatorId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "复核人ID字符串",
+                        "name": "reviewerId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "银行流水号，须同时指定公司账户编号",
+                        "name": "paymentReference",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "创建时间起（毫秒，包含）",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "创建时间止（毫秒，不包含）",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/payout.orderEnvelope"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/payout.orderListResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/order/reconcile": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "执行内部账务对账（非银行对账）",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.OrderAction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/order/release": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "未转账且无凭证时释放领取",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UnpaidAction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/order/retry": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "明确失败后新建尝试",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.StartOrder"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/order/reveal-payee": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "消耗单次凭证查看当前领取订单的收款资料",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.RevealConsume"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.RevealedAccount"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/order/reveal-payee-grant": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "申请45秒单次收款资料查看凭证",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.RevealGrant"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.RevealTicket"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/order/start": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutAdmin"
+                ],
+                "summary": "领取人工出款",
+                "parameters": [
+                    {
+                        "description": "固定requestId；参数不可改变",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.StartOrder"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/ranking/admin/board": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ranking"
+                ],
+                "summary": "管理员查询净礼物消费榜",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "giftNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "periodKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "rankType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "scopeNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "scopeType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/ranking/admin/job/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ranking"
+                ],
+                "summary": "榜单重建任务",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "giftNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "periodKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "rankType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "scopeNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "scopeType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/ranking/admin/rebuild": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ranking"
+                ],
+                "summary": "重建/核验礼物榜单",
+                "parameters": [
+                    {
+                        "description": "永久幂等请求",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tb_live_module_model_ranking_request.Action"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/ranking/admin/reconcile": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ranking"
+                ],
+                "summary": "重建/核验礼物榜单",
+                "parameters": [
+                    {
+                        "description": "永久幂等请求",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tb_live_module_model_ranking_request.Action"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/ranking/admin/status": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ranking"
+                ],
+                "summary": "榜单进度与积压",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "giftNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "periodKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "rankType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "scopeNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "scopeType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/admin/social/block/list": {
             "get": {
                 "security": [
@@ -8883,7 +13958,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
+                "description": "超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
                 "consumes": [
                     "application/json"
                 ],
@@ -8955,7 +14030,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
+                "description": "超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
                 "consumes": [
                     "application/json"
                 ],
@@ -9015,7 +14090,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
+                "description": "超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
                 "consumes": [
                     "application/json"
                 ],
@@ -9072,7 +14147,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
+                "description": "超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
                 "consumes": [
                     "application/json"
                 ],
@@ -9132,7 +14207,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
+                "description": "超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
                 "consumes": [
                     "application/json"
                 ],
@@ -9189,7 +14264,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "每种状态最多统计1000条；countIsLowerBound=true表示总数大于1000，sampleOldestCreatedAt仅为样本最早毫秒时间，不是全局最早时间。\n仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
+                "description": "每种状态最多统计1000条；countIsLowerBound=true表示总数大于1000，sampleOldestCreatedAt仅为样本最早毫秒时间，不是全局最早时间。\n超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
                 "consumes": [
                     "application/json"
                 ],
@@ -9235,7 +14310,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
+                "description": "超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。",
                 "consumes": [
                     "application/json"
                 ],
@@ -9330,6 +14405,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "消费交易游标，首次0；后续使用nextTransactionId",
+                        "name": "afterTransactionId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "起始版本，首次0；后续使用nextVersion",
                         "name": "afterVersion",
                         "in": "query"
@@ -9416,7 +14497,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.Balance"
+                                            "$ref": "#/definitions/tb_live_module_model_wallet_response.Balance"
                                         }
                                     }
                                 }
@@ -9473,7 +14554,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.Balance"
+                                            "$ref": "#/definitions/tb_live_module_model_wallet_response.Balance"
                                         }
                                     }
                                 }
@@ -9530,7 +14611,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.Order"
+                                            "$ref": "#/definitions/tb_live_module_model_wallet_response.Order"
                                         }
                                     }
                                 }
@@ -9587,7 +14668,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.Order"
+                                            "$ref": "#/definitions/tb_live_module_model_wallet_response.Order"
                                         }
                                     }
                                 }
@@ -9639,7 +14720,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.OrderDetail"
+                                            "$ref": "#/definitions/tb_live_module_model_wallet_response.OrderDetail"
                                         }
                                     }
                                 }
@@ -9795,7 +14876,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.Order"
+                                            "$ref": "#/definitions/tb_live_module_model_wallet_response.Order"
                                         }
                                     }
                                 }
@@ -9852,7 +14933,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.Order"
+                                            "$ref": "#/definitions/tb_live_module_model_wallet_response.Order"
                                         }
                                     }
                                 }
@@ -9936,6 +15017,1501 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/wallet/transaction/trace": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "WalletAdmin"
+                ],
+                "summary": "查询交易及原扣款、消费退款和审计",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "流水号、账务交易号或人工充值单号",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "业务命名空间，与businessNo和kind同时提供",
+                        "name": "businessType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "外部业务单号",
+                        "name": "businessNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "debit或refund",
+                        "name": "kind",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "退款游标，首次0，每页50条",
+                        "name": "afterRefundId",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Trace"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/earning/balance": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "本人主播收益与分币种余额",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payeeAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.FinanceOverview"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/earning/overview": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "本人主播收益与分币种余额",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payeeAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.FinanceOverview"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/earning/settlement/list": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "本人主播结算记录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payeeAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_earning_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/earning/withdrawal/apply": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "本人选择有效收款账户申请提现，原子保存快照并冻结余额",
+                "parameters": [
+                    {
+                        "description": "requestId/currency/amount/payeeAccountNo；金额为最小单位字符串，禁止提交姓名、账号、版本或风险结果",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ApplyWithdrawal"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.AppWithdrawal"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/earning/withdrawal/detail": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "本人提现详情，隐藏内部审计及财务快照",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "requestId",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.AppWithdrawal"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/earning/withdrawal/list": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "本人主播提现记录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payeeAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_earning_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/gift/category/list": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "APP礼物分类列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "categoryNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimension",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "giftNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "maxAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "minAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "refunded",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "requestId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "roomNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sessionNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "统一响应，金额和大整数为十进制字符串",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_gift_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/gift/item/list": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "APP启用礼物列表，可按直播间筛选",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "categoryNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimension",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "giftNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "maxAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "minAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "refunded",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "requestId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "roomNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sessionNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "统一响应，金额和大整数为十进制字符串",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_gift_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/gift/order/list": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "本人礼物消费记录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "categoryNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimension",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "giftNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "maxAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "minAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "refunded",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "requestId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "roomNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sessionNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "统一响应，金额和大整数为十进制字符串",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_gift_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/gift/result": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "本人送礼结果（订单号或幂等键）",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "categoryNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "dimension",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "giftNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "maxAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "minAmount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "refunded",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "requestId",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "roomNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sessionNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "仅返回本人公开订单",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.AppOrder"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/gift/send": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Gift"
+                ],
+                "summary": "送礼：服务端定价、永久幂等",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Send"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "公开订单号可供客服核验；不返回内部财务字段",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.AppOrder"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/guard/anchor/members": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guard"
+                ],
+                "summary": "当前用户守护/公开成员列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "membershipNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/guard/mine": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guard"
+                ],
+                "summary": "当前用户守护/公开成员列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "membershipNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/guard/plan/list": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guard"
+                ],
+                "summary": "可用守护方案",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "membershipNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/guard/status": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "guard"
+                ],
+                "summary": "当前用户守护/公开成员列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "accountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "membershipNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -11188,6 +17764,416 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/app/payout/payee/create": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutApp"
+                ],
+                "summary": "新增本人收款账户；同requestId须保持原参数",
+                "parameters": [
+                    {
+                        "description": "加密保存的绑定资料；禁止提交ownerNo、anchorNo、认证或版本",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CreatePayee"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Payee"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/payout/payee/disable": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutApp"
+                ],
+                "summary": "停用本人收款账户（不可恢复或删除历史快照）",
+                "parameters": [
+                    {
+                        "description": "内部收款账户编号",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PayeeAction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Payee"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/payout/payee/list": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutApp"
+                ],
+                "summary": "本人脱敏收款账户（绑定不代表渠道认证）",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码，默认1",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页1—100，默认20",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "币种",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "active/disabled",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_payout_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/payout/payee/set-default": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "PayoutApp"
+                ],
+                "summary": "设置本人同币种唯一默认收款账户",
+                "parameters": [
+                    {
+                        "description": "内部收款账户编号",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PayeeAction"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Payee"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/ranking/charm": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ranking"
+                ],
+                "summary": "净礼物消费榜",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "giftNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "periodKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "rankType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "scopeNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "scopeType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/ranking/gift": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ranking"
+                ],
+                "summary": "净礼物消费榜",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "giftNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "periodKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "rankType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "scopeNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "scopeType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/ranking/wealth": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ranking"
+                ],
+                "summary": "净礼物消费榜",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "giftNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "periodKey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "rankType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "scopeNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "scopeType",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/app/social/block": {
             "post": {
                 "security": [
@@ -12294,7 +19280,7 @@ const docTemplate = `{
                         "AppBearerAuth": []
                     }
                 ],
-                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。",
+                "description": "身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{\"accountNo\":\"10000001\"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。\n普通心跳首次入队或切换会话时校验本人已打开的资源会话；不存在、被删除或已替换的会话返回46010。同一已验证缓冲会话连续心跳不逐次查询MySQL。persisted=false仅表示缓冲受理；严格持久化请使用checkpoint。JSON须为单个对象且正文不超过32KiB。",
                 "consumes": [
                     "application/json"
                 ],
@@ -13096,7 +20082,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.Balance"
+                                            "$ref": "#/definitions/tb_live_module_model_wallet_response.Balance"
                                         }
                                     }
                                 }
@@ -13351,6 +20337,14 @@ const docTemplate = `{
             "properties": {
                 "dir": {
                     "type": "string"
+                }
+            }
+        },
+        "config.Gift": {
+            "type": "object",
+            "properties": {
+                "guardEnabled": {
+                    "type": "boolean"
                 }
             }
         },
@@ -13953,6 +20947,14 @@ const docTemplate = `{
                 }
             }
         },
+        "config.Ranking": {
+            "type": "object",
+            "properties": {
+                "timezone": {
+                    "type": "string"
+                }
+            }
+        },
         "config.Redis": {
             "type": "object",
             "properties": {
@@ -14066,6 +21068,9 @@ const docTemplate = `{
                 "excel": {
                     "$ref": "#/definitions/config.Excel"
                 },
+                "gift": {
+                    "$ref": "#/definitions/config.Gift"
+                },
                 "hua-wei-obs": {
                     "$ref": "#/definitions/config.HuaWeiObs"
                 },
@@ -14119,6 +21124,9 @@ const docTemplate = `{
                 },
                 "qiniu": {
                     "$ref": "#/definitions/config.Qiniu"
+                },
+                "ranking": {
+                    "$ref": "#/definitions/config.Ranking"
                 },
                 "redis": {
                     "$ref": "#/definitions/config.Redis"
@@ -14377,6 +21385,12 @@ const docTemplate = `{
                 "account-daily-limit": {
                     "type": "integer"
                 },
+                "admin-max-inflight": {
+                    "type": "integer"
+                },
+                "app-max-inflight": {
+                    "type": "integer"
+                },
                 "create-authorities": {
                     "type": "array",
                     "items": {
@@ -14444,6 +21458,487 @@ const docTemplate = `{
                 },
                 "stacktrace-key": {
                     "description": "栈名",
+                    "type": "string"
+                }
+            }
+        },
+        "earning.AccountLedger": {
+            "type": "object",
+            "properties": {
+                "availableAfter": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "availableBefore": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "businessNo": {
+                    "type": "string"
+                },
+                "changeAmount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "debtAfter": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "debtBefore": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "entryType": {
+                    "type": "string"
+                },
+                "frozenAfter": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "frozenBefore": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "ledgerNo": {
+                    "type": "string"
+                },
+                "paidAfter": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "paidBefore": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "version": {
+                    "type": "string",
+                    "example": "0"
+                }
+            }
+        },
+        "earning.FinanceAudit": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "actorId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "actorIp": {
+                    "type": "string"
+                },
+                "actorType": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "objectNo": {
+                    "type": "string"
+                },
+                "snapshot": {
+                    "type": "string"
+                }
+            }
+        },
+        "earning.Ledger": {
+            "type": "object",
+            "properties": {
+                "businessNo": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "earningCoinAmount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "earningNo": {
+                    "type": "string"
+                },
+                "entryType": {
+                    "type": "string"
+                },
+                "giftOrderNo": {
+                    "type": "string"
+                },
+                "revenueRuleNo": {
+                    "type": "string"
+                },
+                "shareBps": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "earning.Reconciliation": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "reconciliationNo": {
+                    "type": "string"
+                },
+                "snapshot": {
+                    "type": "string"
+                },
+                "snapshotHash": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "withdrawalNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "earning.RevenueRule": {
+            "type": "object",
+            "properties": {
+                "anchorShareBps": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "approvedAt": {
+                    "type": "integer"
+                },
+                "approvedBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "effectiveFrom": {
+                    "type": "integer"
+                },
+                "effectiveTo": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "ruleNo": {
+                    "type": "string"
+                },
+                "scopeNo": {
+                    "type": "string"
+                },
+                "scopeType": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string",
+                    "example": "0"
+                }
+            }
+        },
+        "earning.RuleTermination": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "reviewedAt": {
+                    "type": "integer"
+                },
+                "reviewedBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "ruleNo": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "terminationNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "earning.Settlement": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "anchorNo": {
+                    "type": "string"
+                },
+                "approvedAt": {
+                    "type": "integer"
+                },
+                "approvedBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "earningCoin": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "grossCoin": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "itemCount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "itemsHash": {
+                    "type": "string"
+                },
+                "periodEnd": {
+                    "type": "integer"
+                },
+                "periodStart": {
+                    "type": "integer"
+                },
+                "refundCoin": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "reviewReason": {
+                    "type": "string"
+                },
+                "ruleNo": {
+                    "type": "string"
+                },
+                "ruleSnapshot": {
+                    "type": "string"
+                },
+                "settlementNo": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "earning.SettlementItem": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "coinUnits": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "incomeHash": {
+                    "type": "string"
+                },
+                "incomeNo": {
+                    "type": "string"
+                },
+                "minorUnits": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "remainderAfter": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "remainderBefore": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "roundingVersion": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "ruleNo": {
+                    "type": "string"
+                },
+                "sequence": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "settlementNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "earning.SettlementRule": {
+            "type": "object",
+            "properties": {
+                "approvedAt": {
+                    "type": "integer"
+                },
+                "approvedBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "coinUnits": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "effectiveFrom": {
+                    "type": "integer"
+                },
+                "effectiveTo": {
+                    "type": "integer"
+                },
+                "minorUnits": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "reviewReason": {
+                    "type": "string"
+                },
+                "roundingMode": {
+                    "type": "string"
+                },
+                "ruleNo": {
+                    "type": "string"
+                },
+                "sourceUnit": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string",
+                    "example": "0"
+                }
+            }
+        },
+        "earning.Withdrawal": {
+            "type": "object",
+            "properties": {
+                "accountMasked": {
+                    "type": "string"
+                },
+                "accountName": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "anchorNo": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "payeeMethod": {
+                    "type": "string"
+                },
+                "payeeRef": {
+                    "type": "string"
+                },
+                "payeeVersion": {
+                    "type": "string"
+                },
+                "payoutNo": {
+                    "type": "string"
+                },
+                "payoutStatus": {
+                    "type": "string"
+                },
+                "reconciliationNo": {
+                    "type": "string"
+                },
+                "reconciliationStatus": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "reviewReason": {
+                    "type": "string"
+                },
+                "reviewedAt": {
+                    "type": "integer"
+                },
+                "reviewedBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "withdrawalNo": {
                     "type": "string"
                 }
             }
@@ -14619,6 +22114,386 @@ const docTemplate = `{
                 }
             }
         },
+        "gift.BenefitCompensation": {
+            "type": "object",
+            "properties": {
+                "compensationNo": {
+                    "type": "string"
+                },
+                "completedAt": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "durationDays": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "giftOrderNo": {
+                    "type": "string"
+                },
+                "lastError": {
+                    "type": "string"
+                },
+                "leaseUntil": {
+                    "type": "integer"
+                },
+                "refundNo": {
+                    "type": "string"
+                },
+                "retryCount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                }
+            }
+        },
+        "gift.BenefitGrant": {
+            "type": "object",
+            "properties": {
+                "benefitSnapshot": {
+                    "type": "string"
+                },
+                "benefitType": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "giftOrderNo": {
+                    "type": "string"
+                },
+                "grantNo": {
+                    "type": "string"
+                },
+                "lastError": {
+                    "type": "string"
+                },
+                "retryCount": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                }
+            }
+        },
+        "gift.Category": {
+            "type": "object",
+            "properties": {
+                "categoryNo": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "iconUrl": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sortOrder": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                },
+                "version": {
+                    "type": "string",
+                    "example": "0"
+                }
+            }
+        },
+        "gift.Event": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "integer"
+                },
+                "deliveredAt": {
+                    "type": "integer"
+                },
+                "deliveryStatus": {
+                    "type": "string"
+                },
+                "eventId": {
+                    "type": "string"
+                },
+                "eventType": {
+                    "type": "string"
+                },
+                "giftOrderNo": {
+                    "type": "string"
+                },
+                "lastError": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "string"
+                },
+                "retryCount": {
+                    "type": "integer"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "sessionNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "gift.Item": {
+            "type": "object",
+            "properties": {
+                "animationType": {
+                    "type": "string"
+                },
+                "animationUrl": {
+                    "type": "string"
+                },
+                "benefitStatus": {
+                    "type": "string"
+                },
+                "benefitType": {
+                    "type": "string"
+                },
+                "categoryNo": {
+                    "type": "string"
+                },
+                "coinPrice": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "effectiveFrom": {
+                    "type": "integer"
+                },
+                "effectiveTo": {
+                    "type": "integer"
+                },
+                "giftNo": {
+                    "type": "string"
+                },
+                "guardDurationDays": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "guardPlanNo": {
+                    "type": "string"
+                },
+                "iconUrl": {
+                    "type": "string"
+                },
+                "isPremium": {
+                    "type": "boolean"
+                },
+                "maxQuantityPerOrder": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sortOrder": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                },
+                "version": {
+                    "type": "string",
+                    "example": "0"
+                }
+            }
+        },
+        "gift.Order": {
+            "type": "object",
+            "properties": {
+                "anchorNo": {
+                    "type": "string"
+                },
+                "anchorShareBps": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "animationType": {
+                    "type": "string"
+                },
+                "animationUrl": {
+                    "type": "string"
+                },
+                "benefitSnapshot": {
+                    "type": "string"
+                },
+                "categoryName": {
+                    "type": "string"
+                },
+                "categoryNo": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "estimatedAnchorEarningCoin": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "estimatedPlatformIncomeCoin": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "giftName": {
+                    "type": "string"
+                },
+                "giftNo": {
+                    "type": "string"
+                },
+                "grossCoinAmount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "iconUrl": {
+                    "type": "string"
+                },
+                "orderNo": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "refundedCoinAmount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "revenueRuleNo": {
+                    "type": "string"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "senderAccountNo": {
+                    "type": "string"
+                },
+                "sessionNo": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "unitPrice": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "walletLedgerNo": {
+                    "type": "string"
+                },
+                "walletTransactionNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "gift.Refund": {
+            "type": "object",
+            "properties": {
+                "benefitCompensationStatus": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "earningReversalNo": {
+                    "type": "string"
+                },
+                "giftOrderNo": {
+                    "type": "string"
+                },
+                "operatorId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "refundCoinAmount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "refundNo": {
+                    "type": "string"
+                },
+                "refundQuantity": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "walletRefundLedgerNo": {
+                    "type": "string"
+                },
+                "walletRefundTransactionNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "gift.Revenue": {
+            "type": "object",
+            "properties": {
+                "businessNo": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "entryType": {
+                    "type": "string"
+                },
+                "giftOrderNo": {
+                    "type": "string"
+                },
+                "grossCoinAmount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "quantity": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "revenueNo": {
+                    "type": "string"
+                }
+            }
+        },
         "live.PlaybackAuthorization": {
             "type": "object",
             "properties": {
@@ -14668,6 +22543,338 @@ const docTemplate = `{
                 },
                 "userID": {
                     "description": "作者",
+                    "type": "integer"
+                }
+            }
+        },
+        "payout.AttemptEvent": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "actorId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "attemptNo": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "eventNo": {
+                    "type": "string"
+                },
+                "fromStatus": {
+                    "type": "string"
+                },
+                "payoutNo": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "snapshotHash": {
+                    "type": "string"
+                },
+                "toStatus": {
+                    "type": "string"
+                },
+                "transitionNo": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string",
+                    "example": "0"
+                }
+            }
+        },
+        "payout.Investigation": {
+            "type": "object",
+            "properties": {
+                "actorId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "attemptNo": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "evidenceNo": {
+                    "type": "string"
+                },
+                "investigationNo": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "payoutNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "payout.OrderAudit": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "actorId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "eventNo": {
+                    "type": "string"
+                },
+                "objectNo": {
+                    "type": "string"
+                },
+                "payoutNo": {
+                    "type": "string"
+                },
+                "snapshot": {
+                    "type": "string"
+                },
+                "traceId": {
+                    "type": "string"
+                },
+                "transitionNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "payout.OrderReconciliation": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "payoutNo": {
+                    "type": "string"
+                },
+                "reconciliationNo": {
+                    "type": "string"
+                },
+                "snapshot": {
+                    "type": "string"
+                },
+                "snapshotHash": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "payout.StatusHistory": {
+            "type": "object",
+            "properties": {
+                "actorId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "attemptNo": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "eventNo": {
+                    "type": "string"
+                },
+                "fromStatus": {
+                    "type": "string"
+                },
+                "payoutNo": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "sequence": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "toStatus": {
+                    "type": "string"
+                }
+            }
+        },
+        "payout.orderDetailResult": {
+            "type": "object",
+            "properties": {
+                "allowedActions": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "boolean"
+                    }
+                },
+                "attemptEvents": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/payout.AttemptEvent"
+                    }
+                },
+                "attempts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.Attempt"
+                    }
+                },
+                "audit": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/payout.OrderAudit"
+                    }
+                },
+                "auditTruncated": {
+                    "type": "boolean"
+                },
+                "check": {
+                    "$ref": "#/definitions/response.Reconciliation"
+                },
+                "checkedAt": {
+                    "type": "integer"
+                },
+                "consistent": {
+                    "type": "boolean"
+                },
+                "creationReconciliation": {
+                    "type": "string"
+                },
+                "currentPayee": {
+                    "$ref": "#/definitions/response.Current"
+                },
+                "evidence": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.EvidenceInfo"
+                    }
+                },
+                "history": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/payout.StatusHistory"
+                    }
+                },
+                "investigations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/payout.Investigation"
+                    }
+                },
+                "investigationsTruncated": {
+                    "type": "boolean"
+                },
+                "order": {
+                    "$ref": "#/definitions/tb_live_module_model_payout_response.Order"
+                },
+                "reconciliations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/payout.OrderReconciliation"
+                    }
+                },
+                "withdrawal": {
+                    "$ref": "#/definitions/earning.Withdrawal"
+                }
+            }
+        },
+        "payout.orderEnvelope": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "payout.orderListResult": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/tb_live_module_model_payout_response.Order"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "string",
+                    "example": "0"
+                }
+            }
+        },
+        "payout.orderResult": {
+            "type": "object",
+            "properties": {
+                "accountMasked": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "anchorNo": {
+                    "type": "string"
+                },
+                "businessNo": {
+                    "type": "string"
+                },
+                "businessType": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "payeeAccountNo": {
+                    "type": "string"
+                },
+                "payeeMethod": {
+                    "type": "string"
+                },
+                "payeeSnapshotHash": {
+                    "type": "string"
+                },
+                "payeeVersion": {
+                    "type": "string"
+                },
+                "payoutNo": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
                     "type": "integer"
                 }
             }
@@ -15339,6 +23546,37 @@ const docTemplate = `{
                 }
             }
         },
+        "request.ApplyWithdrawal": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "payeeAccountNo": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.AttemptAction": {
+            "type": "object",
+            "properties": {
+                "attemptNo": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
         "request.AutoCode": {
             "type": "object",
             "properties": {
@@ -15552,6 +23790,49 @@ const docTemplate = `{
                 }
             }
         },
+        "request.CancelOrder": {
+            "type": "object",
+            "properties": {
+                "confirmNoTransfer": {
+                    "type": "boolean"
+                },
+                "payoutNo": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.Category": {
+            "type": "object",
+            "properties": {
+                "categoryNo": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "iconUrl": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sortOrder": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
         "request.ChangePasswordReq": {
             "type": "object",
             "properties": {
@@ -15561,6 +23842,20 @@ const docTemplate = `{
                 },
                 "password": {
                     "description": "密码",
+                    "type": "string"
+                }
+            }
+        },
+        "request.ChannelAccountAction": {
+            "type": "object",
+            "properties": {
+                "channelAccountNo": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
                     "type": "string"
                 }
             }
@@ -15632,6 +23927,95 @@ const docTemplate = `{
                 }
             }
         },
+        "request.CreateChannelAccount": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "accountName": {
+                    "type": "string"
+                },
+                "channelCode": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "dailyLimit": {
+                    "type": "string"
+                },
+                "institutionName": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "singleLimit": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.CreateOrder": {
+            "type": "object",
+            "properties": {
+                "requestId": {
+                    "type": "string"
+                },
+                "withdrawalNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.CreatePayee": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "accountName": {
+                    "type": "string"
+                },
+                "appId": {
+                    "type": "string"
+                },
+                "bankCode": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "identifierType": {
+                    "type": "string"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.CreateSettlement": {
+            "type": "object",
+            "properties": {
+                "anchorNo": {
+                    "type": "string"
+                },
+                "periodEnd": {
+                    "type": "integer"
+                },
+                "periodStart": {
+                    "type": "integer"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "ruleNo": {
+                    "type": "string"
+                }
+            }
+        },
         "request.DataSource": {
             "type": "object",
             "properties": {
@@ -15652,6 +24036,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "value": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.Delete": {
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "type": "string"
+                },
+                "no": {
+                    "type": "string"
+                },
+                "version": {
                     "type": "string"
                 }
             }
@@ -15700,6 +24098,38 @@ const docTemplate = `{
                 }
             }
         },
+        "request.ExchangeRule": {
+            "type": "object",
+            "properties": {
+                "coinUnits": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "effectiveFrom": {
+                    "type": "integer"
+                },
+                "effectiveTo": {
+                    "type": "integer"
+                },
+                "minorUnits": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "roundingMode": {
+                    "type": "string"
+                },
+                "sourceUnit": {
+                    "type": "string"
+                }
+            }
+        },
         "request.ExportVersionRequest": {
             "type": "object",
             "required": [
@@ -15731,6 +24161,20 @@ const docTemplate = `{
                 },
                 "versionName": {
                     "description": "版本名称",
+                    "type": "string"
+                }
+            }
+        },
+        "request.FinanceReview": {
+            "type": "object",
+            "properties": {
+                "approve": {
+                    "type": "boolean"
+                },
+                "no": {
+                    "type": "string"
+                },
+                "reason": {
                     "type": "string"
                 }
             }
@@ -15976,6 +24420,85 @@ const docTemplate = `{
                 },
                 "userName": {
                     "description": "数据库用户名",
+                    "type": "string"
+                }
+            }
+        },
+        "request.Investigate": {
+            "type": "object",
+            "properties": {
+                "evidenceNo": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "payoutNo": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.Item": {
+            "type": "object",
+            "properties": {
+                "animationType": {
+                    "type": "string"
+                },
+                "animationUrl": {
+                    "type": "string"
+                },
+                "benefitStatus": {
+                    "type": "string"
+                },
+                "benefitType": {
+                    "type": "string"
+                },
+                "categoryNo": {
+                    "type": "string"
+                },
+                "coinPrice": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "effectiveFrom": {
+                    "type": "integer"
+                },
+                "effectiveTo": {
+                    "type": "integer"
+                },
+                "giftNo": {
+                    "type": "string"
+                },
+                "guardDurationDays": {
+                    "type": "string"
+                },
+                "guardPlanNo": {
+                    "type": "string"
+                },
+                "iconUrl": {
+                    "type": "string"
+                },
+                "isPremium": {
+                    "type": "boolean"
+                },
+                "maxQuantityPerOrder": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sortOrder": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "version": {
                     "type": "string"
                 }
             }
@@ -16325,6 +24848,20 @@ const docTemplate = `{
                 }
             }
         },
+        "request.OrderAction": {
+            "type": "object",
+            "properties": {
+                "payoutNo": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
         "request.PageInfo": {
             "type": "object",
             "properties": {
@@ -16339,6 +24876,111 @@ const docTemplate = `{
                 "pageSize": {
                     "description": "每页大小",
                     "type": "integer"
+                }
+            }
+        },
+        "request.PayeeAction": {
+            "type": "object",
+            "properties": {
+                "payeeAccountNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.Plan": {
+            "type": "object",
+            "properties": {
+                "benefitConfig": {
+                    "type": "string"
+                },
+                "defaultDurationDays": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "planNo": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "sortOrder": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.ReadEvidence": {
+            "type": "object",
+            "properties": {
+                "evidenceNo": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.Reconcile": {
+            "type": "object",
+            "properties": {
+                "withdrawalNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.Refund": {
+            "type": "object",
+            "properties": {
+                "orderNo": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.ResolveAttempt": {
+            "type": "object",
+            "properties": {
+                "attemptNo": {
+                    "type": "string"
+                },
+                "confirmExternalResult": {
+                    "type": "boolean"
+                },
+                "decision": {
+                    "type": "string"
+                },
+                "investigationNo": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
                 }
             }
         },
@@ -16385,6 +25027,34 @@ const docTemplate = `{
                 }
             }
         },
+        "request.RevealConsume": {
+            "type": "object",
+            "properties": {
+                "grantNo": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.RevealGrant": {
+            "type": "object",
+            "properties": {
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "targetNo": {
+                    "type": "string"
+                }
+            }
+        },
         "request.ReverseAdjustment": {
             "type": "object",
             "required": [
@@ -16407,6 +25077,17 @@ const docTemplate = `{
                 }
             }
         },
+        "request.Review": {
+            "type": "object",
+            "properties": {
+                "approve": {
+                    "type": "boolean"
+                },
+                "ruleNo": {
+                    "type": "string"
+                }
+            }
+        },
         "request.ReviewAdjustment": {
             "type": "object",
             "required": [
@@ -16418,6 +25099,60 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "reason": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.ReviewAttempt": {
+            "type": "object",
+            "properties": {
+                "attemptNo": {
+                    "type": "string"
+                },
+                "confirmExternalResult": {
+                    "type": "boolean"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.ReviewTermination": {
+            "type": "object",
+            "properties": {
+                "approve": {
+                    "type": "boolean"
+                },
+                "terminationNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.Rule": {
+            "type": "object",
+            "properties": {
+                "anchorShareBps": {
+                    "type": "string"
+                },
+                "effectiveFrom": {
+                    "type": "integer"
+                },
+                "effectiveTo": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                },
+                "scopeNo": {
+                    "type": "string"
+                },
+                "scopeType": {
                     "type": "string"
                 }
             }
@@ -16482,6 +25217,23 @@ const docTemplate = `{
                 }
             }
         },
+        "request.Send": {
+            "type": "object",
+            "properties": {
+                "giftNo": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "roomNo": {
+                    "type": "string"
+                }
+            }
+        },
         "request.SetMenuAuthorities": {
             "type": "object",
             "properties": {
@@ -16535,6 +25287,69 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                }
+            }
+        },
+        "request.Sort": {
+            "type": "object",
+            "properties": {
+                "categoryNo": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "numbers": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.StartOrder": {
+            "type": "object",
+            "properties": {
+                "channelAccountNo": {
+                    "type": "string"
+                },
+                "payoutNo": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.SubmitAttempt": {
+            "type": "object",
+            "properties": {
+                "attemptNo": {
+                    "type": "string"
+                },
+                "confirmRealTransfer": {
+                    "type": "boolean"
+                },
+                "evidenceNo": {
+                    "type": "string"
+                },
+                "operatorNote": {
+                    "type": "string"
+                },
+                "paymentReference": {
+                    "type": "string"
+                },
+                "paymentTime": {
+                    "type": "integer"
+                },
+                "requestId": {
+                    "type": "string"
                 }
             }
         },
@@ -16608,6 +25423,54 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/request.Target"
                     }
+                }
+            }
+        },
+        "request.TerminateRule": {
+            "type": "object",
+            "properties": {
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "ruleNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.UnpaidAction": {
+            "type": "object",
+            "properties": {
+                "attemptNo": {
+                    "type": "string"
+                },
+                "confirmNoTransfer": {
+                    "type": "boolean"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.UploadEvidence": {
+            "type": "object",
+            "properties": {
+                "attemptNo": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "mime": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
                 }
             }
         },
@@ -16906,6 +25769,41 @@ const docTemplate = `{
                 }
             }
         },
+        "response.ActionResult": {
+            "type": "object",
+            "properties": {
+                "attemptNo": {
+                    "type": "string"
+                },
+                "channelAccountNo": {
+                    "type": "string"
+                },
+                "evidenceHash": {
+                    "type": "string"
+                },
+                "evidenceNo": {
+                    "type": "string"
+                },
+                "expiresAt": {
+                    "type": "integer"
+                },
+                "grantNo": {
+                    "type": "string"
+                },
+                "investigationNo": {
+                    "type": "string"
+                },
+                "payoutNo": {
+                    "type": "string"
+                },
+                "reconciliationNo": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "response.AnchorAdminDetailResp": {
             "type": "object",
             "properties": {
@@ -16977,6 +25875,9 @@ const docTemplate = `{
                 },
                 "gender": {
                     "type": "integer"
+                },
+                "giftSummary": {
+                    "$ref": "#/definitions/response.GiftSummary"
                 },
                 "id": {
                     "type": "integer"
@@ -17287,6 +26188,192 @@ const docTemplate = `{
                 }
             }
         },
+        "response.AppOrder": {
+            "type": "object",
+            "properties": {
+                "anchorNo": {
+                    "type": "string"
+                },
+                "animationType": {
+                    "type": "string"
+                },
+                "animationUrl": {
+                    "type": "string"
+                },
+                "categoryName": {
+                    "type": "string"
+                },
+                "categoryNo": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "giftName": {
+                    "type": "string"
+                },
+                "giftNo": {
+                    "type": "string"
+                },
+                "grossCoinAmount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "iconUrl": {
+                    "type": "string"
+                },
+                "orderNo": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "refundedCoinAmount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "sessionNo": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "unitPrice": {
+                    "type": "string",
+                    "example": "0"
+                }
+            }
+        },
+        "response.AppWithdrawal": {
+            "type": "object",
+            "properties": {
+                "accountMasked": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "payeeAccountNo": {
+                    "type": "string"
+                },
+                "payeeMethod": {
+                    "type": "string"
+                },
+                "payeeVersion": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "reviewedAt": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "withdrawalNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Attempt": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "attemptNo": {
+                    "type": "string"
+                },
+                "bankSubmittedAt": {
+                    "type": "integer"
+                },
+                "channelAccountNo": {
+                    "type": "string"
+                },
+                "channelCode": {
+                    "type": "string"
+                },
+                "companyMasked": {
+                    "type": "string"
+                },
+                "completedAt": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "evidenceHash": {
+                    "type": "string"
+                },
+                "evidenceReference": {
+                    "type": "string"
+                },
+                "failureCode": {
+                    "type": "string"
+                },
+                "failureReason": {
+                    "type": "string"
+                },
+                "operatorId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "operatorNote": {
+                    "type": "string"
+                },
+                "paymentReference": {
+                    "type": "string"
+                },
+                "paymentTime": {
+                    "type": "integer"
+                },
+                "payoutNo": {
+                    "type": "string"
+                },
+                "reviewReason": {
+                    "type": "string"
+                },
+                "reviewedAt": {
+                    "type": "integer"
+                },
+                "reviewerId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "sequence": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "submittedAt": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                }
+            }
+        },
         "response.Audit": {
             "type": "object",
             "properties": {
@@ -17310,41 +26397,79 @@ const docTemplate = `{
                 }
             }
         },
-        "response.Balance": {
+        "response.Change": {
             "type": "object",
             "properties": {
-                "accountNo": {
-                    "description": "AccountNo和Phone仅由后台查询接口填充；客户端余额接口不暴露这些字段。",
+                "changed": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.ChannelAccount": {
+            "type": "object",
+            "properties": {
+                "accountName": {
                     "type": "string"
                 },
-                "availableBalance": {
+                "channelAccountNo": {
                     "type": "string"
                 },
-                "currencyCode": {
+                "channelCode": {
                     "type": "string"
                 },
-                "frozenBalance": {
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "currency": {
                     "type": "string"
                 },
-                "phone": {
+                "dailyLimit": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "disabledAt": {
+                    "type": "integer"
+                },
+                "institutionName": {
                     "type": "string"
+                },
+                "maskedAccount": {
+                    "type": "string"
+                },
+                "singleLimit": {
+                    "type": "string",
+                    "example": "0"
                 },
                 "status": {
                     "type": "string"
                 },
                 "updatedAt": {
                     "type": "integer"
-                },
-                "version": {
-                    "type": "string"
                 }
             }
         },
-        "response.Change": {
+        "response.ChannelAccountPage": {
             "type": "object",
             "properties": {
-                "changed": {
-                    "type": "boolean"
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.ChannelAccount"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "string",
+                    "example": "0"
                 }
             }
         },
@@ -17358,6 +26483,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "checkedOrders": {
+                    "type": "integer"
+                },
+                "checkedTransactions": {
                     "type": "integer"
                 },
                 "consistent": {
@@ -17376,6 +26504,9 @@ const docTemplate = `{
                     }
                 },
                 "nextOrderId": {
+                    "type": "string"
+                },
+                "nextTransactionId": {
                     "type": "string"
                 },
                 "nextVersion": {
@@ -17420,6 +26551,76 @@ const docTemplate = `{
                 },
                 "followingCount": {
                     "type": "integer"
+                }
+            }
+        },
+        "response.Current": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "$ref": "#/definitions/response.Payee"
+                },
+                "matchesSnapshot": {
+                    "type": "boolean"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "usable": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.Detail": {
+            "type": "object",
+            "properties": {
+                "benefits": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/gift.BenefitGrant"
+                    }
+                },
+                "compensations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/gift.BenefitCompensation"
+                    }
+                },
+                "consistent": {
+                    "type": "boolean"
+                },
+                "earnings": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/earning.Ledger"
+                    }
+                },
+                "events": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/gift.Event"
+                    }
+                },
+                "issues": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "order": {
+                    "$ref": "#/definitions/gift.Order"
+                },
+                "refunds": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/gift.Refund"
+                    }
+                },
+                "revenue": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/gift.Revenue"
+                    }
                 }
             }
         },
@@ -17483,6 +26684,34 @@ const docTemplate = `{
                 }
             }
         },
+        "response.EvidenceInfo": {
+            "type": "object",
+            "properties": {
+                "attemptNo": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "evidenceNo": {
+                    "type": "string"
+                },
+                "mime": {
+                    "type": "string"
+                },
+                "sha256": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "string",
+                    "example": "0"
+                }
+            }
+        },
         "response.ExaCustomerResponse": {
             "type": "object",
             "properties": {
@@ -17526,6 +26755,64 @@ const docTemplate = `{
             "properties": {
                 "file": {
                     "$ref": "#/definitions/example.ExaFile"
+                }
+            }
+        },
+        "response.FinanceOverview": {
+            "type": "object",
+            "properties": {
+                "anchorNo": {
+                    "type": "string"
+                },
+                "balances": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/tb_live_module_model_earning_response.Balance"
+                    }
+                },
+                "payoutEnabled": {
+                    "type": "boolean"
+                },
+                "pendingCoin": {
+                    "type": "string"
+                },
+                "settledCoin": {
+                    "type": "string"
+                },
+                "withdrawalEnabled": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.GiftSummary": {
+            "type": "object",
+            "properties": {
+                "grossCoin": {
+                    "type": "string"
+                },
+                "grossQuantity": {
+                    "type": "string"
+                },
+                "netCoin": {
+                    "type": "string"
+                },
+                "orders": {
+                    "type": "string"
+                },
+                "pendingEarningCoin": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "string"
+                },
+                "refundCoin": {
+                    "type": "string"
+                },
+                "refundQuantity": {
+                    "type": "string"
+                },
+                "users": {
+                    "type": "string"
                 }
             }
         },
@@ -17797,6 +27084,9 @@ const docTemplate = `{
                 },
                 "currentSessionId": {
                     "type": "integer"
+                },
+                "giftSummary": {
+                    "$ref": "#/definitions/response.GiftSummary"
                 },
                 "id": {
                     "type": "integer"
@@ -18164,14 +27454,8 @@ const docTemplate = `{
                 "failureReason": {
                     "type": "string"
                 },
-                "giftCoinAmount": {
-                    "type": "integer"
-                },
-                "giftCount": {
-                    "type": "integer"
-                },
-                "giftUserCount": {
-                    "type": "integer"
+                "giftSummary": {
+                    "$ref": "#/definitions/response.GiftSummary"
                 },
                 "id": {
                     "type": "integer"
@@ -18334,15 +27618,6 @@ const docTemplate = `{
                 },
                 "failureReason": {
                     "type": "string"
-                },
-                "giftCoinAmount": {
-                    "type": "integer"
-                },
-                "giftCount": {
-                    "type": "integer"
-                },
-                "giftUserCount": {
-                    "type": "integer"
                 },
                 "lastUnpublishAt": {
                     "type": "integer"
@@ -18671,115 +27946,6 @@ const docTemplate = `{
                 }
             }
         },
-        "response.Order": {
-            "type": "object",
-            "properties": {
-                "accountNo": {
-                    "type": "string"
-                },
-                "amount": {
-                    "type": "string"
-                },
-                "approvedAt": {
-                    "type": "integer"
-                },
-                "approvedBy": {
-                    "type": "string"
-                },
-                "approvedByDisplay": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "integer"
-                },
-                "createdBy": {
-                    "type": "string"
-                },
-                "createdByDisplay": {
-                    "type": "string"
-                },
-                "createdIp": {
-                    "type": "string"
-                },
-                "creditedAt": {
-                    "type": "integer"
-                },
-                "currencyCode": {
-                    "type": "string"
-                },
-                "evidenceRef": {
-                    "type": "string"
-                },
-                "externalOrderNo": {
-                    "type": "string"
-                },
-                "kind": {
-                    "type": "string"
-                },
-                "ledgerNo": {
-                    "type": "string"
-                },
-                "orderNo": {
-                    "type": "string"
-                },
-                "originalOrderNo": {
-                    "type": "string"
-                },
-                "reason": {
-                    "type": "string"
-                },
-                "rejectedAt": {
-                    "type": "integer"
-                },
-                "rejectedBy": {
-                    "type": "string"
-                },
-                "rejectedByDisplay": {
-                    "type": "string"
-                },
-                "requestId": {
-                    "type": "string"
-                },
-                "reversalOrderNo": {
-                    "type": "string"
-                },
-                "reversedAt": {
-                    "type": "integer"
-                },
-                "reviewReason": {
-                    "type": "string"
-                },
-                "reviewedIp": {
-                    "type": "string"
-                },
-                "sourceType": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "integer"
-                }
-            }
-        },
-        "response.OrderDetail": {
-            "type": "object",
-            "properties": {
-                "audit": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/response.Audit"
-                    }
-                },
-                "ledger": {
-                    "$ref": "#/definitions/response.Ledger"
-                },
-                "order": {
-                    "$ref": "#/definitions/response.Order"
-                }
-            }
-        },
         "response.PageResult": {
             "type": "object",
             "properties": {
@@ -18803,6 +27969,39 @@ const docTemplate = `{
                 },
                 "token": {
                     "type": "string"
+                }
+            }
+        },
+        "response.Payee": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "integer"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "isDefault": {
+                    "type": "boolean"
+                },
+                "maskedAccount": {
+                    "type": "string"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "payeeAccountNo": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                },
+                "version": {
+                    "type": "string",
+                    "example": "0"
                 }
             }
         },
@@ -18832,6 +28031,29 @@ const docTemplate = `{
                 },
                 "pluginType": {
                     "description": "web, server, full",
+                    "type": "string"
+                }
+            }
+        },
+        "response.Reconciliation": {
+            "type": "object",
+            "properties": {
+                "checkedAt": {
+                    "type": "integer"
+                },
+                "consistent": {
+                    "type": "boolean"
+                },
+                "issues": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "payoutNo": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
@@ -18964,6 +28186,78 @@ const docTemplate = `{
                 }
             }
         },
+        "response.RevealTicket": {
+            "type": "object",
+            "properties": {
+                "expiresAt": {
+                    "type": "integer"
+                },
+                "grantNo": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.RevealedAccount": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "string"
+                },
+                "accountName": {
+                    "type": "string"
+                },
+                "appId": {
+                    "type": "string"
+                },
+                "bankCode": {
+                    "type": "string"
+                },
+                "clearAfterSeconds": {
+                    "type": "integer"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "identifierType": {
+                    "type": "string"
+                },
+                "institutionName": {
+                    "type": "string"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "targetNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.SettlementDetail": {
+            "type": "object",
+            "properties": {
+                "audit": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/earning.FinanceAudit"
+                    }
+                },
+                "consistent": {
+                    "type": "boolean"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/earning.SettlementItem"
+                    }
+                },
+                "settlement": {
+                    "$ref": "#/definitions/earning.Settlement"
+                }
+            }
+        },
         "response.SysAuthorityCopyResponse": {
             "type": "object",
             "properties": {
@@ -19044,6 +28338,103 @@ const docTemplate = `{
             "properties": {
                 "user": {
                     "$ref": "#/definitions/system.SysUser"
+                }
+            }
+        },
+        "response.Trace": {
+            "type": "object",
+            "properties": {
+                "adjustment": {
+                    "$ref": "#/definitions/tb_live_module_model_wallet_response.OrderDetail"
+                },
+                "audit": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.Audit"
+                    }
+                },
+                "hasMore": {
+                    "type": "boolean"
+                },
+                "issues": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "ledger": {
+                    "$ref": "#/definitions/response.Ledger"
+                },
+                "nextRefundId": {
+                    "type": "string"
+                },
+                "original": {
+                    "$ref": "#/definitions/response.Transaction"
+                },
+                "refunds": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.Transaction"
+                    }
+                },
+                "transaction": {
+                    "$ref": "#/definitions/response.Transaction"
+                }
+            }
+        },
+        "response.Transaction": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "actorDisplay": {
+                    "type": "string"
+                },
+                "actorId": {
+                    "type": "string"
+                },
+                "actorIp": {
+                    "type": "string"
+                },
+                "actorType": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "string"
+                },
+                "businessNo": {
+                    "type": "string"
+                },
+                "businessType": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "ledgerNo": {
+                    "type": "string"
+                },
+                "originalNo": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "refundedAmount": {
+                    "type": "string"
+                },
+                "traceId": {
+                    "type": "string"
+                },
+                "transactionNo": {
+                    "type": "string"
                 }
             }
         },
@@ -19139,6 +28530,38 @@ const docTemplate = `{
                 },
                 "sessionVersion": {
                     "type": "integer"
+                }
+            }
+        },
+        "response.WithdrawalDetail": {
+            "type": "object",
+            "properties": {
+                "audit": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/earning.FinanceAudit"
+                    }
+                },
+                "currentPayee": {
+                    "$ref": "#/definitions/response.Current"
+                },
+                "ledger": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/earning.AccountLedger"
+                    }
+                },
+                "payoutEnabled": {
+                    "type": "boolean"
+                },
+                "reconciliations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/earning.Reconciliation"
+                    }
+                },
+                "withdrawal": {
+                    "$ref": "#/definitions/earning.Withdrawal"
                 }
             }
         },
@@ -20033,6 +29456,75 @@ const docTemplate = `{
                 }
             }
         },
+        "tb_live_module_model_earning_response.Balance": {
+            "type": "object",
+            "properties": {
+                "available": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "debt": {
+                    "type": "string"
+                },
+                "frozen": {
+                    "type": "string"
+                },
+                "paid": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "tb_live_module_model_earning_response.Page": {
+            "type": "object",
+            "properties": {
+                "list": {},
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "string",
+                    "example": "0"
+                }
+            }
+        },
+        "tb_live_module_model_gift_response.Page": {
+            "type": "object",
+            "properties": {
+                "list": {},
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "tb_live_module_model_guard_request.Action": {
+            "type": "object",
+            "properties": {
+                "number": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
         "tb_live_module_model_live_request.Login": {
             "type": "object",
             "required": [
@@ -20098,6 +29590,90 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "tb_live_module_model_payout_response.Order": {
+            "type": "object",
+            "properties": {
+                "accountMasked": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "anchorNo": {
+                    "type": "string"
+                },
+                "businessNo": {
+                    "type": "string"
+                },
+                "businessType": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "payeeAccountNo": {
+                    "type": "string"
+                },
+                "payeeMethod": {
+                    "type": "string"
+                },
+                "payeeSnapshotHash": {
+                    "type": "string"
+                },
+                "payeeVersion": {
+                    "type": "string"
+                },
+                "payoutNo": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                }
+            }
+        },
+        "tb_live_module_model_payout_response.Page": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.Payee"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "string",
+                    "example": "0"
+                }
+            }
+        },
+        "tb_live_module_model_ranking_request.Action": {
+            "type": "object",
+            "properties": {
+                "requestId": {
+                    "type": "string"
+                },
+                "scope": {
                     "type": "string"
                 }
             }
@@ -20175,6 +29751,151 @@ const docTemplate = `{
                 },
                 "user": {
                     "$ref": "#/definitions/system.SysUser"
+                }
+            }
+        },
+        "tb_live_module_model_wallet_response.Balance": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "description": "AccountNo和Phone仅由后台查询接口填充；客户端余额接口不暴露这些字段。",
+                    "type": "string"
+                },
+                "availableBalance": {
+                    "type": "string"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "frozenBalance": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "tb_live_module_model_wallet_response.Order": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "string"
+                },
+                "approvedAt": {
+                    "type": "integer"
+                },
+                "approvedBy": {
+                    "type": "string"
+                },
+                "approvedByDisplay": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "createdByDisplay": {
+                    "type": "string"
+                },
+                "createdIp": {
+                    "type": "string"
+                },
+                "creditedAt": {
+                    "type": "integer"
+                },
+                "currencyCode": {
+                    "type": "string"
+                },
+                "evidenceRef": {
+                    "type": "string"
+                },
+                "externalOrderNo": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "ledgerNo": {
+                    "type": "string"
+                },
+                "orderNo": {
+                    "type": "string"
+                },
+                "originalOrderNo": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "rejectedAt": {
+                    "type": "integer"
+                },
+                "rejectedBy": {
+                    "type": "string"
+                },
+                "rejectedByDisplay": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "reversalOrderNo": {
+                    "type": "string"
+                },
+                "reversedAt": {
+                    "type": "integer"
+                },
+                "reviewReason": {
+                    "type": "string"
+                },
+                "reviewedIp": {
+                    "type": "string"
+                },
+                "sourceType": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                }
+            }
+        },
+        "tb_live_module_model_wallet_response.OrderDetail": {
+            "type": "object",
+            "properties": {
+                "audit": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.Audit"
+                    }
+                },
+                "issues": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "ledger": {
+                    "$ref": "#/definitions/response.Ledger"
+                },
+                "order": {
+                    "$ref": "#/definitions/tb_live_module_model_wallet_response.Order"
                 }
             }
         }

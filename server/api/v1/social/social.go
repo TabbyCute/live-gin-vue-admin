@@ -2,12 +2,15 @@ package social
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"tb_live_module/middleware"
 	"tb_live_module/model/common/response"
 	req "tb_live_module/model/social/request"
@@ -19,13 +22,26 @@ type SocialApi struct{}
 
 var _ = res.Change{}
 
-// Guard 限制解析体积、DB/Redis时间和多实例请求频率；必须挂在JWT之后。
-func Guard() gin.HandlerFunc {
+// RequestBudget 必须位于APP JWT之前，使鉴权查询也受总预算约束。
+func RequestBudget() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		c.Header("Cache-Control", "no-store")
 		c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, 32<<10)
 		ctx, cancel := context.WithTimeout(c.Request.Context(), 5*time.Second)
 		defer cancel()
 		c.Request = c.Request.WithContext(ctx)
+		if c.Request.ContentLength > 32<<10 || len(c.Request.URL.RawQuery) > 4096 || len(c.GetHeader("Authorization")) > 8192 {
+			respond(c, nil, svc.ErrInvalid)
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}
+
+// Guard 在JWT之后执行多实例限流。
+func Guard() gin.HandlerFunc {
+	return func(c *gin.Context) {
 		actor, ok := middleware.GetAppAccountID(c)
 		if !ok {
 			response.NoAuth("未登录", c)
@@ -40,7 +56,7 @@ func Guard() gin.HandlerFunc {
 				break
 			}
 		}
-		if err := socialService.RateLimitRequest(ctx, uint64(actor), read, workerRequired); err != nil {
+		if err := socialService.RateLimitRequest(c.Request.Context(), uint64(actor), read, workerRequired); err != nil {
 			respond(c, nil, err)
 			c.Abort()
 			return
@@ -54,7 +70,18 @@ func bind(c *gin.Context, v interface{}) bool {
 	if c.Request.Method == http.MethodGet {
 		err = c.ShouldBindQuery(v)
 	} else {
-		err = c.ShouldBindJSON(v)
+		decoder := json.NewDecoder(c.Request.Body)
+		err = decoder.Decode(v)
+		if err == nil {
+			// 必须读到EOF，不能只解析前面的合法对象，漏掉尾部超限或第二个对象。
+			var trailing interface{}
+			if e := decoder.Decode(&trailing); e != io.EOF {
+				err = svc.ErrInvalid
+			}
+		}
+		if err == nil {
+			err = binding.Validator.ValidateStruct(v)
+		}
 	}
 	if err != nil {
 		respond(c, nil, svc.ErrInvalid)
@@ -514,6 +541,7 @@ func (a *SocialApi) HistoryOpen(c *gin.Context) {
 // @Tags SocialApp
 // @Summary 上报心跳或严格持久化checkpoint；seq递增，毫秒进度允许回退
 // @Description 身份仅来自APP JWT。成功code=0；错误46001参数、46002账号、46003自己、46004拉黑、46005未关注、46006不可访问资源、46007未接入类型、46008限流、46009依赖故障、46010会话冲突。所有时间与进度为毫秒。目标示例：{"accountNo":"10000001"}；accountNo/anchorNo二选一。列表最多100条，过滤后空页仍应跟随nextCursor。
+// @Description 普通心跳首次入队或切换会话时校验本人已打开的资源会话；不存在、被删除或已替换的会话返回46010。同一已验证缓冲会话连续心跳不逐次查询MySQL。persisted=false仅表示缓冲受理；严格持久化请使用checkpoint。JSON须为单个对象且正文不超过32KiB。
 // @Security AppBearerAuth
 // @Accept application/json
 // @Produce application/json

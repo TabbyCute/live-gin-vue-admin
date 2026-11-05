@@ -140,15 +140,17 @@ func (authorityService *AuthorityService) DeleteAuthority(auth *system.SysAuthor
 //@param: info request.PageInfo
 //@return: list interface{}, total int64, err error
 
-func (authorityService *AuthorityService) GetAuthorityInfoList(authorityID uint) (list []system.SysAuthority, err error) {
+func (authorityService *AuthorityService) GetAuthorityInfoList(authorityID uint, userID ...uint) (list []system.SysAuthority, err error) {
 	var authority system.SysAuthority
-	err = global.GVA_DB.Where("authority_id = ?", authorityID).First(&authority).Error
-	if err != nil {
-		return nil, err
+	if !system.IsSuperAdmin(userID...) {
+		err = global.GVA_DB.Where("authority_id = ?", authorityID).First(&authority).Error
+		if err != nil {
+			return nil, err
+		}
 	}
 	var authorities []system.SysAuthority
 	db := global.GVA_DB.Model(&system.SysAuthority{})
-	if global.GVA_CONFIG.System.UseStrictAuth {
+	if global.GVA_CONFIG.System.UseStrictAuth && !system.IsSuperAdmin(userID...) {
 		// 当开启了严格树形结构后
 		if *authority.ParentId == 0 {
 			// 只有顶级角色可以修改自己的权限和以下权限
@@ -193,8 +195,8 @@ func (authorityService *AuthorityService) GetStructAuthorityList(authorityID uin
 	return list, err
 }
 
-func (authorityService *AuthorityService) CheckAuthorityIDAuth(authorityID, targetID uint) (err error) {
-	if !global.GVA_CONFIG.System.UseStrictAuth {
+func (authorityService *AuthorityService) CheckAuthorityIDAuth(authorityID, targetID uint, userID ...uint) (err error) {
+	if system.IsSuperAdmin(userID...) || !global.GVA_CONFIG.System.UseStrictAuth {
 		return nil
 	}
 	authIDS, err := authorityService.GetStructAuthorityList(authorityID)

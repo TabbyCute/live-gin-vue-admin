@@ -139,6 +139,21 @@ func TestMySQLLoadProfile(t *testing.T) {
 		require.NoError(t, db.Raw(q).Scan(&rows).Error)
 		plans = append(plans, map[string]interface{}{"query": q, "plan": rows})
 	}
+	// 新增心跳准入查询必须走唯一资源键和counter主键，不扫描历史列表。
+	admission := "EXPLAIN SELECT h.id FROM social_watch_history h JOIN social_user_counter c ON c.user_id=h.user_id AND c.history_epoch=h.epoch WHERE h.user_id=? AND h.resource_type=? AND h.resource_id=? AND h.session_token=? AND h.session_version=? AND h.epoch=? AND h.hidden=? LIMIT 1"
+	var admissionPlan []map[string]interface{}
+	first := sessions[0]
+	require.NoError(t, db.Raw(admission, 1000, first.ResourceType, first.ResourceID, first.SessionToken, first.SessionVersion, first.Epoch, false).Scan(&admissionPlan).Error)
+	for _, row := range admissionPlan {
+		require.NotEqual(t, "ALL", fmt.Sprint(row["type"]))
+		if row["table"] == "h" {
+			require.Equal(t, "uk_social_history_resource", row["key"])
+		}
+		if row["table"] == "c" {
+			require.Equal(t, "PRIMARY", row["key"])
+		}
+	}
+	plans = append(plans, map[string]interface{}{"query": admission, "plan": admissionPlan})
 	reports["explain"] = plans
 	if path := os.Getenv("SOCIAL_LOAD_REPORT"); path != "" {
 		raw, err := json.MarshalIndent(reports, "", "  ")

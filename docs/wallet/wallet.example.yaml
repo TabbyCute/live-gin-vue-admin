@@ -1,6 +1,9 @@
 # 合并到实际运行的配置文件；无需配置也采用以下默认值。
 # 生产限额应按运营规则审核后调整，所有实例保持一致并重启。
 wallet:
+  # 单进程在途请求上限；超额立即503，按数据库连接池/实例数压测调整。
+  app-max-inflight: 64
+  admin-max-inflight: 16
   max-grant-amount: 1000000
   account-daily-limit: 10000000
   operator-daily-limit: 10000000

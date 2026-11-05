@@ -1,0 +1,629 @@
+ Network payout-delivery-test_default  Creating
+ Network payout-delivery-test_default  Created
+ Container payout-delivery-test-mysql-1  Creating
+ Container payout-delivery-test-mysql-1  Created
+ Container payout-delivery-test-mysql-1  Starting
+ Container payout-delivery-test-mysql-1  Started
+ Container payout-delivery-test-mysql-1  Waiting
+ Container payout-delivery-test-mysql-1  Healthy
+ Network earning-delivery-test_default  Creating
+ Network earning-delivery-test_default  Created
+ Container earning-delivery-test-mysql-1  Creating
+ Container earning-delivery-test-mysql-1  Created
+ Container earning-delivery-test-mysql-1  Starting
+ Container earning-delivery-test-mysql-1  Started
+ Container earning-delivery-test-mysql-1  Waiting
+ Container earning-delivery-test-mysql-1  Healthy
+ Network gift-delivery-test_default  Creating
+ Network gift-delivery-test_default  Created
+ Container gift-delivery-test-mysql-1  Creating
+ Container gift-delivery-test-mysql-1  Created
+ Container gift-delivery-test-mysql-1  Starting
+ Container gift-delivery-test-mysql-1  Started
+ Container gift-delivery-test-mysql-1  Waiting
+ Container gift-delivery-test-mysql-1  Healthy
+?   	tb_live_module	[no test files]
+?   	tb_live_module/api/v1	[no test files]
+ok  	tb_live_module/api/v1/earning	2.352s
+?   	tb_live_module/api/v1/example	[no test files]
+ok  	tb_live_module/api/v1/gift	2.777s
+ok  	tb_live_module/api/v1/live	5.267s
+ok  	tb_live_module/api/v1/payout	4.044s
+ok  	tb_live_module/api/v1/social	4.572s
+?   	tb_live_module/api/v1/system	[no test files]
+ok  	tb_live_module/api/v1/wallet	5.015s
+?   	tb_live_module/assets	[no test files]
+?   	tb_live_module/cmd/earning-migrate	[no test files]
+?   	tb_live_module/cmd/gift-migrate	[no test files]
+?   	tb_live_module/cmd/mcp	[no test files]
+?   	tb_live_module/cmd/payout-migrate	[no test files]
+?   	tb_live_module/cmd/root-admin-migrate	[no test files]
+?   	tb_live_module/cmd/social-check	[no test files]
+?   	tb_live_module/cmd/wallet-migrate	[no test files]
+ok  	tb_live_module/config	4.171s
+ok  	tb_live_module/core	5.715s
+?   	tb_live_module/core/internal	[no test files]
+?   	tb_live_module/docs	[no test files]
+?   	tb_live_module/global	[no test files]
+ok  	tb_live_module/initialize	6.732s
+ok  	tb_live_module/initialize/internal	5.998s
+ok  	tb_live_module/internal/srs	6.331s
+ok  	tb_live_module/mcp	6.622s
+ok  	tb_live_module/mcp/client	6.559s
+ok  	tb_live_module/middleware	9.380s
+?   	tb_live_module/model/common	[no test files]
+?   	tb_live_module/model/common/request	[no test files]
+?   	tb_live_module/model/common/response	[no test files]
+?   	tb_live_module/model/earning	[no test files]
+?   	tb_live_module/model/earning/request	[no test files]
+ok  	tb_live_module/model/earning/response	5.883s
+?   	tb_live_module/model/example	[no test files]
+?   	tb_live_module/model/example/request	[no test files]
+?   	tb_live_module/model/example/response	[no test files]
+?   	tb_live_module/model/gift	[no test files]
+?   	tb_live_module/model/gift/request	[no test files]
+?   	tb_live_module/model/gift/response	[no test files]
+ok  	tb_live_module/model/live	5.938s
+ok  	tb_live_module/model/live/request	5.651s
+?   	tb_live_module/model/live/response	[no test files]
+?   	tb_live_module/model/payout	[no test files]
+?   	tb_live_module/model/payout/request	[no test files]
+?   	tb_live_module/model/payout/response	[no test files]
+ok  	tb_live_module/model/social	6.046s
+?   	tb_live_module/model/social/request	[no test files]
+?   	tb_live_module/model/social/response	[no test files]
+?   	tb_live_module/model/system	[no test files]
+?   	tb_live_module/model/system/request	[no test files]
+?   	tb_live_module/model/system/response	[no test files]
+?   	tb_live_module/model/wallet	[no test files]
+?   	tb_live_module/model/wallet/request	[no test files]
+?   	tb_live_module/model/wallet/response	[no test files]
+?   	tb_live_module/plugin	[no test files]
+?   	tb_live_module/plugin/announcement	[no test files]
+?   	tb_live_module/plugin/announcement/api	[no test files]
+?   	tb_live_module/plugin/announcement/config	[no test files]
+?   	tb_live_module/plugin/announcement/gen	[no test files]
+?   	tb_live_module/plugin/announcement/initialize	[no test files]
+?   	tb_live_module/plugin/announcement/model	[no test files]
+?   	tb_live_module/plugin/announcement/model/request	[no test files]
+?   	tb_live_module/plugin/announcement/plugin	[no test files]
+?   	tb_live_module/plugin/announcement/router	[no test files]
+?   	tb_live_module/plugin/announcement/service	[no test files]
+?   	tb_live_module/plugin/auto	[no test files]
+?   	tb_live_module/plugin/auto/api	[no test files]
+ok  	tb_live_module/plugin/auto/initialize	7.893s
+?   	tb_live_module/plugin/auto/model	[no test files]
+?   	tb_live_module/plugin/auto/router	[no test files]
+ok  	tb_live_module/plugin/auto/service	5.054s
+?   	tb_live_module/plugin/email	[no test files]
+?   	tb_live_module/plugin/email/api	[no test files]
+?   	tb_live_module/plugin/email/config	[no test files]
+?   	tb_live_module/plugin/email/global	[no test files]
+?   	tb_live_module/plugin/email/model/response	[no test files]
+?   	tb_live_module/plugin/email/router	[no test files]
+?   	tb_live_module/plugin/email/service	[no test files]
+?   	tb_live_module/plugin/email/utils	[no test files]
+?   	tb_live_module/plugin/plugin-tool/utils	[no test files]
+?   	tb_live_module/repository/social	[no test files]
+?   	tb_live_module/router	[no test files]
+ok  	tb_live_module/router/earning	7.125s
+?   	tb_live_module/router/example	[no test files]
+ok  	tb_live_module/router/gift	7.691s
+ok  	tb_live_module/router/live	8.059s
+ok  	tb_live_module/router/payout	7.718s
+ok  	tb_live_module/router/social	7.764s
+?   	tb_live_module/router/system	[no test files]
+ok  	tb_live_module/router/wallet	7.245s
+?   	tb_live_module/service	[no test files]
+ok  	tb_live_module/service/earning	24.225s
+?   	tb_live_module/service/example	[no test files]
+ok  	tb_live_module/service/gift	22.774s
+ok  	tb_live_module/service/live	7.728s
+ok  	tb_live_module/service/payout	4.799s
+ok  	tb_live_module/service/social	2.614s
+ok  	tb_live_module/service/system	3.507s
+ok  	tb_live_module/service/wallet	4.637s
+?   	tb_live_module/source/example	[no test files]
+?   	tb_live_module/source/system	[no test files]
+?   	tb_live_module/task	[no test files]
+?   	tb_live_module/tmp	[no test files]
+ok  	tb_live_module/utils	2.294s
+ok  	tb_live_module/utils/ast	2.889s
+?   	tb_live_module/utils/autocode	[no test files]
+?   	tb_live_module/utils/captcha	[no test files]
+?   	tb_live_module/utils/plugin	[no test files]
+?   	tb_live_module/utils/plugin/v2	[no test files]
+?   	tb_live_module/utils/request	[no test files]
+?   	tb_live_module/utils/stacktrace	[no test files]
+ok  	tb_live_module/utils/timer	1.655s
+?   	tb_live_module/utils/upload	[no test files]
+ok  	tb_live_module/service/payout	8.522s
+ok  	tb_live_module/service/earning	79.363s
+ok  	tb_live_module/api/v1/payout	6.242s
+ok  	tb_live_module/api/v1/earning	4.571s
+ok  	tb_live_module/router/payout	7.804s
+ok  	tb_live_module/router/earning	8.248s
+ok  	tb_live_module/middleware	11.267s
+ok  	tb_live_module/service/payout	2.837s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/61 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 61/61 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 2084 (694/sec), new interesting: 2 (total: 63)
+fuzz: elapsed: 6s, execs: 2084 (0/sec), new interesting: 2 (total: 63)
+fuzz: elapsed: 9s, execs: 2084 (0/sec), new interesting: 2 (total: 63)
+fuzz: elapsed: 11s, execs: 2084 (0/sec), new interesting: 2 (total: 63)
+PASS
+ok  	tb_live_module/api/v1/payout	13.967s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/65 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 65/65 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 9843 (3280/sec), new interesting: 1 (total: 66)
+fuzz: elapsed: 6s, execs: 22987 (4379/sec), new interesting: 9 (total: 74)
+fuzz: elapsed: 9s, execs: 38786 (5266/sec), new interesting: 14 (total: 79)
+fuzz: elapsed: 10s, execs: 43807 (4584/sec), new interesting: 14 (total: 79)
+PASS
+ok  	tb_live_module/service/payout	13.700s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/87 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 87/87 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 1112 (370/sec), new interesting: 0 (total: 87)
+fuzz: elapsed: 6s, execs: 1112 (0/sec), new interesting: 0 (total: 87)
+fuzz: elapsed: 9s, execs: 1112 (0/sec), new interesting: 0 (total: 87)
+fuzz: elapsed: 11s, execs: 1112 (0/sec), new interesting: 0 (total: 87)
+PASS
+ok  	tb_live_module/api/v1/earning	13.967s
+=== RUN   TestMySQLFinanceLoad
+    finance_integration_test.go:622: EARNING_LOAD_RESULT {"allMoneyChecksPassed":true,"concurrency":16,"databasePayee":true,"elapsedMs":3519,"incomeFacts":500,"maxMs":909,"p50Ms":870,"p95Ms":884,"settlementCreateAndApproveMs":133,"withdrawals":64}
+--- PASS: TestMySQLFinanceLoad (14.72s)
+PASS
+ok  	tb_live_module/service/earning	16.925s
+(node:86335) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ settlement review targets the settlement, not its exchange rule (37.500708ms)
+✔ review freezes the confirmed target and rejects concurrent submissions (12.35075ms)
+✔ lost create response retries identical parameters and permanent key (11.866375ms)
+✔ invalid ratios never reach an API write (11.578958ms)
+✔ exchange page explains the ratio to operations without presenting it as a default (11.795959ms)
+✔ exchange preview uses integer arithmetic and updates all three sample values (11.329625ms)
+✔ latest query wins and errors do not retain a success state (10.935709ms)
+✔ payout entry is static and cannot call a dispatch or paid endpoint (12.679834ms)
+✔ withdrawal destination tracing uses only the public payee reference and masked fields (12.540291ms)
+✔ recent seven days end at current second; boundary and invalid inputs fail before write (1.695875ms)
+(node:86336) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ anchor selection is pinned; rules paginated; valid selection creates only a settlement request (31.656583ms)
+✔ confirmation prevents duplicate clicks and freezes the chosen anchor and interval (11.369625ms)
+✔ lost response is recovered using original key even after reopening on a different row (11.391333ms)
+✔ old rule request cannot overwrite new row and denied loading never creates a settlement (10.695667ms)
+✔ anchor and finance pages both integrate the same dialog; session shows gross and net quantities (115.262917ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 370.173584
+(node:86338) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ actual refund page freezes confirmed request and reuses key after lost response (22.7015ms)
+✔ actual order page rejects stale list responses (4.25ms)
+✔ actual rule page rejects out-of-range basis points before HTTP write (6.708583ms)
+✔ termination freezes confirmed request and reuses idempotency key after response loss (3.580875ms)
+✔ termination review cannot switch target or double-submit while confirming (2.315542ms)
+✔ COIN uses exact integers including values beyond Number precision (0.467334ms)
+✔ editor emits only request contract and preserves decimal strings (0.126ms)
+✔ late responses and disposed page cannot overwrite current results (0.070459ms)
+(node:86340) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ root sees unassigned buttons and role directives; other accounts keep their permissions (4.150917ms)
+(node:86341) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 钱包真实请求客户端保留鉴权、整数精度和失败重试参数 (17.781042ms)
+(node:86342) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 交易溯源忽略旧响应，退款翻页沿用已查询交易 (21.874667ms)
+✔ 账户乱序返回、重置后旧响应不能恢复旧用户 (8.653917ms)
+✔ 切换账户使旧对账停止，不能拼接另一用户的数据 (5.001792ms)
+✔ 状态确认期间换用户使旧确认失效 (2.7805ms)
+✔ 流水翻页使用已查询账号，编辑搜索框不混用游标 (5.244125ms)
+✔ 新建充值必须按当前手机号重新定位，不能使用旧列表第一行 (7.589208ms)
+✔ 账号和手机号交叉查询不匹配时不打开充值表单 (3.309042ms)
+✔ 审核确认固定订单、决定和原因，双击只提交一次 (4.348583ms)
+✔ 详情乱序返回和离开页面不覆盖新详情 (4.215833ms)
+✔ 充值确认期间字段改变不能替换已确认账号和金额 (4.767708ms)
+✔ 充值提交失败保留原请求编号及表单，可原样重试 (2.739541ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 187.48875
+
+> tb_live@2.9.2 build /Users/tabby/codes/go/live-gin-vue-admin/web
+> vite build --mode production
+
+vite v8.3.0 building client environment for production...
+transforming...
+✓ 2739 modules transformed.
+rendering chunks...
+computing gzip size...
+../server/assets/admin/index.html                                                        3.01 kB │ gzip:   1.15 kB
+../server/assets/admin/assets/087AC4D233B64EB0noBody.uscRzRXF.png                        4.09 kB
+../server/assets/admin/assets/087AC4D233B64EB0docs.DHdLpnBP.png                          4.70 kB
+../server/assets/admin/assets/087AC4D233B64EB0kefu.DNqTOiJW.png                          6.77 kB
+../server/assets/admin/assets/087AC4D233B64EB0logo.DAivSsrL.png                          8.06 kB
+../server/assets/admin/assets/087AC4D233B64EB0404.Bk63Q-R4.png                          43.98 kB
+../server/assets/admin/assets/087AC4D233B64EB0banner2.CEIAvdoV.jpg                      45.77 kB
+../server/assets/admin/assets/087AC4D233B64EB0login_right_banner.Dgs3yKiB.jpg          719.02 kB
+../server/assets/admin/assets/087AC4D233B64EB0pubPlug.Cq_EgFnB.css                       0.05 kB │ gzip:   0.07 kB
+../server/assets/admin/assets/087AC4D233B64EB0asyncSubmenu.DG2UZagD.css                  0.07 kB │ gzip:   0.08 kB
+../server/assets/admin/assets/087AC4D233B64EB0aiWrokflow.TX5pchio.css                    0.07 kB │ gzip:   0.09 kB
+../server/assets/admin/assets/087AC4D233B64EB0screenfull.CYSY2BXD.css                    0.13 kB │ gzip:   0.13 kB
+../server/assets/admin/assets/087AC4D233B64EB0icon.mwfTl2Aj.css                          0.13 kB │ gzip:   0.13 kB
+../server/assets/admin/assets/087AC4D233B64EB0authority.Bl7foHeB.css                     0.16 kB │ gzip:   0.13 kB
+../server/assets/admin/assets/087AC4D233B64EB0customPic.ClpSuBvk.css                     0.16 kB │ gzip:   0.14 kB
+../server/assets/admin/assets/087AC4D233B64EB0autoCode.nc-TitMy.css                      0.22 kB │ gzip:   0.10 kB
+../server/assets/admin/assets/087AC4D233B64EB0user.B9yYj4ma.css                          0.24 kB │ gzip:   0.17 kB
+../server/assets/admin/assets/087AC4D233B64EB0sysOperationRecord.DnCDt2Ko.css            0.29 kB │ gzip:   0.21 kB
+../server/assets/admin/assets/087AC4D233B64EB0headMode.D-eBj0Km.css                      0.33 kB │ gzip:   0.16 kB
+../server/assets/admin/assets/087AC4D233B64EB0layoutModeCard.uT0k3aCe.css                0.33 kB │ gzip:   0.18 kB
+../server/assets/admin/assets/087AC4D233B64EB0QR-code.D6qGBMS2.css                       0.37 kB │ gzip:   0.24 kB
+../server/assets/admin/assets/087AC4D233B64EB0state.bpSK_b73.css                         0.40 kB │ gzip:   0.20 kB
+../server/assets/admin/assets/087AC4D233B64EB0themeColorPicker.BTGzcaWA.css              0.48 kB │ gzip:   0.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0system.JWmmJjEr.css                        0.60 kB │ gzip:   0.27 kB
+../server/assets/admin/assets/087AC4D233B64EB0selectImage.CzH1drpr.css                   0.61 kB │ gzip:   0.29 kB
+../server/assets/admin/assets/087AC4D233B64EB0layout.BpwvfLRL.css                        0.64 kB │ gzip:   0.28 kB
+../server/assets/admin/assets/087AC4D233B64EB0init.BLcG7E2I.css                          0.78 kB │ gzip:   0.29 kB
+../server/assets/admin/assets/087AC4D233B64EB0atom-one-dark.B-oHczHB.css                 0.85 kB │ gzip:   0.40 kB
+../server/assets/admin/assets/087AC4D233B64EB0atom-one-light.DL4hhEUL.css                0.85 kB │ gzip:   0.40 kB
+../server/assets/admin/assets/087AC4D233B64EB0search.Bnfh1Wu4.css                        0.86 kB │ gzip:   0.37 kB
+../server/assets/admin/assets/087AC4D233B64EB0tools.CSiIx0WQ.css                         0.90 kB │ gzip:   0.36 kB
+../server/assets/admin/assets/087AC4D233B64EB0menu.BWQStMth.css                          0.93 kB │ gzip:   0.32 kB
+../server/assets/admin/assets/087AC4D233B64EB0scanUpload.XxMCc_lB.css                    0.96 kB │ gzip:   0.47 kB
+../server/assets/admin/assets/087AC4D233B64EB0wallet.DVuaWDZ9.css                        1.65 kB │ gzip:   0.61 kB
+../server/assets/admin/assets/087AC4D233B64EB0settingItem.s9ceP_M2.css                   1.70 kB │ gzip:   0.34 kB
+../server/assets/admin/assets/087AC4D233B64EB0breakpoint.CE1sJiIf.css                    1.70 kB │ gzip:   0.60 kB
+../server/assets/admin/assets/087AC4D233B64EB0sysDictionary.D3jJHlnl.css                 1.71 kB │ gzip:   0.59 kB
+../server/assets/admin/assets/087AC4D233B64EB0session.4SSVXMHN.css                       1.94 kB │ gzip:   0.64 kB
+../server/assets/admin/assets/087AC4D233B64EB0room.Bu2CgBb5.css                          2.00 kB │ gzip:   0.66 kB
+../server/assets/admin/assets/087AC4D233B64EB0tabs.y2CJkCRw.css                          2.07 kB │ gzip:   0.64 kB
+../server/assets/admin/assets/087AC4D233B64EB0category.CqBWXPJg.css                      2.23 kB │ gzip:   0.67 kB
+../server/assets/admin/assets/087AC4D233B64EB0account.DQSC8HLv.css                       2.35 kB │ gzip:   0.68 kB
+../server/assets/admin/assets/087AC4D233B64EB0version.DoN_VkIF.css                       2.42 kB │ gzip:   0.55 kB
+../server/assets/admin/assets/087AC4D233B64EB0introduction.DjgRyqe4.css                  2.87 kB │ gzip:   0.91 kB
+../server/assets/admin/assets/087AC4D233B64EB0vue-cropper.BiGpXayo.css                   3.36 kB │ gzip:   0.99 kB
+../server/assets/admin/assets/087AC4D233B64EB0anchor.BIobJKKy.css                        4.28 kB │ gzip:   1.06 kB
+../server/assets/admin/assets/087AC4D233B64EB0person.Gd1NApYc.css                        5.60 kB │ gzip:   1.10 kB
+../server/assets/admin/assets/087AC4D233B64EB0setting.DebdmHOa.css                       7.25 kB │ gzip:   1.35 kB
+../server/assets/admin/assets/087AC4D233B64EB0info.BdSiwwOp.css                         17.64 kB │ gzip:   3.08 kB
+../server/assets/admin/assets/087AC4D233B64EB0index.rHqVk7cv.css                       427.99 kB │ gzip:  61.90 kB
+../server/assets/admin/assets/087AC4D233B64EB0config.D0-abWly.js                         0.08 kB │ gzip:   0.10 kB
+../server/assets/admin/assets/087AC4D233B64EB0_plugin-vue_export-helper.BDNMzG2s.js      0.08 kB │ gzip:   0.09 kB
+../server/assets/admin/assets/087AC4D233B64EB0earning.BlnisNld.js                        0.18 kB │ gzip:   0.16 kB
+../server/assets/admin/assets/087AC4D233B64EB0bottomInfo.DTFE5Lef.js                     0.20 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0mcp.DWiZDyP9.js                            0.21 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0skills.mXDkXuyI.js                         0.22 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0autoCode.BtaKiTsC.js                       0.22 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0autoPkg.DgMZjLI2.js                        0.22 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0mcpTest.DvSXdMFH.js                        0.22 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0aiWorkflow.Ctmq-c_1.js                     0.22 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0about.IXGTqYYO.js                          0.22 kB │ gzip:   0.21 kB
+../server/assets/admin/assets/087AC4D233B64EB0autoCodeAdmin._iB7jW8f.js                  0.22 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0stringFun.B1FamCgm.js                      0.26 kB │ gzip:   0.17 kB
+../server/assets/admin/assets/087AC4D233B64EB0history.XrE2B_h6.js                        0.27 kB │ gzip:   0.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0item.Dn7tz8k2.js                           0.27 kB │ gzip:   0.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0category.D6hU-bWX.js                       0.27 kB │ gzip:   0.23 kB
+../server/assets/admin/assets/087AC4D233B64EB0initdb.D7gcvBpR.js                         0.27 kB │ gzip:   0.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0reload.CACVG1zB.js                         0.27 kB │ gzip:   0.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0settlement.C9rgrewC.js                     0.31 kB │ gzip:   0.26 kB
+../server/assets/admin/assets/087AC4D233B64EB0withdrawal.qoChjpj_.js                     0.31 kB │ gzip:   0.26 kB
+../server/assets/admin/assets/087AC4D233B64EB0exchange.C7-Q9iGP.js                       0.31 kB │ gzip:   0.27 kB
+../server/assets/admin/assets/087AC4D233B64EB0account.DdNbztjI.js                        0.31 kB │ gzip:   0.27 kB
+../server/assets/admin/assets/087AC4D233B64EB0reconciliation.N323mYnI.js                 0.31 kB │ gzip:   0.27 kB
+../server/assets/admin/assets/087AC4D233B64EB0bus.CCyuzs33.js                            0.32 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0system.Bxf88vBX.js                         0.33 kB │ gzip:   0.20 kB
+../server/assets/admin/assets/087AC4D233B64EB0live-category.CcBrIskb.js                  0.46 kB │ gzip:   0.21 kB
+../server/assets/admin/assets/087AC4D233B64EB0lock.CPfKi5di.js                           0.49 kB │ gzip:   0.27 kB
+../server/assets/admin/assets/087AC4D233B64EB0close.I2gbXQk9.js                          0.51 kB │ gzip:   0.27 kB
+../server/assets/admin/assets/087AC4D233B64EB0warn.BYc6zT3H.js                           0.53 kB │ gzip:   0.34 kB
+../server/assets/admin/assets/087AC4D233B64EB0authority.C_o9Kj0h.js                      0.57 kB │ gzip:   0.24 kB
+../server/assets/admin/assets/087AC4D233B64EB0systemTools.ssyLvF7U.js                    0.58 kB │ gzip:   0.40 kB
+../server/assets/admin/assets/087AC4D233B64EB0example.BnIhD5GY.js                        0.58 kB │ gzip:   0.40 kB
+../server/assets/admin/assets/087AC4D233B64EB0superAdmin.DBtWva5G.js                     0.58 kB │ gzip:   0.40 kB
+../server/assets/admin/assets/087AC4D233B64EB0live-room.D04UYg-A.js                      0.59 kB │ gzip:   0.24 kB
+../server/assets/admin/assets/087AC4D233B64EB0routerHolder.CkvDvlgG.js                   0.62 kB │ gzip:   0.40 kB
+../server/assets/admin/assets/087AC4D233B64EB0responsive.DYkgqOKo.js                     0.67 kB │ gzip:   0.38 kB
+../server/assets/admin/assets/087AC4D233B64EB0warningBar.pYIcHjud.js                     0.70 kB │ gzip:   0.46 kB
+../server/assets/admin/assets/087AC4D233B64EB0server.BBUkjkQC.js                         0.72 kB │ gzip:   0.32 kB
+../server/assets/admin/assets/087AC4D233B64EB0idea.Dif1VSir.js                           0.76 kB │ gzip:   0.45 kB
+../server/assets/admin/assets/087AC4D233B64EB0wallet.DhFitWNQ.js                         0.82 kB │ gzip:   0.28 kB
+../server/assets/admin/assets/087AC4D233B64EB0banner.CE66JfBl.js                         0.83 kB │ gzip:   0.53 kB
+../server/assets/admin/assets/087AC4D233B64EB0menuItem.Balv9fXX.js                       0.93 kB │ gzip:   0.54 kB
+../server/assets/admin/assets/087AC4D233B64EB0settingItem.CuoRyRu_.js                    0.95 kB │ gzip:   0.55 kB
+../server/assets/admin/assets/087AC4D233B64EB0asideComponent.BNTjGSCz.js                 0.95 kB │ gzip:   0.51 kB
+../server/assets/admin/assets/087AC4D233B64EB0card.wuEm8cel.js                           0.98 kB │ gzip:   0.57 kB
+../server/assets/admin/assets/087AC4D233B64EB0aside.Cypvc9Yv.js                          1.03 kB │ gzip:   0.47 kB
+../server/assets/admin/assets/087AC4D233B64EB0error.BncKltee.js                          1.28 kB │ gzip:   0.87 kB
+../server/assets/admin/assets/087AC4D233B64EB0asyncSubmenu.BZEF0ZK_.js                   1.28 kB │ gzip:   0.66 kB
+../server/assets/admin/assets/087AC4D233B64EB0customer-gva.kyyneBnn.js                   1.32 kB │ gzip:   0.54 kB
+../server/assets/admin/assets/087AC4D233B64EB0logo.Bt2gKc0R.js                           1.41 kB │ gzip:   0.93 kB
+../server/assets/admin/assets/087AC4D233B64EB0themeModeSelector.CB0h9tnZ.js              1.41 kB │ gzip:   0.82 kB
+../server/assets/admin/assets/087AC4D233B64EB0search.bxXc4MIr.js                         1.42 kB │ gzip:   0.76 kB
+../server/assets/admin/assets/087AC4D233B64EB0iframe.BPslGZkb.js                         1.42 kB │ gzip:   0.78 kB
+../server/assets/admin/assets/087AC4D233B64EB0SnapshotPanel.DTTpYnlv.js                  1.45 kB │ gzip:   0.88 kB
+../server/assets/admin/assets/087AC4D233B64EB0charts-people-numbers.G5KpQnHl.js          1.50 kB │ gzip:   0.78 kB
+../server/assets/admin/assets/087AC4D233B64EB0shared.BwVsnwN4.js                         1.52 kB │ gzip:   0.88 kB
+../server/assets/admin/assets/087AC4D233B64EB0charts.o3i-CjWz.js                         1.58 kB │ gzip:   0.81 kB
+../server/assets/admin/assets/087AC4D233B64EB0image.j5EDn94w.js                          1.58 kB │ gzip:   0.82 kB
+../server/assets/admin/assets/087AC4D233B64EB0customPic.DadYZswA.js                      1.62 kB │ gzip:   0.75 kB
+../server/assets/admin/assets/087AC4D233B64EB0requestScope.Bx79eRBo.js                   1.71 kB │ gzip:   1.05 kB
+../server/assets/admin/assets/087AC4D233B64EB0components-cascader.BPVnNEyE.js            1.82 kB │ gzip:   1.02 kB
+../server/assets/admin/assets/087AC4D233B64EB0dashboard.uMq42Rzv.js                      1.96 kB │ gzip:   1.09 kB
+../server/assets/admin/assets/087AC4D233B64EB0headMode.BEnfPZxj.js                       2.20 kB │ gzip:   1.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0normalMode.Bragui28.js                     2.25 kB │ gzip:   1.23 kB
+../server/assets/admin/assets/087AC4D233B64EB0ai-gva.B4pDcBLQ.js                         2.29 kB │ gzip:   1.08 kB
+../server/assets/admin/assets/087AC4D233B64EB0charts-content-numbers.BNmyR7Q9.js         2.31 kB │ gzip:   1.14 kB
+../server/assets/admin/assets/087AC4D233B64EB0layout.BhPZL78-.js                         2.48 kB │ gzip:   1.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0screenfull.DBz9rqlF.js                     2.59 kB │ gzip:   1.05 kB
+../server/assets/admin/assets/087AC4D233B64EB0combinationMode.Dsm18lz5.js                3.11 kB │ gzip:   1.46 kB
+../server/assets/admin/assets/087AC4D233B64EB0setting.BRl59Lo7.js                        3.12 kB │ gzip:   1.62 kB
+../server/assets/admin/assets/087AC4D233B64EB0installPlugin.BqFUaNjs.js                  3.13 kB │ gzip:   1.61 kB
+../server/assets/admin/assets/087AC4D233B64EB0header.DMRl3mth.js                         3.48 kB │ gzip:   1.61 kB
+../server/assets/admin/assets/087AC4D233B64EB0layoutModeCard.ClTUJnez.js                 3.65 kB │ gzip:   1.45 kB
+../server/assets/admin/assets/087AC4D233B64EB0appearance.CWa38BRc.js                     3.72 kB │ gzip:   1.25 kB
+../server/assets/admin/assets/087AC4D233B64EB0themeColorPicker.C8jMLQ5k.js               3.83 kB │ gzip:   1.71 kB
+../server/assets/admin/assets/087AC4D233B64EB0scanUpload.CavtXs-Z.js                     3.95 kB │ gzip:   2.02 kB
+../server/assets/admin/assets/087AC4D233B64EB0ranking.DdvASbX6.js                        3.97 kB │ gzip:   2.03 kB
+../server/assets/admin/assets/087AC4D233B64EB0shared.BwxZxYuY.js                         4.25 kB │ gzip:   2.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0menus.D3dD-8QU.js                          4.26 kB │ gzip:   2.03 kB
+../server/assets/admin/assets/087AC4D233B64EB0overview.DXR1xxSi.js                       4.32 kB │ gzip:   2.15 kB
+../server/assets/admin/assets/087AC4D233B64EB0layout.DTHfBQ73.js                         4.52 kB │ gzip:   1.44 kB
+../server/assets/admin/assets/087AC4D233B64EB0mcp.BZB39Um6.js                            4.57 kB │ gzip:   1.54 kB
+../server/assets/admin/assets/087AC4D233B64EB0tools._4srw23V.js                          4.57 kB │ gzip:   2.00 kB
+../server/assets/admin/assets/087AC4D233B64EB0pubPlug.C-kDto0e.js                        4.58 kB │ gzip:   1.88 kB
+../server/assets/admin/assets/087AC4D233B64EB0sidebarMode.DeY9gVBc.js                    4.79 kB │ gzip:   1.80 kB
+../server/assets/admin/assets/087AC4D233B64EB0loginLog.Du8iuexb.js                       4.80 kB │ gzip:   1.95 kB
+../server/assets/admin/assets/087AC4D233B64EB0autoPkg.DBJGriw0.js                        4.83 kB │ gzip:   2.11 kB
+../server/assets/admin/assets/087AC4D233B64EB0sysOperationRecord.BISNeN3E.js             5.31 kB │ gzip:   1.96 kB
+../server/assets/admin/assets/087AC4D233B64EB0state.B3jCt1DM.js                          5.42 kB │ gzip:   1.24 kB
+../server/assets/admin/assets/087AC4D233B64EB0login.5F892szv.js                          5.45 kB │ gzip:   2.39 kB
+../server/assets/admin/assets/087AC4D233B64EB0pathInfo.CEYSgNSS.js                       5.88 kB │ gzip:   1.28 kB
+../server/assets/admin/assets/087AC4D233B64EB0tabs.Vcz81KaO.js                           5.89 kB │ gzip:   2.29 kB
+../server/assets/admin/assets/087AC4D233B64EB0autoCode.C6ZJyhez.js                       6.35 kB │ gzip:   2.39 kB
+../server/assets/admin/assets/087AC4D233B64EB0ledger.ue5gB09p.js                         7.18 kB │ gzip:   3.05 kB
+../server/assets/admin/assets/087AC4D233B64EB0sysDictionaryDetail.B4mJg8WS.js            7.48 kB │ gzip:   2.80 kB
+../server/assets/admin/assets/087AC4D233B64EB0init.DYxi3hG3.js                           7.57 kB │ gzip:   2.88 kB
+../server/assets/admin/assets/087AC4D233B64EB0general.HfOa9S-m.js                        7.78 kB │ gzip:   2.68 kB
+../server/assets/admin/assets/087AC4D233B64EB0SettlementCreateDialog.CsZI-0mc.js         8.05 kB │ gzip:   3.64 kB
+../server/assets/admin/assets/087AC4D233B64EB0sysError.D2aWcvsx.js                       8.24 kB │ gzip:   3.16 kB
+../server/assets/admin/assets/087AC4D233B64EB0trace.C349R-MN.js                          8.71 kB │ gzip:   3.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0apiToken.2b8agRfR.js                       9.15 kB │ gzip:   3.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0order.DK336Aoc.js                          9.24 kB │ gzip:   3.71 kB
+../server/assets/admin/assets/087AC4D233B64EB0Catalog.CbyXlWzi.js                        9.50 kB │ gzip:   3.64 kB
+../server/assets/admin/assets/087AC4D233B64EB0upload.B13oLShr.js                         9.54 kB │ gzip:   3.77 kB
+../server/assets/admin/assets/087AC4D233B64EB0rule.yc621PDf.js                           9.58 kB │ gzip:   3.61 kB
+../server/assets/admin/assets/087AC4D233B64EB0authority.CFzzXYfJ.js                     10.58 kB │ gzip:   3.75 kB
+../server/assets/admin/assets/087AC4D233B64EB0account.BjM9SBJE.js                       11.02 kB │ gzip:   4.37 kB
+../server/assets/admin/assets/087AC4D233B64EB0icon.CB7qFkL_.js                          11.18 kB │ gzip:   2.75 kB
+../server/assets/admin/assets/087AC4D233B64EB0sysParams.B8S_2pYL.js                     11.62 kB │ gzip:   3.91 kB
+../server/assets/admin/assets/087AC4D233B64EB0category.C9jFsVhU.js                      11.79 kB │ gzip:   4.50 kB
+../server/assets/admin/assets/087AC4D233B64EB0mcpTest.BEJwmCWB.js                       12.43 kB │ gzip:   4.44 kB
+../server/assets/admin/assets/087AC4D233B64EB0breakpoint.D767O0Qa.js                    12.58 kB │ gzip:   4.70 kB
+../server/assets/admin/assets/087AC4D233B64EB0user.BafTUMc9.js                          12.68 kB │ gzip:   4.16 kB
+../server/assets/admin/assets/087AC4D233B64EB0fieldDialog.zQYQWEGQ.js                   12.95 kB │ gzip:   3.80 kB
+../server/assets/admin/assets/087AC4D233B64EB0introduction.BtGdNNx-.js                  13.61 kB │ gzip:   6.11 kB
+../server/assets/admin/assets/087AC4D233B64EB0person.DrYJXZZL.js                        13.92 kB │ gzip:   4.25 kB
+../server/assets/admin/assets/087AC4D233B64EB0sysDictionary.gFWLWV6K.js                 14.88 kB │ gzip:   5.51 kB
+../server/assets/admin/assets/087AC4D233B64EB0version.pTQEJls8.js                       17.51 kB │ gzip:   5.57 kB
+../server/assets/admin/assets/087AC4D233B64EB0session.CSv26z7u.js                       18.14 kB │ gzip:   5.97 kB
+../server/assets/admin/assets/087AC4D233B64EB0menu.B7w-8n8_.js                          18.42 kB │ gzip:   5.54 kB
+../server/assets/admin/assets/087AC4D233B64EB0FinancePage.DrmhnsIp.js                   19.32 kB │ gzip:   6.77 kB
+../server/assets/admin/assets/087AC4D233B64EB0room.CTuttDzD.js                          19.42 kB │ gzip:   5.72 kB
+../server/assets/admin/assets/087AC4D233B64EB0autoCodeAdmin.BJBB5xH4.js                 20.76 kB │ gzip:   6.95 kB
+../server/assets/admin/assets/087AC4D233B64EB0account.BCF7AEqA.js                       21.14 kB │ gzip:   6.46 kB
+../server/assets/admin/assets/087AC4D233B64EB0recharge.BVOwxzMj.js                      24.27 kB │ gzip:   7.49 kB
+../server/assets/admin/assets/087AC4D233B64EB0vue-router.7fen-oIf.js                    24.98 kB │ gzip:   9.66 kB
+../server/assets/admin/assets/087AC4D233B64EB0mode-javascript.BoiD040p.js               27.67 kB │ gzip:   8.97 kB
+../server/assets/admin/assets/087AC4D233B64EB0vue-cropper.es.lV10USxd.js                30.98 kB │ gzip:   8.42 kB
+../server/assets/admin/assets/087AC4D233B64EB0anchor.B62mWgLI.js                        42.74 kB │ gzip:  11.13 kB
+../server/assets/admin/assets/087AC4D233B64EB0system.BL-EaZCw.js                        44.20 kB │ gzip:   7.00 kB
+../server/assets/admin/assets/087AC4D233B64EB0message.2X4H7t7u.js                       52.06 kB │ gzip:  19.88 kB
+../server/assets/admin/assets/087AC4D233B64EB0aiWrokflow.BSOKb-pr.js                    53.61 kB │ gzip:  14.69 kB
+../server/assets/admin/assets/087AC4D233B64EB0QR-code.9o7PZwB4.js                       62.08 kB │ gzip:  22.84 kB
+../server/assets/admin/assets/087AC4D233B64EB0autoCode.DVpVGbEa.js                      72.39 kB │ gzip:  22.44 kB
+../server/assets/admin/assets/087AC4D233B64EB0exportTemplate.ds9781m6.js               125.26 kB │ gzip:  36.26 kB
+../server/assets/admin/assets/087AC4D233B64EB0skills.lcm_kHJb.js                       128.66 kB │ gzip:  36.90 kB
+../server/assets/admin/assets/087AC4D233B64EB0user.BMunD8HR.js                         128.78 kB │ gzip:  44.03 kB
+../server/assets/admin/assets/087AC4D233B64EB0vue.runtime.esm-bundler.wiulPJRg.js      129.82 kB │ gzip:  49.58 kB
+../server/assets/admin/assets/087AC4D233B64EB0dist.CHIlnWmS.js                         170.44 kB │ gzip:  43.35 kB
+../server/assets/admin/assets/087AC4D233B64EB0selectImage.CwGPdGCy.js                  189.68 kB │ gzip:  66.07 kB
+../server/assets/admin/assets/087AC4D233B64EB0theme-github_dark.ByI2wtE9.js            480.14 kB │ gzip: 131.02 kB
+../server/assets/admin/assets/087AC4D233B64EB0info.6L6BxOUN.js                         808.11 kB │ gzip: 276.53 kB
+../server/assets/admin/assets/087AC4D233B64EB0index.BTRnJqYb.js                        910.77 kB │ gzip: 288.66 kB
+../server/assets/admin/assets/087AC4D233B64EB0previewCodeDialog.DM0rTWeh.js            960.48 kB │ gzip: 319.81 kB
+../server/assets/admin/assets/087AC4D233B64EB0echarts.Dont3YBl.js                    1,031.81 kB │ gzip: 337.82 kB
+../server/assets/admin/assets/087AC4D233B64EB0formCreate.BnAZToNL.js                 1,269.05 kB │ gzip: 395.62 kB
+../server/assets/admin/assets/087AC4D233B64EB0picture.Jdy8riyh.js                    1,831.18 kB │ gzip: 506.67 kB
+
+✓ built in 1.52s
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+> player@0.0.0 test /Users/tabby/Desktop/IM/H5Player
+> node --experimental-vm-modules --test tests/*.test.js
+
+✔ earning overview preserves large financial values as strings (0.583875ms)
+✔ withdrawal input converts CNY yuan to cents without Number (0.409625ms)
+✔ public withdrawal DTO rejects internal or malformed values (0.260166ms)
+✔ withdrawal page validates pagination and total strings (0.128125ms)
+✔ pending withdrawal is isolated per account and keeps the idempotency key (0.338917ms)
+✔ corrupt or unpersistable pending requests fail closed (0.250459ms)
+✔ earning errors never expose unknown server internals (0.1255ms)
+✔ gift money uses decimal strings beyond Number safe range (0.745042ms)
+✔ gift order validates allowlisted public DTO and calculates net amount (0.177166ms)
+✔ gift page keeps total as a decimal string (0.080084ms)
+✔ pending request keeps the same idempotency key and fixed parameters (0.365833ms)
+✔ pending gift requests are isolated by public account number (0.317292ms)
+✔ corrupted persisted request is rejected instead of being retried (0.061958ms)
+✔ a new gift must not be sent when its idempotency key cannot be persisted (0.155167ms)
+✔ unknown gift result and rate limit preserve the original request (0.146042ms)
+✔ determinate gift rejection clears pending while accounting errors retain it (0.085709ms)
+✔ 直播间昵称和头像只使用 userInfo，不读取主播身份资料 (0.6605ms)
+✔ 旧响应缺少 userInfo 时不回退展示主播昵称和头像 (0.081ms)
+✔ payee DTO is a strict allowlist and never retains account material (0.789625ms)
+✔ binding request selects only channel fields and never accepts an owner or verification (0.076583ms)
+(node:86398) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ timeout replay preserves payee and amount, blocks changes and concurrent clicks (5.556208ms)
+✔ lost response recovery checks the chosen payee before clearing pending (2.182833ms)
+✔ legacy pending requests stay queryable and cannot silently acquire a new payee (0.104959ms)
+✔ account changes discard stale details and prevent cross-user UI leakage (1.276209ms)
+✔ browser lock contention never queues another withdrawal (0.144041ms)
+✔ confirmation captures account/currency and blocks a second click before the network call (25.818916ms)
+✔ payee binding timeout retries identical private materials then clears the form (5.373458ms)
+✔ payee list responses cannot regress state and close clears private material (4.252291ms)
+✔ 同一房间并发创建观看会话时复用同一个请求 (1.6115ms)
+✔ 高频观看上报合并为单次请求，并且 checkpoint 最多补发一次 (0.877208ms)
+✔ 社交目标严格执行 accountNo/anchorNo 二选一并保持字符串 (0.841875ms)
+✔ 直播间资源只生成后端已接入的 live_room 类型 (0.747708ms)
+✔ 观看 requestId 是标准 UUID，可直接满足后端长度和唯一性契约 (0.967667ms)
+✔ 游标响应兼容统一响应包裹，并保留空页 hasMore (0.077666ms)
+✔ 实时过滤产生空页时继续使用 nextCursor，直到取得可见数据 (0.107291ms)
+✔ 重复游标会终止分页，防止异常响应触发无限请求 (0.066875ms)
+✔ 社交业务码识别和用户文案覆盖会话冲突及依赖故障 (0.093417ms)
+✔ wallet balance keeps values beyond Number safe range as strings (0.955334ms)
+✔ wallet response rejects numeric amounts and malformed pagination (0.224333ms)
+✔ ledger normalization accepts unknown future business types (0.146833ms)
+✔ wallet labels include consumption and refund while keeping unknown fallback (0.049958ms)
+✔ wallet business errors are mapped without exposing server details (0.121709ms)
+✔ wallet foreground refresh is visible-only and throttled (0.069791ms)
+✔ capacity protection honors Retry-After and adds bounded jitter (0.138375ms)
+ℹ tests 44
+ℹ suites 0
+ℹ pass 44
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 180.766625
+
+> player@0.0.0 build /Users/tabby/Desktop/IM/H5Player
+> pnpm run build:prod
+
+
+> player@0.0.0 build:prod /Users/tabby/Desktop/IM/H5Player
+> vite build --mode production
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 527 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                   4.93 kB │ gzip:   2.13 kB
+dist/assets/lottie/loading-DY2-ygU2.lottie        4.95 kB
+dist/assets/png/hero-CLDdwZDr.png                13.05 kB
+dist/assets/css/test-BU2PywDm.css                 0.37 kB │ gzip:   0.22 kB
+dist/assets/css/index2-e1VgPjBr.css               0.45 kB │ gzip:   0.22 kB
+dist/assets/css/page-B4nwCqkQ.css                 2.65 kB │ gzip:   0.67 kB
+dist/assets/css/social_center-D64bc1xa.css        2.83 kB │ gzip:   0.85 kB
+dist/assets/css/home-qBfMwPv_.css                 3.40 kB │ gzip:   1.01 kB
+dist/assets/css/live_rank-CiEM-5v7.css            3.53 kB │ gzip:   0.99 kB
+dist/assets/css/social_profile-Z97YqCYw.css       3.75 kB │ gzip:   0.94 kB
+dist/assets/css/user_set-B9Fq4Jhj.css             4.05 kB │ gzip:   1.14 kB
+dist/assets/css/vendor-Bdbi0viN.css               4.82 kB │ gzip:   1.13 kB
+dist/assets/css/gift_history-D9yGYBt4.css         4.90 kB │ gzip:   1.23 kB
+dist/assets/css/user_to_anchor-C2GTCBsx.css       6.14 kB │ gzip:   1.60 kB
+dist/assets/css/play-BnzInbND.css                 6.61 kB │ gzip:   1.74 kB
+dist/assets/css/test_video-BKhQCNAF.css           6.61 kB │ gzip:   1.74 kB
+dist/assets/css/wallet_home-CL3FK2az.css          6.76 kB │ gzip:   1.74 kB
+dist/assets/css/login-DmXyujzZ.css                7.09 kB │ gzip:   1.98 kB
+dist/assets/css/test_video_swiper-AqmB_dj-.css    8.34 kB │ gzip:   2.19 kB
+dist/assets/css/ui-COmU4oUD.css                   8.36 kB │ gzip:   2.09 kB
+dist/assets/css/live_home-CFVNhScY.css            9.26 kB │ gzip:   2.17 kB
+dist/assets/css/user_live-0ITA3Rg-.css            9.30 kB │ gzip:   2.07 kB
+dist/assets/css/earning_home-AJgK1yRi.css         9.55 kB │ gzip:   2.18 kB
+dist/assets/css/index-VqV1WGll.css               14.63 kB │ gzip:   3.47 kB
+dist/assets/css/live_room-CICo-sM_.css           16.81 kB │ gzip:   3.51 kB
+dist/assets/css/vant-DBe6gjvH.css                90.84 kB │ gzip:  37.31 kB
+dist/assets/js/loading-COIJ7ASy.js                0.05 kB │ gzip:   0.07 kB
+dist/assets/js/about-POzC2k0_.js                  0.20 kB │ gzip:   0.18 kB
+dist/assets/js/enums-CrAqIzbA.js                  0.24 kB │ gzip:   0.18 kB
+dist/assets/js/not-found-BaLSI-sa.js              0.47 kB │ gzip:   0.31 kB
+dist/assets/js/temp_data-C4jtGsER.js              0.91 kB │ gzip:   0.69 kB
+dist/assets/js/security-BmMB87Wr.js               1.28 kB │ gzip:   0.81 kB
+dist/assets/js/index2-C26zBvpA.js                 1.56 kB │ gzip:   0.86 kB
+dist/assets/js/test-Bzxfe4oU.js                   1.79 kB │ gzip:   0.92 kB
+dist/assets/js/live_rank-BC2U4yDj.js              2.13 kB │ gzip:   1.24 kB
+dist/assets/js/home-A9OwDAgz.js                   2.65 kB │ gzip:   1.35 kB
+dist/assets/js/gift_history-D89TA81S.js           5.25 kB │ gzip:   2.40 kB
+dist/assets/js/social_profile-BD4KS2TG.js         6.03 kB │ gzip:   2.71 kB
+dist/assets/js/wallet_home-DC_lnbHX.js            6.69 kB │ gzip:   3.00 kB
+dist/assets/js/live_home-BoSt5NdY.js              7.10 kB │ gzip:   3.20 kB
+dist/assets/js/social_center-Bahab8VO.js          7.42 kB │ gzip:   3.13 kB
+dist/assets/js/page-N0GQTuic.js                   8.44 kB │ gzip:   2.55 kB
+dist/assets/js/play-CM90gpdH.js                   8.60 kB │ gzip:   3.43 kB
+dist/assets/js/svg-icon-C4MyRYWG.js               8.61 kB │ gzip:   2.68 kB
+dist/assets/js/test_video-BdgBBz0r.js             8.62 kB │ gzip:   3.44 kB
+dist/assets/js/login-D9q7Z0L3.js                  9.64 kB │ gzip:   4.06 kB
+dist/assets/js/test_video_swiper-CBIYPl1G.js      9.82 kB │ gzip:   4.17 kB
+dist/assets/js/user_set-D8YBOSY8.js              10.25 kB │ gzip:   3.88 kB
+dist/assets/js/ui-MnvlRqbd.js                    10.97 kB │ gzip:   3.93 kB
+dist/assets/js/user_to_anchor-BGiQF7Wr.js        13.39 kB │ gzip:   5.42 kB
+dist/assets/js/user_live-BnRxXWNK.js             19.41 kB │ gzip:   7.57 kB
+dist/assets/js/earning_home-DRDgJN0S.js          23.12 kB │ gzip:   8.44 kB
+dist/assets/js/live_room-C2OmjqAx.js             29.60 kB │ gzip:  10.82 kB
+dist/assets/js/lottie-B5Z5U7f3.js                63.01 kB │ gzip:  13.92 kB
+dist/assets/js/vue-vendor-Ba81gMJ5.js            82.91 kB │ gzip:  29.13 kB
+dist/assets/js/vendor-XuxNUv8G.js                92.02 kB │ gzip:  27.00 kB
+dist/assets/js/index-5ES40Ume.js                138.34 kB │ gzip:  42.15 kB
+dist/assets/js/vant-Cc-awwI6.js                 162.44 kB │ gzip:  59.37 kB
+dist/assets/js/moives-DUW6etAo.js               615.45 kB │ gzip: 189.99 kB
+
+✓ built in 3.89s
+
+✨ [vite-plugin-compression]:algorithm=gzip - compressed file successfully: 
+dist//Users/tabby/Desktop/IM/H5Player/assets/css/live_room-CICo-sM_.css.gz      16.42kb / gzip: 3.40kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/css/index-VqV1WGll.css.gz          14.29kb / gzip: 3.38kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/earning_home-DRDgJN0S.js.gz     22.58kb / gzip: 8.20kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/live_room-C2OmjqAx.js.gz        28.91kb / gzip: 10.51kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/ui-MnvlRqbd.js.gz               10.72kb / gzip: 3.82kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/user_set-D8YBOSY8.js.gz         10.01kb / gzip: 3.79kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/lottie-B5Z5U7f3.js.gz           61.54kb / gzip: 13.52kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/user_live-BnRxXWNK.js.gz        18.96kb / gzip: 7.36kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/user_to_anchor-BGiQF7Wr.js.gz   13.08kb / gzip: 5.29kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/css/vant-DBe6gjvH.css.gz           88.72kb / gzip: 36.37kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/vendor-XuxNUv8G.js.gz           89.87kb / gzip: 26.09kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/vue-vendor-Ba81gMJ5.js.gz       80.98kb / gzip: 28.11kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/index-5ES40Ume.js.gz            135.10kb / gzip: 40.88kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/vant-Cc-awwI6.js.gz             158.63kb / gzip: 57.39kb
+dist//Users/tabby/Desktop/IM/H5Player/assets/js/moives-DUW6etAo.js.gz           601.03kb / gzip: 183.33kb
+dist//Users/tabby/Desktop/IM/H5Player/cdn_scripts/hls.js.gz                     2106.99kb / gzip: 378.03kb
+
+
+[33m[PLUGIN_TIMINGS] [0mJavaScript callbacks ran for 3.9s. The build took 3.9s. Callbacks such as `closeBundle` run after the build ends, so callback time can be more than build time.
+2 callbacks are listed without a time. Their calls overlapped, so the time inside one call includes work from other calls. To find their cost, profile the build with `node --cpu-prof`:
+  - plugin vite:terser renderChunk (33 calls)
+  - plugin vite:asset load (2 calls)
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+
+ Container payout-delivery-test-mysql-1  Stopping
+ Container payout-delivery-test-mysql-1  Stopped
+ Container payout-delivery-test-mysql-1  Removing
+ Container payout-delivery-test-mysql-1  Removed
+ Network payout-delivery-test_default  Removing
+ Network payout-delivery-test_default  Removed
+ Container earning-delivery-test-mysql-1  Stopping
+ Container earning-delivery-test-mysql-1  Stopped
+ Container earning-delivery-test-mysql-1  Removing
+ Container earning-delivery-test-mysql-1  Removed
+ Network earning-delivery-test_default  Removing
+ Network earning-delivery-test_default  Removed
+ Container gift-delivery-test-mysql-1  Stopping
+ Container gift-delivery-test-mysql-1  Stopped
+ Container gift-delivery-test-mysql-1  Removing
+ Container gift-delivery-test-mysql-1  Removed
+ Network gift-delivery-test_default  Removing
+ Network gift-delivery-test_default  Removed

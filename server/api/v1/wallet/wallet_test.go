@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/glebarez/sqlite"
+	driver "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest/observer"
@@ -160,4 +161,25 @@ func FuzzWalletJSON(f *testing.F) {
 		var r req.CreateAdjustment
 		_ = bindBody(c, &r)
 	})
+}
+
+func TestWalletErrorsDoNotLogDependencySecrets(t *testing.T) {
+	core, logs := observer.New(zap.ErrorLevel)
+	previous := global.GVA_LOG
+	global.GVA_LOG = zap.New(core)
+	t.Cleanup(func() { global.GVA_LOG = previous })
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest("GET", "/", nil)
+	respond(c, nil, &driver.MySQLError{Number: 1062, Message: "Duplicate BANK-private-credential phone=+60123456789 password=secret"})
+	require.Equal(t, 1, logs.Len())
+	fields := logs.All()[0].ContextMap()
+	require.Equal(t, "mysql", fields["class"])
+	require.EqualValues(t, 1062, fields["mysqlCode"])
+	require.Len(t, fields, 3)
+}
+
+func TestWalletRejectsInvalidUTF8(t *testing.T) {
+	e := apiFixture(t)
+	body := `{"requestId":"invalid_utf8_001","externalOrderNo":"BANK-UTF8","evidenceRef":"upload:proof","accountNo":"10000010","amount":"1","reason":"bad` + string([]byte{0xff}) + `reason"}`
+	require.Contains(t, call(e, "POST", "/create", body).Body.String(), `"code":47001`)
 }

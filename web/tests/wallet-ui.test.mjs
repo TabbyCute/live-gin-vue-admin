@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises'
 import vm from 'node:vm'
 import { parse, compileScript } from '@vue/compiler-sfc'
 import * as vue from 'vue'
+import { isSuperAdmin } from '../src/utils/superAdmin.js'
 import { createRequestScope } from '../src/view/wallet/requestScope.js'
 
 const deferred = () => {
@@ -16,6 +17,19 @@ const balance = (accountNo) => ({ accountNo, currencyCode: 'COIN', availableBala
 const order = (no, accountNo = '10000010') => ({ orderNo: no, accountNo, amount: '10', createdBy: '2', status: 'pending' })
 const flush = async () => { for (let i = 0; i < 8; i++) await Promise.resolve() }
 
+test('交易溯源忽略旧响应，退款翻页沿用已查询交易', async (t) => {
+  const a = deferred(), b = deferred(); const calls = []
+  const p = await page('trace', { getWalletTrace: (params) => { calls.push({ ...params }); return calls.length === 1 ? a.promise : calls.length === 2 ? b.promise : Promise.resolve(ok({ refunds: [{ transactionNo: 'r2' }], hasMore: false })) } })
+  t.after(p.close); const s = p.state
+  s.form.no = 'wt_old'; const first = s.searchTrace()
+  s.form.no = 'wt_new'; const second = s.searchTrace()
+  b.resolve(ok({ transaction: { transactionNo: 'wt_new' }, refunds: [{ transactionNo: 'r1' }], nextRefundId: '12', hasMore: true })); await second
+  a.resolve(ok({ transaction: { transactionNo: 'wt_old' }, refunds: [] })); await first
+  assert.equal(s.data.value.transaction.transactionNo, 'wt_new')
+  s.form.no = 'wt_edited'; await s.loadMore()
+  assert.equal(calls[2].no, 'wt_new'); assert.equal(calls[2].afterRefundId, '12'); assert.equal(s.data.value.refunds.length, 2)
+})
+
 // 编译真实Vue页面的setup并注入可控的API/确认框；不用复制生产逻辑，复现乱序和确认期间切换。
 async function page(name, overrides = {}, confirm = async () => {}) {
   const filename = new URL(`../src/view/wallet/${name}/index.vue`, import.meta.url)
@@ -24,6 +38,7 @@ async function page(name, overrides = {}, confirm = async () => {}) {
   const deactivated = []
   const route = vue.reactive({ query: {} })
   const api = {
+    getWalletTrace: async () => ok({ refunds: [], audit: [], hasMore: false }),
     getWalletAdjustmentList: async () => ok({ list: [], total: 0, page: 1, pageSize: 20 }),
     getWalletAccount: async ({ accountNo }) => ok(balance(accountNo)),
     getWalletLedger: async () => ok({ list: [], hasMore: false, nextCursor: '' }),
@@ -40,6 +55,7 @@ async function page(name, overrides = {}, confirm = async () => {}) {
     '@/pinia': { useUserStore: () => ({ userInfo: { ID: 1 } }) },
     '@/utils/format': { CreateUUID: () => '12345678-1234-1234-1234-123456789abc' },
     '@/api/wallet': api,
+    '@/utils/superAdmin': { isSuperAdmin },
     '../shared': { formatWalletAmount: String, formatWalletTime: String, issueLabel: String, kindLabel: String, sourceLabel: String, statusMeta: () => ({}), businessLabel: String },
     '../requestScope': { createRequestScope }, '../wallet.scss': {}
   }

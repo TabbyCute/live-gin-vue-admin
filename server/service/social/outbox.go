@@ -212,11 +212,13 @@ func (s *Service) runLoop(ctx context.Context, interval, timeout time.Duration, 
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 	for ctx.Err() == nil {
+		started := time.Now()
 		run, cancel := context.WithTimeout(ctx, timeout)
 		err := fn(run)
 		cancel()
 		if err != nil && ctx.Err() == nil && s.Log != nil {
-			s.Log.Warn("social worker iteration failed", zap.String("code", code))
+			fields := append([]zap.Field{zap.String("code", code), zap.Duration("elapsed", time.Since(started))}, workerErrorFields(err)...)
+			s.Log.Warn("social worker iteration failed", fields...)
 		}
 		select {
 		case <-ctx.Done():

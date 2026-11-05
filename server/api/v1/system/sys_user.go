@@ -4,6 +4,9 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
+	"go.uber.org/zap"
 	"tb_live_module/global"
 	"tb_live_module/model/common"
 	"tb_live_module/model/common/request"
@@ -12,9 +15,6 @@ import (
 	systemReq "tb_live_module/model/system/request"
 	systemRes "tb_live_module/model/system/response"
 	"tb_live_module/utils"
-	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
-	"go.uber.org/zap"
 )
 
 // Login
@@ -108,11 +108,11 @@ func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
 	}
 	// 记录登录成功日志
 	loginLogService.CreateLoginLog(system.SysLoginLog{
-		Username: user.Username,
-		Ip:       c.ClientIP(),
-		Agent:    c.Request.UserAgent(),
-		Status:   true,
-		UserID:   user.ID,
+		Username:     user.Username,
+		Ip:           c.ClientIP(),
+		Agent:        c.Request.UserAgent(),
+		Status:       true,
+		UserID:       user.ID,
 		ErrorMessage: "登录成功",
 	})
 	if !global.GVA_CONFIG.System.UseMultipoint {
@@ -319,7 +319,7 @@ func (b *BaseApi) SetUserAuthorities(c *gin.Context) {
 		return
 	}
 	authorityID := utils.GetUserAuthorityId(c)
-	err = userService.SetUserAuthorities(authorityID, sua.ID, sua.AuthorityIds)
+	err = userService.SetUserAuthorities(authorityID, sua.ID, sua.AuthorityIds, utils.GetUserID(c))
 	if err != nil {
 		global.GVA_LOG.Error("修改失败!", zap.Error(err))
 		response.FailWithMessage("修改失败", c)
@@ -386,7 +386,7 @@ func (b *BaseApi) SetUserInfo(c *gin.Context) {
 	}
 	if len(user.AuthorityIds) != 0 {
 		authorityID := utils.GetUserAuthorityId(c)
-		err = userService.SetUserAuthorities(authorityID, user.ID, user.AuthorityIds)
+		err = userService.SetUserAuthorities(authorityID, user.ID, user.AuthorityIds, utils.GetUserID(c))
 		if err != nil {
 			global.GVA_LOG.Error("设置失败!", zap.Error(err))
 			response.FailWithMessage("设置失败", c)

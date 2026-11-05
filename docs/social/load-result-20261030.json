@@ -1,0 +1,337 @@
+{
+  "batch_status_100_no_redis": {
+    "concurrency": 16,
+    "elapsedSeconds": 0.3061815,
+    "errorRate": 0,
+    "errors": 0,
+    "p95Ms": 15.829,
+    "p99Ms": 17.395,
+    "qps": 1306.4146592788918,
+    "requests": 400
+  },
+  "explain": [
+    {
+      "plan": [
+        {
+          "Extra": "Using where; Backward index scan",
+          "filtered": 100,
+          "id": 1,
+          "key": "PRIMARY",
+          "key_len": "8",
+          "partitions": null,
+          "possible_keys": "PRIMARY,uk_social_follow_pair,idx_social_follow_in",
+          "ref": null,
+          "rows": 1000,
+          "select_type": "SIMPLE",
+          "table": "social_follow",
+          "type": "range"
+        }
+      ],
+      "query": "EXPLAIN SELECT id,user_id FROM social_follow WHERE target_user_id=2 AND id<100000 ORDER BY id DESC LIMIT 101"
+    },
+    {
+      "plan": [
+        {
+          "Extra": "Using where; Using index; Using filesort",
+          "filtered": 100,
+          "id": 1,
+          "key": "uk_social_follow_pair",
+          "key_len": "8",
+          "partitions": null,
+          "possible_keys": "PRIMARY,uk_social_follow_pair,idx_social_follow_out",
+          "ref": "const",
+          "rows": 1,
+          "select_type": "SIMPLE",
+          "table": "social_follow",
+          "type": "ref"
+        }
+      ],
+      "query": "EXPLAIN SELECT id,target_user_id FROM social_follow WHERE user_id=1000 AND id<100000 ORDER BY id DESC LIMIT 101"
+    },
+    {
+      "plan": [
+        {
+          "Extra": "Using where",
+          "filtered": 1,
+          "id": 1,
+          "key": "PRIMARY",
+          "key_len": "8",
+          "partitions": null,
+          "possible_keys": "PRIMARY,idx_social_subscription_fanout",
+          "ref": null,
+          "rows": 100,
+          "select_type": "SIMPLE",
+          "table": "social_live_subscription",
+          "type": "range"
+        }
+      ],
+      "query": "EXPLAIN SELECT * FROM social_live_subscription WHERE target_user_id=2 AND enabled=1 AND id>0 ORDER BY id LIMIT 20"
+    },
+    {
+      "plan": [
+        {
+          "Extra": "Using index condition",
+          "filtered": 100,
+          "id": 1,
+          "key": "idx_social_event_claim",
+          "key_len": "74",
+          "partitions": null,
+          "possible_keys": "idx_social_event_claim,idx_social_event_retention",
+          "ref": null,
+          "rows": 2,
+          "select_type": "SIMPLE",
+          "table": "social_outbox_event",
+          "type": "range"
+        }
+      ],
+      "query": "EXPLAIN SELECT * FROM social_outbox_event WHERE status='pending' AND next_attempt_at<=9999999999999 ORDER BY next_attempt_at,id LIMIT 1"
+    },
+    {
+      "plan": [
+        {
+          "Extra": null,
+          "filtered": 100,
+          "id": 1,
+          "key": "idx_social_history_recent",
+          "key_len": "8",
+          "partitions": null,
+          "possible_keys": "uk_social_history_resource,idx_social_history_recent",
+          "ref": "const",
+          "rows": 1,
+          "select_type": "SIMPLE",
+          "table": "social_watch_history",
+          "type": "ref"
+        }
+      ],
+      "query": "EXPLAIN SELECT * FROM social_watch_history WHERE user_id=1000 ORDER BY last_watched_at DESC,id DESC LIMIT 101"
+    },
+    {
+      "plan": [
+        {
+          "Extra": null,
+          "filtered": 100,
+          "id": 1,
+          "key": "uk_social_history_resource",
+          "key_len": "396",
+          "partitions": null,
+          "possible_keys": "uk_social_history_resource,idx_social_history_recent",
+          "ref": "const,const,const",
+          "rows": 1,
+          "select_type": "SIMPLE",
+          "table": "h",
+          "type": "const"
+        },
+        {
+          "Extra": null,
+          "filtered": 100,
+          "id": 1,
+          "key": "PRIMARY",
+          "key_len": "8",
+          "partitions": null,
+          "possible_keys": "PRIMARY",
+          "ref": "const",
+          "rows": 1,
+          "select_type": "SIMPLE",
+          "table": "c",
+          "type": "const"
+        }
+      ],
+      "query": "EXPLAIN SELECT h.id FROM social_watch_history h JOIN social_user_counter c ON c.user_id=h.user_id AND c.history_epoch=h.epoch WHERE h.user_id=? AND h.resource_type=? AND h.resource_id=? AND h.session_token=? AND h.session_version=? AND h.epoch=? AND h.hidden=? LIMIT 1"
+    }
+  ],
+  "fans_cursor_page_100": {
+    "concurrency": 16,
+    "elapsedSeconds": 0.100264834,
+    "errorRate": 0,
+    "errors": 0,
+    "p95Ms": 7.952,
+    "p99Ms": 14.171,
+    "qps": 2992.0759655374286,
+    "requests": 300
+  },
+  "history_strict_checkpoint": {
+    "concurrency": 16,
+    "elapsedSeconds": 0.063677375,
+    "errorRate": 0,
+    "errors": 0,
+    "p95Ms": 11.42,
+    "p99Ms": 11.525,
+    "qps": 1570.4164940844375,
+    "requests": 100
+  },
+  "hot_anchor_follow": {
+    "concurrency": 32,
+    "elapsedSeconds": 7.751365417,
+    "errorRate": 0,
+    "errors": 0,
+    "p95Ms": 261.952,
+    "p99Ms": 279.777,
+    "qps": 129.00952879951163,
+    "requests": 1000
+  },
+  "hot_anchor_unfollow_refollow": {
+    "concurrency": 32,
+    "elapsedSeconds": 11.819087875,
+    "errorRate": 0,
+    "errors": 0,
+    "p95Ms": 492.805,
+    "p99Ms": 515.691,
+    "qps": 84.6088979603259,
+    "requests": 1000
+  },
+  "notification_fanout_page_20_fake_sink": {
+    "concurrency": 1,
+    "elapsedSeconds": 0.469190959,
+    "errorRate": 0,
+    "errors": 0,
+    "p95Ms": 97.813,
+    "p99Ms": 97.813,
+    "qps": 10.656641830133815,
+    "requests": 5
+  },
+  "pool": {
+    "maxOpen": 32,
+    "open": 32,
+    "waitCount": 0,
+    "waitDurationMs": 0
+  },
+  "actual_public_profiles": {
+    "requests": 400,
+    "concurrency": 16,
+    "qps": 1337.25,
+    "p95Ms": 15.151542,
+    "p99Ms": 21.720791,
+    "errors": 0,
+    "explain": [
+      {
+        "Extra": "Using where",
+        "filtered": 10,
+        "id": 1,
+        "key": "PRIMARY",
+        "key_len": "8",
+        "partitions": null,
+        "possible_keys": "PRIMARY,idx_live_account_deleted_at,idx_live_account_status_ban",
+        "ref": null,
+        "rows": 100,
+        "select_type": "PRIMARY",
+        "table": "u",
+        "type": "range"
+      },
+      {
+        "Extra": "Using where",
+        "filtered": 5,
+        "id": 1,
+        "key": "uk_user_id",
+        "key_len": "8",
+        "partitions": null,
+        "possible_keys": "PRIMARY,uk_user_id,idx_live_anchor_deleted_at,idx_apply_created",
+        "ref": "social_test_public_profiles.u.id",
+        "rows": 1,
+        "select_type": "PRIMARY",
+        "table": "a",
+        "type": "eq_ref"
+      },
+      {
+        "Extra": "Using where; Not exists; Using index",
+        "filtered": 100,
+        "id": 1,
+        "key": "uk_social_block_pair",
+        "key_len": "16",
+        "partitions": null,
+        "possible_keys": "uk_social_block_pair,idx_social_block_list",
+        "ref": "const,social_test_public_profiles.u.id",
+        "rows": 1,
+        "select_type": "PRIMARY",
+        "table": "b",
+        "type": "eq_ref"
+      },
+      {
+        "Extra": "Using where; Not exists; Using index",
+        "filtered": 100,
+        "id": 1,
+        "key": "uk_social_block_pair",
+        "key_len": "16",
+        "partitions": null,
+        "possible_keys": "uk_social_block_pair,idx_social_block_list",
+        "ref": "social_test_public_profiles.u.id,const",
+        "rows": 1,
+        "select_type": "PRIMARY",
+        "table": "b",
+        "type": "eq_ref"
+      },
+      {
+        "Extra": "Using where",
+        "filtered": 35.20000076293945,
+        "id": 1,
+        "key": "uk_live_room_anchor",
+        "key_len": "8",
+        "partitions": null,
+        "possible_keys": "PRIMARY,uk_live_room_anchor,idx_live_room_deleted_at,idx_live_room_discovery",
+        "ref": "social_test_public_profiles.a.id",
+        "rows": 1,
+        "select_type": "PRIMARY",
+        "table": "r",
+        "type": "eq_ref"
+      },
+      {
+        "Extra": "Using where",
+        "filtered": 5,
+        "id": 1,
+        "key": "PRIMARY",
+        "key_len": "8",
+        "partitions": null,
+        "possible_keys": "PRIMARY",
+        "ref": "social_test_public_profiles.r.current_session_id",
+        "rows": 1,
+        "select_type": "PRIMARY",
+        "table": "s",
+        "type": "eq_ref"
+      },
+      {
+        "Extra": "Using index",
+        "filtered": 100,
+        "id": 4,
+        "key": "uk_social_follow_pair",
+        "key_len": "16",
+        "partitions": null,
+        "possible_keys": "uk_social_follow_pair,idx_social_follow_out,idx_social_follow_in",
+        "ref": "const,social_test_public_profiles.a.user_id",
+        "rows": 1,
+        "select_type": "DEPENDENT SUBQUERY",
+        "table": "f",
+        "type": "eq_ref"
+      }
+    ]
+  },
+  "redis_heartbeat": {
+    "requests": 1000,
+    "concurrency": 1,
+    "qps": 3977.02,
+    "p95Ms": 0.287,
+    "p99Ms": 0.417,
+    "errors": 0
+  },
+  "redis_injected_latency": {
+    "cold_write_guard": {
+      "injectedRttMs": 180,
+      "elapsedMs": 188.640208,
+      "pipelines": 1
+    },
+    "history_ack_32": {
+      "injectedRttMs": 30,
+      "elapsedMs": 231.156959,
+      "pipelines": 2,
+      "commands": 4
+    }
+  },
+  "environment": {
+    "date": "2026-10-30",
+    "go": "1.26.10",
+    "goRedis": "9.7.3",
+    "mysql": "8.0.46",
+    "redis": "7.4.11",
+    "os": "darwin/amd64",
+    "host": "Docker Desktop; isolated local dependencies",
+    "scope": "Service calls; social load fixtures use controlled Directory/ResourceProvider; only actual_public_profiles uses real live account/anchor/room/session tables; excludes HTTP/JWT and production traffic"
+  }
+}

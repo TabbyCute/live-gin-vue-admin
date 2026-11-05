@@ -9,9 +9,14 @@ import (
 const MODULE_LIVE = "/app/live"
 
 func registerLiveRoutes(publicRoot *gin.RouterGroup) {
+	router.RouterGroupApp.Guard.InitGuardRouter(publicRoot.Group("/v1/app"))
+	router.RouterGroupApp.Ranking.InitRankingRouter(publicRoot.Group("/v1/app"))
+	router.RouterGroupApp.Payout.InitPayoutRouter(publicRoot.Group("/v1/app"))
 	registerLiveRoutesV1(publicRoot)
 	router.RouterGroupApp.Social.InitSocialRouter(publicRoot.Group("/v1/app"))
 	router.RouterGroupApp.Wallet.InitWalletRouter(publicRoot.Group("/v1/app"))
+	router.RouterGroupApp.Gift.InitGiftRouter(publicRoot.Group("/v1/app"))
+	router.RouterGroupApp.Earning.InitEarningRouter(publicRoot.Group("/v1/app"))
 }
 
 func registerLiveRoutesV1(publicRoot *gin.RouterGroup) {

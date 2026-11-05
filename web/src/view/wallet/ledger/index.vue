@@ -27,6 +27,7 @@
       </div>
       <el-table v-loading="loading" class="mt-4" :data="rows" row-key="ledgerNo" stripe>
         <el-table-column label="版本" prop="walletVersion" width="90" />
+        <el-table-column label="追踪" width="110"><template #default="{ row }"><router-link :to="{ name: 'walletTrace', query: { no: row.ledgerNo } }"><el-button link type="primary">交易详情</el-button></router-link></template></el-table-column>
         <el-table-column label="发生金额" min-width="130">
           <template #default="scope"><span class="wallet-amount" :class="scope.row.changeAmount.startsWith('-') ? 'wallet-negative' : 'wallet-positive'">{{ scope.row.changeAmount.startsWith('-') ? '' : '+' }}{{ formatWalletAmount(scope.row.changeAmount) }}</span></template>
         </el-table-column>

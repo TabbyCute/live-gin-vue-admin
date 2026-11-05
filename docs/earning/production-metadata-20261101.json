@@ -1,0 +1,179 @@
+{
+  "date": "2026-11-01",
+  "database": "live_prod",
+  "schemaVerified": true,
+  "giftIncomeBackfillVerified": true,
+  "menus": [
+    {
+      "id": 58,
+      "parentId": 7,
+      "name": "earning-overview",
+      "title": "直播收益",
+      "component": "view/live/earning/overview/index.vue"
+    },
+    {
+      "id": 59,
+      "parentId": 7,
+      "name": "earning-exchange",
+      "title": "结算兑换规则",
+      "component": "view/live/earning/exchange/index.vue"
+    },
+    {
+      "id": 60,
+      "parentId": 7,
+      "name": "earning-settlement",
+      "title": "收益结算",
+      "component": "view/live/earning/settlement/index.vue"
+    },
+    {
+      "id": 61,
+      "parentId": 7,
+      "name": "earning-account",
+      "title": "主播可提现账户",
+      "component": "view/live/earning/account/index.vue"
+    },
+    {
+      "id": 62,
+      "parentId": 7,
+      "name": "earning-withdrawal",
+      "title": "提现审核",
+      "component": "view/live/earning/withdrawal/index.vue"
+    },
+    {
+      "id": 63,
+      "parentId": 7,
+      "name": "earning-reconciliation",
+      "title": "收益对账",
+      "component": "view/live/earning/reconciliation/index.vue"
+    }
+  ],
+  "grants": [
+    {
+      "MenuID": 58,
+      "AuthorityID": 888
+    },
+    {
+      "MenuID": 59,
+      "AuthorityID": 888
+    },
+    {
+      "MenuID": 60,
+      "AuthorityID": 888
+    },
+    {
+      "MenuID": 61,
+      "AuthorityID": 888
+    },
+    {
+      "MenuID": 62,
+      "AuthorityID": 888
+    },
+    {
+      "MenuID": 63,
+      "AuthorityID": 888
+    }
+  ],
+  "apiCount": 17,
+  "exactPermissions": [
+    {
+      "authorityId": 888,
+      "path": "/earning/account/check",
+      "method": "GET"
+    },
+    {
+      "authorityId": 888,
+      "path": "/earning/account/ledger",
+      "method": "GET"
+    },
+    {
+      "authorityId": 888,
+      "path": "/earning/account/list",
+      "method": "GET"
+    },
+    {
+      "authorityId": 888,
+      "path": "/earning/exchange/create",
+      "method": "POST"
+    },
+    {
+      "authorityId": 888,
+      "path": "/earning/exchange/list",
+      "method": "GET"
+    },
+    {
+      "authorityId": 888,
+      "path": "/earning/exchange/review",
+      "method": "POST"
+    },
+    {
+      "authorityId": 888,
+      "path": "/earning/income/list",
+      "method": "GET"
+    },
+    {
+      "authorityId": 888,
+      "path": "/earning/overview",
+      "method": "GET"
+    },
+    {
+      "authorityId": 888,
+      "path": "/earning/reconciliation/list",
+      "method": "GET"
+    },
+    {
+      "authorityId": 888,
+      "path": "/earning/reconciliation/run",
+      "method": "POST"
+    },
+    {
+      "authorityId": 888,
+      "path": "/earning/settlement/create",
+      "method": "POST"
+    },
+    {
+      "authorityId": 888,
+      "path": "/earning/settlement/detail",
+      "method": "GET"
+    },
+    {
+      "authorityId": 888,
+      "path": "/earning/settlement/list",
+      "method": "GET"
+    },
+    {
+      "authorityId": 888,
+      "path": "/earning/settlement/review",
+      "method": "POST"
+    },
+    {
+      "authorityId": 888,
+      "path": "/earning/withdrawal/detail",
+      "method": "GET"
+    },
+    {
+      "authorityId": 888,
+      "path": "/earning/withdrawal/list",
+      "method": "GET"
+    },
+    {
+      "authorityId": 888,
+      "path": "/earning/withdrawal/review",
+      "method": "POST"
+    }
+  ],
+  "repeatIdentical": true,
+  "factCounts": {
+    "anchor_earning_ledger": 0,
+    "anchor_income_fact": 0,
+    "anchor_settlement": 0,
+    "anchor_settlement_rule": 0,
+    "anchor_withdrawable_account": 0,
+    "anchor_withdrawable_ledger": 0,
+    "anchor_withdrawal_order": 0
+  },
+  "productionTestDataInserted": false,
+  "applicationDeployed": false,
+  "applicationRestarted": false,
+  "productionWithdrawalEnabled": false,
+  "payoutImplemented": false
+}

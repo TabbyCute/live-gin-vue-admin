@@ -1,0 +1,16 @@
+name: earning-delivery-test
+services:
+  mysql:
+    image: mysql:8.0.46
+    environment:
+      MYSQL_ROOT_PASSWORD: earning-local-test-only
+      MYSQL_DATABASE: earning_test_delivery
+    ports:
+      - '127.0.0.1:13328:3306'
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-pearning-local-test-only']
+      interval: 2s
+      timeout: 2s
+      retries: 60

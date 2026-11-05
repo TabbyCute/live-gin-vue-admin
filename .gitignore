@@ -34,7 +34,7 @@ server/uploads/
 
 *.iml
 web/.pnpm-debug.log
-web/pnpm-lock.yaml
+# 管理端依赖锁文件纳入交付，CI使用冻结锁文件安装。
 
 # binary files
 *.exe

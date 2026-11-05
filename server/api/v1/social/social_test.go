@@ -12,10 +12,54 @@ import (
 	liveModel "tb_live_module/model/live"
 	liveReq "tb_live_module/model/live/request"
 	model "tb_live_module/model/social"
+	socialReq "tb_live_module/model/social/request"
 	liveService "tb_live_module/service/live"
 	service "tb_live_module/service/social"
 	"testing"
+	"time"
 )
+
+func TestRequestParsingLimitsAndNoStore(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	for _, tc := range []struct {
+		name, body        string
+		unknownLength, ok bool
+	}{
+		{"valid", `{"accountNo":"target"}`, false, true},
+		{"unknown_actor_ignored", `{"accountNo":"target","userId":99}`, false, true},
+		{"second_object", `{"accountNo":"target"}{"accountNo":"other"}`, false, false},
+		{"trailing_garbage", `{"accountNo":"target"}broken`, false, false},
+		{"trailing_oversize_known", `{"accountNo":"target"}` + strings.Repeat(" ", 33<<10), false, false},
+		{"trailing_oversize_chunked", `{"accountNo":"target"}` + strings.Repeat(" ", 33<<10), true, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			engine := gin.New()
+			called := false
+			engine.POST("/test", RequestBudget(), func(c *gin.Context) {
+				deadline, ok := c.Request.Context().Deadline()
+				require.True(t, ok)
+				require.LessOrEqual(t, time.Until(deadline), 5*time.Second)
+				var r socialReq.Target
+				if bind(c, &r) {
+					called = true
+					respond(c, r, nil)
+				}
+			})
+			r := httptest.NewRequest(http.MethodPost, "/test", strings.NewReader(tc.body))
+			if tc.unknownLength {
+				r.ContentLength = -1
+			}
+			w := httptest.NewRecorder()
+			engine.ServeHTTP(w, r)
+			require.Equal(t, tc.ok, called)
+			require.Equal(t, "no-store", w.Header().Get("Cache-Control"))
+			if !tc.ok {
+				require.Contains(t, w.Body.String(), `"code":46001`)
+				require.NotContains(t, w.Body.String(), "invalid character")
+			}
+		})
+	}
+}
 
 func TestActorCannotBeSpoofedInJSON(t *testing.T) {
 	gin.SetMode(gin.TestMode)

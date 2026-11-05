@@ -1,4 +1,5 @@
 // 权限按钮展示指令
+import { isSuperAdmin } from '@/utils/superAdmin'
 import { useUserStore } from '@/pinia/modules/user'
 export default {
   install: (app) => {
@@ -7,6 +8,7 @@ export default {
       // 当被绑定的元素插入到 DOM 中时……
       mounted: function (el, binding) {
         const userInfo = userStore.userInfo
+        if (isSuperAdmin(userInfo)) return
         if (!binding.value){
           el.parentNode.removeChild(el)
           return

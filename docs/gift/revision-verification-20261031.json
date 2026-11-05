@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-31",
+  "fullScriptExitCode": 0,
+  "fullScriptLogSHA256": "4cb09566b1c54cedb48de8fb8d7268a04f1d6206fa59325b498b16ff09e30261",
+  "localEvidenceLog": "/tmp/gift-review-final.log",
+  "testDatabase": "127.0.0.1:13327/gift_test_delivery",
+  "loadEnabled": true,
+  "goTestSuccessLines": 36,
+  "frontendGiftTests": 8,
+  "cleanupScriptTests": 4,
+  "fuzzExecutions": 6468,
+  "checks": {
+    "repositoryGoTests": "passed",
+    "realMySQLConcurrencyAndAtomicRollback": "passed",
+    "race": "passed",
+    "clientFoundRows": "passed",
+    "goVet": "passed",
+    "goBuild": "passed",
+    "frontendProductionBuild": "passed",
+    "composeCleanup": "passed; no gift-delivery-test containers remain"
+  },
+  "walletCoreChecked": 27,
+  "walletCoreChanged": [],
+  "dependencyVersionsChanged": false,
+  "productionCatalogImport": {
+    "userAuthorized": true,
+    "database": "live_prod",
+    "moduleTablesCreatedAndValidated": 14,
+    "categories": 3,
+    "gifts": 6,
+    "giftStatus": "draft",
+    "repeatImportUnchanged": true,
+    "readbackSHA256": "4e7283755f499d198638878beda51dd744eb2c52b1f4272828447c02285d0ba5",
+    "applicationReleased": false,
+    "productionTestsRun": false
+  },
+  "productionCapacityHARecoveryCertified": false
+}

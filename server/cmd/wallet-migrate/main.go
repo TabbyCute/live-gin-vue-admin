@@ -15,6 +15,7 @@ import (
 
 func main() {
 	verify := flag.Bool("verify", false, "只校验结构，不执行DDL")
+	transactionsOnly := flag.Bool("transactions-only", false, "已有钱包仅创建消费交易表及其触发器，不修改其他表")
 	flag.Parse()
 	raw := os.Getenv("WALLET_MIGRATION_DSN")
 	if raw == "" {
@@ -44,6 +45,8 @@ func main() {
 	pool.SetMaxOpenConns(1)
 	if *verify {
 		err = initialize.ValidateWalletSchema(db)
+	} else if *transactionsOnly {
+		err = initialize.MigrateWalletTransactions(db)
 	} else {
 		err = initialize.MigrateWallet(db)
 	}

@@ -1,0 +1,63 @@
+
+> player@0.0.0 test /Users/tabby/Desktop/IM/H5Player
+> node --experimental-vm-modules --test tests/*.test.js
+
+✔ earning overview preserves large financial values as strings (0.703834ms)
+✔ withdrawal input converts CNY yuan to cents without Number (0.431417ms)
+✔ public withdrawal DTO rejects internal or malformed values (0.25875ms)
+✔ withdrawal page validates pagination and total strings (0.128417ms)
+✔ pending withdrawal is isolated per account and keeps the idempotency key (0.350709ms)
+✔ corrupt or unpersistable pending requests fail closed (0.160875ms)
+✔ earning errors never expose unknown server internals (0.088791ms)
+✔ gift money uses decimal strings beyond Number safe range (0.824958ms)
+✔ gift order validates allowlisted public DTO and calculates net amount (0.184208ms)
+✔ gift page keeps total as a decimal string (0.082791ms)
+✔ pending request keeps the same idempotency key and fixed parameters (0.366334ms)
+✔ pending gift requests are isolated by public account number (0.319833ms)
+✔ corrupted persisted request is rejected instead of being retried (0.063667ms)
+✔ a new gift must not be sent when its idempotency key cannot be persisted (0.156542ms)
+✔ unknown gift result and rate limit preserve the original request (0.1495ms)
+✔ determinate gift rejection clears pending while accounting errors retain it (0.088375ms)
+✔ 直播间昵称和头像只使用 userInfo，不读取主播身份资料 (1.39875ms)
+✔ 旧响应缺少 userInfo 时不回退展示主播昵称和头像 (0.1875ms)
+✔ payee DTO is a strict allowlist and never retains account material (0.893417ms)
+✔ binding request selects only channel fields and never accepts an owner or verification (0.080167ms)
+(node:90630) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ timeout replay preserves payee and amount, blocks changes and concurrent clicks (5.445208ms)
+✔ lost response recovery checks the chosen payee before clearing pending (2.124125ms)
+✔ legacy pending requests stay queryable and cannot silently acquire a new payee (0.080959ms)
+✔ account changes discard stale details and prevent cross-user UI leakage (1.094459ms)
+✔ browser lock contention never queues another withdrawal (0.103542ms)
+✔ confirmation captures account/currency and blocks a second click before the network call (24.242583ms)
+✔ payee binding timeout retries identical private materials then clears the form (4.986917ms)
+✔ payee list responses cannot regress state and close clears private material (3.855792ms)
+✔ late recovery for A cannot clear a newer pending withdrawal B (2.486542ms)
+✔ recovery winning the race does not leave the submit button permanently busy (1.203834ms)
+✔ late recovery cannot erase another tab's persisted request (1.302209ms)
+✔ recovery shares the browser lock with submission (1.277209ms)
+✔ confirmed legacy cleanup cannot delete a newer request (0.912ms)
+✔ 同一房间并发创建观看会话时复用同一个请求 (1.812542ms)
+✔ 高频观看上报合并为单次请求，并且 checkpoint 最多补发一次 (1.329583ms)
+✔ 社交目标严格执行 accountNo/anchorNo 二选一并保持字符串 (0.80375ms)
+✔ 直播间资源只生成后端已接入的 live_room 类型 (0.81375ms)
+✔ 观看 requestId 是标准 UUID，可直接满足后端长度和唯一性契约 (1.162917ms)
+✔ 游标响应兼容统一响应包裹，并保留空页 hasMore (0.09525ms)
+✔ 实时过滤产生空页时继续使用 nextCursor，直到取得可见数据 (0.116833ms)
+✔ 重复游标会终止分页，防止异常响应触发无限请求 (0.07025ms)
+✔ 社交业务码识别和用户文案覆盖会话冲突及依赖故障 (0.101167ms)
+✔ wallet balance keeps values beyond Number safe range as strings (0.986834ms)
+✔ wallet response rejects numeric amounts and malformed pagination (0.236125ms)
+✔ ledger normalization accepts unknown future business types (0.163625ms)
+✔ wallet labels include consumption and refund while keeping unknown fallback (0.050542ms)
+✔ wallet business errors are mapped without exposing server details (0.130584ms)
+✔ wallet foreground refresh is visible-only and throttled (0.071041ms)
+✔ capacity protection honors Retry-After and adds bounded jitter (0.147416ms)
+ℹ tests 49
+ℹ suites 0
+ℹ pass 49
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 167.372125

@@ -7,9 +7,27 @@ import (
 	model "tb_live_module/model/social"
 	req "tb_live_module/model/social/request"
 	res "tb_live_module/model/social/response"
+	"tb_live_module/model/system"
 	repo "tb_live_module/repository/social"
 	"time"
 )
+
+// AdminAllowed 每次核验当前管理员状态和角色归属，不能依赖旧JWT中的角色。
+func (s *Service) AdminAllowed(ctx context.Context, id, authority uint) (bool, error) {
+	if id == 0 || (authority != 888 && !system.IsSuperAdmin(id)) {
+		return false, nil
+	}
+	if s.DB == nil {
+		return false, ErrUnavailable
+	}
+	var count int64
+	q := s.db(ctx).Model(&system.SysUser{}).Where("id = ? AND enable = ?", id, 1)
+	if !system.IsSuperAdmin(id) {
+		q = q.Where("authority_id = ? OR EXISTS (SELECT 1 FROM sys_user_authority ua WHERE ua.sys_user_id = sys_users.id AND ua.sys_authority_authority_id = ?)", authority, authority)
+	}
+	err := q.Count(&count).Error
+	return count == 1, err
+}
 
 func formatID(id uint64) string { return strconv.FormatUint(id, 10) }
 func (s *Service) AuditCounters(ctx context.Context, t req.Target, repair bool) (res.CounterAudit, error) {

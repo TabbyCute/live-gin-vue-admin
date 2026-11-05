@@ -1,0 +1,100 @@
+{
+  "recordedAt": "2026-11-04T01:32:01.014662+08:00",
+  "fullScript": {
+    "command": "bash server/tests/guard/run.sh",
+    "exitCode": 0,
+    "allGoTests": true,
+    "realMySQLModules": [
+      "gift",
+      "wallet",
+      "earning",
+      "payout"
+    ],
+    "raceModules": [
+      "guard",
+      "ranking",
+      "gift",
+      "wallet",
+      "earning",
+      "payout"
+    ],
+    "goVet": true,
+    "goBuild": true,
+    "fuzzReplayExecutions": 218281,
+    "fuzzGiftJSONExecutions": 6388,
+    "frontendAtScriptRun": {
+      "passed": 56,
+      "failed": 0
+    },
+    "containersCleaned": true
+  },
+  "finalTargetedChecks": {
+    "remainingDaysQueryTests": "passed",
+    "goVetGuard": "passed",
+    "goBuildAll": "passed",
+    "frontendPassed": 57,
+    "frontendFailed": 0,
+    "productionBuild": "passed",
+    "newGuardRankingFrontendTests": 7
+  },
+  "load": {
+    "environment": "isolated local MySQL 8, service calls contending on one real wallet; not HTTP capacity",
+    "orders": 100,
+    "concurrency": 100,
+    "sendMs": 1969,
+    "p50Ms": 1030.179,
+    "p95Ms": 1880.662,
+    "p99Ms": 1950.498,
+    "fulfillFourWorkersMs": 1018,
+    "rankingFourWorkersMs": 84,
+    "rankingIndex": "idx_ranking_board",
+    "rankingAccessType": "ref"
+  },
+  "financialFlow": {
+    "recharge": "1000",
+    "giftDebit": "40",
+    "refund": "20",
+    "finalWalletBalance": "980",
+    "rankNetScore": "20",
+    "guardStatus": "expired",
+    "duplicateExpiryLedgers": false,
+    "followupFullRefundBalance": "1000"
+  },
+  "scans": {
+    "goReachableVulnerabilities": 0,
+    "goImportedPackageWarnings": 7,
+    "goRequiredModuleWarnings": 2,
+    "frontendHigh": 4,
+    "frontendModerate": 10,
+    "frontendCritical": 0
+  },
+  "logs": [
+    {
+      "file": "/tmp/guard-ranking-release-full.log",
+      "sha256": "cf9265eb116291e9905002cdb20a3ae5ecb49995ef098389eafb0e91952c464e"
+    },
+    {
+      "file": "/tmp/guard-ranking-final-ui.log",
+      "sha256": "e7b6d4a140e38e785d231087a47cc3e705650c41b29d26bfcd73d4e3bbc6e57a"
+    },
+    {
+      "file": "/tmp/guard-ranking-final-web-build.log",
+      "sha256": "a99f798509ea04fb227277d6ce9b58e1c7824663df81b34b58d4a0e6ea2c3d0a"
+    },
+    {
+      "file": "/tmp/guard-ranking-final-query.log",
+      "sha256": "fda1dc162a45d9caf8312b00852323195ee6af21e4b96576b237500e5426d2b0"
+    },
+    {
+      "file": "/tmp/guard-ranking-last-race.log",
+      "sha256": "adc1e3b29635e54095952901e56d4c78931725445497174b80e9aee8fe7ceaeb"
+    }
+  ],
+  "limitations": [
+    "no production application deployment/smoke acceptance",
+    "no external payment channel",
+    "no target capacity/HA/RPO/RTO test",
+    "existing frontend vulnerabilities remain",
+    "guard per-member replay 10000 facts; synchronous ranking reconciliation 10000 events"
+  ]
+}

@@ -295,10 +295,14 @@ func (s *Service) review(ctx context.Context, a Actor, r req.ReviewAdjustment, a
 				return e
 			}
 		} else {
+			if o.Kind == model.KindGrant && o.SourceType == model.SourceLegacy {
+				return ErrLegacyOrder
+			}
+			// 首次入账同样必须具备完整申请审计，不能等到重试或对账才发现缺失。
+			if e = validateOrderAudit(tx, o); e != nil {
+				return e
+			}
 			if o.Kind == model.KindGrant {
-				if o.SourceType == model.SourceLegacy {
-					return ErrLegacyOrder
-				}
 				if !validOrderRequest(o) {
 					return ErrInvariant
 				}
@@ -324,6 +328,9 @@ func (s *Service) review(ctx context.Context, a Actor, r req.ReviewAdjustment, a
 			business := model.BusinessGrant
 			originalLedger := ""
 			if o.Kind == model.KindReverse {
+				if e = validateReviewReplay(tx, *original); e != nil {
+					return e
+				}
 				delta = -o.Amount
 				business = model.BusinessReverse
 				originalLedger = original.LedgerNo

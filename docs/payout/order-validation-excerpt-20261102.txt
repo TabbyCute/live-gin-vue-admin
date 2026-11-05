@@ -1,0 +1,114 @@
+ok  	tb_live_module/api/v1/earning	3.013s
+ok  	tb_live_module/api/v1/gift	2.996s
+ok  	tb_live_module/api/v1/live	5.072s
+ok  	tb_live_module/api/v1/payout	2.106s
+ok  	tb_live_module/api/v1/social	2.683s
+ok  	tb_live_module/api/v1/wallet	2.784s
+ok  	tb_live_module/config	1.515s
+ok  	tb_live_module/core	3.486s
+ok  	tb_live_module/initialize	4.640s
+ok  	tb_live_module/initialize/internal	2.701s
+ok  	tb_live_module/internal/srs	2.757s
+ok  	tb_live_module/mcp	2.738s
+ok  	tb_live_module/mcp/client	2.685s
+ok  	tb_live_module/middleware	6.107s
+ok  	tb_live_module/model/earning/response	2.858s
+ok  	tb_live_module/model/live	3.121s
+ok  	tb_live_module/model/live/request	2.878s
+ok  	tb_live_module/model/social	2.898s
+ok  	tb_live_module/plugin/auto/initialize	3.858s
+ok  	tb_live_module/plugin/auto/service	1.983s
+ok  	tb_live_module/router/earning	3.892s
+ok  	tb_live_module/router/gift	4.211s
+ok  	tb_live_module/router/live	4.599s
+ok  	tb_live_module/router/payout	5.427s
+ok  	tb_live_module/router/social	5.159s
+ok  	tb_live_module/router/wallet	3.310s
+ok  	tb_live_module/service/earning	34.410s
+ok  	tb_live_module/service/gift	20.447s
+ok  	tb_live_module/service/live	7.400s
+ok  	tb_live_module/service/payout	6.738s
+ok  	tb_live_module/service/social	2.400s
+ok  	tb_live_module/service/system	3.845s
+ok  	tb_live_module/service/wallet	4.999s
+ok  	tb_live_module/utils	2.513s
+ok  	tb_live_module/utils/ast	2.324s
+ok  	tb_live_module/utils/timer	2.387s
+ok  	tb_live_module/service/payout	10.243s
+ok  	tb_live_module/service/earning	109.504s
+ok  	tb_live_module/api/v1/payout	4.674s
+ok  	tb_live_module/api/v1/earning	7.157s
+ok  	tb_live_module/router/payout	8.832s
+ok  	tb_live_module/router/earning	9.987s
+ok  	tb_live_module/middleware	11.233s
+ok  	tb_live_module/service/payout	3.158s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/63 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 63/63 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 3454 (1151/sec), new interesting: 7 (total: 70)
+fuzz: elapsed: 6s, execs: 3454 (0/sec), new interesting: 7 (total: 70)
+fuzz: elapsed: 9s, execs: 3454 (0/sec), new interesting: 7 (total: 70)
+fuzz: elapsed: 11s, execs: 3454 (0/sec), new interesting: 7 (total: 70)
+PASS
+ok  	tb_live_module/api/v1/payout	13.905s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/2 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 2/2 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 16765 (5584/sec), new interesting: 18 (total: 20)
+fuzz: elapsed: 6s, execs: 16765 (0/sec), new interesting: 18 (total: 20)
+fuzz: elapsed: 9s, execs: 16765 (0/sec), new interesting: 18 (total: 20)
+fuzz: elapsed: 11s, execs: 16765 (0/sec), new interesting: 18 (total: 20)
+PASS
+ok  	tb_live_module/api/v1/payout	13.650s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/79 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 79/79 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 9174 (3058/sec), new interesting: 2 (total: 81)
+fuzz: elapsed: 6s, execs: 20225 (3683/sec), new interesting: 5 (total: 84)
+fuzz: elapsed: 9s, execs: 27511 (2428/sec), new interesting: 7 (total: 86)
+fuzz: elapsed: 11s, execs: 30313 (1396/sec), new interesting: 7 (total: 86)
+PASS
+ok  	tb_live_module/service/payout	14.618s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/87 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 87/87 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 5651 (1882/sec), new interesting: 2 (total: 89)
+fuzz: elapsed: 6s, execs: 6377 (242/sec), new interesting: 2 (total: 89)
+fuzz: elapsed: 9s, execs: 6377 (0/sec), new interesting: 2 (total: 89)
+fuzz: elapsed: 11s, execs: 6377 (0/sec), new interesting: 2 (total: 89)
+PASS
+ok  	tb_live_module/api/v1/earning	13.966s
+    finance_integration_test.go:623: EARNING_LOAD_RESULT {"allMoneyChecksPassed":true,"concurrency":16,"databasePayee":true,"elapsedMs":3465,"incomeFacts":500,"maxMs":894,"p50Ms":856,"p95Ms":875,"settlementCreateAndApproveMs":131,"withdrawals":64}
+    finance_integration_test.go:625: PAYOUT_LOAD_RESULT {"concurrency":16,"elapsedMs":3863,"incomeFacts":500,"maxMs":995,"p50Ms":958,"p95Ms":966,"readyOrders":64,"unchangedBalances":true}
+--- PASS: TestMySQLFinanceLoad (22.19s)
+PASS
+ok  	tb_live_module/service/earning	24.610s
+ℹ tests 19
+ℹ pass 19
+ℹ fail 0
+ℹ skipped 0
+ℹ tests 21
+ℹ pass 21
+ℹ fail 0
+ℹ skipped 0
+ℹ tests 49
+ℹ pass 49
+ℹ fail 0
+ℹ skipped 0
+
+Final payout MySQL/SQLite race regression:
+--- PASS: TestPayoutOrderLifecycle (3.56s)
+--- PASS: TestMySQLPayoutOrderLifecycle (2.31s)
+--- PASS: TestPayoutOrderFailures (2.86s)
+--- PASS: TestMySQLPayoutOrderConcurrent (2.95s)
+--- PASS: TestMySQLPayoutDisableRace (7.32s)
+--- PASS: TestPayoutOrderInputBoundaries (2.49s)
+PASS
+ok  	tb_live_module/service/earning	26.306s
+
+Migration fast-path regression:
+ok  	tb_live_module/service/earning	4.470s
+
+Final schema definition and drift race regression:
+ok  	tb_live_module/service/earning	9.395s
+
+Final API contract regression:
+ok  	tb_live_module/router/payout	2.470s
+ok  	tb_live_module/api/v1/payout	2.687s
+ok  	tb_live_module/service/payout	3.683s

@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-31",
+  "database": "isolated MySQL 8.0.46, 127.0.0.1:13327, gift_test_delivery",
+  "walletCoreFilesUnchanged": 27,
+  "frontendGiftTests": 6,
+  "frontendWalletTests": 12,
+  "goReachableVulnerabilities": 0,
+  "frontendProductionVulnerabilities": {
+    "high": 4,
+    "moderate": 7
+  },
+  "verification": {
+    "final-go-test.log": [
+      "ok  \ttb_live_module/api/v1/gift\t2.608s",
+      "ok  \ttb_live_module/api/v1/live\t5.181s",
+      "ok  \ttb_live_module/api/v1/social\t3.606s",
+      "ok  \ttb_live_module/api/v1/wallet\t4.034s",
+      "ok  \ttb_live_module/config\t3.127s",
+      "ok  \ttb_live_module/core\t3.609s",
+      "ok  \ttb_live_module/initialize\t4.289s",
+      "ok  \ttb_live_module/initialize/internal\t3.460s",
+      "ok  \ttb_live_module/internal/srs\t3.531s",
+      "ok  \ttb_live_module/mcp\t3.605s",
+      "ok  \ttb_live_module/mcp/client\t3.520s",
+      "ok  \ttb_live_module/middleware\t7.175s",
+      "ok  \ttb_live_module/model/live\t3.647s",
+      "ok  \ttb_live_module/model/live/request\t3.390s",
+      "ok  \ttb_live_module/model/social\t3.364s",
+      "ok  \ttb_live_module/plugin/auto/initialize\t4.818s",
+      "ok  \ttb_live_module/plugin/auto/service\t2.820s",
+      "ok  \ttb_live_module/router/gift\t4.430s",
+      "ok  \ttb_live_module/router/live\t4.661s",
+      "ok  \ttb_live_module/router/social\t5.527s",
+      "ok  \ttb_live_module/router/wallet\t6.366s",
+      "ok  \ttb_live_module/service/earning\t5.192s",
+      "ok  \ttb_live_module/service/gift\t13.899s",
+      "ok  \ttb_live_module/service/live\t10.570s",
+      "ok  \ttb_live_module/service/social\t6.822s",
+      "ok  \ttb_live_module/service/system\t7.408s",
+      "ok  \ttb_live_module/service/wallet\t9.363s",
+      "ok  \ttb_live_module/utils\t5.774s",
+      "ok  \ttb_live_module/utils/ast\t5.176s",
+      "ok  \ttb_live_module/utils/timer\t5.022s"
+    ],
+    "final-race.log": [
+      "ok  \ttb_live_module/service/gift\t23.593s",
+      "ok  \ttb_live_module/service/earning\t6.151s",
+      "ok  \ttb_live_module/api/v1/gift\t7.835s",
+      "ok  \ttb_live_module/router/gift\t7.306s"
+    ],
+    "client-found-rows.log": [
+      "--- PASS: TestGiftLifecycle (0.16s)",
+      "--- PASS: TestMySQLGiftLifecycle (1.05s)",
+      "--- PASS: TestGiftConcurrentSQLite (0.21s)",
+      "--- PASS: TestMySQLGiftConcurrency (2.19s)",
+      "--- PASS: TestGiftRollback (0.13s)",
+      "--- PASS: TestMySQLGiftRollback (1.26s)",
+      "--- PASS: TestGiftValidationAndPermissions (0.13s)",
+      "--- PASS: TestGiftCatalogRulesVisibility (0.11s)",
+      "--- PASS: TestGiftBenefitCompensationFutureFact (0.10s)",
+      "--- PASS: TestGiftSchemaTampering (0.10s)",
+      "--- PASS: TestMySQLGiftIndependentWallets (1.43s)",
+      "--- PASS: TestGiftFractionalRefundRounding (0.13s)",
+      "ok  \ttb_live_module/service/gift\t9.532s",
+      "--- PASS: TestGiftJWTIsolationAndForgery (0.03s)",
+      "--- PASS: TestGuardCapacityDeadline (0.00s)",
+      "ok  \ttb_live_module/router/gift\t3.062s"
+    ],
+    "final-vet.log": [],
+    "final-build.log": [],
+    "final-web-build.log": [
+      "✓ built in 4.79s"
+    ],
+    "migration-cli.log": [
+      "gift schema verified"
+    ]
+  },
+  "limitations": [
+    "Existing admin frontend dependency vulnerabilities remain release blockers",
+    "Production HA, long-running load, gateway, recovery and manual browser acceptance are not certified",
+    "Guard fulfillment, IM delivery, settlement, withdrawals and payout are not implemented in this gift-first stage"
+  ]
+}

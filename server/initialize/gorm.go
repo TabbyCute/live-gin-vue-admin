@@ -42,6 +42,14 @@ func RegisterTables() {
 			global.GVA_LOG.Error("sync wallet metadata failed", zap.Error(err))
 			os.Exit(1)
 		}
+		if err := SyncGiftMetadata(global.GVA_DB); err != nil {
+			global.GVA_LOG.Error("sync gift metadata failed", zap.Error(err))
+			os.Exit(1)
+		}
+		if err := SyncEarningMetadata(global.GVA_DB); err != nil {
+			global.GVA_LOG.Error("sync earning metadata failed", zap.Error(err))
+			os.Exit(1)
+		}
 		global.GVA_LOG.Info("auto-migrate is disabled, skipping table registration")
 		// 菜单和接口元数据不属于表结构迁移。即使外部明确关闭自动迁移，
 		// 仍需同步这些数据，确保新后台功能可见且可分配权限。
@@ -98,6 +106,18 @@ func RegisterTables() {
 	)
 	if err != nil {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = MigrateGift(db); err != nil {
+		global.GVA_LOG.Error("migrate gift failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = MigrateGuard(db); err != nil {
+		global.GVA_LOG.Error("migrate guard failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = MigrateRanking(db, global.GVA_CONFIG.Ranking.Zone()); err != nil {
+		global.GVA_LOG.Error("migrate ranking failed", zap.Error(err))
 		os.Exit(1)
 	}
 	if err = MigrateWallet(db); err != nil {
@@ -163,6 +183,22 @@ func RegisterTables() {
 		os.Exit(1)
 	}
 
+	if err = SyncGiftMetadata(db); err != nil {
+		global.GVA_LOG.Error("sync gift metadata failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = MigratePayout(db); err != nil {
+		global.GVA_LOG.Error("migrate payout failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = MigrateEarning(db); err != nil {
+		global.GVA_LOG.Error("migrate earning failed", zap.Error(err))
+		os.Exit(1)
+	}
+	if err = SyncEarningMetadata(db); err != nil {
+		global.GVA_LOG.Error("sync earning metadata failed", zap.Error(err))
+		os.Exit(1)
+	}
 	err = bizModel()
 
 	if err != nil {

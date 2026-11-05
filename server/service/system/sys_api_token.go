@@ -2,11 +2,11 @@ package system
 
 import (
 	"errors"
+	"github.com/golang-jwt/jwt/v5"
 	"tb_live_module/global"
 	"tb_live_module/model/system"
 	sysReq "tb_live_module/model/system/request"
 	"tb_live_module/utils"
-	"github.com/golang-jwt/jwt/v5"
 	"time"
 )
 
@@ -25,7 +25,7 @@ func (apiVersion *ApiTokenService) CreateApiToken(apiToken system.SysApiToken, d
 			break
 		}
 	}
-	if !hasAuth && user.AuthorityId != apiToken.AuthorityID {
+	if !system.IsSuperAdmin(user.ID) && !hasAuth && user.AuthorityId != apiToken.AuthorityID {
 		return "", errors.New("用户不具备该角色权限")
 	}
 

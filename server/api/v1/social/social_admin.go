@@ -5,6 +5,7 @@ import (
 	"tb_live_module/model/common/response"
 	req "tb_live_module/model/social/request"
 	res "tb_live_module/model/social/response"
+	"tb_live_module/utils"
 )
 
 type SocialAdminApi struct{}
@@ -12,10 +13,33 @@ type SocialAdminApi struct{}
 var _ = response.Response{}
 var _ = res.CounterAudit{}
 
+func AdminGuard() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		claims, err := utils.GetClaims(c)
+		if err != nil || claims == nil {
+			response.NoAuth("管理员登录无效", c)
+			c.Abort()
+			return
+		}
+		allowed, err := socialService.AdminAllowed(c.Request.Context(), claims.BaseClaims.ID, claims.AuthorityId)
+		if err != nil {
+			respond(c, nil, err)
+			c.Abort()
+			return
+		}
+		if !allowed {
+			response.NoAuth("管理员权限已失效", c)
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}
+
 // Check
 // @Tags SocialAdmin
 // @Summary 核对指定账号的关系事实与计数
-// @Description 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+// @Description 超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
 // @Security ApiKeyAuth
 // @Accept application/json
 // @Produce application/json
@@ -36,7 +60,7 @@ func (a *SocialAdminApi) Check(c *gin.Context) {
 // Repair
 // @Tags SocialAdmin
 // @Summary 持锁重算计数，需REPAIR确认及审计原因
-// @Description 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+// @Description 超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
 // @Security ApiKeyAuth
 // @Accept application/json
 // @Produce application/json
@@ -56,7 +80,7 @@ func (a *SocialAdminApi) Repair(c *gin.Context) {
 // Events
 // @Tags SocialAdmin
 // @Summary 有界查询事件积压和失败记录
-// @Description 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+// @Description 超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
 // @Security ApiKeyAuth
 // @Accept application/json
 // @Produce application/json
@@ -77,7 +101,7 @@ func (a *SocialAdminApi) Events(c *gin.Context) {
 // Replay
 // @Tags SocialAdmin
 // @Summary 重放失败事件，保留投递去重记录
-// @Description 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+// @Description 超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
 // @Security ApiKeyAuth
 // @Accept application/json
 // @Produce application/json
@@ -97,7 +121,7 @@ func (a *SocialAdminApi) Replay(c *gin.Context) {
 // Blocks
 // @Tags SocialAdmin
 // @Summary 授权管理员审计指定用户黑名单
-// @Description 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+// @Description 超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
 // @Security ApiKeyAuth
 // @Accept application/json
 // @Produce application/json
@@ -125,7 +149,7 @@ func (a *SocialAdminApi) Blocks(c *gin.Context) {
 // Anomalies
 // @Tags SocialAdmin
 // @Summary 扫描拉黑与关注并存的异常关系
-// @Description 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+// @Description 超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
 // @Security ApiKeyAuth
 // @Accept application/json
 // @Produce application/json
@@ -147,7 +171,7 @@ func (a *SocialAdminApi) Anomalies(c *gin.Context) {
 // @Tags SocialAdmin
 // @Summary 查询事件积压、投递渠道状态和实例指标
 // @Description 每种状态最多统计1000条；countIsLowerBound=true表示总数大于1000，sampleOldestCreatedAt仅为样本最早毫秒时间，不是全局最早时间。
-// @Description 仅高级管理员角色888，后台JWT、服务端权限、操作审计同时生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
+// @Description 超级 root（ID 1）免角色授权，其他管理员仅角色888；后台JWT和操作审计继续生效。错误码46001至46010与APP一致；时间戳毫秒。示例accountNo=10000001。
 // @Security ApiKeyAuth
 // @Accept application/json
 // @Produce application/json

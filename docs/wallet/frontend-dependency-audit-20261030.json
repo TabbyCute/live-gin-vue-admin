@@ -1,0 +1,122 @@
+{
+  "scope": "pnpm audit --prod after axios 1.21.0 update; dependency findings do not prove browser exploitability",
+  "counts": {
+    "info": 0,
+    "low": 0,
+    "moderate": 7,
+    "high": 4,
+    "critical": 0
+  },
+  "advisories": [
+    {
+      "package": "wangeditor",
+      "severity": "high",
+      "title": "Cross-Site Scripting in wangeditor",
+      "url": "https://github.com/advisories/GHSA-g7mw-5cq6-fv82",
+      "patchedVersions": "<0.0.0",
+      "paths": [
+        ".>@form-create/designer>@form-create/component-wangeditor>wangeditor"
+      ]
+    },
+    {
+      "package": "postcss",
+      "severity": "moderate",
+      "title": "PostCSS line return parsing error",
+      "url": "https://github.com/advisories/GHSA-7fh5-64p2-3v2j",
+      "patchedVersions": ">=8.4.31",
+      "paths": [
+        ".>vue3-sfc-loader>@vue/component-compiler-utils>postcss"
+      ]
+    },
+    {
+      "package": "vue-template-compiler",
+      "severity": "moderate",
+      "title": "vue-template-compiler vulnerable to client-side Cross-Site Scripting (XSS)",
+      "url": "https://github.com/advisories/GHSA-g3ch-rx76-35fx",
+      "patchedVersions": "<0.0.0",
+      "paths": [
+        ".>vue3-sfc-loader>vue-template-compiler"
+      ]
+    },
+    {
+      "package": "postcss",
+      "severity": "moderate",
+      "title": "PostCSS has XSS via Unescaped </style> in its CSS Stringify Output",
+      "url": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93",
+      "patchedVersions": ">=8.5.10",
+      "paths": [
+        ".>vue3-sfc-loader>@vue/component-compiler-utils>postcss"
+      ]
+    },
+    {
+      "package": "echarts",
+      "severity": "moderate",
+      "title": "Apache ECharts has a cross-site scripting (XSS) vulnerability",
+      "url": "https://github.com/advisories/GHSA-fgmj-fm8m-jvvx",
+      "patchedVersions": ">=6.1.0",
+      "paths": [
+        ".>echarts"
+      ]
+    },
+    {
+      "package": "postcss",
+      "severity": "high",
+      "title": "PostCSS: Arbitrary file read and information disclosure via attacker-controlled sourceMappingURL in CSS comments",
+      "url": "https://github.com/advisories/GHSA-6g55-p6wh-862q",
+      "patchedVersions": ">=8.5.12",
+      "paths": [
+        ".>vue3-sfc-loader>@vue/component-compiler-utils>postcss"
+      ]
+    },
+    {
+      "package": "postcss",
+      "severity": "moderate",
+      "title": "PostCSS: incomplete fix of GHSA-6g55-p6wh-862q — attacker-controlled sourceMappingURL reads arbitrary .map files when `from` is unset",
+      "url": "https://github.com/advisories/GHSA-fxqj-rqcc-2cmp",
+      "patchedVersions": ">=8.5.23",
+      "paths": [
+        ".>vue3-sfc-loader>@vue/component-compiler-utils>postcss"
+      ]
+    },
+    {
+      "package": "postcss",
+      "severity": "high",
+      "title": "PostCSS: Path Traversal in Previous Source Map Auto-Loading (sourceMappingURL) leads to Arbitrary .map File Disclosure",
+      "url": "https://github.com/advisories/GHSA-r28c-9q8g-f849",
+      "patchedVersions": ">=8.5.18",
+      "paths": [
+        ".>vue3-sfc-loader>@vue/component-compiler-utils>postcss"
+      ]
+    },
+    {
+      "package": "source-map-js",
+      "severity": "high",
+      "title": "source-map-js allows event-loop denial of service through indexed source-map section offsets",
+      "url": "https://github.com/advisories/GHSA-68fv-2mgg-jv7q",
+      "patchedVersions": ">=1.2.2",
+      "paths": [
+        ".>@unocss/transformer-directives>css-tree>source-map-js"
+      ]
+    },
+    {
+      "package": "postcss-selector-parser",
+      "severity": "moderate",
+      "title": "PostCSS: Quadratic complexity in flat selector parsing allows CPU exhaustion",
+      "url": "https://github.com/advisories/GHSA-rj75-hqrm-r3gf",
+      "patchedVersions": ">=6.1.5",
+      "paths": [
+        ".>vue3-sfc-loader>@vue/component-compiler-utils>postcss-selector-parser"
+      ]
+    },
+    {
+      "package": "qs",
+      "severity": "moderate",
+      "title": "qs : qs.stringify with arrayFormat 'comma' throws an uncaught TypeError on array elements carrying a non-callable own toString (DoS)",
+      "url": "https://github.com/advisories/GHSA-6pq8-jhm2-2vcw",
+      "patchedVersions": ">=6.16.1",
+      "paths": [
+        ".>qs"
+      ]
+    }
+  ]
+}

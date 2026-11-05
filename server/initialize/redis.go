@@ -3,6 +3,7 @@ package initialize
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"tb_live_module/config"
 	"tb_live_module/global"
@@ -16,19 +17,24 @@ func initRedisClient(redisCfg config.Redis) (redis.UniversalClient, error) {
 	// 使用集群模式
 	if redisCfg.UseCluster {
 		client = redis.NewClusterClient(&redis.ClusterOptions{
-			Addrs:    redisCfg.ClusterAddrs,
-			Password: redisCfg.Password,
+			ContextTimeoutEnabled: true,
+			Addrs:                 redisCfg.ClusterAddrs,
+			Password:              redisCfg.Password,
 		})
 	} else {
 		// 使用单例模式
 		client = redis.NewClient(&redis.Options{
-			Addr:     redisCfg.Addr,
-			Password: redisCfg.Password,
-			DB:       redisCfg.DB,
+			ContextTimeoutEnabled: true,
+			Addr:                  redisCfg.Addr,
+			Password:              redisCfg.Password,
+			DB:                    redisCfg.DB,
 		})
 	}
-	pong, err := client.Ping(context.Background()).Result()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	pong, err := client.Ping(ctx).Result()
 	if err != nil {
+		_ = client.Close()
 		global.GVA_LOG.Error("redis connect ping failed, err:", zap.String("name", redisCfg.Name), zap.Error(err))
 		return nil, err
 	}

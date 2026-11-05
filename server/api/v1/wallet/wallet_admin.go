@@ -194,6 +194,7 @@ func (*WalletAdminApi) Ledger(c *gin.Context) {
 // @Param phone query string false "E.164完整手机号"
 // @Param currencyCode query string false "仅COIN"
 // @Param afterOrderId query string false "起始订单内部游标，首次0；后续使用nextOrderId"
+// @Param afterTransactionId query string false "消费交易游标，首次0；后续使用nextTransactionId"
 // @Param afterVersion query string false "起始版本，首次0；后续使用nextVersion"
 // @Param limit query int false "默认100，最大1000"
 // @Success 200 {object} response.Response{data=walletResponse.Check}
@@ -208,6 +209,27 @@ func (*WalletAdminApi) Check(c *gin.Context) {
 	if err == nil && !data.Consistent && global.GVA_LOG != nil {
 		global.GVA_LOG.Error("wallet reconciliation inconsistent", zap.String("accountNo", data.AccountNo), zap.Int("issueCount", len(data.Issues)), zap.Uint64("operatorId", actor(c).ID))
 	}
+	respond(c, data, err)
+}
+
+// Trace
+// @Tags WalletAdmin
+// @Summary 查询交易及原扣款、消费退款和审计
+// @Security ApiKeyAuth
+// @Produce application/json
+// @Param no query string false "流水号、账务交易号或人工充值单号"
+// @Param businessType query string false "业务命名空间，与businessNo和kind同时提供"
+// @Param businessNo query string false "外部业务单号"
+// @Param kind query string false "debit或refund"
+// @Param afterRefundId query string false "退款游标，首次0，每页50条"
+// @Success 200 {object} response.Response{data=walletResponse.Trace}
+// @Router /v1/admin/wallet/transaction/trace [get]
+func (*WalletAdminApi) Trace(c *gin.Context) {
+	var r req.TraceQuery
+	if !bindQuery(c, &r) {
+		return
+	}
+	data, err := walletService.Trace(c.Request.Context(), actor(c), r)
 	respond(c, data, err)
 }
 

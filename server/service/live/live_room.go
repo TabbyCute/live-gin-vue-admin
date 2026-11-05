@@ -810,8 +810,7 @@ func hasSRSPublisher(session liveModel.LiveSession) bool {
 func (s *RoomService) UpdateSessionStats(req liveReq.LiveSessionStatsReq) error {
 	updates := map[string]interface{}{
 		"view_count": req.ViewCount, "viewer_count": req.ViewerCount, "peak_online_count": req.PeakOnlineCount,
-		"like_count": req.LikeCount, "gift_count": req.GiftCount, "gift_coin_amount": req.GiftCoinAmount,
-		"gift_user_count": req.GiftUserCount,
+		"like_count": req.LikeCount, // Gift statistics are owned exclusively by gift facts.
 	}
 	result := global.GVA_DB.Model(&liveModel.LiveSession{}).
 		Where("session_no = ? AND status IN ?", req.SessionNo, []int{int(liveModel.LiveSessionPreparing), int(liveModel.LiveSessionLiving), int(liveModel.LiveSessionEnding)}).
@@ -2927,7 +2926,7 @@ func (s *RoomService) GetAdminRoomList(req liveReq.LiveRoomAdminListReq) ([]live
 	return list, total, nil
 }
 
-func (s *RoomService) GetAdminRoomDetail(roomID uint) (liveRes.LiveRoomAdminDetailResp, error) {
+func (s *RoomService) GetAdminRoomDetail(roomID uint, includeGift ...bool) (liveRes.LiveRoomAdminDetailResp, error) {
 	var room liveModel.LiveRoom
 	if err := global.GVA_DB.First(&room, roomID).Error; err != nil {
 		return liveRes.LiveRoomAdminDetailResp{}, normalizeRoomError(err)
@@ -2937,6 +2936,11 @@ func (s *RoomService) GetAdminRoomDetail(roomID uint) (liveRes.LiveRoomAdminDeta
 		return liveRes.LiveRoomAdminDetailResp{}, err
 	}
 	result := liveRes.LiveRoomAdminDetailResp{LiveRoomAdminItem: toLiveRoomAdminItem(room, anchor)}
+	summary, err := authorizedGiftSummary(global.GVA_DB, "room_id", roomID, includeGift)
+	if err != nil {
+		return result, err
+	}
+	result.GiftSummary = summary
 	if room.CurrentSessionId == 0 {
 		return result, nil
 	}
@@ -2945,6 +2949,10 @@ func (s *RoomService) GetAdminRoomDetail(roomID uint) (liveRes.LiveRoomAdminDeta
 		return liveRes.LiveRoomAdminDetailResp{}, normalizeSessionError(err)
 	}
 	current := toLiveSessionAdminItem(session, room, anchor)
+	current.GiftSummary, err = authorizedGiftSummary(global.GVA_DB, "session_id", session.ID, includeGift)
+	if err != nil {
+		return result, err
+	}
 	if runtime, runtimeErr := loadLiveSRSRuntime(global.GVA_DB); runtimeErr == nil {
 		applySRSRuntimeToAdminItem(&current, session, runtime)
 	}
@@ -3045,7 +3053,7 @@ func (s *RoomService) UpdateAdminRoomStatus(req liveReq.LiveRoomAdminStatusReq) 
 	})
 }
 
-func (s *RoomService) GetAdminSessionList(req liveReq.LiveSessionAdminListReq) ([]liveRes.LiveSessionAdminItem, int64, error) {
+func (s *RoomService) GetAdminSessionList(req liveReq.LiveSessionAdminListReq, includeGift ...bool) ([]liveRes.LiveSessionAdminItem, int64, error) {
 	db := global.GVA_DB.Model(&liveModel.LiveSession{})
 	if req.SessionNo != "" {
 		db = db.Where("session_no LIKE ?", "%"+strings.TrimSpace(req.SessionNo)+"%")
@@ -3109,10 +3117,21 @@ func (s *RoomService) GetAdminSessionList(req liveReq.LiveSessionAdminListReq) (
 		applySRSRuntimeToAdminItem(&item, session, runtime)
 		list = append(list, item)
 	}
+	ids := make([]uint, 0, len(list))
+	for _, item := range list {
+		ids = append(ids, item.ID)
+	}
+	summaries, err := authorizedGiftSummaries(global.GVA_DB, "session_id", ids, includeGift)
+	if err != nil {
+		return nil, 0, err
+	}
+	for i := range list {
+		list[i].GiftSummary = summaries[list[i].ID]
+	}
 	return list, total, nil
 }
 
-func (s *RoomService) GetAdminSessionDetail(sessionID uint) (liveRes.LiveSessionAdminItem, error) {
+func (s *RoomService) GetAdminSessionDetail(sessionID uint, includeGift ...bool) (liveRes.LiveSessionAdminItem, error) {
 	var session liveModel.LiveSession
 	if err := global.GVA_DB.First(&session, sessionID).Error; err != nil {
 		return liveRes.LiveSessionAdminItem{}, normalizeSessionError(err)
@@ -3126,6 +3145,11 @@ func (s *RoomService) GetAdminSessionDetail(sessionID uint) (liveRes.LiveSession
 		return liveRes.LiveSessionAdminItem{}, err
 	}
 	item := toLiveSessionAdminItem(session, room, anchor)
+	summary, err := authorizedGiftSummary(global.GVA_DB, "session_id", sessionID, includeGift)
+	if err != nil {
+		return item, err
+	}
+	item.GiftSummary = summary
 	runtime, runtimeErr := loadLiveSRSRuntime(global.GVA_DB)
 	if runtimeErr != nil {
 		return liveRes.LiveSessionAdminItem{}, runtimeErr

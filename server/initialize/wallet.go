@@ -24,6 +24,8 @@ func walletTriggers() []walletTrigger {
 		{"trg_wallet_audit_no_update", "wallet_audit_log", "UPDATE"}, {"trg_wallet_audit_no_delete", "wallet_audit_log", "DELETE"},
 		{"trg_wallet_order_no_delete", "wallet_adjustment_order", "DELETE"}, {"trg_wallet_account_no_delete", "wallet_account", "DELETE"},
 		{"trg_wallet_order_core_immutable", "wallet_adjustment_order", "UPDATE"},
+		{"trg_wallet_transaction_no_delete", "wallet_transaction", "DELETE"},
+		{"trg_wallet_transaction_core_immutable", "wallet_transaction", "UPDATE"},
 	}
 }
 
@@ -33,14 +35,18 @@ const walletTriggerBody = "SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'wallet re
 var walletOrderCoreColumns = []string{"id", "order_no", "account_id", "account_no", "currency_code", "amount", "kind", "created_by", "request_id", "request_hash", "original_order_no", "source_type", "external_order_no", "reason", "evidence_ref", "created_ip", "created_at"}
 
 func (t walletTrigger) body(dialect string) string {
-	if t.name != "trg_wallet_order_core_immutable" {
+	if t.name != "trg_wallet_order_core_immutable" && t.name != "trg_wallet_transaction_core_immutable" {
 		if dialect == "mysql" {
 			return walletTriggerBody
 		}
 		return "BEGIN SELECT RAISE(ABORT, 'wallet record is immutable'); END"
 	}
 	var changed []string
-	for _, col := range walletOrderCoreColumns {
+	columns := walletOrderCoreColumns
+	if t.name == "trg_wallet_transaction_core_immutable" {
+		columns = []string{"id", "transaction_no", "kind", "business_type", "business_no", "account_id", "account_no", "currency_code", "amount", "original_no", "ledger_no", "request_hash", "actor_type", "actor_id", "actor_ip", "trace_id", "reason", "created_at"}
+	}
+	for _, col := range columns {
 		if dialect == "mysql" {
 			// BINARY避免VARCHAR的PAD SPACE排序规则把尾部空格变化视为相等。
 			changed = append(changed, fmt.Sprintf("NOT (BINARY OLD.`%s` <=> BINARY NEW.`%s`)", col, col))
@@ -58,6 +64,42 @@ func (t walletTrigger) body(dialect string) string {
 // SQLite仅用于本地开发和单元测试；生产基线为MySQL8/InnoDB。
 func MigrateWallet(db *gorm.DB) error {
 	return withWalletMigrationLock(db, migrateWallet)
+}
+
+// MigrateWalletTransactions 用于现有钱包已完成部署时增量安装消费内核。
+// 只创建新表及其保护触发器；已有表仅严格校验，不执行ALTER或业务数据修补。
+func MigrateWalletTransactions(db *gorm.DB) error {
+	return withWalletMigrationLock(db, func(conn *gorm.DB) error {
+		if conn.Dialector.Name() != "mysql" {
+			return fmt.Errorf("transaction-only migration requires MySQL")
+		}
+		if err := validateWalletMySQLRuntime(conn); err != nil {
+			return err
+		}
+		var count int64
+		if err := conn.Raw("SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='wallet_transaction'").Scan(&count).Error; err != nil {
+			return err
+		}
+		if count == 0 {
+			if err := conn.Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin").Migrator().CreateTable(&model.WalletTransaction{}); err != nil {
+				return err
+			}
+		}
+		for _, t := range walletTriggers() {
+			if t.table != "wallet_transaction" {
+				continue
+			}
+			if err := conn.Raw("SELECT COUNT(*) FROM information_schema.TRIGGERS WHERE TRIGGER_SCHEMA=DATABASE() AND TRIGGER_NAME=?", t.name).Scan(&count).Error; err != nil {
+				return err
+			}
+			if count == 0 {
+				if err := conn.Exec(fmt.Sprintf("CREATE TRIGGER %s BEFORE %s ON %s FOR EACH ROW %s", t.name, t.event, t.table, t.body("mysql"))).Error; err != nil {
+					return err
+				}
+			}
+		}
+		return ValidateWalletSchema(conn)
+	})
 }
 
 func migrateWallet(db *gorm.DB) error {
@@ -242,6 +284,7 @@ func syncWalletMetadataUnlocked(db *gorm.DB) error {
 			parentCreated = true
 		}
 		menus := []system.SysBaseMenu{
+			{MenuLevel: 1, ParentId: parent.ID, Path: "trace", Name: "walletTrace", Component: "view/wallet/trace/index.vue", Sort: 5, Meta: system.Meta{Title: "交易溯源", Icon: "search", KeepAlive: true}},
 			{MenuLevel: 1, ParentId: parent.ID, Path: "introduction", Name: "walletIntroduction", Component: "view/wallet/introduction/index.vue", Sort: 0, Meta: system.Meta{Title: "钱包介绍", Icon: "reading", KeepAlive: true}},
 			{MenuLevel: 1, ParentId: parent.ID, Path: "account", Name: "walletAccount", Component: "view/wallet/account/index.vue", Sort: 2, Meta: system.Meta{Title: "钱包账户", Icon: "credit-card", KeepAlive: true}},
 			{MenuLevel: 1, ParentId: parent.ID, Path: "ledger", Name: "walletLedger", Component: "view/wallet/ledger/index.vue", Sort: 3, Meta: system.Meta{Title: "余额流水", Icon: "tickets", KeepAlive: true}},
@@ -262,6 +305,7 @@ func syncWalletMetadataUnlocked(db *gorm.DB) error {
 			createdIDs = append(createdIDs, menu.ID)
 		}
 		for _, r := range []struct{ method, path, description string }{
+			{"GET", "transaction/trace", "追踪交易、原扣款及消费退款"},
 			{"GET", "account/detail", "查询钱包余额"}, {"GET", "account/check", "分批只读账务对账"}, {"POST", "account/status", "停用或启用钱包"},
 			{"GET", "ledger/list", "查询余额流水"}, {"POST", "adjustment/create", "创建人工入账单"}, {"POST", "adjustment/approve", "审核并入账"},
 			{"POST", "adjustment/reject", "驳回人工入账单"}, {"POST", "adjustment/reverse", "创建冲正申请"}, {"GET", "adjustment/list", "查询人工入账单"}, {"GET", "adjustment/detail", "查看人工入账详情及审计"},

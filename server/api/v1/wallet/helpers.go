@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
@@ -10,8 +11,10 @@ import (
 	"net/url"
 	"reflect"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/gin-gonic/gin"
+	driver "github.com/go-sql-driver/mysql"
 	"go.uber.org/zap"
 	"tb_live_module/global"
 	"tb_live_module/middleware"
@@ -36,7 +39,18 @@ func respond(c *gin.Context, data any, err error) {
 		return
 	}
 	if global.GVA_LOG != nil {
-		global.GVA_LOG.Error("wallet request failed", zap.String("path", c.FullPath()), zap.Error(err))
+		// 数据库错误文本可能包含凭证、完整SQL或连接信息，只记录可告警分类。
+		class, mysqlCode := "dependency", uint16(0)
+		var mysqlErr *driver.MySQLError
+		switch {
+		case errors.Is(err, context.DeadlineExceeded):
+			class = "deadline"
+		case errors.Is(err, context.Canceled):
+			class = "canceled"
+		case errors.As(err, &mysqlErr):
+			class, mysqlCode = "mysql", mysqlErr.Number
+		}
+		global.GVA_LOG.Error("wallet request failed", zap.String("path", c.FullPath()), zap.String("class", class), zap.Uint16("mysqlCode", mysqlCode))
 	}
 	response.Result(svc.ErrUnavailable.Code, map[string]any{}, svc.ErrUnavailable.Message, c)
 }
@@ -70,7 +84,7 @@ func bindBody(c *gin.Context, out any) bool {
 		return invalid(c)
 	}
 	body, err := io.ReadAll(io.LimitReader(c.Request.Body, (16<<10)+1))
-	if err != nil || len(body) > 16<<10 {
+	if err != nil || len(body) > 16<<10 || !utf8.Valid(body) {
 		return invalid(c)
 	}
 	// 拒绝重复JSON键和多值请求体，避免代理、审计与业务解释不一致。

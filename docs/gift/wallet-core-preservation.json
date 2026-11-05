@@ -1,0 +1,33 @@
+{
+  "checkedFiles": 27,
+  "changedFiles": [],
+  "baselineSHA256": {
+    "server/service/wallet/query.go": "8f8cd61e28301497de6b31b8bfa28a8f8279cc87f0ad167960da4eee9eec3ba8",
+    "server/service/wallet/mysql_load_test.go": "06cf49abb6c9b5ed6a3d6267df7c79f8a4f66042ffcf5bfb4745f64a51ea1e62",
+    "server/service/wallet/seal_integrity_test.go": "102315d97473b2ad7252e18c4bb8e869b6262ad9a4948e8227a8bf57d0c4c6bf",
+    "server/service/wallet/service.go": "e677f3381cf99b2580fe3f51fd43c8ecf427ff49e6e608f1c0cbdd51bf3e00ef",
+    "server/service/wallet/trace.go": "19fafacf041085e6cd69693c926af74aabc900fdbf9a1af64dba8cd181756f88",
+    "server/service/wallet/mysql_snapshot_test.go": "07d58b8531858351ddb8142bda6a14d19de011014752a39b2a4f764fa1f0c036",
+    "server/service/wallet/transaction_test.go": "fe68423163f864ac4291ddb7081f0e7dc93f841d8fcf4c4c899576379dd56d40",
+    "server/service/wallet/posting.go": "92aa7b090f3e5061b4481e022da808f4f81bb139fd3a5152625b4092508ed78e",
+    "server/service/wallet/transaction.go": "e04e2ba34427320a37834860e8822cd1b76ac0324ef5c6484f8c62c18fe0deb8",
+    "server/service/wallet/recharge_test.go": "d8b176cc7d14bf39597e92e7174ecfc706aea5f7069584838fd19fe2ad5a4329",
+    "server/service/wallet/mysql_transaction_test.go": "abcc280a567fd9268b2ad5b553635db521f718b9584d8888eb3ac75660c4b6b7",
+    "server/service/wallet/transaction_check.go": "64b181ca7d5ee4fed1cf996c8ee5a031ca9c4d1c3e7356292c02c569bced0413",
+    "server/service/wallet/wallet_test.go": "e352bdf12ea9369927a6ca4604e6b88c288239701f7857b0a2d18139786ae979",
+    "server/service/wallet/mysql_test.go": "dd248e7aa4a61e18d13f1f109adeade745d2136e8c5e6097244558663450eebc",
+    "server/service/wallet/mysql_recharge_test.go": "e27374b14c85041ee784d9d68e8c3b1414bc164aa2a4b4296ea0d5f5f3db9173",
+    "server/service/wallet/integrity.go": "87f76e47883284e3c7b65e55ecf5291a48f0106bcc298e0c412a0258fbba93f3",
+    "server/service/wallet/adjustment.go": "202c79cc05d5397bb69a8d173a7914504fb9657aaf70509fd8075b686ab587e7",
+    "server/service/wallet/enter.go": "508cc05b24cc7df6cac00a0b5430666ce6648898d9290a051eddbf4c83421630",
+    "server/service/wallet/transaction_limits_test.go": "04be4fa2bb42f0949d3f7f092f805977269316bb6c1dc3b8414da59716037ae0",
+    "server/model/wallet/transaction.go": "5ad0e365525e207b758b63e44d6f2d76d5663e5b6fda5bda523596ed3e98fa57",
+    "server/model/wallet/wallet.go": "891edf1011fbd81a63ca95669e69dc4a1486ea9436b7f2537726d753dcf57795",
+    "server/model/wallet/response/wallet.go": "781e29f4574fe585755d79d3e46943c8a9446f1d793f02fde50c408df315d8b5",
+    "server/model/wallet/request/wallet.go": "0432108c00e764be55458b924035d8352d4740de63c824a1ce12d2cc3ec29296",
+    "server/initialize/wallet_migration.go": "856fe515ef9374e1901dbea796ec9881f085f131e9ef595cf616ac6691af9211",
+    "server/initialize/wallet_test.go": "19493e51fed6f8e720beb0136125978802dc0c956bcd6ad8f407a0a7bdbdb1cf",
+    "server/initialize/wallet.go": "81aad9af9901e54fd5dce18d6274cf4da804c3c0d452e3a7cf803edaf5154c76",
+    "server/initialize/wallet_schema.go": "7e62946bcc1d32fdcc7ae012356d341e5ca5e9515cc756d20756c2f24dd50dc7"
+  }
+}

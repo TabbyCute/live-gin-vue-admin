@@ -1,0 +1,86 @@
+{
+  "date": "2026-11-01",
+  "environment": {
+    "os": "macOS-26.6.2-arm64-arm-64bit",
+    "go": "go version go1.26.10 darwin/amd64 (server module toolchain)",
+    "node": "v24.4.1",
+    "docker": "Docker version 28.4.0, build d8eb465",
+    "mysql": "8.0.46; isolated Docker/tmpfs; ports 13327/13328"
+  },
+  "completeScript": {
+    "command": "EARNING_RUN_LOAD=1 bash tests/earning/run.sh",
+    "exitCode": 0,
+    "logSHA256": "d5d5673a42e3361ac6deed2d86216ecfbb731cc4b7fcc81443b7119cfdb11f03",
+    "cleanupSucceeded": true
+  },
+  "mysqlLoad": {
+    "allMoneyChecksPassed": true,
+    "concurrency": 16,
+    "elapsedMs": 3279,
+    "incomeFacts": 500,
+    "maxMs": 827,
+    "p50Ms": 814,
+    "p95Ms": 824,
+    "settlementCreateAndApproveMs": 131,
+    "withdrawals": 64
+  },
+  "fuzz": {
+    "jsonExecutions": 6871,
+    "roundingExecutions": 47579,
+    "secondsEach": 10
+  },
+  "frontendTests": {
+    "passed": 28,
+    "failed": 0
+  },
+  "vulnerabilityScan": {
+    "goReachable": 0,
+    "goImportedUnreachable": 7,
+    "goRequiredUnreachable": 2,
+    "frontend": {
+      "info": 0,
+      "low": 0,
+      "moderate": 10,
+      "high": 4,
+      "critical": 0
+    }
+  },
+  "scopeLimits": {
+    "maxSettlementFacts": 1000,
+    "maxSynchronousHistoryRows": 20000,
+    "productionPayeeProviderInstalled": false,
+    "withdrawalApplicationDefaultOpen": true,
+    "withdrawalApplicationAcceptsPayeeData": false,
+    "pendingPayoutCenterSnapshotInstalled": true,
+    "payoutImplemented": false,
+    "productionHARecoveryAccepted": false
+  },
+  "incrementalVerification": {
+    "racePackages": [
+      "service/earning",
+      "api/v1/earning",
+      "router/earning"
+    ],
+    "racePassed": true,
+    "raceLogSHA256": "68b3c39767a3326c6ddfafb0d1699dba2a9753ccab796ec280d321d8ce372a4c",
+    "frontendPassed": 8,
+    "productionBuildPassed": true,
+    "goVetPassed": true,
+    "goBuildPassed": true,
+    "swaggerEarningPaths": 23
+  },
+  "productionMetadata": {
+    "menus": 6,
+    "apiPermissions": 17,
+    "repeatIdentical": true,
+    "financialRows": {
+      "anchor_earning_ledger": 0,
+      "anchor_income_fact": 0,
+      "anchor_settlement": 0,
+      "anchor_settlement_rule": 0,
+      "anchor_withdrawable_account": 0,
+      "anchor_withdrawable_ledger": 0,
+      "anchor_withdrawal_order": 0
+    }
+  }
+}

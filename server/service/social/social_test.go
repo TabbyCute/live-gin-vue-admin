@@ -512,9 +512,14 @@ func TestMySQLConcurrency(t *testing.T) {
 			if i%3 == 0 {
 				action = Unfollow
 			}
-			_, _ = s.ChangeRelationship(ctx, 1, target(2), action, "")
+			_, err := s.ChangeRelationship(ctx, 1, target(2), action, "")
+			if err != nil && !errors.Is(err, ErrBlocked) {
+				t.Error(err)
+			}
 			if i%7 == 0 {
-				_, _ = s.ChangeRelationship(ctx, 2, target(1), Block, "")
+				if _, err = s.ChangeRelationship(ctx, 2, target(1), Block, ""); err != nil {
+					t.Error(err)
+				}
 			}
 		}(i)
 	}
@@ -542,6 +547,34 @@ func TestMySQLConcurrency(t *testing.T) {
 		}
 	}()
 	wg.Wait()
+	assertCounters(t, s, 1, 0, 0)
+	assertCounters(t, s, 2, 0, 0)
+	t.Run("pool_exhaustion_has_deadline", func(t *testing.T) {
+		sqlDB.SetMaxOpenConns(1)
+		conn, err := sqlDB.Conn(ctx)
+		require.NoError(t, err)
+		defer conn.Close()
+		limited, cancel := context.WithTimeout(ctx, 80*time.Millisecond)
+		defer cancel()
+		start := time.Now()
+		_, err = s.ChangeRelationship(limited, 1, target(2), Follow, "")
+		require.ErrorIs(t, err, context.DeadlineExceeded)
+		require.Less(t, time.Since(start), time.Second)
+	})
+	sqlDB.SetMaxOpenConns(64)
+	t.Run("row_lock_wait_has_deadline", func(t *testing.T) {
+		tx := db.Begin()
+		require.NoError(t, tx.Error)
+		defer tx.Rollback()
+		var counter model.SocialUserCounter
+		require.NoError(t, tx.Raw("SELECT * FROM social_user_counter WHERE user_id = ? FOR UPDATE", 1).Scan(&counter).Error)
+		limited, cancel := context.WithTimeout(ctx, 80*time.Millisecond)
+		defer cancel()
+		start := time.Now()
+		_, err := s.ChangeRelationship(limited, 1, target(2), Follow, "")
+		require.ErrorIs(t, err, context.DeadlineExceeded)
+		require.Less(t, time.Since(start), time.Second)
+	})
 	assertCounters(t, s, 1, 0, 0)
 	assertCounters(t, s, 2, 0, 0)
 }

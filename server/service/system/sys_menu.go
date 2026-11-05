@@ -19,24 +19,21 @@ type MenuService struct{}
 
 var MenuServiceApp = new(MenuService)
 
-func (menuService *MenuService) getMenuTreeMap(authorityId uint) (treeMap map[uint][]system.SysMenu, err error) {
+func (menuService *MenuService) getMenuTreeMap(authorityId uint, userID ...uint) (treeMap map[uint][]system.SysMenu, err error) {
 	var allMenus []system.SysMenu
 	var baseMenu []system.SysBaseMenu
 	treeMap = make(map[uint][]system.SysMenu)
 
-	var SysAuthorityMenus []system.SysAuthorityMenu
-	err = global.GVA_DB.Where("sys_authority_authority_id = ?", authorityId).Find(&SysAuthorityMenus).Error
-	if err != nil {
-		return
+	db := global.GVA_DB.Order("sort").Preload("Parameters").Preload("MenuBtn")
+	if !system.IsSuperAdmin(userID...) {
+		var menuIDs []string
+		err = global.GVA_DB.Model(&system.SysAuthorityMenu{}).Where("sys_authority_authority_id = ?", authorityId).Pluck("sys_base_menu_id", &menuIDs).Error
+		if err != nil {
+			return
+		}
+		db = db.Where("id in (?)", menuIDs)
 	}
-
-	var MenuIds []string
-
-	for i := range SysAuthorityMenus {
-		MenuIds = append(MenuIds, SysAuthorityMenus[i].MenuId)
-	}
-
-	err = global.GVA_DB.Where("id in (?)", MenuIds).Order("sort").Preload("Parameters").Preload("MenuBtn").Find(&baseMenu).Error
+	err = db.Find(&baseMenu).Error
 	if err != nil {
 		return
 	}
@@ -57,6 +54,9 @@ func (menuService *MenuService) getMenuTreeMap(authorityId uint) (treeMap map[ui
 				btnMap[menu.ID] = make(map[string]uint)
 			}
 			btnMap[menu.ID][btn.Name] = authorityId
+			if system.IsSuperAdmin(userID...) {
+				btnMap[menu.ID][btn.Name] = system.SuperAdminUserID
+			}
 		}
 	}
 	for i := range allMenus {
@@ -72,8 +72,8 @@ func (menuService *MenuService) getMenuTreeMap(authorityId uint) (treeMap map[ui
 //@param: authorityId string
 //@return: menus []system.SysMenu, err error
 
-func (menuService *MenuService) GetMenuTree(authorityId uint) (menus []system.SysMenu, err error) {
-	menuTree, err := menuService.getMenuTreeMap(authorityId)
+func (menuService *MenuService) GetMenuTree(authorityId uint, userID ...uint) (menus []system.SysMenu, err error) {
+	menuTree, err := menuService.getMenuTreeMap(authorityId, userID...)
 	menus = menuTree[0]
 	for i := 0; i < len(menus); i++ {
 		err = menuService.getChildrenList(&menus[i], menuTree)
@@ -100,9 +100,9 @@ func (menuService *MenuService) getChildrenList(menu *system.SysMenu, treeMap ma
 //@description: 获取路由分页
 //@return: list interface{}, total int64,err error
 
-func (menuService *MenuService) GetInfoList(authorityID uint) (list interface{}, err error) {
+func (menuService *MenuService) GetInfoList(authorityID uint, userID ...uint) (list interface{}, err error) {
 	var menuList []system.SysBaseMenu
-	treeMap, err := menuService.getBaseMenuTreeMap(authorityID)
+	treeMap, err := menuService.getBaseMenuTreeMap(authorityID, userID...)
 	menuList = treeMap[0]
 	for i := 0; i < len(menuList); i++ {
 		err = menuService.getBaseChildrenList(&menuList[i], treeMap)
@@ -184,10 +184,13 @@ func (menuService *MenuService) AddBaseMenu(menu system.SysBaseMenu) error {
 //@description: 获取路由总树map
 //@return: treeMap map[string][]system.SysBaseMenu, err error
 
-func (menuService *MenuService) getBaseMenuTreeMap(authorityID uint) (treeMap map[uint][]system.SysBaseMenu, err error) {
-	parentAuthorityID, err := AuthorityServiceApp.GetParentAuthorityID(authorityID)
-	if err != nil {
-		return nil, err
+func (menuService *MenuService) getBaseMenuTreeMap(authorityID uint, userID ...uint) (treeMap map[uint][]system.SysBaseMenu, err error) {
+	var parentAuthorityID uint
+	if !system.IsSuperAdmin(userID...) {
+		parentAuthorityID, err = AuthorityServiceApp.GetParentAuthorityID(authorityID)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	var allMenus []system.SysBaseMenu
@@ -220,8 +223,8 @@ func (menuService *MenuService) getBaseMenuTreeMap(authorityID uint) (treeMap ma
 //@description: 获取基础路由树
 //@return: menus []system.SysBaseMenu, err error
 
-func (menuService *MenuService) GetBaseMenuTree(authorityID uint) (menus []system.SysBaseMenu, err error) {
-	treeMap, err := menuService.getBaseMenuTreeMap(authorityID)
+func (menuService *MenuService) GetBaseMenuTree(authorityID uint, userID ...uint) (menus []system.SysBaseMenu, err error) {
+	treeMap, err := menuService.getBaseMenuTreeMap(authorityID, userID...)
 	menus = treeMap[0]
 	for i := 0; i < len(menus); i++ {
 		err = menuService.getBaseChildrenList(&menus[i], treeMap)
@@ -235,12 +238,12 @@ func (menuService *MenuService) GetBaseMenuTree(authorityID uint) (menus []syste
 //@param: menus []model.SysBaseMenu, authorityId string
 //@return: err error
 
-func (menuService *MenuService) AddMenuAuthority(menus []system.SysBaseMenu, adminAuthorityID, authorityId uint) (err error) {
+func (menuService *MenuService) AddMenuAuthority(menus []system.SysBaseMenu, adminAuthorityID, authorityId uint, userID ...uint) (err error) {
 	var auth system.SysAuthority
 	auth.AuthorityId = authorityId
 	auth.SysBaseMenus = menus
 
-	err = AuthorityServiceApp.CheckAuthorityIDAuth(adminAuthorityID, authorityId)
+	err = AuthorityServiceApp.CheckAuthorityIDAuth(adminAuthorityID, authorityId, userID...)
 	if err != nil {
 		return err
 	}
@@ -250,7 +253,7 @@ func (menuService *MenuService) AddMenuAuthority(menus []system.SysBaseMenu, adm
 	var menuIds []string
 
 	// 当开启了严格的树角色并且父角色不为0时需要进行菜单筛选
-	if global.GVA_CONFIG.System.UseStrictAuth && *authority.ParentId != 0 {
+	if !system.IsSuperAdmin(userID...) && global.GVA_CONFIG.System.UseStrictAuth && authority.ParentId != nil && *authority.ParentId != 0 {
 		var authorityMenus []system.SysAuthorityMenu
 		err = global.GVA_DB.Where("sys_authority_authority_id = ?", adminAuthorityID).Find(&authorityMenus).Error
 		if err != nil {
@@ -374,6 +377,15 @@ func (menuService *MenuService) SetMenuAuthorities(menuId uint, authorityIds []u
 //
 //	Author [SliverHorn](https://github.com/SliverHorn)
 func (menuService *MenuService) UserAuthorityDefaultRouter(user *system.SysUser) {
+	if system.IsSuperAdmin(user.ID) {
+		var menu system.SysBaseMenu
+		if user.Authority.DefaultRouter != "" && user.Authority.DefaultRouter != "404" && global.GVA_DB.Where("name = ?", user.Authority.DefaultRouter).First(&menu).Error == nil {
+			return
+		}
+		user.Authority.DefaultRouter = "dashboard"
+		return
+	}
+
 	var menuIds []string
 	err := global.GVA_DB.Model(&system.SysAuthorityMenu{}).Where("sys_authority_authority_id = ?", user.AuthorityId).Pluck("sys_base_menu_id", &menuIds).Error
 	if err != nil {

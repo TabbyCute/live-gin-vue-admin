@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -43,7 +44,8 @@ func OperationRecord() gin.HandlerFunc {
 			captured, truncated, replacement, err := captureOperationRequestBody(c.Request.Body, operationRecordCaptureLimit)
 			c.Request.Body = replacement
 			body, bodyTruncated = captured, truncated
-			if !bodyTruncated && strings.Contains(contentType, "application/json") {
+			// 钱包只接受JSON；错误Content-Type也不能让凭证绕过脱敏。
+			if !bodyTruncated && (strings.Contains(strings.ToLower(contentType), "application/json") || strings.Contains(c.FullPath(), "/wallet/")) {
 				body = redactOperationRecordJSON(body)
 			}
 			if err != nil && global.GVA_LOG != nil {
@@ -94,8 +96,12 @@ func OperationRecord() gin.HandlerFunc {
 			}
 			return
 		}
-		if err := global.GVA_DB.Create(&record).Error; err != nil && global.GVA_LOG != nil {
-			global.GVA_LOG.Error("create operation record error:", zap.Error(err))
+		// 通用操作日志是补充记录；资金审计已在业务事务内写入。
+		// 客户端断开后仍尽力记录，但不能无限等待连接池占住钱包的并发槽。
+		ctx, cancel := context.WithTimeout(context.WithoutCancel(c.Request.Context()), 2*time.Second)
+		defer cancel()
+		if err := global.GVA_DB.WithContext(ctx).Create(&record).Error; err != nil && global.GVA_LOG != nil {
+			global.GVA_LOG.Error("create operation record failed")
 		}
 	}
 }
@@ -152,13 +158,16 @@ func operationRecordQuery(rawQuery string) ([]byte, bool) {
 
 func redactOperationRecordJSON(value []byte) []byte {
 	var data interface{}
-	if len(value) == 0 || json.Unmarshal(value, &data) != nil {
+	if len(value) == 0 {
 		return value
+	}
+	if json.Unmarshal(value, &data) != nil {
+		return []byte(operationRecordRedacted)
 	}
 	redactOperationRecordValue(data)
 	redacted, err := json.Marshal(data)
 	if err != nil || len(redacted) > operationRecordCaptureLimit {
-		return value
+		return []byte(operationRecordRedacted)
 	}
 	return redacted
 }
@@ -185,7 +194,7 @@ func isSensitiveOperationRecordKey(key string) bool {
 	switch normalized {
 	case "password", "oldpassword", "newpassword", "confirmpassword", "phone", "legalname", "documentno",
 		"token", "accesstoken", "refreshtoken", "authorization", "secret", "privatekey", "smscode", "supercode",
-		"evidenceref", "externalorderno", "requesthash":
+		"evidenceref", "externalorderno", "requesthash", "account", "accountname", "encryptedpayload", "accountfingerprint", "encryptionkeyid", "nonce", "payoutencryptionkeys", "payoutfingerprintkey":
 		return true
 	default:
 		return false

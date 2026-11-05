@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"tb_live_module/config"
@@ -68,14 +69,15 @@ type NotificationSink interface {
 	Deliver(context.Context, Notification) error
 }
 type Service struct {
-	DB        *gorm.DB
-	Redis     redis.UniversalClient
-	Directory Directory
-	Resources map[model.ResourceType]ResourceProvider
-	Config    config.Social
-	Log       *zap.Logger
-	Sink      NotificationSink
-	Metrics   Metrics
+	historyNextShard atomic.Uint32
+	DB               *gorm.DB
+	Redis            redis.UniversalClient
+	Directory        Directory
+	Resources        map[model.ResourceType]ResourceProvider
+	Config           config.Social
+	Log              *zap.Logger
+	Sink             NotificationSink
+	Metrics          Metrics
 }
 
 func (s *Service) db(ctx context.Context) *gorm.DB {

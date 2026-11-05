@@ -138,3 +138,50 @@ func TestMySQLWalletSchemaQueryBudgetAndErrors(t *testing.T) {
 	require.ErrorContains(t, err, "query wallet checks")
 	require.NotContains(t, err.Error(), "missing")
 }
+
+func TestMySQLReviewReplayTailStableDuringConcurrentDebit(t *testing.T) {
+	s := mysqlFixture(t)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	o, err := s.Create(ctx, creator, grant("replay_stable_tail"))
+	require.NoError(t, err)
+	_, err = s.Approve(ctx, reviewer, review(o.OrderNo))
+	require.NoError(t, err)
+	paused, resume := make(chan struct{}), make(chan struct{})
+	var once, resumeOnce sync.Once
+	defer resumeOnce.Do(func() { close(resume) })
+	require.NoError(t, s.DB.Callback().Query().After("gorm:query").Register("replay_wallet_pause", func(tx *gorm.DB) {
+		if tx.Statement.Context.Value(snapshotProbe{}) == true && tx.Statement.Table == "wallet_account" {
+			once.Do(func() {
+				close(paused)
+				select {
+				case <-resume:
+				case <-ctx.Done():
+				}
+			})
+		}
+	}))
+	t.Cleanup(func() { s.DB.Callback().Query().Remove("replay_wallet_pause") })
+	replayDone, debitDone := make(chan error, 1), make(chan error, 1)
+	go func() {
+		_, e := s.Approve(context.WithValue(ctx, snapshotProbe{}, true), reviewer, review(o.OrderNo))
+		replayDone <- e
+	}()
+	select {
+	case <-paused:
+	case <-ctx.Done():
+		t.Fatal(ctx.Err())
+	}
+	go func() { _, e := s.Debit(ctx, movement("replay_concurrent_debit", "1")); debitDone <- e }()
+	select {
+	case e := <-debitDone:
+		t.Fatalf("debit must wait for replay consistency check, got %v", e)
+	case <-time.After(50 * time.Millisecond):
+	}
+	resumeOnce.Do(func() { close(resume) })
+	require.NoError(t, <-replayDone)
+	require.NoError(t, <-debitDone)
+	c, err := s.Check(ctx, creator, req.CheckSearch{AccountQuery: req.AccountQuery{AccountNo: "10000010"}})
+	require.NoError(t, err)
+	require.True(t, c.Consistent, c.Issues)
+}

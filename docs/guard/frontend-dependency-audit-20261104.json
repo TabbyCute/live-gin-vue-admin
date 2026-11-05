@@ -1,0 +1,110 @@
+{
+  "scannedAt": "2026-11-04",
+  "command": "pnpm audit --prod --json",
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 10,
+      "high": 4,
+      "critical": 0
+    },
+    "dependencies": 340,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 340
+  },
+  "advisories": [
+    {
+      "package": "wangeditor",
+      "severity": "high",
+      "title": "Cross-Site Scripting in wangeditor",
+      "patchedVersions": "<0.0.0",
+      "url": "https://github.com/advisories/GHSA-g7mw-5cq6-fv82"
+    },
+    {
+      "package": "postcss",
+      "severity": "moderate",
+      "title": "PostCSS line return parsing error",
+      "patchedVersions": ">=8.4.31",
+      "url": "https://github.com/advisories/GHSA-7fh5-64p2-3v2j"
+    },
+    {
+      "package": "vue-template-compiler",
+      "severity": "moderate",
+      "title": "vue-template-compiler vulnerable to client-side Cross-Site Scripting (XSS)",
+      "patchedVersions": "<0.0.0",
+      "url": "https://github.com/advisories/GHSA-g3ch-rx76-35fx"
+    },
+    {
+      "package": "postcss",
+      "severity": "moderate",
+      "title": "PostCSS has XSS via Unescaped </style> in its CSS Stringify Output",
+      "patchedVersions": ">=8.5.10",
+      "url": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93"
+    },
+    {
+      "package": "echarts",
+      "severity": "moderate",
+      "title": "Apache ECharts has a cross-site scripting (XSS) vulnerability",
+      "patchedVersions": ">=6.1.0",
+      "url": "https://github.com/advisories/GHSA-fgmj-fm8m-jvvx"
+    },
+    {
+      "package": "postcss",
+      "severity": "high",
+      "title": "PostCSS: Arbitrary file read and information disclosure via attacker-controlled sourceMappingURL in CSS comments",
+      "patchedVersions": ">=8.5.12",
+      "url": "https://github.com/advisories/GHSA-6g55-p6wh-862q"
+    },
+    {
+      "package": "postcss",
+      "severity": "moderate",
+      "title": "PostCSS: incomplete fix of GHSA-6g55-p6wh-862q — attacker-controlled sourceMappingURL reads arbitrary .map files when `from` is unset",
+      "patchedVersions": ">=8.5.23",
+      "url": "https://github.com/advisories/GHSA-fxqj-rqcc-2cmp"
+    },
+    {
+      "package": "postcss",
+      "severity": "high",
+      "title": "PostCSS: Path Traversal in Previous Source Map Auto-Loading (sourceMappingURL) leads to Arbitrary .map File Disclosure",
+      "patchedVersions": ">=8.5.18",
+      "url": "https://github.com/advisories/GHSA-r28c-9q8g-f849"
+    },
+    {
+      "package": "source-map-js",
+      "severity": "high",
+      "title": "source-map-js allows event-loop denial of service through indexed source-map section offsets",
+      "patchedVersions": ">=1.2.2",
+      "url": "https://github.com/advisories/GHSA-68fv-2mgg-jv7q"
+    },
+    {
+      "package": "postcss-selector-parser",
+      "severity": "moderate",
+      "title": "PostCSS: Quadratic complexity in flat selector parsing allows CPU exhaustion",
+      "patchedVersions": ">=6.1.5",
+      "url": "https://github.com/advisories/GHSA-rj75-hqrm-r3gf"
+    },
+    {
+      "package": "qs",
+      "severity": "moderate",
+      "title": "qs : qs.stringify with arrayFormat 'comma' throws an uncaught TypeError on array elements carrying a non-callable own toString (DoS)",
+      "patchedVersions": ">=6.16.1",
+      "url": "https://github.com/advisories/GHSA-6pq8-jhm2-2vcw"
+    },
+    {
+      "package": "minimatch",
+      "severity": "moderate",
+      "title": "minimatch has potential denial of service via globparts amplification",
+      "patchedVersions": ">=11.0.1",
+      "url": "https://github.com/advisories/GHSA-g3hv-75wg-m249"
+    },
+    {
+      "package": "glob",
+      "severity": "moderate",
+      "title": "Glob: AbortSignal cancellation bypass allows post-timeout filesystem traversal",
+      "patchedVersions": ">=14.0.2",
+      "url": "https://github.com/advisories/GHSA-3g3m-2fjr-6pw4"
+    }
+  ]
+}

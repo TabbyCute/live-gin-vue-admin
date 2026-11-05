@@ -17,17 +17,18 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	driver "github.com/go-sql-driver/mysql"
-	"github.com/google/uuid"
-	"go.uber.org/zap"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 	"tb_live_module/config"
 	live "tb_live_module/model/live"
 	"tb_live_module/model/system"
 	model "tb_live_module/model/wallet"
 	res "tb_live_module/model/wallet/response"
 	"tb_live_module/utils"
+
+	driver "github.com/go-sql-driver/mysql"
+	"github.com/google/uuid"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type BusinessError struct {
@@ -41,23 +42,24 @@ var (
 	ErrInvalid         = &BusinessError{47001, "钱包参数无效，请检查整数金额、编号和原因"}
 	ErrForbidden       = &BusinessError{47002, "无钱包操作权限或管理员已失效"}
 	ErrAccount         = &BusinessError{47003, "账号不存在或当前不可入账"}
-	ErrNotFound        = &BusinessError{47004, "入账单不存在"}
+	ErrNotFound        = &BusinessError{47004, "账务单不存在"}
 	ErrConflict        = &BusinessError{47005, "订单状态冲突或幂等键已用于其他请求"}
 	ErrSelfReview      = &BusinessError{47006, "除顶级超级管理员外，申请人不能审核自己的订单"}
-	ErrLimit           = &BusinessError{47007, "超过单笔、每日或待审核数量限制"}
+	ErrLimit           = &BusinessError{47007, "超过单笔、每日或待审核数量限制，请联系客服"}
 	ErrEvidence        = &BusinessError{47008, "人工充值必须提供资金凭证引用"}
 	ErrDisabled        = &BusinessError{47009, "钱包已停用"}
-	ErrInsufficient    = &BusinessError{47010, "余额不足，不能执行冲正"}
+	ErrInsufficient    = &BusinessError{47010, "可用余额不足"}
 	ErrInvariant       = &BusinessError{47011, "账务校验异常，请联系管理员核查"}
 	ErrUnavailable     = &BusinessError{47012, "钱包服务暂不可用，请使用原请求编号重试"}
 	ErrDuplicateSource = &BusinessError{47013, "该资金凭证已有申请，请按凭证号查询原单，禁止重复充值"}
 	ErrWalletNotFound  = &BusinessError{47014, "钱包尚未开户，不能设置状态"}
 	ErrLegacyOrder     = &BusinessError{47015, "历史申请缺少资金凭证标识，禁止入账，请核查后驳回"}
+	ErrRefundLimit     = &BusinessError{47016, "累计退款不能超过原扣款金额"}
 )
 
 // topSuperAdminUserID 是系统初始化的固定顶级超级管理员账号。
 // 该账号不受钱包角色列表和自审限制；启用状态、订单状态、额度和账务校验仍全部执行。
-const topSuperAdminUserID uint64 = 1
+const topSuperAdminUserID uint64 = system.SuperAdminUserID
 
 type Actor struct {
 	ID          uint64

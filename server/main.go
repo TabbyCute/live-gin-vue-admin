@@ -63,7 +63,19 @@ func initializeSystem() {
 	initialize.SetupHandlers() // 注册全局函数
 	if global.GVA_DB != nil {
 		initialize.RegisterTables() // 初始化表
+		if err := initialize.InitializeEngagement(); err != nil {
+			panic(err)
+		}
 		if err := initialize.InitializeWallet(); err != nil {
+			panic(err)
+		}
+		if err := initialize.InitializeGift(); err != nil {
+			panic(err)
+		}
+		if err := initialize.InitializePayout(); err != nil {
+			panic(err)
+		}
+		if err := initialize.InitializeEarning(); err != nil {
 			panic(err)
 		}
 		if err := initialize.InitializeSocial(); err != nil {

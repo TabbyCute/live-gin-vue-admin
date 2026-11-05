@@ -1,0 +1,63 @@
+{
+  "server": {
+    "unchangedSourceFiles": 1057,
+    "changedExistingFiles": [
+      "server/api/v1/earning/finance.go",
+      "server/api/v1/earning/helpers.go",
+      "server/api/v1/earning/helpers_test.go",
+      "server/api/v1/enter.go",
+      "server/docs/docs.go",
+      "server/docs/swagger.json",
+      "server/docs/swagger.yaml",
+      "server/initialize/earning.go",
+      "server/initialize/gorm.go",
+      "server/initialize/router.go",
+      "server/initialize/router_live.go",
+      "server/main.go",
+      "server/middleware/error.go",
+      "server/middleware/operation.go",
+      "server/model/earning/finance.go",
+      "server/model/earning/request/finance.go",
+      "server/model/earning/response/finance.go",
+      "server/model/earning/response/finance_test.go",
+      "server/router/enter.go",
+      "server/service/earning/finance.go",
+      "server/service/earning/finance_integration_test.go",
+      "server/service/earning/query.go",
+      "server/service/earning/withdrawal.go",
+      "server/service/enter.go",
+      "web/src/view/live/earning/FinancePage.vue",
+      "web/src/view/live/earning/shared.js",
+      "web/tests/earning.test.mjs",
+      "web/package.json",
+      "aiDoc/frontend-backend/boundary.md",
+      "aiDoc/memory/business/active/anchor-earning-phase1.md",
+      "aiDoc/memory/business/demand-index.md",
+      "aiDoc/modules/earning.md",
+      "aiDoc/modules/module-index.md",
+      "docs/earning/README.md",
+      "docs/earning/accounting.md",
+      "docs/earning/admin-api.md",
+      "docs/earning/deployment.md",
+      "docs/earning/frontend-client-integration.md"
+    ],
+    "missingSourceFiles": [],
+    "existingWalletGiftCorePreserved": true
+  },
+  "h5": {
+    "unchangedSourceFiles": 112,
+    "changedExistingFiles": [
+      "src/modules/module_earning/README.md",
+      "src/modules/module_earning/apis.js",
+      "src/modules/module_earning/domain.js",
+      "src/modules/module_earning/errors.js",
+      "src/modules/module_earning/pages/earning_home.vue",
+      "src/modules/module_earning/pending_storage.js",
+      "src/stores/store_earning.js",
+      "tests/earning-domain.test.js",
+      "package.json"
+    ],
+    "missingSourceFiles": [],
+    "existingWalletGiftCorePreserved": null
+  }
+}

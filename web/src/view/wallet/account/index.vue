@@ -60,6 +60,7 @@
       <el-descriptions class="mt-4" :column="4" border>
         <el-descriptions-item label="已检查流水">{{ reconcileResult.checked }}</el-descriptions-item>
         <el-descriptions-item label="已检查订单">{{ reconcileResult.checkedOrders }}</el-descriptions-item>
+        <el-descriptions-item label="已检查消费/退款">{{ reconcileResult.checkedTransactions }}</el-descriptions-item>
         <el-descriptions-item label="快照版本">{{ reconcileResult.snapshotVersion || '-' }}</el-descriptions-item>
         <el-descriptions-item label="执行批次">{{ reconcileResult.batches }}</el-descriptions-item>
       </el-descriptions>
@@ -160,21 +161,22 @@ const runReconcile = async () => {
   const current = reconcileRequests.begin()
   const accountNo = balance.value.accountNo
   reconcileCancelled.value = false; reconciling.value = true
-  const result = { consistent: true, issues: [], checked: 0, checkedOrders: 0, snapshotVersion: '0', batches: 0, cancelled: false }
-  let afterVersion = '0'; let afterOrderId = '0'
+  const result = { consistent: true, issues: [], checked: 0, checkedOrders: 0, checkedTransactions: 0, snapshotVersion: '0', batches: 0, cancelled: false }
+  let afterVersion = '0'; let afterOrderId = '0'; let afterTransactionId = '0'
   try {
     while (result.batches < 1000 && !reconcileCancelled.value) {
-      const res = await checkWalletAccount({ accountNo, currencyCode: 'COIN', afterVersion, afterOrderId, limit: 1000 })
+      const res = await checkWalletAccount({ accountNo, currencyCode: 'COIN', afterVersion, afterOrderId, afterTransactionId, limit: 1000 })
       if (!current()) return
       if (res.code !== 0) return
       const data = res.data
       result.batches += 1; result.checked += Number(data.checked || 0); result.checkedOrders += Number(data.checkedOrders || 0)
+      result.checkedTransactions += Number(data.checkedTransactions || 0)
       result.snapshotVersion = data.snapshotVersion || result.snapshotVersion
       result.consistent = result.consistent && Boolean(data.consistent)
       result.issues.push(...(data.issues || []))
       if (!data.hasMore) break
-      if (data.nextVersion === afterVersion && data.nextOrderId === afterOrderId) throw new Error('对账游标未推进')
-      afterVersion = data.nextVersion; afterOrderId = data.nextOrderId
+      if (data.nextVersion === afterVersion && data.nextOrderId === afterOrderId && (data.nextTransactionId || '0') === afterTransactionId) throw new Error('对账游标未推进')
+      afterVersion = data.nextVersion; afterOrderId = data.nextOrderId; afterTransactionId = data.nextTransactionId || '0'
     }
     result.cancelled = reconcileCancelled.value
     if (result.batches >= 1000) { result.cancelled = true; ElMessage.warning('对账达到 1000 批安全上限，请联系技术人员执行离线核查') }

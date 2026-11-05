@@ -1,9 +1,11 @@
 package wallet
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -77,7 +79,12 @@ func TestWalletRoutesJWTIsolationAndEndToEnd(t *testing.T) {
 		engine.ServeHTTP(w, r)
 		return w
 	}
-	require.Len(t, engine.Routes(), 12)
+	require.Len(t, engine.Routes(), 13)
+	for _, path := range []string{"/api/v1/app/wallet/debit", "/api/v1/app/wallet/refund", "/api/v1/admin/wallet/debit", "/api/v1/admin/wallet/refund"} {
+		require.Equal(t, http.StatusNotFound, call("POST", path, `{"amount":"1","accountId":1}`, "Authorization", "Bearer "+appToken).Code)
+	}
+	require.Equal(t, http.StatusUnauthorized, call("GET", "/api/v1/admin/wallet/transaction/trace?no=wt_00000000000000000000000000000000", "", "x-token", appToken).Code)
+	require.Contains(t, call("GET", "/api/v1/admin/wallet/transaction/trace?no=wt_00000000000000000000000000000000", "", "x-token", ordinaryToken).Body.String(), `"code":47002`)
 	for _, route := range engine.Routes() {
 		w := call(route.Method, route.Path, `{}`, "", "")
 		require.Equal(t, http.StatusUnauthorized, w.Code, route.Path)
@@ -135,6 +142,17 @@ func TestWalletRoutesJWTIsolationAndEndToEnd(t *testing.T) {
 	require.Contains(t, call("POST", "/api/v1/admin/wallet/adjustment/reject", reverseReview, "x-token", reviewToken).Body.String(), `"code":0`)
 	require.Contains(t, call("POST", "/api/v1/admin/wallet/account/status", `{"accountNo":"10000010","status":"normal","reason":"风险核查结束"}`, "x-token", reviewToken).Body.String(), `"code":0`)
 	require.Contains(t, call("GET", "/api/v1/app/wallet/ledger", "", "Authorization", "Bearer "+appToken).Body.String(), `"changeAmount":"250"`)
+	d, e := svc.Default.Debit(context.Background(), svc.MovementInput{AccountID: uint64(user.ID), Amount: "10", BusinessType: "test_shop", BusinessNo: "http-consume", ActorType: "user", ActorID: strconv.FormatUint(uint64(user.ID), 10), ActorIP: "127.0.0.1", TraceID: "private_trace", Reason: "内部消费原因"})
+	require.NoError(t, e)
+	trace := call("GET", "/api/v1/admin/wallet/transaction/trace?no="+d.LedgerNo, "", "x-token", adminToken)
+	require.Contains(t, trace.Body.String(), `"code":0`)
+	require.Contains(t, trace.Body.String(), "http-consume")
+	require.Equal(t, "no-store", trace.Header().Get("Cache-Control"))
+	appLedger := call("GET", "/api/v1/app/wallet/ledger", "", "Authorization", "Bearer "+appToken)
+	require.Contains(t, appLedger.Body.String(), `"businessType":"CONSUME"`)
+	for _, private := range []string{"private_trace", "http-consume", "actorId", "actorIp", "内部消费原因", "operatorId"} {
+		require.NotContains(t, appLedger.Body.String(), private)
+	}
 	// JWT尚未过期，但数据库中的管理员被冻结后必须立即拒绝。
 	require.NoError(t, db.Exec("UPDATE sys_users SET enable=2 WHERE id=2").Error)
 	require.Contains(t, call("POST", "/api/v1/admin/wallet/adjustment/approve", approve, "x-token", reviewToken).Body.String(), `"code":47002`)

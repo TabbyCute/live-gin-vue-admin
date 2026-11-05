@@ -1,0 +1,131 @@
+{
+  "migrate": {
+    "after": {
+      "anchor_income_fact": 7,
+      "anchor_settlement": 1,
+      "anchor_withdrawable_account": 1,
+      "anchor_withdrawable_ledger": 2,
+      "anchor_withdrawal_order": 1,
+      "gift_order": 6,
+      "payout_owner_lock": 0,
+      "payout_payee_account": 0,
+      "payout_payee_audit": 0,
+      "wallet_account": 1
+    },
+    "before": {
+      "anchor_income_fact": 7,
+      "anchor_settlement": 1,
+      "anchor_withdrawable_account": 1,
+      "anchor_withdrawable_ledger": 2,
+      "anchor_withdrawal_order": 1,
+      "gift_order": 6,
+      "wallet_account": 1
+    },
+    "checkedAt": "2026-11-02T04:18:14Z",
+    "database": "live_prod",
+    "financialDigestAfter": {
+      "anchor_income_fact": "e5197fae3ce25ddc5e13d673aef3a52cacef7c086b7ec3ddc0772f7a9ebf7dbf",
+      "anchor_settlement": "7595b9e3012e383e065b83e3baa3a3f8ac76497142d85f9c6f0d38f7e8165b6a",
+      "anchor_withdrawable_account": "eb5404a867dad17e344310604dfeb2e9f56f82dbb5aa4c3b6caacde2d255430e",
+      "anchor_withdrawable_ledger": "de26e153d8a357a467ddd3e68f91cb0632736d6d8fbde1f8044762943523c5ed",
+      "anchor_withdrawal_order": "b223df4ab9feb0244581d178271c1b2bf9e43fd55a9d3e0d5d110d26a7bfa284"
+    },
+    "financialDigestBefore": {
+      "anchor_income_fact": "e5197fae3ce25ddc5e13d673aef3a52cacef7c086b7ec3ddc0772f7a9ebf7dbf",
+      "anchor_settlement": "7595b9e3012e383e065b83e3baa3a3f8ac76497142d85f9c6f0d38f7e8165b6a",
+      "anchor_withdrawable_account": "eb5404a867dad17e344310604dfeb2e9f56f82dbb5aa4c3b6caacde2d255430e",
+      "anchor_withdrawable_ledger": "de26e153d8a357a467ddd3e68f91cb0632736d6d8fbde1f8044762943523c5ed",
+      "anchor_withdrawal_order": "b223df4ab9feb0244581d178271c1b2bf9e43fd55a9d3e0d5d110d26a7bfa284"
+    },
+    "migrated": true,
+    "verified": false
+  },
+  "repeat": {
+    "after": {
+      "anchor_income_fact": 7,
+      "anchor_settlement": 1,
+      "anchor_withdrawable_account": 1,
+      "anchor_withdrawable_ledger": 2,
+      "anchor_withdrawal_order": 1,
+      "gift_order": 6,
+      "payout_owner_lock": 0,
+      "payout_payee_account": 0,
+      "payout_payee_audit": 0,
+      "wallet_account": 1
+    },
+    "before": {
+      "anchor_income_fact": 7,
+      "anchor_settlement": 1,
+      "anchor_withdrawable_account": 1,
+      "anchor_withdrawable_ledger": 2,
+      "anchor_withdrawal_order": 1,
+      "gift_order": 6,
+      "payout_owner_lock": 0,
+      "payout_payee_account": 0,
+      "payout_payee_audit": 0,
+      "wallet_account": 1
+    },
+    "checkedAt": "2026-11-02T04:23:28Z",
+    "database": "live_prod",
+    "financialDigestAfter": {
+      "anchor_income_fact": "e5197fae3ce25ddc5e13d673aef3a52cacef7c086b7ec3ddc0772f7a9ebf7dbf",
+      "anchor_settlement": "7595b9e3012e383e065b83e3baa3a3f8ac76497142d85f9c6f0d38f7e8165b6a",
+      "anchor_withdrawable_account": "eb5404a867dad17e344310604dfeb2e9f56f82dbb5aa4c3b6caacde2d255430e",
+      "anchor_withdrawable_ledger": "de26e153d8a357a467ddd3e68f91cb0632736d6d8fbde1f8044762943523c5ed",
+      "anchor_withdrawal_order": "b223df4ab9feb0244581d178271c1b2bf9e43fd55a9d3e0d5d110d26a7bfa284"
+    },
+    "financialDigestBefore": {
+      "anchor_income_fact": "e5197fae3ce25ddc5e13d673aef3a52cacef7c086b7ec3ddc0772f7a9ebf7dbf",
+      "anchor_settlement": "7595b9e3012e383e065b83e3baa3a3f8ac76497142d85f9c6f0d38f7e8165b6a",
+      "anchor_withdrawable_account": "eb5404a867dad17e344310604dfeb2e9f56f82dbb5aa4c3b6caacde2d255430e",
+      "anchor_withdrawable_ledger": "de26e153d8a357a467ddd3e68f91cb0632736d6d8fbde1f8044762943523c5ed",
+      "anchor_withdrawal_order": "b223df4ab9feb0244581d178271c1b2bf9e43fd55a9d3e0d5d110d26a7bfa284"
+    },
+    "migrated": true,
+    "verified": false
+  },
+  "verify": {
+    "after": {
+      "anchor_income_fact": 7,
+      "anchor_settlement": 1,
+      "anchor_withdrawable_account": 1,
+      "anchor_withdrawable_ledger": 2,
+      "anchor_withdrawal_order": 1,
+      "gift_order": 6,
+      "payout_owner_lock": 0,
+      "payout_payee_account": 0,
+      "payout_payee_audit": 0,
+      "wallet_account": 1
+    },
+    "before": {
+      "anchor_income_fact": 7,
+      "anchor_settlement": 1,
+      "anchor_withdrawable_account": 1,
+      "anchor_withdrawable_ledger": 2,
+      "anchor_withdrawal_order": 1,
+      "gift_order": 6,
+      "payout_owner_lock": 0,
+      "payout_payee_account": 0,
+      "payout_payee_audit": 0,
+      "wallet_account": 1
+    },
+    "checkedAt": "2026-11-02T04:26:49Z",
+    "database": "live_prod",
+    "financialDigestAfter": {
+      "anchor_income_fact": "e5197fae3ce25ddc5e13d673aef3a52cacef7c086b7ec3ddc0772f7a9ebf7dbf",
+      "anchor_settlement": "7595b9e3012e383e065b83e3baa3a3f8ac76497142d85f9c6f0d38f7e8165b6a",
+      "anchor_withdrawable_account": "eb5404a867dad17e344310604dfeb2e9f56f82dbb5aa4c3b6caacde2d255430e",
+      "anchor_withdrawable_ledger": "de26e153d8a357a467ddd3e68f91cb0632736d6d8fbde1f8044762943523c5ed",
+      "anchor_withdrawal_order": "b223df4ab9feb0244581d178271c1b2bf9e43fd55a9d3e0d5d110d26a7bfa284"
+    },
+    "financialDigestBefore": {
+      "anchor_income_fact": "e5197fae3ce25ddc5e13d673aef3a52cacef7c086b7ec3ddc0772f7a9ebf7dbf",
+      "anchor_settlement": "7595b9e3012e383e065b83e3baa3a3f8ac76497142d85f9c6f0d38f7e8165b6a",
+      "anchor_withdrawable_account": "eb5404a867dad17e344310604dfeb2e9f56f82dbb5aa4c3b6caacde2d255430e",
+      "anchor_withdrawable_ledger": "de26e153d8a357a467ddd3e68f91cb0632736d6d8fbde1f8044762943523c5ed",
+      "anchor_withdrawal_order": "b223df4ab9feb0244581d178271c1b2bf9e43fd55a9d3e0d5d110d26a7bfa284"
+    },
+    "migrated": false,
+    "verified": true
+  }
+}

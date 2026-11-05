@@ -37,7 +37,7 @@ func (a *AuthorityApi) CreateAuthority(c *gin.Context) {
 		return
 	}
 
-	if *authority.ParentId == 0 && global.GVA_CONFIG.System.UseStrictAuth {
+	if *authority.ParentId == 0 && global.GVA_CONFIG.System.UseStrictAuth && !system.IsSuperAdmin(utils.GetUserID(c)) {
 		authority.ParentId = utils.Pointer(utils.GetUserAuthorityId(c))
 	}
 
@@ -154,7 +154,7 @@ func (a *AuthorityApi) UpdateAuthority(c *gin.Context) {
 // @Router    /authority/getAuthorityList [post]
 func (a *AuthorityApi) GetAuthorityList(c *gin.Context) {
 	authorityID := utils.GetUserAuthorityId(c)
-	list, err := authorityService.GetAuthorityInfoList(authorityID)
+	list, err := authorityService.GetAuthorityInfoList(authorityID, utils.GetUserID(c))
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败"+err.Error(), c)

@@ -24,7 +24,7 @@ type AuthorityMenuApi struct{}
 // @Success   200   {object}  response.Response{data=systemRes.SysMenusResponse,msg=string}  "获取用户动态路由,返回包括系统菜单详情列表"
 // @Router    /menu/getMenu [post]
 func (a *AuthorityMenuApi) GetMenu(c *gin.Context) {
-	menus, err := menuService.GetMenuTree(utils.GetUserAuthorityId(c))
+	menus, err := menuService.GetMenuTree(utils.GetUserAuthorityId(c), utils.GetUserID(c))
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
@@ -46,7 +46,7 @@ func (a *AuthorityMenuApi) GetMenu(c *gin.Context) {
 // @Router    /menu/getBaseMenuTree [post]
 func (a *AuthorityMenuApi) GetBaseMenuTree(c *gin.Context) {
 	authority := utils.GetUserAuthorityId(c)
-	menus, err := menuService.GetBaseMenuTree(authority)
+	menus, err := menuService.GetBaseMenuTree(authority, utils.GetUserID(c))
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
@@ -76,7 +76,7 @@ func (a *AuthorityMenuApi) AddMenuAuthority(c *gin.Context) {
 		return
 	}
 	adminAuthorityID := utils.GetUserAuthorityId(c)
-	if err := menuService.AddMenuAuthority(authorityMenu.Menus, adminAuthorityID, authorityMenu.AuthorityId); err != nil {
+	if err := menuService.AddMenuAuthority(authorityMenu.Menus, adminAuthorityID, authorityMenu.AuthorityId, utils.GetUserID(c)); err != nil {
 		global.GVA_LOG.Error("添加失败!", zap.Error(err))
 		response.FailWithMessage("添加失败", c)
 	} else {
@@ -325,7 +325,7 @@ func (a *AuthorityMenuApi) SetMenuRoles(c *gin.Context) {
 // @Router    /menu/getMenuList [post]
 func (a *AuthorityMenuApi) GetMenuList(c *gin.Context) {
 	authorityID := utils.GetUserAuthorityId(c)
-	menuList, err := menuService.GetInfoList(authorityID)
+	menuList, err := menuService.GetInfoList(authorityID, utils.GetUserID(c))
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)

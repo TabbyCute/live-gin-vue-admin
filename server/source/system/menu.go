@@ -99,10 +99,23 @@ func (i *initMenu) InitializeData(ctx context.Context) (next context.Context, er
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["liveManagement"], Path: "room", Name: "liveRoom", Component: "view/live/room/index.vue", Sort: 3, Meta: Meta{Title: "直播间管理", Icon: "video-play", KeepAlive: true}},
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["liveManagement"], Path: "session", Name: "liveSession", Component: "view/live/session/index.vue", Sort: 4, Meta: Meta{Title: "直播场次", Icon: "data-analysis", KeepAlive: true}},
 
+		{MenuLevel: 1, ParentId: menuNameMap["liveManagement"], Path: "gift-category", Name: "gift-category", Component: "view/live/gift/category/index.vue", Sort: 20, Meta: Meta{Title: "礼物分类", Icon: "present", KeepAlive: true}},
+		{MenuLevel: 1, ParentId: menuNameMap["liveManagement"], Path: "gift-item", Name: "gift-item", Component: "view/live/gift/item/index.vue", Sort: 21, Meta: Meta{Title: "礼物配置", Icon: "present", KeepAlive: true}},
+		{MenuLevel: 1, ParentId: menuNameMap["liveManagement"], Path: "gift-order", Name: "gift-order", Component: "view/live/gift/order/index.vue", Sort: 22, Meta: Meta{Title: "礼物消费记录", Icon: "present", KeepAlive: true}},
+		{MenuLevel: 1, ParentId: menuNameMap["liveManagement"], Path: "gift-ranking", Name: "gift-ranking", Component: "view/live/gift/ranking/index.vue", Sort: 23, Meta: Meta{Title: "礼物消费排行", Icon: "present", KeepAlive: true}},
+		{MenuLevel: 1, ParentId: menuNameMap["liveManagement"], Path: "gift-rule", Name: "gift-rule", Component: "view/live/gift/rule/index.vue", Sort: 24, Meta: Meta{Title: "主播分成规则", Icon: "present", KeepAlive: true}},
+
 		// appUserManagement 子菜单
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["appUserManagement"], Path: "account", Name: "liveAccount", Component: "view/user/account/index.vue", Sort: 1, Meta: Meta{Title: "用户列表", Icon: "user", KeepAlive: true}},
 
+		{MenuLevel: 1, ParentId: menuNameMap["liveManagement"], Path: "earning-overview", Name: "earning-overview", Component: "view/live/earning/overview/index.vue", Sort: 25, Meta: Meta{Title: "直播收益", Icon: "coin", KeepAlive: true}},
+		{MenuLevel: 1, ParentId: menuNameMap["liveManagement"], Path: "earning-exchange", Name: "earning-exchange", Component: "view/live/earning/exchange/index.vue", Sort: 26, Meta: Meta{Title: "结算兑换规则", Icon: "coin", KeepAlive: true}},
+		{MenuLevel: 1, ParentId: menuNameMap["liveManagement"], Path: "earning-settlement", Name: "earning-settlement", Component: "view/live/earning/settlement/index.vue", Sort: 27, Meta: Meta{Title: "收益结算", Icon: "coin", KeepAlive: true}},
+		{MenuLevel: 1, ParentId: menuNameMap["liveManagement"], Path: "earning-account", Name: "earning-account", Component: "view/live/earning/account/index.vue", Sort: 28, Meta: Meta{Title: "主播可提现账户", Icon: "coin", KeepAlive: true}},
+		{MenuLevel: 1, ParentId: menuNameMap["liveManagement"], Path: "earning-withdrawal", Name: "earning-withdrawal", Component: "view/live/earning/withdrawal/index.vue", Sort: 29, Meta: Meta{Title: "提现审核", Icon: "coin", KeepAlive: true}},
+		{MenuLevel: 1, ParentId: menuNameMap["liveManagement"], Path: "earning-reconciliation", Name: "earning-reconciliation", Component: "view/live/earning/reconciliation/index.vue", Sort: 30, Meta: Meta{Title: "收益对账", Icon: "coin", KeepAlive: true}},
 		// walletManagement 子菜单
+		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["walletManagement"], Path: "trace", Name: "walletTrace", Component: "view/wallet/trace/index.vue", Sort: 5, Meta: Meta{Title: "交易溯源", Icon: "search", KeepAlive: true}},
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["walletManagement"], Path: "introduction", Name: "walletIntroduction", Component: "view/wallet/introduction/index.vue", Sort: 0, Meta: Meta{Title: "钱包介绍", Icon: "reading", KeepAlive: true}},
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["walletManagement"], Path: "account", Name: "walletAccount", Component: "view/wallet/account/index.vue", Sort: 2, Meta: Meta{Title: "钱包账户", Icon: "credit-card", KeepAlive: true}},
 		{MenuLevel: 1, Hidden: false, ParentId: menuNameMap["walletManagement"], Path: "ledger", Name: "walletLedger", Component: "view/wallet/ledger/index.vue", Sort: 3, Meta: Meta{Title: "余额流水", Icon: "tickets", KeepAlive: true}},

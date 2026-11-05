@@ -138,7 +138,7 @@ interface WalletLedgerItem {
   changeAmount: IntegerString
   balanceBefore: IntegerString
   balanceAfter: IntegerString
-  businessType: 'ADMIN_GRANT' | 'ADMIN_REVERSE' | string
+  businessType: 'ADMIN_GRANT' | 'ADMIN_REVERSE' | 'CONSUME' | 'CONSUME_REFUND' | string
   businessNo: string
   originalLedgerNo?: string
   createdAt: number
@@ -178,15 +178,19 @@ interface WalletLedgerPage {
 }
 ```
 
-流水按钱包版本倒序返回。`changeAmount > 0` 是入账，`changeAmount < 0` 是冲正或未来的扣减业务。当前已开放业务：
+流水按钱包版本倒序返回。`changeAmount > 0` 是入账，`changeAmount < 0` 是冲正或消费扣款。当前支持类型：
 
 | businessType | 客户端文案建议 |
 | --- | --- |
 | ADMIN_GRANT | 人工充值 |
 | ADMIN_REVERSE | 充值冲正 |
+| CONSUME | 消费扣款 |
+| CONSUME_REFUND | 消费退款 |
 | 未知新值 | 余额变动 |
 
-客户端必须允许未知 `businessType` 正常展示，避免后端以后增加消费等类型时页面崩溃。APP 响应不会返回管理员 ID、内部审核原因或资金凭证。
+客户端必须允许未知 `businessType` 正常展示。APP响应不会返回管理员ID、内部原因、资金凭证、业务订单号、IP或追踪号。消费/退款的businessNo是wt_内部账务交易号；退款的originalLedgerNo关联原扣款流水，不能用它请求另一用户数据。
+
+本轮无需改变余额和流水请求路径或参数，只需在客户端类型文案中支持这两个新增值。没有提供H5可直接指定金额的扣款/退款接口，也暂未实现送礼、商城等业务页面。后续前端应调用对应业务订单接口，由服务端核价后调用钱包内核；成功后刷新余额和流水首页，不以本地减法作为记账结果。消费退款退回的是COIN，不代表退回银行卡现金。
 
 ## 5. 推荐的状态管理和刷新策略
 
@@ -255,3 +259,7 @@ export const getMyWalletLedger = (cursor = '', limit = 20) =>
 ```
 
 项目管理后台的实现位于 `web/src/view/wallet/`，可作为状态、金额和游标展示的参考；客户端不能复用其中的后台充值、审核和状态接口。
+
+## 2026-10-30封版接口保护补充
+
+H5仍仅开放本人余额、本人流水读取，没有任意金额充值/扣款/退款HTTP接口。超出钱包实例并发容量返回HTTP503、业务code=47012和Retry-After: 1；客户端等待后加随机退避再查询，避免并行轮询或立即无限重试。超长参数/token或已知超大正文可返回HTTP400。响应字段不变，无需改变余额展示或金额字符串处理。后台写请求遇到超时/断连必须保留原请求编号及参数，先查原单，不得换编号补发。

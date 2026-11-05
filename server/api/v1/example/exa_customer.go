@@ -1,14 +1,14 @@
 package example
 
 import (
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"tb_live_module/global"
 	"tb_live_module/model/common/request"
 	"tb_live_module/model/common/response"
 	"tb_live_module/model/example"
 	exampleRes "tb_live_module/model/example/response"
 	"tb_live_module/utils"
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 )
 
 type CustomerApi struct{}
@@ -161,7 +161,7 @@ func (e *CustomerApi) GetExaCustomerList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	customerList, total, err := customerService.GetCustomerInfoList(utils.GetUserAuthorityId(c), pageInfo)
+	customerList, total, err := customerService.GetCustomerInfoList(utils.GetUserAuthorityId(c), pageInfo, utils.GetUserID(c))
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败"+err.Error(), c)

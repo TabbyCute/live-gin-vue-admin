@@ -60,9 +60,9 @@ type LiveSessionInfo struct {
 	ViewerCount          uint64          `json:"viewerCount"`
 	PeakOnlineCount      uint32          `json:"peakOnlineCount"`
 	LikeCount            uint64          `json:"likeCount"`
-	GiftCount            uint64          `json:"giftCount"`
-	GiftCoinAmount       uint64          `json:"giftCoinAmount"`
-	GiftUserCount        uint32          `json:"giftUserCount"`
+	GiftCount            uint64          `json:"-"`
+	GiftCoinAmount       uint64          `json:"-"`
+	GiftUserCount        uint32          `json:"-"`
 	StatsFinalizedAt     int64           `json:"statsFinalizedAt"`
 	MediaState           uint8           `json:"mediaState"`
 	MediaStateChangedAt  int64           `json:"mediaStateChangedAt"`
@@ -195,6 +195,7 @@ type LiveRoomAdminItem struct {
 // LiveRoomAdminDetailResp 表示管理后台的直播间详情。
 // CurrentSession 只在存在当前活动场次时返回；列表接口不查询该快照。
 type LiveRoomAdminDetailResp struct {
+	GiftSummary *GiftSummary `json:"giftSummary,omitempty"`
 	LiveRoomAdminItem
 	CurrentSession *LiveSessionAdminItem `json:"currentSession,omitempty"`
 }
@@ -212,8 +213,9 @@ type LiveRoomAdminListResp struct {
 // 它在通用场次信息上增加场次、直播间和主播的内部主键，仅供后台使用。
 // 使用接口：GET /api/v1/admin/live/session/detail 直接返回；GET /api/v1/admin/live/session/list 作为列表元素返回。
 type LiveSessionAdminItem struct {
-	ID        uint      `json:"id"`
-	CreatedAt time.Time `json:"createdAt"`
+	GiftSummary *GiftSummary `json:"giftSummary,omitempty"`
+	ID          uint         `json:"id"`
+	CreatedAt   time.Time    `json:"createdAt"`
 	LiveSessionInfo
 	RoomID               uint   `json:"roomId"`
 	AnchorID             uint   `json:"anchorId"`

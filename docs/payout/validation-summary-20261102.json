@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-02",
+  "comprehensiveScriptExitCode": 0,
+  "finalH5TestsAndBuildExitCode": 0,
+  "h5FinalTests": 49,
+  "adminTests": 36,
+  "load": {
+    "allMoneyChecksPassed": true,
+    "concurrency": 16,
+    "databasePayee": true,
+    "elapsedMs": 3519,
+    "incomeFacts": 500,
+    "maxMs": 909,
+    "p50Ms": 870,
+    "p95Ms": 884,
+    "settlementCreateAndApproveMs": 133,
+    "withdrawals": 64
+  },
+  "evidence": {
+    "validation-20261102.log": "94646ca8e5fde6dc602fbd88e39c4065328512fde22f341a78e6846c6c3ba8f1",
+    "h5-final-tests-20261102.log": "1e5fcb79c375d2d26a383a06c79dabd983db11ea9bcc3d0370895a419c49c957",
+    "h5-final-build-20261102.log": "ce204664ba2295b08b295d1609b8eac5705cdcff1fd6d389cc6b35de9edc61b7"
+  },
+  "scope": "Local integration tests; remote database migrated and verified separately; no live application deployment or real payment."
+}

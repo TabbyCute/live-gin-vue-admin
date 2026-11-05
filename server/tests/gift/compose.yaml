@@ -1,0 +1,16 @@
+name: gift-delivery-test
+services:
+  mysql:
+    image: mysql:8.0.46
+    environment:
+      MYSQL_ROOT_PASSWORD: gift-local-test-only
+      MYSQL_DATABASE: gift_test_delivery
+    ports:
+      - '127.0.0.1:13327:3306'
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-pgift-local-test-only']
+      interval: 2s
+      timeout: 2s
+      retries: 60

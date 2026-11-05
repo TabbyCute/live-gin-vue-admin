@@ -127,5 +127,5 @@ func (*WalletAuditLog) BeforeUpdate(*gorm.DB) error { return ErrImmutable }
 func (*WalletAuditLog) BeforeDelete(*gorm.DB) error { return ErrImmutable }
 func (*WalletAccount) BeforeDelete(*gorm.DB) error  { return ErrImmutable }
 func Models() []interface{} {
-	return []interface{}{&WalletAccount{}, &WalletLedger{}, &WalletAdjustmentOrder{}, &WalletDailyQuota{}, &WalletAuditLog{}}
+	return []interface{}{&WalletAccount{}, &WalletLedger{}, &WalletAdjustmentOrder{}, &WalletDailyQuota{}, &WalletAuditLog{}, &WalletTransaction{}}
 }

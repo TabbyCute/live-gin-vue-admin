@@ -29,7 +29,8 @@ func postLedger(tx *gorm.DB, w model.WalletAccount, p ledgerPosting) (model.Wall
 	if w.Status != model.AccountNormal {
 		return l, ErrDisabled
 	}
-	if w.ID == 0 || w.FrozenBalance != 0 || w.AvailableBalance < 0 || w.Version < 0 || w.Version == math.MaxInt64 || p.Delta == 0 || p.Delta == math.MinInt64 || !textOK(p.BusinessNo, 1, 40) || !textOK(p.BusinessType, 1, 32) || !textOK(p.OriginalLedgerNo, 0, 40) || p.OperatorID == 0 || p.Now <= 0 || !reasonOK(p.Reason) {
+	internal := p.BusinessType == model.BusinessDebit || p.BusinessType == model.BusinessRefund
+	if w.ID == 0 || w.FrozenBalance != 0 || w.AvailableBalance < 0 || w.Version < 0 || w.Version == math.MaxInt64 || p.Delta == 0 || p.Delta == math.MinInt64 || !textOK(p.BusinessNo, 1, 40) || !textOK(p.BusinessType, 1, 32) || !textOK(p.OriginalLedgerNo, 0, 40) || (p.OperatorID == 0 && !internal) || p.Now <= 0 || !reasonOK(p.Reason) {
 		return l, ErrInvariant
 	}
 	if err := validateWalletTail(tx, w); err != nil {

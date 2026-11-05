@@ -53,6 +53,12 @@ func registerSystemRoutesV1(apiRoot *gin.RouterGroup, engine *gin.Engine) {
 	liveRouter.InitRoomAdminRouter(adminPrivateGroup)
 	router.RouterGroupApp.Social.InitSocialAdminRouter(adminPrivateGroup)
 	router.RouterGroupApp.Wallet.InitWalletAdminRouter(adminPrivateGroup)
+	router.RouterGroupApp.Gift.InitGiftAdminRouter(adminPrivateGroup)
+	router.RouterGroupApp.Guard.InitGuardAdminRouter(adminPrivateGroup)
+	router.RouterGroupApp.Ranking.InitRankingAdminRouter(adminPrivateGroup)
+	router.RouterGroupApp.Earning.InitEarningAdminRouter(adminPrivateGroup)
+	// Payout applies size/capacity limits before its own administrator JWT check.
+	router.RouterGroupApp.Payout.InitPayoutAdminRouter(apiRoot.Group(adminV1RoutePrefix))
 
 	//注册：插件路由安装
 	InstallPlugin(adminPrivateGroup, adminPublicGroup, engine)

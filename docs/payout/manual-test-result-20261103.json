@@ -1,0 +1,81 @@
+{
+  "date": "2026-11-03",
+  "fullScript": {
+    "command": "PAYOUT_H5_DIR=/Users/tabby/Desktop/IM/H5Player bash tests/payout/run.sh",
+    "exitCode": 0,
+    "goAllPackages": true,
+    "racePackages": [
+      "service/payout",
+      "service/earning",
+      "api/v1/payout",
+      "api/v1/earning",
+      "router/payout",
+      "router/earning",
+      "middleware"
+    ],
+    "fuzzTargets": [
+      "FuzzPayeeJSON",
+      "FuzzOrderJSON",
+      "FuzzManualPayoutJSON",
+      "FuzzManualEvidenceAndReference",
+      "FuzzManualPaidConservation",
+      "FuzzPayeeValidation",
+      "FuzzEarningJSON"
+    ],
+    "fuzzSecondsEach": 10,
+    "goVet": true,
+    "goBuild": true,
+    "adminTests": 50,
+    "h5Tests": 49,
+    "adminBuild": true,
+    "h5Build": true
+  },
+  "additionalHTTPRouteRace": {
+    "routes": 27,
+    "passed": true
+  },
+  "manualLoad": {
+    "claim": {
+      "max_ms": 84.245,
+      "p50_ms": 59.529,
+      "p95_ms": 79.257
+    },
+    "database": "isolated local MySQL",
+    "detail_with_internal_check": {
+      "max_ms": 81.144,
+      "p50_ms": 63.199,
+      "p95_ms": 80.255
+    },
+    "externalBankCalls": 0,
+    "frozen": 0,
+    "orders": 20,
+    "paid": 100,
+    "review_and_accounting": {
+      "max_ms": 147.307,
+      "p50_ms": 104.067,
+      "p95_ms": 143.183
+    },
+    "seconds": 8.1732985,
+    "upload_and_submit": {
+      "max_ms": 30.748,
+      "p50_ms": 27.743,
+      "p95_ms": 30.738
+    },
+    "withdrawal_and_ready": {
+      "max_ms": 260.309,
+      "p50_ms": 169.152,
+      "p95_ms": 221.28
+    },
+    "measuredAt": "2026-11-03",
+    "test": "TestMySQLManualPayoutLoad",
+    "scope": "service + isolated local MySQL + encrypted local evidence; no HTTP or external bank calls"
+  },
+  "externalBankCalls": 0,
+  "productionBusinessTestRows": 0,
+  "postScriptChecks": {
+    "manualHTTP27RoutesWithRace": true,
+    "optimizedCLIPrivateBackupAndHistoricalProofMySQL": true,
+    "cliAndRouterGoVet": true,
+    "cliBuild": true
+  }
+}

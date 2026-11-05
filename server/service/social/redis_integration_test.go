@@ -53,7 +53,7 @@ func TestPrivacyRevocationRemainsRateLimitedWithoutWorker(t *testing.T) {
 	s.Redis = isolatedRedis(t)
 	ctx := context.Background()
 	require.ErrorIs(t, s.RateLimitRequest(ctx, 1, false, true), ErrUnavailable)
-	for i := 0; i < 60; i++ {
+	for i := 0; i < 59; i++ {
 		require.NoError(t, s.RateLimitRequest(ctx, 1, false, false))
 	}
 	require.ErrorIs(t, s.RateLimitRequest(ctx, 1, false, false), ErrRateLimited)
@@ -87,7 +87,7 @@ func isolatedRedis(t *testing.T) *redis.Client {
 		t.Skip("set SOCIAL_TEST_REDIS_ADDR=127.0.0.1:16389 for isolated compose Redis")
 	}
 	require.Equal(t, "127.0.0.1:16389", addr, "refuse non-isolated Redis")
-	client := redis.NewClient(&redis.Options{Addr: addr, DB: 15})
+	client := redis.NewClient(&redis.Options{Addr: addr, DB: 15, ContextTimeoutEnabled: true})
 	require.NoError(t, client.FlushDB(context.Background()).Err())
 	t.Cleanup(func() { client.Close() })
 	return client
@@ -155,6 +155,9 @@ func TestRedisAggregationClearFenceAndQueueBound(t *testing.T) {
 	require.NoError(t, e)
 	require.Empty(t, history.List)
 	// 有界队列满时明确拒绝，不通过无限创建key继续增长。
+	opened, e = s.OpenHistory(ctx, 1, req.HistoryOpen{Resource: r, RequestID: "queue-bound-session"})
+	require.NoError(t, e)
+	report.SessionToken, report.SessionVersion, report.Epoch = opened.SessionToken, opened.SessionVersion, opened.Epoch
 	members := make([]redis.Z, 1000)
 	for i := range members {
 		members[i] = redis.Z{Score: float64(time.Now().UnixMilli()), Member: formatID(uint64(i + 1))}

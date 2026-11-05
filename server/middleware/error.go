@@ -10,11 +10,11 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"tb_live_module/global"
 	"tb_live_module/model/system"
 	"tb_live_module/service"
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 )
 
 // GinRecovery recover掉项目可能出现的panic，并使用zap记录相关日志
@@ -22,6 +22,13 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
+				if strings.Contains(c.Request.URL.Path, "/payout/") || strings.Contains(c.Request.URL.Path, "/earning/") {
+					if global.GVA_LOG != nil {
+						global.GVA_LOG.Error("financial request panic", zap.String("path", c.FullPath()), zap.String("traceId", c.GetString("payoutTrace")))
+					}
+					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": 49103, "data": gin.H{}, "msg": "服务暂不可用，请查询原请求结果"})
+					return
+				}
 				// Check for a broken connection, as it is not really a
 				// condition that warrants a panic stack trace.
 				var brokenPipe bool

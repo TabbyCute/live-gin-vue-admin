@@ -19,14 +19,18 @@ var walletBigIntDisplayWidth = regexp.MustCompile(`^bigint\([0-9]+\)( unsigned)?
 // MySQL把CHECK保存为规范表达式。保留括号/操作符/字面量逐字核验，避免同名
 // CHECK(1=1)或改变优先级仍通过启动检查。增加模型约束时须同步并跑真实MySQL测试。
 var walletMySQLCheckClauses = map[string]string{
-	"ck_wallet_account_balance": "((`available_balance` >= 0) and (`frozen_balance` >= 0) and (`version` >= 0))",
-	"ck_wallet_account_status":  "(`status` in ('normal','disabled'))",
-	"ck_wallet_ledger_amount":   "((`change_amount` <> 0) and (`balance_before` >= 0) and (`balance_after` >= 0) and ((`balance_after` - `balance_before`) = `change_amount`) and (`wallet_version` > 0))",
-	"ck_wallet_order_amount":    "(`amount` > 0)",
-	"ck_wallet_order_status":    "(`status` in ('pending','credited','rejected','reversed'))",
-	"ck_wallet_order_source":    "((`external_order_no` <> '') and (((`kind` = 'grant') and (`source_type` in ('manual','legacy'))) or ((`kind` = 'reverse') and (`source_type` = 'reversal'))))",
-	"ck_wallet_order_kind":      "(`kind` in ('grant','reverse'))",
-	"ck_wallet_quota_amount":    "(`amount` >= 0)",
+	"ck_wallet_transaction_kind":     "(`kind` in ('debit','refund'))",
+	"ck_wallet_transaction_amount":   "((`amount` > 0) and (`refunded_amount` >= 0) and (`refunded_amount` <= `amount`) and ((`kind` = 'debit') or (`refunded_amount` = 0)))",
+	"ck_wallet_transaction_original": "(((`kind` = 'debit') and (`original_no` = '')) or ((`kind` = 'refund') and (`original_no` <> '')))",
+	"ck_wallet_transaction_actor":    "(`actor_type` in ('user','admin','system'))",
+	"ck_wallet_account_balance":      "((`available_balance` >= 0) and (`frozen_balance` >= 0) and (`version` >= 0))",
+	"ck_wallet_account_status":       "(`status` in ('normal','disabled'))",
+	"ck_wallet_ledger_amount":        "((`change_amount` <> 0) and (`balance_before` >= 0) and (`balance_after` >= 0) and ((`balance_after` - `balance_before`) = `change_amount`) and (`wallet_version` > 0))",
+	"ck_wallet_order_amount":         "(`amount` > 0)",
+	"ck_wallet_order_status":         "(`status` in ('pending','credited','rejected','reversed'))",
+	"ck_wallet_order_source":         "((`external_order_no` <> '') and (((`kind` = 'grant') and (`source_type` in ('manual','legacy'))) or ((`kind` = 'reverse') and (`source_type` = 'reversal'))))",
+	"ck_wallet_order_kind":           "(`kind` in ('grant','reverse'))",
+	"ck_wallet_quota_amount":         "(`amount` >= 0)",
 }
 var walletSQLLiteral = regexp.MustCompile(`'[^']*'`)
 

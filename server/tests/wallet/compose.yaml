@@ -1,0 +1,14 @@
+name: wallet-ledger-tests
+services:
+  mysql:
+    image: mysql:8.0.46
+    environment:
+      MYSQL_ROOT_PASSWORD: wallet-local-test-only
+    ports:
+      - '127.0.0.1:13326:3306'
+    command: ['--innodb-flush-log-at-trx-commit=1', '--sync-binlog=1']
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', '127.0.0.1', '-pwallet-local-test-only']
+      interval: 2s
+      timeout: 2s
+      retries: 60

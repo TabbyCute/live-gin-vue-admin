@@ -4,6 +4,10 @@
 
 如果当前环境可用 GVA Helper 或其他项目专用 MCP 工具，开发前应优先使用它获取项目级建议、约束和示例，再落地具体实现。
 
+## Go构建与安全基线
+
+2026-10-30安全复核后，后端工具链固定Go1.26.10，模块最低语言版本1.26；CI、Makefile和Docker builder已同步。升级依赖或发布前须以当前go.mod/go.sum重新构建，不能仅重启旧二进制。漏洞复扫须用同一工具链构建扫描器，例如`GOTOOLCHAIN=go1.26.10 go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...`，并区分符号可达结果与仅存在于依赖中的报告。完整变更依据见docs/social/production-review-20261030.md。
+
 ## 推荐开发顺序
 
 1. 先分析需求与接口

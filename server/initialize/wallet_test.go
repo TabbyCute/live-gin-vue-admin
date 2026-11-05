@@ -62,7 +62,8 @@ func TestSyncWalletMetadataCreatesMenusAndIsIdempotent(t *testing.T) {
 	require.Equal(t, "view/routerHolder.vue", parent.Component)
 	var children []system.SysBaseMenu
 	require.NoError(t, db.Where("parent_id = ?", parent.ID).Order("sort").Find(&children).Error)
-	require.Len(t, children, 4)
+	require.Len(t, children, 5)
+	require.Equal(t, "walletTrace", children[4].Name)
 	require.Equal(t, []string{"walletIntroduction", "walletAccount", "walletLedger", "walletRecharge"}, []string{children[0].Name, children[1].Name, children[2].Name, children[3].Name})
 	require.Equal(t, []string{"view/wallet/introduction/index.vue", "view/wallet/account/index.vue", "view/wallet/ledger/index.vue", "view/wallet/recharge/index.vue"}, []string{children[0].Component, children[1].Component, children[2].Component, children[3].Component})
 
@@ -71,14 +72,14 @@ func TestSyncWalletMetadataCreatesMenusAndIsIdempotent(t *testing.T) {
 	require.NoError(t, db.Model(&system.SysApi{}).Where("api_group = ?", "钱包账务").Count(&apiCount).Error)
 	require.NoError(t, db.Model(&system.SysAuthorityMenu{}).Where("sys_authority_authority_id = ?", "888").Count(&relationCount).Error)
 	require.EqualValues(t, 5, menuCount)
-	require.EqualValues(t, 10, apiCount)
-	require.EqualValues(t, 5, relationCount)
+	require.EqualValues(t, 11, apiCount)
+	require.EqualValues(t, 6, relationCount)
 
 	// 菜单已经存在后不得在每次启动重新补权限，避免覆盖运营侧主动收回的访问权。
 	require.NoError(t, db.Where("sys_base_menu_id = ?", children[0].ID).Delete(&system.SysAuthorityMenu{}).Error)
 	require.NoError(t, syncWalletMetadata(db))
 	require.NoError(t, db.Model(&system.SysAuthorityMenu{}).Where("sys_authority_authority_id = ?", "888").Count(&relationCount).Error)
-	require.EqualValues(t, 4, relationCount)
+	require.EqualValues(t, 5, relationCount)
 
 	// 模拟旧版本数据库尚无“钱包介绍”：缺失菜单应在升级时创建并给默认888追加关系。
 	require.NoError(t, db.Delete(&system.SysBaseMenu{}, children[0].ID).Error)
@@ -87,7 +88,7 @@ func TestSyncWalletMetadataCreatesMenusAndIsIdempotent(t *testing.T) {
 	require.NoError(t, db.Where("name = ?", "walletIntroduction").Take(&introduction).Error)
 	require.EqualValues(t, parent.ID, introduction.ParentId)
 	require.NoError(t, db.Model(&system.SysAuthorityMenu{}).Where("sys_authority_authority_id = ?", "888").Count(&relationCount).Error)
-	require.EqualValues(t, 5, relationCount)
+	require.EqualValues(t, 6, relationCount)
 }
 
 func TestWalletMySQLVersionAndSQLMode(t *testing.T) {

@@ -56,7 +56,16 @@ type AccountStatus struct {
 // CheckSearch 分批只读对账，按钱包版本向前扫描，最多1000条；不自动修账。
 type CheckSearch struct {
 	AccountQuery
-	AfterVersion string `form:"afterVersion" json:"afterVersion"`
-	AfterOrderID string `form:"afterOrderId" json:"afterOrderId"`
-	Limit        int    `form:"limit" json:"limit"`
+	AfterVersion       string `form:"afterVersion" json:"afterVersion"`
+	AfterOrderID       string `form:"afterOrderId" json:"afterOrderId"`
+	AfterTransactionID string `form:"afterTransactionId" json:"afterTransactionId"`
+	Limit              int    `form:"limit" json:"limit"`
+}
+
+type TraceQuery struct {
+	No            string `form:"no"`
+	BusinessType  string `form:"businessType"`
+	BusinessNo    string `form:"businessNo"`
+	Kind          string `form:"kind"`
+	AfterRefundID string `form:"afterRefundId"`
 }

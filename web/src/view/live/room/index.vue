@@ -99,6 +99,14 @@
 
     <el-drawer v-model="detailVisible" title="直播间详情" size="760px">
       <template v-if="detail">
+<el-descriptions v-if="detail.giftSummary" title="礼物收入（COIN）" :column="2" border>
+ <el-descriptions-item label="原始收入">{{ detail.giftSummary.grossCoin }}</el-descriptions-item>
+ <el-descriptions-item label="退款">{{ detail.giftSummary.refundCoin }}</el-descriptions-item>
+ <el-descriptions-item label="有效收入">{{ detail.giftSummary.netCoin }}</el-descriptions-item>
+ <el-descriptions-item label="主播礼物分成（含已结算）">{{ detail.giftSummary.pendingEarningCoin }}</el-descriptions-item>
+ <el-descriptions-item label="有效件数">{{ detail.giftSummary.quantity }}</el-descriptions-item>
+ <el-descriptions-item label="去重送礼人数">{{ detail.giftSummary.users }}</el-descriptions-item>
+ </el-descriptions>
         <el-descriptions :column="2" border>
           <el-descriptions-item label="内部 ID">{{ detail.id }}</el-descriptions-item><el-descriptions-item label="房间编号">{{ detail.roomNo }}</el-descriptions-item>
           <el-descriptions-item label="主播内部 ID">{{ detail.anchorId }}</el-descriptions-item><el-descriptions-item label="主播编号">{{ detail.anchorNo }}</el-descriptions-item>
@@ -128,7 +136,7 @@
           </el-descriptions>
           <div class="stat-grid">
             <div><strong>{{ detail.currentSession.viewCount }}</strong><span>进入次数</span></div><div><strong>{{ detail.currentSession.viewerCount }}</strong><span>去重观众</span></div><div><strong>{{ detail.currentSession.peakOnlineCount }}</strong><span>峰值在线</span></div>
-            <div><strong>{{ detail.currentSession.likeCount }}</strong><span>点赞</span></div><div><strong>{{ detail.currentSession.giftCount }}</strong><span>礼物件数</span></div><div><strong>{{ detail.currentSession.giftCoinAmount }}</strong><span>礼物金币</span></div><div><strong>{{ detail.currentSession.giftUserCount }}</strong><span>送礼人数</span></div>
+            <div><strong>{{ detail.currentSession.likeCount }}</strong><span>点赞</span></div><div><strong>{{ detail.currentSession.giftSummary?.quantity }}</strong><span>礼物件数</span></div><div><strong>{{ detail.currentSession.giftSummary?.netCoin }}</strong><span>礼物金币</span></div><div><strong>{{ detail.currentSession.giftSummary?.users }}</strong><span>送礼人数</span></div>
           </div>
           <div class="snapshot-subtitle">公开流媒体信息</div>
           <pre class="stream-info">{{ streamInfoText(detail.currentSession.streamInfo) }}</pre>

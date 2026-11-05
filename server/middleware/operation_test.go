@@ -1,11 +1,13 @@
 package middleware
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"tb_live_module/global"
 	"tb_live_module/model/system"
@@ -131,3 +133,59 @@ func (r *countingReadCloser) Read(value []byte) (int, error) {
 }
 
 func (r *countingReadCloser) Close() error { return nil }
+
+func TestOperationRecordRedactionFailsClosed(t *testing.T) {
+	for _, input := range []string{
+		`{"externalOrderNo":"PRIVATE-BANK","amount":`,
+		`{"externalOrderNo":"PRIVATE-BANK","x":"` + strings.Repeat("a", 980) + `"}`,
+	} {
+		require.NotContains(t, string(redactOperationRecordJSON([]byte(input))), "PRIVATE-BANK")
+	}
+}
+
+func TestOperationRecordHasIndependentBoundedContext(t *testing.T) {
+	db := setupOperationRecordTest(t)
+	entered := false
+	require.NoError(t, db.Callback().Create().Before("gorm:create").Register("test_operation_budget", func(tx *gorm.DB) {
+		if tx.Statement.Table != "sys_operation_records" {
+			return
+		}
+		entered = true
+		require.NoError(t, tx.Statement.Context.Err(), "client cancellation should not discard supplemental log")
+		deadline, ok := tx.Statement.Context.Deadline()
+		require.True(t, ok)
+		require.LessOrEqual(t, time.Until(deadline), 2*time.Second)
+		<-tx.Statement.Context.Done()
+		tx.AddError(tx.Statement.Context.Err())
+	}))
+	t.Cleanup(func() { db.Callback().Create().Remove("test_operation_budget") })
+	router := gin.New()
+	router.Use(OperationRecord())
+	router.POST("/", func(c *gin.Context) { c.Status(http.StatusNoContent) })
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	request := httptest.NewRequest("POST", "/", strings.NewReader("{}")).WithContext(ctx)
+	request.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	start := time.Now()
+	router.ServeHTTP(w, request)
+	require.True(t, entered)
+	require.Less(t, time.Since(start), 4*time.Second)
+	require.Equal(t, http.StatusNoContent, w.Code)
+}
+
+func TestWalletOperationRedactionRegardlessOfContentType(t *testing.T) {
+	db := setupOperationRecordTest(t)
+	router := gin.New()
+	router.Use(OperationRecord())
+	router.POST("/wallet/adjustment/create", func(c *gin.Context) { c.Status(http.StatusBadRequest) })
+	for _, contentType := range []string{"Application/JSON", "text/plain", ""} {
+		r := httptest.NewRequest("POST", "/wallet/adjustment/create", strings.NewReader(`{"evidenceRef":"PRIVATE-PROOF","externalOrderNo":"PRIVATE-BANK"}`))
+		r.Header.Set("Content-Type", contentType)
+		router.ServeHTTP(httptest.NewRecorder(), r)
+		var record system.SysOperationRecord
+		require.NoError(t, db.Order("id DESC").First(&record).Error)
+		require.NotContains(t, record.Body, "PRIVATE-PROOF")
+		require.NotContains(t, record.Body, "PRIVATE-BANK")
+	}
+}

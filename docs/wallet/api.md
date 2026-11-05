@@ -1,6 +1,6 @@
 # 钱包API契约
 
-默认根路径`/api`，以实际`system.router-prefix`为准。统一响应`{code,data,msg}`，成功code=0；鉴权失败HTTP401；参数及业务失败HTTP200+470xx。金额、版本、管理员ID均为字符串，不要转为JavaScript Number；时间为毫秒整数。所有写请求使用`Content-Type: application/json`，最大16KiB，拒绝未知及重复JSON键、尾随JSON；查询拒绝重复和未知参数。请求数据库执行期限8秒。
+默认根路径`/api`，以实际`system.router-prefix`为准。统一响应`{code,data,msg}`，成功code=0；鉴权失败HTTP401；参数及业务失败HTTP200+470xx。金额、版本、管理员ID均为字符串，不要转为JavaScript Number；时间为毫秒整数。所有写请求使用`Content-Type: application/json`，最大16KiB，拒绝未知及重复JSON键、尾随JSON；查询拒绝重复和未知参数。请求数据库执行期限8秒；正文读取也受此期限限制。入口超长query/token或已知超大正文为HTTP400；超额并发为HTTP503、code=47012、Retry-After: 1，不进入业务处理器。客户端按退避策略重试，写请求必须保留原编号和参数。
 
 ## APP本人接口
 
@@ -34,7 +34,8 @@
 | POST | /v1/admin/wallet/adjustment/reverse | 申请权限；requestId、原orderNo、reason、evidenceRef可选；只创建申请 |
 | GET | /v1/admin/wallet/adjustment/list | 读权限；page/pageSize/accountNo/phone/orderNo/status/kind/sourceType/externalOrderNo |
 | GET | /v1/admin/wallet/adjustment/detail | 读权限；orderNo必填 |
-| GET | /v1/admin/wallet/account/check | 读权限；accountNo或phone至少一个、currencyCode、afterVersion、afterOrderId、limit |
+| GET | /v1/admin/wallet/account/check | 读权限；accountNo或phone至少一个、currencyCode、afterVersion、afterOrderId、afterTransactionId、limit |
+| GET | /v1/admin/wallet/transaction/trace | 读权限；no，或businessType+businessNo+kind；afterRefundId可选 |
 
 后台用户定位支持公开账号或完整E.164手机号（例如`+60123456789`）精确查询。两者同时提供时必须属于同一用户，否则按账号不存在处理；手机号只用于定位当前用户，账务事实仍绑定稳定的内部用户ID和公开账号快照。余额响应会返回解析后的`accountNo`和当前绑定`phone`，便于后台再次确认目标。订单、流水和审计保留原始管理员ID，同时提供`createdByDisplay`、`approvedByDisplay`、`rejectedByDisplay`或`operatorDisplay`，格式为`昵称 [ ID ]`；历史管理员被物理删除时回退为`管理员 [ ID ]`。
 
@@ -54,11 +55,32 @@
 
 订单返回：orderNo、requestId、sourceType、externalOrderNo、kind(grant/reverse)、accountNo、currencyCode、amount、reason、evidenceRef、status、originalOrderNo、reversalOrderNo、ledgerNo、createdBy/createdByDisplay、approvedBy/approvedByDisplay、rejectedBy/rejectedByDisplay、reviewReason、createdIp、reviewedIp及各毫秒时间。创建及审核IP取TCP真实对端，不信任X-Forwarded-For；经网关时记录网关IP，可与网关请求日志关联。
 
-详情为`{order,ledger,audit}`；未入账ledger=null，audit按发生顺序列出操作、管理员、IP、原因、时间。审核错误时只返回安全业务错误信息，不向调用方返回数据库错误详情。
+详情为`{order,ledger,audit,issues}`；未入账ledger=null，audit按发生顺序列出操作、管理员、IP、原因、时间。issues非空表示本单请求摘要、审计或流水事实异常；即使已入账单的流水缺失仍返回其现存订单与审计供追查，不能将HTTP成功等同于账务完整。全面核验仍需运行三游标对账。审核错误时只返回安全业务错误信息，不向调用方返回数据库错误详情。
 
 订单列表保留项目`{page,pageSize,total,list}`：默认1/20，pageSize最大100，offset最大10000。status仅pending/credited/rejected/reversed；kind仅grant/reverse；不支持keyword模糊扫描、任意排序或无界导出。total与列表可能因并发提交轻微变化，财务核验以单据详情和对账为准。
 
-对账按两个游标分批：首次`afterVersion=0&afterOrderId=0`，默认limit=100，最大1000；每次同时传回`nextVersion`和`nextOrderId`，直到hasMore=false。结果包含consistent、issues、checked（流水数）、checkedOrders、snapshotVersion。每批使用REPEATABLE READ只读事务取得一致的MVCC快照，不持资金行锁；首次开户并发也读取同一快照中的订单和钱包状态。连续多批期间可能有新入账，snapshotVersion会推进，不代表跨全部页面的冻结快照。必须从0开始并累计每批issues；单独检查最后一页不代表历史全部正确。这里只核查，不自动修改账或重放余额。order_request_hash表示申请摘要异常；order_audit表示订单创建/审核审计缺失、重复或身份/时间/原因不一致；legacy_source_unverified表示历史真实资金标识尚未核验（已驳回旧单除外），不等同于余额合计错误。所有钱包响应带Cache-Control: no-store。
+对账按三个游标分批：首次`afterVersion=0&afterOrderId=0&afterTransactionId=0`，默认limit=100，最大1000；每次同时把`nextVersion`、`nextOrderId`、`nextTransactionId`传入对应after参数，直到hasMore=false。结果包含consistent、issues、checked（流水数）、checkedOrders、checkedTransactions、snapshotVersion。每批使用REPEATABLE READ只读事务取得一致的MVCC快照，不持资金行锁；首次开户并发也读取同一快照中的订单和钱包状态。连续多批期间可能有新入账，snapshotVersion会推进，不代表跨全部页面的冻结快照。必须从0开始并累计每批issues；单独检查最后一页不代表历史全部正确。这里只核查，不自动修改账或重放余额。order_request_hash表示申请摘要异常；order_audit表示订单创建/审核审计缺失、重复或身份/时间/原因不一致；legacy_source_unverified表示历史真实资金标识尚未核验（已驳回旧单除外），不等同于余额合计错误。所有钱包响应带Cache-Control: no-store。
+
+### 消费与退款追踪
+
+内核没有对外扣款、退款接口。内部Go契约见[扣款与消费退款](debit-refund-core.md)。本人流水新增`CONSUME`（负数）、`CONSUME_REFUND`（正数），`businessNo`为`wt_`内部交易号，退款的`originalLedgerNo`关联原扣款流水。不向APP返回业务订单号、操作者、IP、TraceID或内部原因。
+
+后台追踪支持以下两种互斥查询：
+
+```text
+GET /v1/admin/wallet/transaction/trace?no=wt_<32位小写十六进制>
+GET /v1/admin/wallet/transaction/trace?businessType=shop&businessNo=order-123&kind=debit
+```
+
+`no`接受wl_流水号、wt_交易号、wa_人工单号。业务查询kind仅debit/refund；必须提供全部三个字段，区分大小写。响应为`{ledger,transaction,original,refunds,nextRefundId,hasMore,audit,adjustment,issues}`，不适用的对象为null或省略：
+
+- ledger：本次流水，与管理端流水DTO一致。
+- transaction / original / refunds项：transactionNo、kind、businessType、businessNo、accountNo、currencyCode、amount、refundedAmount、originalNo、ledgerNo、actorType、actorId、actorDisplay、actorIp、traceId、reason、createdAt。
+- original：查询退款时返回原扣款；refunds：该原消费下的退款，按ID正序，每页50条。保持查询条件不变，把nextRefundId作为afterRefundId继续查询；hasMore=false停止。退款合计以refundedAmount为准，不能只加总第一页。
+- audit：当前交易审计；人工单查询的adjustment为原有`{order,ledger,audit}`详情。
+- issues：消费交易完整性异常返回`transaction_integrity`，页面应警示并保留现存事实。完整核验使用account/check，新增异常transaction_ledger、transaction_audit、transaction_refund分别表示交易与流水、审计、退款关系异常。
+
+人工与消费的管理员均显示`昵称 [ ID ]`；用户显示`用户 [ 公开账号 ]`，任务显示`系统 [ 服务标识 ]`。普通流水中的operatorId=0表示非管理员，不能当作超级管理员或使用它替代actorType/actorId。
 
 ## 错误码
 
@@ -70,10 +92,10 @@
 | 47004 | 订单不存在 | 核对单号 |
 | 47005 | 状态冲突/幂等键冲突 | 查询原单，不能盲目新建 |
 | 47006 | 普通管理员自审禁止 | 交给另一管理员；固定顶级超级管理员userId=1不受此项限制 |
-| 47007 | 单笔/每日/待审单数量超限，或余额溢出保护 | 核对额度，禁止拆单绕过 |
+| 47007 | 单笔/每日/待审单数量/退款拆分数量超限，或余额溢出保护 | 核对额度，禁止拆单绕过 |
 | 47008 | 人工充值凭证缺失 | 新申请提供凭证 |
 | 47009 | 钱包停用 | 核查停用原因 |
-| 47010 | 冲正余额不足 | 驳回或等待业务处理，禁止改余额 |
+| 47010 | 可用余额不足 | 拒绝扣款或冲正，禁止改余额 |
 | 47011 | 账务不变量异常 | 停止该钱包写操作并对账排查 |
 | 47012 | 服务/数据库异常或提交结果未知 | 查询原单，使用原请求编号/原审核内容重试 |
 
@@ -94,5 +116,6 @@
 | 47013 | 资金凭证已有申请 | 按sourceType/externalOrderNo查询原单，禁止绕过防重 |
 | 47014 | 钱包尚未开户 | 不以状态接口开户；真实充值审批时原子开户 |
 | 47015 | 历史申请无真实资金标识 | 核查后驳回旧待审单，不直接批准 |
+| 47016 | 累计消费退款超过原消费金额 | 查询原消费和成功退款，禁止新单绕过 |
 
 迁移后的`legacy`是历史缺少资金标识的记录，`externalOrderNo`只是原内部订单号，**不代表真实资金凭证**。`reversal`为内部冲正命名空间，以冲正单号区分；两者均不能通过人工充值API创建。旧数据升级与上线核查见deployment.md。

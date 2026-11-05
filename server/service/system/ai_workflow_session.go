@@ -5,11 +5,11 @@ import (
 	"errors"
 	"strings"
 
+	"gorm.io/gorm"
 	"tb_live_module/global"
 	system "tb_live_module/model/system"
 	systemReq "tb_live_module/model/system/request"
 	systemResp "tb_live_module/model/system/response"
-	"gorm.io/gorm"
 )
 
 type aiWorkflowSession struct{}
@@ -26,13 +26,15 @@ func (s *aiWorkflowSession) Save(ctx context.Context, userID uint, info systemRe
 
 	db := global.GVA_DB.WithContext(ctx)
 	if info.ID != 0 {
-		err = db.Where("id = ? AND user_id = ?", info.ID, userID).First(&session).Error
+		err = db.Scopes(workflowSessionScope(userID)).Where("id = ?", info.ID).First(&session).Error
 		if err != nil {
 			return session, err
 		}
 	}
 
-	session.UserID = userID
+	if session.ID == 0 {
+		session.UserID = userID
+	}
 	session.Tab = info.Tab
 	session.Title = truncateText(firstNonEmpty(strings.TrimSpace(info.Title), s.titleFromMessages(info.Messages), s.titleFromForm(info)), 255)
 	session.Summary = strings.TrimSpace(firstNonEmpty(info.Summary, s.summaryFromResult(info.ResultData)))
@@ -56,7 +58,7 @@ func (s *aiWorkflowSession) Save(ctx context.Context, userID uint, info systemRe
 }
 
 func (s *aiWorkflowSession) GetList(ctx context.Context, userID uint, info systemReq.SysAIWorkflowSessionSearch) (list []systemResp.SysAIWorkflowSessionListItem, total int64, err error) {
-	db := global.GVA_DB.WithContext(ctx).Model(&system.SysAIWorkflowSession{}).Where("user_id = ?", userID)
+	db := global.GVA_DB.WithContext(ctx).Model(&system.SysAIWorkflowSession{}).Scopes(workflowSessionScope(userID))
 	if tab := strings.TrimSpace(info.Tab); tab != "" {
 		db = db.Where("tab = ?", tab)
 	}
@@ -78,12 +80,12 @@ func (s *aiWorkflowSession) GetList(ctx context.Context, userID uint, info syste
 }
 
 func (s *aiWorkflowSession) GetDetail(ctx context.Context, userID uint, id uint) (session system.SysAIWorkflowSession, err error) {
-	err = global.GVA_DB.WithContext(ctx).Where("id = ? AND user_id = ?", id, userID).First(&session).Error
+	err = global.GVA_DB.WithContext(ctx).Scopes(workflowSessionScope(userID)).Where("id = ?", id).First(&session).Error
 	return session, err
 }
 
 func (s *aiWorkflowSession) Delete(ctx context.Context, userID uint, id uint) error {
-	result := global.GVA_DB.WithContext(ctx).Where("id = ? AND user_id = ?", id, userID).Delete(&system.SysAIWorkflowSession{})
+	result := global.GVA_DB.WithContext(ctx).Scopes(workflowSessionScope(userID)).Where("id = ?", id).Delete(&system.SysAIWorkflowSession{})
 	if result.Error != nil {
 		return result.Error
 	}
@@ -181,4 +183,13 @@ func truncateText(value string, size int) string {
 		return string(runes)
 	}
 	return string(runes[:size])
+}
+
+func workflowSessionScope(userID uint) func(*gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if system.IsSuperAdmin(userID) {
+			return db
+		}
+		return db.Where("user_id = ?", userID)
+	}
 }

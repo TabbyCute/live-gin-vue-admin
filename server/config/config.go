@@ -1,6 +1,8 @@
 package config
 
 type Server struct {
+	Ranking   Ranking `mapstructure:"ranking" json:"ranking" yaml:"ranking"`
+	Gift      Gift    `mapstructure:"gift" json:"gift" yaml:"gift"`
 	Wallet    Wallet  `mapstructure:"wallet" json:"wallet" yaml:"wallet"`
 	Social    Social  `mapstructure:"social" json:"social" yaml:"social"`
 	JWT       JWT     `mapstructure:"jwt" json:"jwt" yaml:"jwt"`

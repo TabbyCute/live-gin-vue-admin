@@ -8,11 +8,11 @@ import (
 	"tb_live_module/model/common"
 	systemReq "tb_live_module/model/system/request"
 
+	"github.com/google/uuid"
+	"gorm.io/gorm"
 	"tb_live_module/global"
 	"tb_live_module/model/system"
 	"tb_live_module/utils"
-	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)
@@ -140,7 +140,7 @@ func (userService *UserService) GetUserInfoList(info systemReq.GetUserList) (lis
 func (userService *UserService) SetUserAuthority(id uint, authorityId uint) (err error) {
 
 	assignErr := global.GVA_DB.Where("sys_user_id = ? AND sys_authority_authority_id = ?", id, authorityId).First(&system.SysUserAuthority{}).Error
-	if errors.Is(assignErr, gorm.ErrRecordNotFound) {
+	if !system.IsSuperAdmin(id) && errors.Is(assignErr, gorm.ErrRecordNotFound) {
 		return errors.New("该用户无此角色")
 	}
 
@@ -172,7 +172,7 @@ func (userService *UserService) SetUserAuthority(id uint, authorityId uint) (err
 			break
 		}
 	}
-	if !hasMenu {
+	if !hasMenu && !system.IsSuperAdmin(id) {
 		return errors.New("找不到默认路由,无法切换本角色")
 	}
 
@@ -186,7 +186,7 @@ func (userService *UserService) SetUserAuthority(id uint, authorityId uint) (err
 //@param: id uint, authorityIds []string
 //@return: err error
 
-func (userService *UserService) SetUserAuthorities(adminAuthorityID, id uint, authorityIds []uint) (err error) {
+func (userService *UserService) SetUserAuthorities(adminAuthorityID, id uint, authorityIds []uint, userID ...uint) (err error) {
 	return global.GVA_DB.Transaction(func(tx *gorm.DB) error {
 		var user system.SysUser
 		TxErr := tx.Where("id = ?", id).First(&user).Error
@@ -200,7 +200,7 @@ func (userService *UserService) SetUserAuthorities(adminAuthorityID, id uint, au
 		}
 		var useAuthority []system.SysUserAuthority
 		for _, v := range authorityIds {
-			e := AuthorityServiceApp.CheckAuthorityIDAuth(adminAuthorityID, v)
+			e := AuthorityServiceApp.CheckAuthorityIDAuth(adminAuthorityID, v, userID...)
 			if e != nil {
 				return e
 			}

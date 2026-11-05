@@ -9,6 +9,9 @@ import (
 
 // Reload 优雅地重新加载系统配置
 func Reload() error {
+	if global.GuardReady.Load() || global.RankingReady.Load() {
+		return errors.New("守护与榜单后台任务运行中，请通过进程重启应用配置")
+	}
 	if socialService.Default.DB != nil {
 		return errors.New("社交模块默认启用时请通过进程重启应用数据库配置，避免关闭运行中Worker的连接池")
 	}
@@ -41,6 +44,12 @@ func Reload() error {
 		// 确保数据库表结构是最新的
 		RegisterTables()
 		if err := InitializeWallet(); err != nil {
+			return err
+		}
+		if err := InitializeGift(); err != nil {
+			return err
+		}
+		if err := InitializeEarning(); err != nil {
 			return err
 		}
 		// 表结构就绪后重新注册任务并立即执行一次直播生命周期扫描。

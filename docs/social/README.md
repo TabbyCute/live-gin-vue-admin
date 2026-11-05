@@ -10,7 +10,7 @@
 - 九张业务表为 `social_follow`、`social_user_counter`、`social_block`、`social_mute`、`social_favorite`、`social_watch_history`、`social_live_subscription`、`social_outbox_event`、`social_event_consumer`。单数表名、snake_case 列、camelCase DTO，不混用后台用户。
 - 关系采用硬删除，未继承含 `DeletedAt` 的 GVA_MODEL；保留 ID、CreatedAt、UpdatedAt 习惯。计数表以 `user_id` 为主键，避免多余主键与唯一索引。
 - 保留 `live_room.visibility`：0 私密，1 公开，2 仅关注者。不增加平行访问策略字段，不改房间/场次状态值。
-- API/Router/Service 用 `enter.go` 注册；管理实现放 `_admin.go`。现有项目已移除 Casbin，社交管理接口在后台 JWT 之外强制 `RequireAuthority(888)`，菜单可见性不能代替授权。
+- API/Router/Service 用 `enter.go` 注册；管理实现放 `_admin.go`。现有项目已移除 Casbin，社交管理接口在后台 JWT 之外强制 `RequireAuthority(888)`并复核数据库当前账号状态和角色归属，菜单可见性不能代替授权。
 - 统一 `{code,data,msg}`。新列表使用 `limit/cursor/nextCursor/hasMore`，不会伪装成 OFFSET 页码。原有接口保留原分页格式；原公开直播列表计数是候选总数，登录用户被过滤后可见条数可少于总数。
 - 新表 datetime(3) 固定 UTC；`UTCTime` 使用字符串绑定与 UTC 墙钟扫描，避免现有 MySQL `loc=Local` 转换它，也不批量修改旧表时间。返回时间/进度均毫秒；客户端展示按 Asia/Shanghai。
 - 启用社交后，各主播资料与房间详情的 `fansCount` 改读社交权威计数，旧 `live_anchor.fans_count` 仅保留为回退快照，不双写。旧数据若只有粉丝数字而无关注事实，不能凭数字生成关系。
@@ -32,18 +32,22 @@ MuteScope 固定为 `content`、`live_notification`、`recommendation`、`direct
 
 1. `history/open` 持久创建会话，返回服务端 sessionVersion、sessionToken 和 epoch。后打开的设备获得写权。`social_user_counter.history_version` 在用户锁下递增，删除记录后重开也不会复用旧版本；版本在 JS 安全整数范围内，不保证从1开始。
 2. 同一会话按 `sequence` 单调递增；乱序/重复不覆盖，合法新序号可以回退播放位置。客户端时间不参与排序。直播 positionMs 固定 0、completed=false；点播独立保存进度及完成状态。
-3. 普通心跳进入 Redis Lua 聚合：16 个 hash-tag 分片，各最多1000个资源记录；单记录 TTL 60秒，首次入队5秒后可落库。后续心跳不延后首次刷盘期限；不存在每次心跳都 UPDATE MySQL 的行为。
-4. Worker 每分片一次最多读取32条；每次持久化重新检查账号、资源、服务端会话及 epoch。当前采用有界逐记录事务，尚未实现单条 SQL 批量合并写入。Redis Cluster 同分片 MGET/Lua 使用相同 hash tag；每分片有15秒租约，单轮最多10秒，减少多实例重复落库，数据库会话/epoch/sequence及缓冲CAS确认继续兜底。Lua保留原始JSON，避免cjson重编码损失大整数精度。
+3. 普通心跳进入 Redis Lua 聚合：16 个 hash-tag 分片，各最多1000个资源记录；单记录 TTL 60秒，首次入队5秒后可落库。首次入队、会话切换或缓冲过期时，先按唯一资源键核验本人的数据库会话与epoch，伪造会话返回46010，不占用队列。同一已验证缓冲会话的连续心跳只访问Redis。后续心跳不延后首次刷盘期限；不存在每次心跳都 UPDATE MySQL 的行为。
+4. Worker先用一次pipeline只读检查16个分片（Cluster按节点分组），只对有到期记录的分片取租约；空队列不逐片加锁/解锁。每分片一次最多读取32条，每次持久化重新检查账号、资源、服务端会话及epoch。当前采用有界逐记录事务，尚未实现单条SQL批量合并写入。Redis Cluster同分片MGET/Lua使用相同hash tag；每分片15秒租约、单轮10秒处理预算，解锁另有独立1秒清理预算，直接EVAL避免冷脚本两次往返，仅在token匹配时释放。数据库会话/epoch/sequence及缓冲CAS确认继续兜底。单个队列类型错误会报告失败，但健康分片仍继续处理；不自动删除异常队列。Lua保留原始JSON，避免cjson重编码损失大整数精度。
 5. `checkpoint=true` 成功意味着同步 MySQL 提交；应用退出时应提交 checkpoint，但 App 被杀死/网络断开无法保证送达。
 6. 普通心跳 `persisted=false` 只表示排队，数据库长时间不可用、Redis 丢失/过期或重启可丢失未持久化进度，最长未持久化缓冲保留60秒。该通道不是严格可靠观看事件流水。
 7. 清空历史递增 epoch 并删除记录；单记录删除依靠撤销原 sessionToken；旧缓冲只能 UPDATE 已匹配记录，不能重新 INSERT。每用户最多1000条，只在新增记录时核对并清理超额，避免重开已有记录时重复COUNT；默认保留90天，可配置1—365天。
 8. open 的 requestId 在当前会话内幂等；不要无限重放已被其他设备替换的旧 open。跨会话、长期幂等记录与严格观看事件账本尚未实现。
+
+2026-10-30 补充：每轮轮转分片起点，避免前几个分片耗尽预算后饿死后面的分片。已处理前缀用一次pipeline执行逐条CAS确认，另有1秒确认预算；中途数据库失败只确认此前已提交或已失效的记录，失败记录留待重试。并发新心跳不被旧确认删除。载荷身份与key不符的损坏缓冲会被丢弃并计数，不写入其他用户也不阻塞后面的记录。总处理10秒、确认1秒、释放1秒，低于15秒租约；最终一致性仍依赖数据库会话/epoch/sequence条件。删除/切换会话后的旧缓冲可能暂时被Redis受理，但落库时会再次拒绝，不能恢复已删除记录。
 
 ## Redis 与降级
 
 `social:v1:relationship:<hash>`：展示状态 TTL 随机5—10秒；键含双方数据库版本，旧读只能回填旧版本。每次仍现查可见账号资料，封禁账号不会被缓存资料重新显示。所有授权路径直接读库，绝不靠缓存独立放行。
 
 `social:v1:rate:{read|write}:<userID>`：60秒窗口，读600次/写60次；body 32KiB、批量100、列表100上限。Redis 不可用时敏感写入失败关闭；只读接口使用进程级100 QPS有界兜底后回源MySQL，最终授权仍只读库。后台修复不受此客户端限流。写入不使用本地限流冒充多实例限流；只读兜底仅保护单个实例。实际网关还应对匿名鉴权/媒体请求设置速率上限。
+
+请求限流与Worker健康检查合并为pipeline，小型限流/心跳脚本直接EVAL，避免冷缓存时额外往返。必要Redis操作预算1秒，非必要关系缓存每次500毫秒；均不超过上层请求剩余预算。初始化单机和Cluster客户端开启ContextTimeoutEnabled，确保deadline进入socket读写；初始化Ping最多5秒。背压或Worker缺失的失败请求仍会消耗限流额度。社交APP从鉴权前起设5秒协作式context预算；JSON必须完整解析为单个值，正文32KiB、query4KiB、Authorization8KiB上限，响应no-store。慢客户端读写仍依赖HTTP服务器/网关超时。
 
 `social:v1:{history-NN}:item:<hash>` 和 `:pending`：有界心跳缓冲；无 KEYS，无完整粉丝集合。
 
@@ -102,6 +106,7 @@ CLI输出 JSON 审计记录，需由运维留存；HTTP修复有后台 Operation
 - `api.md`：接口、错误码、权限矩阵。
 - `frontend-integration.md`：前端当前可对接功能、接口字段、页面范围与暂缓能力。
 - `production-review-20261027.md`：统一公开资料、破坏性接口变更、SQL与竞态修复、最新验证证据和容量边界。
+- `production-review-20261030.md`：远端Redis预算、历史准入与批量确认、权限撤销、请求边界、安全依赖升级和本轮回归证据；本轮无数据库结构变更。
 - `verification.md`：实测结果、复现命令、40项验收矩阵、性能与未验证项。
 - `server/model/social/`：模型、DTO与 UTC 类型。
 - `server/repository/social/`：锁、重试、计数不变量。

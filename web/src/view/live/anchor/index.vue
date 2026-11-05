@@ -211,7 +211,7 @@
         <el-table-column label="创建时间" width="175">
           <template #default="scope">{{ formatDateTime(scope.row.createdAt) }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="285" fixed="right">
+        <el-table-column label="操作" width="380" fixed="right">
           <template #default="scope">
             <el-button link type="primary" @click="openDetail(scope.row)">详情</el-button>
             <el-button
@@ -221,6 +221,7 @@
               @click="openAction('audit', scope.row)"
             >审核</el-button>
             <el-button link type="primary" @click="openAction('permission', scope.row)">功能权限</el-button>
+            <el-button link type="success" @click="settlementCreator.open(scope.row.anchorNo)">创建结算单</el-button>
             <el-dropdown trigger="click" @command="(command) => handleMore(command, scope.row)">
               <el-button link type="primary">更多</el-button>
               <template #dropdown>
@@ -267,6 +268,14 @@
 
       <div v-loading="detailLoading" class="detail-body">
         <template v-if="detail">
+<el-descriptions v-if="detail.giftSummary" title="礼物收入（COIN）" :column="2" border>
+ <el-descriptions-item label="原始收入">{{ detail.giftSummary.grossCoin }}</el-descriptions-item>
+ <el-descriptions-item label="退款">{{ detail.giftSummary.refundCoin }}</el-descriptions-item>
+ <el-descriptions-item label="有效收入">{{ detail.giftSummary.netCoin }}</el-descriptions-item>
+ <el-descriptions-item label="主播礼物分成（含已结算）">{{ detail.giftSummary.pendingEarningCoin }}</el-descriptions-item>
+ <el-descriptions-item label="有效件数">{{ detail.giftSummary.quantity }}</el-descriptions-item>
+ <el-descriptions-item label="去重送礼人数">{{ detail.giftSummary.users }}</el-descriptions-item>
+ </el-descriptions>
           <div class="detail-actions">
             <el-button v-if="detail.applyStatus === 1" type="warning" @click="openAction('audit', detail)">审核申请</el-button>
             <el-button type="primary" @click="openAction('permission', detail)">功能权限</el-button>
@@ -366,6 +375,7 @@
       </div>
     </el-drawer>
 
+    <SettlementCreateDialog ref="settlementCreator" />
     <el-dialog
       v-model="actionVisible"
       :title="actionTitle"
@@ -528,6 +538,8 @@ import {
   updateAnchorStatus
 } from '@/api/live-anchor'
 import { getCategoryTree } from '@/api/live-category'
+import SettlementCreateDialog from '../earning/SettlementCreateDialog.vue'
+const settlementCreator = ref(null)
 
 const applyStatusMap = { 0: { label: '未申请', type: 'info' }, 1: { label: '待审核', type: 'warning' }, 2: { label: '已通过', type: 'success' }, 3: { label: '已拒绝', type: 'danger' } }
 const anchorStatusMap = { 0: { label: '已禁用', type: 'info' }, 1: { label: '正常', type: 'success' }, 2: { label: '已封禁', type: 'danger' }, 3: { label: '已注销', type: 'info' } }
