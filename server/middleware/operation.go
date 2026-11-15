@@ -79,7 +79,7 @@ func OperationRecord() gin.HandlerFunc {
 			if len(body) > bufferSize {
 				record.Body = "[超出记录长度]"
 			} else {
-				record.Body = string(body)
+				record.Body = redactOperationPayload(body)
 			}
 		}
 
@@ -96,7 +96,11 @@ func OperationRecord() gin.HandlerFunc {
 		record.ErrorMessage = c.Errors.ByType(gin.ErrorTypePrivate).String()
 		record.Status = c.Writer.Status()
 		record.Latency = latency
-		record.Resp = writer.body.String()
+		if writer.body.Len() > bufferSize {
+			record.Resp = "[超出记录长度]"
+		} else {
+			record.Resp = redactOperationPayload(writer.body.Bytes())
+		}
 
 		if strings.Contains(c.Writer.Header().Get("Pragma"), "public") ||
 			strings.Contains(c.Writer.Header().Get("Expires"), "0") ||
@@ -124,6 +128,53 @@ type responseBodyWriter struct {
 }
 
 func (r responseBodyWriter) Write(b []byte) (int, error) {
-	r.body.Write(b)
+	// 仅缓存日志所需内容，响应仍完整发送给客户端。
+	if remaining := bufferSize + 1 - r.body.Len(); remaining > 0 {
+		if remaining > len(b) {
+			remaining = len(b)
+		}
+		r.body.Write(b[:remaining])
+	}
 	return r.ResponseWriter.Write(b)
+}
+
+func redactOperationPayload(body []byte) string {
+	if len(body) == 0 {
+		return ""
+	}
+	var payload interface{}
+	if err := json.Unmarshal(body, &payload); err != nil {
+		return "[非 JSON 内容已省略]"
+	}
+	redactOperationValue(payload)
+	encoded, err := json.Marshal(payload)
+	if err != nil || len(encoded) > bufferSize {
+		return "[超出记录长度]"
+	}
+	return string(encoded)
+}
+
+func redactOperationValue(value interface{}) {
+	switch v := value.(type) {
+	case map[string]interface{}:
+		for key, child := range v {
+			normalized := strings.NewReplacer("-", "", "_", "", " ", "").Replace(strings.ToLower(key))
+			sensitive := false
+			for _, name := range []string{"password", "passwd", "secret", "token", "signingkey", "authorization", "cookie", "privatekey", "credential"} {
+				if strings.Contains(normalized, name) {
+					sensitive = true
+					break
+				}
+			}
+			if sensitive {
+				v[key] = "[已隐藏]"
+			} else {
+				redactOperationValue(child)
+			}
+		}
+	case []interface{}:
+		for _, child := range v {
+			redactOperationValue(child)
+		}
+	}
 }

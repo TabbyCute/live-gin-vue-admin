@@ -10,6 +10,10 @@ import (
 )
 
 func Gorm(ctx context.Context) {
+	if global.GVA_CONFIG.System.DisableAutoMigrate {
+		zap.L().Info("announcement plugin auto-migrate is disabled")
+		return
+	}
 	err := global.GVA_DB.WithContext(ctx).AutoMigrate(
 		new(model.Info),
 	)

@@ -210,6 +210,7 @@ const docTemplate = `{
         },
         "/api/freshCasbin": {
             "get": {
+                "security": [{"ApiKeyAuth": []}],
                 "consumes": [
                     "application/json"
                 ],
@@ -3350,83 +3351,6 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "msg": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/init/checkdb": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "CheckDB"
-                ],
-                "summary": "初始化用户数据库",
-                "responses": {
-                    "200": {
-                        "description": "初始化用户数据库",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object",
-                                            "additionalProperties": true
-                                        },
-                                        "msg": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/init/initdb": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "InitDB"
-                ],
-                "summary": "初始化用户数据库",
-                "parameters": [
-                    {
-                        "description": "初始化数据库参数",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.InitDB"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "初始化用户数据库",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
                                             "type": "string"
                                         }
                                     }
@@ -8107,50 +8031,6 @@ const docTemplate = `{
                     "items": {
                         "type": "integer"
                     }
-                }
-            }
-        },
-        "request.InitDB": {
-            "type": "object",
-            "required": [
-                "adminPassword",
-                "dbName"
-            ],
-            "properties": {
-                "adminPassword": {
-                    "type": "string"
-                },
-                "dbName": {
-                    "description": "数据库名",
-                    "type": "string"
-                },
-                "dbPath": {
-                    "description": "sqlite数据库文件路径",
-                    "type": "string"
-                },
-                "dbType": {
-                    "description": "数据库类型",
-                    "type": "string"
-                },
-                "host": {
-                    "description": "服务器地址",
-                    "type": "string"
-                },
-                "password": {
-                    "description": "数据库密码",
-                    "type": "string"
-                },
-                "port": {
-                    "description": "数据库连接端口",
-                    "type": "string"
-                },
-                "template": {
-                    "description": "postgresql指定template",
-                    "type": "string"
-                },
-                "userName": {
-                    "description": "数据库用户名",
-                    "type": "string"
                 }
             }
         },

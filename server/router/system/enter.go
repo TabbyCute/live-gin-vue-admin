@@ -7,7 +7,6 @@ type RouterGroup struct {
 	JwtRouter
 	SysRouter
 	BaseRouter
-	InitRouter
 	MenuRouter
 	UserRouter
 	CasbinRouter
@@ -27,7 +26,6 @@ type RouterGroup struct {
 }
 
 var (
-	dbApi                = api.ApiGroupApp.SystemApiGroup.DBApi
 	jwtApi               = api.ApiGroupApp.SystemApiGroup.JwtApi
 	baseApi              = api.ApiGroupApp.SystemApiGroup.BaseApi
 	casbinApi            = api.ApiGroupApp.SystemApiGroup.CasbinApi

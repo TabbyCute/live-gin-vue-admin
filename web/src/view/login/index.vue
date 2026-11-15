@@ -1,13 +1,9 @@
 <template>
   <div id="userLayout" class="w-full h-full relative">
     <div
-      class="rounded-lg flex items-center justify-evenly w-full h-full md:w-screen md:h-screen md:bg-[#194bfb] bg-white"
+      class="flex items-center justify-center w-full h-full md:w-screen md:h-screen bg-slate-900"
     >
-      <div class="md:w-3/5 w-10/12 h-full flex items-center justify-evenly">
-        <div
-          class="oblique h-[130%] w-3/5 bg-white dark:bg-slate-900 transform -rotate-12 absolute -ml-52"
-        />
-        <!-- 分割斜块 -->
+      <div class="w-10/12 md:w-full h-full flex items-center justify-center">
         <div
           class="z-[999] pt-12 pb-10 md:w-96 w-full rounded-lg flex flex-col justify-between box-border"
         >
@@ -79,66 +75,26 @@
                   >登 录</el-button
                 >
               </el-form-item>
-              <el-form-item v-if="isDev" class="mb-6">
-                <el-button
-                  class="shadow shadow-active h-11 w-full"
-                  type="primary"
-                  size="large"
-                  @click="checkInit"
-                  >前往初始化</el-button
-                >
-              </el-form-item>
             </el-form>
           </div>
         </div>
       </div>
-      <div class="hidden md:block w-1/2 h-full float-right bg-[#194bfb]">
-        <img
-          class="h-full"
-          src="@/assets/login_right_banner.jpg"
-          alt="banner"
-        />
-      </div>
     </div>
 
-    <BottomInfo class="left-0 right-0 absolute bottom-3 mx-auto w-full z-20">
-      <div class="links items-center justify-center gap-2 hidden md:flex">
-        <a href="https://www.gin-vue-admin.com/" target="_blank">
-          <img src="@/assets/docs.png" class="w-8 h-8" alt="文档" />
-        </a>
-        <a href="https://support.qq.com/product/371961" target="_blank">
-          <img src="@/assets/kefu.png" class="w-8 h-8" alt="客服" />
-        </a>
-        <a
-          href="https://github.com/flipped-aurora/gin-vue-admin"
-          target="_blank"
-        >
-          <img src="@/assets/github.png" class="w-8 h-8" alt="github" />
-        </a>
-        <a href="https://space.bilibili.com/322210472" target="_blank">
-          <img src="@/assets/video.png" class="w-8 h-8" alt="视频站" />
-        </a>
-      </div>
-    </BottomInfo>
   </div>
 </template>
 
 <script setup>
   import { captcha } from '@/api/user'
-  import { checkDB } from '@/api/initdb'
-  import BottomInfo from '@/components/bottomInfo/bottomInfo.vue'
   import { reactive, ref } from 'vue'
   import { ElMessage } from 'element-plus'
-  import { useRouter } from 'vue-router'
   import { useUserStore } from '@/pinia/modules/user'
   import Logo from '@/components/logo/index.vue'
-  import { isDev } from '@/utils/env.js'
 
   defineOptions({
     name: 'Login'
   })
 
-  const router = useRouter()
   const captchaRequiredLength = ref(6)
   // 验证函数
   const checkUsername = (rule, value, callback) => {
@@ -231,21 +187,5 @@
       // 登陆成功
       return true
     })
-  }
-
-  // 跳转初始化
-  const checkInit = async () => {
-    const res = await checkDB()
-    if (res.code === 0) {
-      if (res.data?.needInit) {
-        userStore.NeedInit()
-        await router.push({ name: 'Init' })
-      } else {
-        ElMessage({
-          type: 'info',
-          message: '已配置数据库信息，无法初始化'
-        })
-      }
-    }
   }
 </script>

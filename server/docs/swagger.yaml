@@ -1113,38 +1113,6 @@ definitions:
           type: integer
         type: array
     type: object
-  request.InitDB:
-    properties:
-      adminPassword:
-        type: string
-      dbName:
-        description: 数据库名
-        type: string
-      dbPath:
-        description: sqlite数据库文件路径
-        type: string
-      dbType:
-        description: 数据库类型
-        type: string
-      host:
-        description: 服务器地址
-        type: string
-      password:
-        description: 数据库密码
-        type: string
-      port:
-        description: 数据库连接端口
-        type: string
-      template:
-        description: postgresql指定template
-        type: string
-      userName:
-        description: 数据库用户名
-        type: string
-    required:
-    - adminPassword
-    - dbName
-    type: object
   request.Login:
     properties:
       captcha:
@@ -2038,6 +2006,8 @@ paths:
       - SysApi
   /api/freshCasbin:
     get:
+      security:
+      - ApiKeyAuth: []
       consumes:
       - application/json
       produces:
@@ -3824,50 +3794,6 @@ paths:
       summary: 更新公告
       tags:
       - Info
-  /init/checkdb:
-    post:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 初始化用户数据库
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  additionalProperties: true
-                  type: object
-                msg:
-                  type: string
-              type: object
-      summary: 初始化用户数据库
-      tags:
-      - CheckDB
-  /init/initdb:
-    post:
-      parameters:
-      - description: 初始化数据库参数
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.InitDB'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 初始化用户数据库
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: string
-              type: object
-      summary: 初始化用户数据库
-      tags:
-      - InitDB
   /jwt/jsonInBlacklist:
     post:
       consumes:

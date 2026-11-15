@@ -4,9 +4,10 @@
 import packageInfo from '../../package.json'
 
 const greenText = (text) => `\x1b[32m${text}\x1b[0m`
+const appName = import.meta.env?.VITE_APP_NAME?.trim() || 'Gin-Vue-Admin'
 
 export const config = {
-  appName: 'Gin-Vue-Admin',
+  appName,
   showViteLogo: true,
   keepAliveTabs: false,
   logs: []
@@ -14,9 +15,10 @@ export const config = {
 
 export const viteLogo = (env) => {
   if (config.showViteLogo) {
+    const envAppName = env.VITE_APP_NAME?.trim() || config.appName
     console.log(
       greenText(
-        `> 欢迎使用Gin-Vue-Admin，开源地址：https://github.com/flipped-aurora/gin-vue-admin`
+        `> 欢迎使用${envAppName}，开源地址：https://github.com/flipped-aurora/gin-vue-admin`
       )
     )
     console.log(greenText(`> 当前版本:v${packageInfo.version}`))

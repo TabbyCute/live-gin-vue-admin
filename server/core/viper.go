@@ -20,6 +20,16 @@ func Viper() *viper.Viper {
 	v := viper.New()
 	v.SetConfigFile(config)
 	v.SetConfigType("yaml")
+	// 服务端密钥可由部署环境注入，避免写入受版本管理的配置文件。
+	for key, env := range map[string]string{
+		"jwt.signing-key": "GVA_JWT_SIGNING_KEY",
+		"pgsql.password":  "GVA_PGSQL_PASSWORD",
+		"redis.password":  "GVA_REDIS_PASSWORD",
+	} {
+		if err := v.BindEnv(key, env); err != nil {
+			panic(err)
+		}
+	}
 	err := v.ReadInConfig()
 	if err != nil {
 		panic(fmt.Errorf("fatal error config file: %w", err))

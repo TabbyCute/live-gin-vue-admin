@@ -40,11 +40,6 @@ export const useUserStore = defineStore('user', () => {
     xToken.value = val
   }
 
-  const NeedInit = async () => {
-    await ClearStorage()
-    await router.push({ name: 'Init', replace: true })
-  }
-
   const ResetUserInfo = (value = {}) => {
     userInfo.value = {
       ...userInfo.value,
@@ -138,7 +133,6 @@ export const useUserStore = defineStore('user', () => {
   return {
     userInfo,
     token: currentToken,
-    NeedInit,
     ResetUserInfo,
     GetUserInfo,
     LoginIn,

@@ -6,7 +6,6 @@ type AutoCodeRouter struct{}
 
 func (s *AutoCodeRouter) InitAutoCodeRouter(Router *gin.RouterGroup, RouterPublic *gin.RouterGroup) {
 	autoCodeRouter := Router.Group("autoCode")
-	publicAutoCodeRouter := RouterPublic.Group("autoCode")
 	{
 		autoCodeRouter.GET("getDB", autoCodeApi.GetDB)
 		autoCodeRouter.GET("getTables", autoCodeApi.GetTables)
@@ -46,10 +45,10 @@ func (s *AutoCodeRouter) InitAutoCodeRouter(Router *gin.RouterGroup, RouterPubli
 		autoCodeRouter.GET("getPluginList", autoCodePluginApi.GetPluginList)
 	}
 	{
-		publicAutoCodeRouter.POST("llmAuto", autoCodeApi.LLMAuto)
-		publicAutoCodeRouter.POST("llmAutoSSE", autoCodeApi.LLMAutoSSE)
-		publicAutoCodeRouter.POST("initMenu", autoCodePluginApi.InitMenu)
-		publicAutoCodeRouter.POST("initAPI", autoCodePluginApi.InitAPI)
-		publicAutoCodeRouter.POST("initDictionary", autoCodePluginApi.InitDictionary)
+		autoCodeRouter.POST("llmAuto", autoCodeApi.LLMAuto)
+		autoCodeRouter.POST("llmAutoSSE", autoCodeApi.LLMAutoSSE)
+		autoCodeRouter.POST("initMenu", autoCodePluginApi.InitMenu)
+		autoCodeRouter.POST("initAPI", autoCodePluginApi.InitAPI)
+		autoCodeRouter.POST("initDictionary", autoCodePluginApi.InitDictionary)
 	}
 }

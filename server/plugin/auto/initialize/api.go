@@ -10,6 +10,11 @@ import (
 func Api(ctx context.Context) {
 	_ = ctx
 	entities := []model.SysApi{
+		{Path: "/autoCode/llmAuto", Description: "AI 代码生成", ApiGroup: "代码生成器", Method: "POST"},
+		{Path: "/autoCode/llmAutoSSE", Description: "AI 代码生成流式响应", ApiGroup: "代码生成器", Method: "POST"},
+		{Path: "/autoCode/initMenu", Description: "生成插件菜单文件", ApiGroup: "代码生成器", Method: "POST"},
+		{Path: "/autoCode/initAPI", Description: "生成插件 API 文件", ApiGroup: "代码生成器", Method: "POST"},
+		{Path: "/autoCode/initDictionary", Description: "生成插件字典文件", ApiGroup: "代码生成器", Method: "POST"},
 		// 代码生成器
 		{Path: "/autoCode/getDB", Description: "获取数据库列表", ApiGroup: "代码生成器", Method: "GET"},
 		{Path: "/autoCode/getTables", Description: "获取数据表列表", ApiGroup: "代码生成器", Method: "GET"},

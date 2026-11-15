@@ -20,7 +20,7 @@
 │   └── template
 ├── router
 ├── service
-├── source
+├── migrations
 └── utils
     ├── timer
     └── upload
@@ -47,7 +47,6 @@
 | `--template` | 模板 | 模板文件夹,存放的是代码生成器的模板 |
 | `router`     | 路由层                  | 路由层 |
 | `service`    | service层               | 存放业务逻辑问题 |
-| `source` | source层 | 存放初始化数据的函数 |
 | `utils`      | 工具包                  | 工具函数封装            |
 | `--timer` | timer | 定时器接口封装 |
 | `--upload`      | oss                  | oss接口封装        |

@@ -308,6 +308,7 @@ func (s *SystemApiApi) DeleteApisByIds(c *gin.Context) {
 // FreshCasbin
 // @Tags      SysApi
 // @Summary   刷新casbin缓存
+// @Security  ApiKeyAuth
 // @accept    application/json
 // @Produce   application/json
 // @Success   200   {object}  response.Response{msg=string}  "刷新成功"

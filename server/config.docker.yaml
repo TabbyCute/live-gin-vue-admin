@@ -2,7 +2,7 @@
 
 # jwt configuration
 jwt:
-    signing-key: qmPlus
+    signing-key: 4c435bd30b631dd23531039c10757f0849d578707bd24d57272fc038e22c279c
     expires-time: 7d
     buffer-time: 1d
     issuer: qmPlus
@@ -87,6 +87,8 @@ system:
     router-prefix: ""
     #  严格角色模式 打开后权限将会存在上下级关系
     use-strict-auth: false
+    # 首次结构和数据由 migrations/postgresql/init.sql 初始化
+    disable-auto-migrate: true
 
 # captcha configuration
 captcha:
@@ -97,7 +99,6 @@ captcha:
     open-captcha-timeout: 3600 # open-captcha大于0时才生效
 
 # mysql connect configuration
-# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://gin-vue-admin.com/docs/first_master）
 mysql:
     path: ""
     port: ""
@@ -111,7 +112,6 @@ mysql:
     log-zap: false
 
 # pgsql connect configuration
-# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://gin-vue-admin.com/docs/first_master）
 pgsql:
     path: ""
     port: ""

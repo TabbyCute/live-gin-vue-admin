@@ -2,7 +2,7 @@
 
 # jwt configuration
 jwt:
-    signing-key: qmPlus
+    signing-key: 2b79ca56de5d6cceeab2917d01950b62875b0d1eaa4e70fd89b99577d23dc924
     expires-time: 7d
     buffer-time: 1d
     issuer: qmPlus
@@ -26,7 +26,7 @@ redis:
     addr: 127.0.0.1:6379
     #ACL登录账号,云Redis自定义账号必填,默认账号留空
     username: ""
-    password: ""
+    password: "GvaRedis_2026_R8m3Vz6c"
     db: 0
     clusterAddrs:
         - "172.21.0.3:7000"
@@ -76,7 +76,7 @@ email:
 system:
     env: local # 修改为public可以关闭路由日志输出
     addr: 8888
-    db-type: mysql
+    db-type: pgsql
     oss-type: local # 控制oss选择走本地还是 七牛等其他仓 自行增加其他oss仓可以在 server/utils/upload/upload.go 中 NewOss函数配置
     use-redis: false # 使用redis
     use-mongo: false     # 使用mongo
@@ -90,7 +90,7 @@ system:
     #  严格角色模式 打开后权限将会存在上下级关系
     use-strict-auth: false
     #  禁用自动迁移数据库表结构，生产环境建议设为true，手动迁移
-    disable-auto-migrate: false
+    disable-auto-migrate: true
 
 # captcha configuration
 captcha:
@@ -101,7 +101,6 @@ captcha:
     open-captcha-timeout: 3600 # open-captcha大于0时才生效
 
 # mysql connect configuration
-# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://gin-vue-admin.com/docs/first_master）
 mysql:
     path: ""
     port: ""
@@ -116,14 +115,14 @@ mysql:
     log-zap: false
 
 # pgsql connect configuration
-# 未初始化之前请勿手动修改数据库信息！！！如果一定要手动初始化请看（https://gin-vue-admin.com/docs/first_master）
+# 首次启动前请先在目标数据库执行 migrations/postgresql/init.sql
 pgsql:
-    path: ""
-    port: ""
-    config: ""
-    db-name: ""
-    username: ""
-    password: ""
+    path: "127.0.0.1"
+    port: "5432"
+    config: "sslmode=disable TimeZone=Asia/Shanghai"
+    db-name: "admin"
+    username: "postgres"
+    password: "GvaPg_2026_N7k4Qp9x"
     max-idle-conns: 10
     max-open-conns: 100
     conn-max-lifetime: 0

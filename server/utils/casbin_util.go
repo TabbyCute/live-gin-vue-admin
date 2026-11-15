@@ -9,6 +9,7 @@ import (
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 var (
@@ -19,7 +20,15 @@ var (
 // GetCasbin 获取casbin实例
 func GetCasbin() *casbin.SyncedCachedEnforcer {
 	once.Do(func() {
-		a, err := gormadapter.NewAdapterByDB(global.GVA_DB)
+		if global.GVA_DB == nil {
+			zap.L().Error("数据库未连接，无法加载权限策略")
+			return
+		}
+		db := global.GVA_DB.Session(&gorm.Session{})
+		if global.GVA_CONFIG.System.DisableAutoMigrate {
+			gormadapter.TurnOffAutoMigrate(db)
+		}
+		a, err := gormadapter.NewAdapterByDB(db)
 		if err != nil {
 			zap.L().Error("适配数据库失败请检查 casbin 配置和数据表", zap.Error(err))
 			return

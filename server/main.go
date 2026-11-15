@@ -42,6 +42,9 @@ func initializeSystem() {
 	global.GVA_LOG = core.Zap() // 初始化zap日志库
 	zap.ReplaceGlobals(global.GVA_LOG)
 	global.GVA_DB = initialize.Gorm() // gorm连接数据库
+	if global.GVA_DB == nil {
+		global.GVA_LOG.Fatal("数据库未配置，请配置数据库连接并执行初始化 SQL 后启动")
+	}
 	initialize.Timer()
 	initialize.DBList()
 	initialize.SetupHandlers() // 注册全局函数

@@ -13,7 +13,7 @@ Nprogress.configure({
 })
 
 // 白名单路由
-const WHITE_LIST = ['Login', 'Init']
+const WHITE_LIST = ['Login']
 
 function isExternalUrl(val) {
   return typeof val === 'string' && /^(https?:)?\/\//.test(val)

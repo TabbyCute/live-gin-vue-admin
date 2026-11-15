@@ -80,7 +80,6 @@ web
  │   │   ├── request.js         -- 请求
  │   │   └── stringFun.js       -- 字符串文件
  |   ├── view -- 主要view代码
- |   |   ├── about -- 关于我们
  |   |   ├── dashboard -- 面板
  |   |   ├── error -- 错误
  |   |   ├── example --上传案例
@@ -90,7 +89,6 @@ web
  |   |   |   ├── init -- 旧版本
  |   |   ├── layout  --  layout约束页面
  |   |   |   ├── aside
- |   |   |   ├── bottomInfo     -- bottomInfo
  |   |   |   ├── screenfull     -- 全屏设置
  |   |   |   ├── setting        -- 系统设置
  |   |   |   └── index.vue      -- base 约束

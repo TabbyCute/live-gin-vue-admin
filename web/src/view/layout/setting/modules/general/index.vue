@@ -128,7 +128,7 @@
               <Logo />
             </div>
             <div class="flex-1">
-              <h4 class="text-xl font-semibold gva-theme-text-main mb-3">Gin-Vue-Admin</h4>
+              <h4 class="text-xl font-semibold gva-theme-text-main mb-3">{{ $GIN_VUE_ADMIN.appName }}</h4>
               <p class="text-sm gva-theme-text-sub mb-5 leading-relaxed">
                 基于 Vue3 + Gin 的全栈开发基础平台，提供完整的后台管理解决方案
               </p>

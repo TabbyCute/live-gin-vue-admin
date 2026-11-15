@@ -13,6 +13,7 @@ import LogoHeader from '@/view/layout/header/index.vue'
 import Dashboard from '@/view/dashboard/index.vue'
 import { useAppStore } from '@/pinia/modules/app'
 import { useUserStore } from '@/pinia/modules/user'
+import config from '@/core/config'
 
 const pinia = createPinia()
 const router = createRouter({
@@ -55,9 +56,7 @@ for (const iconName in ElIconModules) {
   app.component(iconName, ElIconModules[iconName])
 }
 
-app.config.globalProperties.$GIN_VUE_ADMIN = {
-  appName: 'Gin-Vue-Admin'
-}
+app.config.globalProperties.$GIN_VUE_ADMIN = config
 
 app.use(ElementPlus).use(pinia).use(router)
 await router.isReady()
