@@ -1,0 +1,81 @@
+{
+  "date": "2026-11-14",
+  "goVet": {
+    "exitCode": 0,
+    "log": "go-vet.log"
+  },
+  "goBuild": {
+    "exitCode": 0,
+    "log": "go-build.log"
+  },
+  "moduleLocalRunner": {
+    "exitCode": 0,
+    "log": "local-runner.log",
+    "includes": [
+      "guarded local MySQL",
+      "race",
+      "migration actual restore",
+      "JPEG EXIF fuzz"
+    ],
+    "fuzzExecutions": 23012
+  },
+  "imageUpgradeRegression": {
+    "exitCode": 0,
+    "log": "image-upgrade-regression.log"
+  },
+  "logFieldRegression": {
+    "exitCode": 0,
+    "log": "log-field-regression.log"
+  },
+  "mcpRace": {
+    "exitCode": 0,
+    "log": "mcp-security-race.log"
+  },
+  "dependencyScan": {
+    "commandExitCode": 1,
+    "scannerExitStatus": 3,
+    "reachableAdvisories": [
+      "GO-2026-6911"
+    ],
+    "resolvedAdvisories": [
+      "GO-2026-6222"
+    ],
+    "log": "govulncheck.log",
+    "passed": false
+  },
+  "production": {
+    "databaseMigrationCompleted": false,
+    "applicationDeployed": false,
+    "state": "TCP connects but MySQL handshake times out",
+    "writeStatementsExecuted": false,
+    "log": "prod-preflight.json",
+    "lastRetry": {
+      "userConfirmedExternalAccess": true,
+      "target": "140.210.12.162:3306",
+      "defaultRouteInterface": "utun8",
+      "defaultPathHandshakeAttempts": 3,
+      "defaultPathHandshakeBytes": 0,
+      "defaultPathReadTimeoutSeconds": 10,
+      "scopedInterface": "en0",
+      "scopedTCPTimeoutSeconds": [
+        5,
+        20
+      ],
+      "scopedSocketBindSucceeded": true,
+      "systemNetworkConfigurationChanged": false,
+      "sshConnected": false,
+      "readonlySSHQuestionPending": true,
+      "evidence": [
+        "prod-retry-preflight.json",
+        "prod-retry-network.jsonl",
+        "prod-retry-direct-probe.jsonl",
+        "prod-retry-direct-probe-20s.jsonl"
+      ]
+    }
+  },
+  "cleanup": {
+    "ownedTestComposeProjectsRemoved": 7,
+    "preexistingSRSRetained": true,
+    "log": "local-container-cleanup.log"
+  }
+}

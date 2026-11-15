@@ -36,6 +36,9 @@
         <el-table-column label="点赞" prop="likeCount" width="90" />
         <el-table-column label="礼物数（件）" min-width="165"><template #default="{ row }"><div v-if="row.giftSummary" class="main-cell"><strong>{{ row.giftSummary.grossQuantity }}</strong><span>退款 {{ row.giftSummary.refundQuantity }} · 有效 {{ row.giftSummary.quantity }}</span></div><span v-else title="礼物统计未就绪或当前账号无礼物财务查看权限">—</span></template></el-table-column>
         <el-table-column label="礼物价值（COIN）" min-width="200"><template #default="{ row }"><div v-if="row.giftSummary" class="main-cell"><strong>{{ row.giftSummary.grossCoin }}</strong><span>退款 {{ row.giftSummary.refundCoin }} · 有效 {{ row.giftSummary.netCoin }}</span></div><span v-else title="礼物统计未就绪或当前账号无礼物财务查看权限">—</span></template></el-table-column>
+        <el-table-column v-if="presenceAllowed" label="游客 / 会员在线" width="160">
+          <template #default="scope"><span>{{ presenceCount(presenceStats[scope.row.sessionNo], 'guestCount') }} / {{ presenceCount(presenceStats[scope.row.sessionNo], 'memberCount') }}</span></template>
+        </el-table-column>
         <el-table-column label="操作" width="230" fixed="right"><template #default="scope"><el-button link type="primary" @click="showDetail(scope.row)">详情</el-button><el-button v-if="[0, 1].includes(scope.row.status)" link type="danger" @click="openEnd(scope.row)">强制结束</el-button><el-button v-if="canConfirmStopped(scope.row)" link type="warning" @click="openConfirmStopped(scope.row)">确认已停流</el-button></template></el-table-column>
       </el-table>
       <div class="gva-pagination"><el-pagination v-model:current-page="page" v-model:page-size="pageSize" :page-sizes="[10, 20, 50, 100]" :total="total" layout="total, sizes, prev, pager, next, jumper" @current-change="getTableData" @size-change="handleSizeChange" /></div>
@@ -62,6 +65,7 @@
 
     <el-drawer v-model="detailVisible" title="直播场次详情" size="680px">
       <template v-if="detail">
+ <PresencePanel v-if="detailVisible" :session-no="detail.sessionNo" />
 <el-descriptions v-if="detail.giftSummary" title="礼物收入（COIN）" :column="2" border>
  <el-descriptions-item label="原始收入">{{ detail.giftSummary.grossCoin }}</el-descriptions-item>
  <el-descriptions-item label="退款">{{ detail.giftSummary.refundCoin }}</el-descriptions-item>
@@ -102,6 +106,8 @@
 </template>
 
 <script setup>
+import PresencePanel from '@/view/live/presence/PresencePanel.vue'
+import { usePresence, presenceCount } from '@/view/live/presence/use-presence'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { formatDate } from '@/utils/format'
@@ -135,6 +141,7 @@ const formatTimestamp = (value) => Number(value) ? (formatDate(Number(value)) ||
 const durationText = (milliseconds) => { const seconds = Math.floor(Number(milliseconds || 0) / 1000); if (seconds < 60) return `${seconds} 秒`; if (seconds < 3600) return `${Math.floor(seconds / 60)} 分 ${seconds % 60} 秒`; return `${Math.floor(seconds / 3600)} 小时 ${Math.floor((seconds % 3600) / 60)} 分` }
 const streamInfoText = (value) => { if (!value || (typeof value === 'object' && Object.keys(value).length === 0)) return '{}'; if (typeof value === 'string') { try { return JSON.stringify(JSON.parse(value), null, 2) } catch { return value } } return JSON.stringify(value, null, 2) }
 const params = () => { const result = { page: page.value, pageSize: pageSize.value }; ['sessionNo', 'roomNo', 'anchorNo', 'categoryId', 'status'].forEach((key) => { const value = searchInfo[key]; if (value !== '' && value !== null && value !== undefined) result[key] = value }); if (searchInfo.startedAtRange?.length === 2) { result.startedAtStart = Number(searchInfo.startedAtRange[0]); result.startedAtEnd = Number(searchInfo.startedAtRange[1]) } return result }
+const { presenceStats, presenceAllowed } = usePresence(tableData, 'sessionNo')
 const getTableData = async () => { loading.value = true; try { const res = await getLiveSessionList(params()); if (res.code === 0) { tableData.value = res.data.list || []; total.value = Number(res.data.total || 0) } } finally { loading.value = false } }
 const loadCategories = async () => { const res = await getCategoryTree(); if (res.code === 0) categoryTree.value = res.data || [] }
 const refreshData = () => Promise.all([getTableData(), loadCategories()])

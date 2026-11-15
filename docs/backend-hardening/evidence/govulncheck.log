@@ -1,0 +1,94 @@
+=== Symbol Results ===
+
+Vulnerability #1: GO-2026-6911
+    SSRF and credential leak via unvalidated Location header in
+    github.com/mark3labs/mcp-go
+  More info: https://pkg.go.dev/vuln/GO-2026-6911
+  Module: github.com/mark3labs/mcp-go
+    Found in: github.com/mark3labs/mcp-go@v0.41.1
+    Fixed in: N/A
+    Example traces found:
+      #1: mcp/client/client.go:26:50: client.NewClient calls client.NewStreamableHttpClient, which calls transport.NewStreamableHTTP
+      #2: api/v1/system/auto_code_mcp.go:120:2: system.AutoCodeTemplateApi.MCPTest calls client.Client.Close, which calls transport.StreamableHTTP.Close
+      #3: mcp/client/client.go:46:34: client.NewClient calls client.Client.Initialize, which calls transport.StreamableHTTP.SendNotification
+      #4: api/v1/system/auto_code_mcp.go:126:36: system.AutoCodeTemplateApi.MCPTest calls client.Client.CallTool, which eventually calls transport.StreamableHTTP.SendRequest
+      #5: mcp/client/client.go:32:24: client.NewClient calls client.Client.Start, which calls transport.StreamableHTTP.SetRequestHandler
+
+Vulnerability #2: GO-2026-6859
+    HTTP/1 server crash due to MaxBytesReader header race in net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6859
+  Standard library
+    Found in: net/http@go1.26.10
+    Fixed in: net/http@go1.26.11
+    Example traces found:
+      #1: utils/upload/minio_oss.go:44:54: upload.GetMinio calls minio.Client.BucketExists, which eventually calls http.CanonicalHeaderKey
+      #2: service/system/sys_skills.go:408:44: system.SkillsService.DownloadOnlineSkill calls http.Client.Do
+      #3: initialize/router.go:34:22: initialize.justFilesFilesystem.Open calls http.Dir.Open
+      #4: service/system/sys_skills.go:437:26: system.SkillsService.DownloadOnlineSkill calls http.Get
+      #5: service/system/auto_code_plugin.go:17:2: system.init calls archives.init, which eventually calls http.HandleFunc
+      #6: utils/upload/minio_oss.go:41:30: upload.GetMinio calls minio.Client.MakeBucket, which eventually calls http.Header.Add
+      #7: api/v1/payout/manual.go:468:10: payout.API.EvidenceRead calls gin.Context.Header, which calls http.Header.Del
+      #8: utils/claims.go:43:31: utils.GetToken calls http.Header.Get
+      #9: service/system/sys_skills.go:406:24: system.SkillsService.DownloadOnlineSkill calls http.Header.Set
+      #10: utils/upload/aws_s3.go:68:31: upload.AwsS3.DeleteFile calls s3.Client.DeleteObject, which eventually calls http.Header.Values
+      #11: utils/upload/qiniu.go:65:32: upload.Qiniu.DeleteFile calls storage.BucketManager.Delete, which eventually calls http.Header.WriteSubset
+      #12: service/system/sys_skills.go:402:37: system.SkillsService.DownloadOnlineSkill calls http.NewRequest
+      #13: internal/srs/client.go:727:40: srs.Client.doJSON calls http.NewRequestWithContext
+      #14: utils/upload/minio_oss.go:44:54: upload.GetMinio calls minio.Client.BucketExists, which eventually calls http.ReadRequest
+      #15: utils/claims.go:46:22: utils.GetToken calls gin.Context.Cookie, which calls http.Request.Cookie
+      #16: api/v1/example/exa_breakpoint_continue.go:35:42: example.FileUploadAndDownloadApi.BreakpointContinue calls http.Request.FormFile
+      #17: api/v1/example/exa_breakpoint_continue.go:30:32: example.FileUploadAndDownloadApi.BreakpointContinue calls http.Request.FormValue
+      #18: api/v1/system/sys_export_template.go:444:25: system.SysExportTemplateApi.ImportExcel calls gin.Context.FormFile, which calls http.Request.ParseMultipartForm
+      #19: internal/srs/client.go:732:19: srs.Client.doJSON calls http.Request.SetBasicAuth
+      #20: api/v1/live/live_room_admin.go:208:57: live.RoomAdminApi.ConfirmMediaStopped calls http.Request.UserAgent
+      #21: utils/upload/minio_oss.go:44:54: upload.GetMinio calls minio.Client.BucketExists, which eventually calls http.Response.Write
+      #22: api/v1/live/live_presence.go:87:32: live.presenceBind calls http.ResponseController.SetReadDeadline
+      #23: mcp/server.go:45:12: mcp.NewStreamableHTTPServer calls http.ServeMux.Handle
+      #24: mcp/server.go:46:16: mcp.NewStreamableHTTPServer calls http.ServeMux.HandleFunc
+      #25: core/server_run.go:62:16: core.initServer calls http.Server.Close
+      #26: cmd/mcp/main.go:32:24: mcp.main calls server.StreamableHTTPServer.Start, which calls http.Server.ListenAndServe
+      #27: cmd/mcp/main.go:32:24: mcp.main calls server.StreamableHTTPServer.Start, which calls http.Server.ListenAndServeTLS
+      #28: core/server_run.go:60:24: core.initServer calls http.Server.Shutdown
+      #29: utils/claims.go:36:14: utils.SetToken calls gin.Context.SetCookie, which calls http.SetCookie
+      #30: initialize/internal/mongo.go:8:2: internal.init calls options.init, which eventually calls http.Transport.Clone
+      #31: utils/upload/minio_oss.go:44:54: upload.GetMinio calls minio.Client.BucketExists, which eventually calls http.Transport.CloseIdleConnections
+      #32: mcp/client/client.go:71:25: client.originTransport.RoundTrip calls http.Transport.RoundTrip
+      #33: service/system/sys_skills.go:412:2: system.SkillsService.DownloadOnlineSkill calls http.body.Close
+      #34: service/system/sys_skills.go:418:29: system.SkillsService.DownloadOnlineSkill calls io.ReadAll, which calls http.body.Read
+      #35: service/system/sys_skills.go:412:2: system.SkillsService.DownloadOnlineSkill calls http.bodyEOFSignal.Close
+      #36: service/system/sys_skills.go:418:29: system.SkillsService.DownloadOnlineSkill calls io.ReadAll, which calls http.bodyEOFSignal.Read
+      #37: service/system/sys_skills.go:454:21: system.SkillsService.DownloadOnlineSkill calls io.Copy, which eventually calls http.bodyLocked.Read
+      #38: service/system/sys_skills.go:454:21: system.SkillsService.DownloadOnlineSkill calls io.Copy, which eventually calls http.bufioFlushWriter.Write
+      #39: service/system/sys_skills.go:412:2: system.SkillsService.DownloadOnlineSkill calls http.cancelTimerBody.Close
+      #40: service/system/sys_skills.go:418:29: system.SkillsService.DownloadOnlineSkill calls io.ReadAll, which calls http.cancelTimerBody.Read
+      #41: service/system/sys_skills.go:256:15: system.SkillsService.Package calls zip.Writer.Close, which eventually calls http.checkConnErrorWriter.Write
+      #42: service/system/sys_skills.go:256:15: system.SkillsService.Package calls zip.Writer.Close, which eventually calls http.chunkWriter.Write
+      #43: service/system/sys_skills.go:454:21: system.SkillsService.DownloadOnlineSkill calls io.Copy, which eventually calls http.connReader.Read
+      #44: service/system/sys_skills.go:412:2: system.SkillsService.DownloadOnlineSkill calls http.expectContinueReader.Close
+      #45: service/system/sys_skills.go:418:29: system.SkillsService.DownloadOnlineSkill calls io.ReadAll, which calls http.expectContinueReader.Read
+      #46: service/system/sys_skills.go:412:2: system.SkillsService.DownloadOnlineSkill calls http.gzipReader.Close
+      #47: service/system/sys_skills.go:418:29: system.SkillsService.DownloadOnlineSkill calls io.ReadAll, which calls http.gzipReader.Read
+      #48: service/system/sys_skills.go:454:21: system.SkillsService.DownloadOnlineSkill calls io.Copy, which eventually calls http.loggingConn.Read
+      #49: internal/engagementcli/backup.go:170:16: engagementcli.backupTables calls bufio.Writer.Flush, which calls http.loggingConn.Write
+      #50: service/system/sys_skills.go:412:2: system.SkillsService.DownloadOnlineSkill calls http.maxBytesReader.Close
+      #51: service/system/sys_skills.go:418:29: system.SkillsService.DownloadOnlineSkill calls io.ReadAll, which calls http.maxBytesReader.Read
+      #52: initialize/plugin_notifier.go:39:24: initialize.GetDBReadyNotifier calls sync.Once.Do, which eventually calls http.onceCloseListener.Close
+      #53: service/system/sys_skills.go:418:29: system.SkillsService.DownloadOnlineSkill calls io.ReadAll, which calls http.persistConn.Read
+      #54: service/system/sys_skills.go:454:21: system.SkillsService.DownloadOnlineSkill calls io.Copy, which eventually calls http.persistConnWriter.ReadFrom
+      #55: service/system/sys_skills.go:256:15: system.SkillsService.Package calls zip.Writer.Close, which eventually calls http.persistConnWriter.Write
+      #56: service/system/sys_skills.go:412:2: system.SkillsService.DownloadOnlineSkill calls http.readTrackingBody.Close
+      #57: service/system/sys_skills.go:418:29: system.SkillsService.DownloadOnlineSkill calls io.ReadAll, which calls http.readTrackingBody.Read
+      #58: service/system/sys_skills.go:418:29: system.SkillsService.DownloadOnlineSkill calls io.ReadAll, which calls http.readWriteCloserBody.Read
+      #59: api/v1/system/sys_auto_code.go:202:16: system.writeLLMStreamError calls gin.responseWriter.Flush, which calls http.response.Flush
+      #60: service/system/sys_skills.go:454:21: system.SkillsService.DownloadOnlineSkill calls io.Copy, which eventually calls http.response.ReadFrom
+      #61: core/internal/cutter.go:97:23: internal.Cutter.Write calls fmt.Fprintln, which calls http.response.Write
+      #62: middleware/operation.go:244:37: middleware.responseBodyWriter.WriteString calls gin.responseWriter.WriteString, which eventually calls http.response.WriteHeader
+      #63: service/system/sys_skills.go:256:15: system.SkillsService.Package calls zip.Writer.Close, which eventually calls http.response.WriteString
+      #64: api/v1/system/sys_user.go:506:37: system.BaseApi.ResetPassword calls http.transportReadFromServerError.Error
+
+Your code is affected by 2 vulnerabilities from 1 module and the Go standard library.
+This scan also found 6 vulnerabilities in packages you import and 2
+vulnerabilities in modules you require, but your code doesn't appear to call
+these vulnerabilities.
+Use '-show verbose' for more details.
+exit status 3

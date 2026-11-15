@@ -145,7 +145,7 @@ func migratePayout(db *gorm.DB) error {
 	})
 }
 func InitializePayout() error {
-	crypto, e := svc.LoadCrypto()
+	crypto, e := svc.LoadCrypto(global.GVA_CONFIG.Payout)
 	if e != nil {
 		return e
 	}

@@ -1,0 +1,5 @@
+=== RUN   TestMySQLRegistrationToManualPaid
+    registration_paid_test.go:128: new registration/login → anchor application/approval → recharge → gift/idempotent replay → settlement → own payee → withdrawal → independent manual confirmation → paid once; external bank calls=0
+--- PASS: TestMySQLRegistrationToManualPaid (9.09s)
+PASS
+ok  	tb_live_module/service/earning	13.996s

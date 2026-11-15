@@ -1,0 +1,142 @@
+=== RUN   TestPresenceLoad1000
+    live_presence_mysql_test.go:235: hot-room-open-state count=1000 elapsed=117.434417ms p95=6.411875ms p99=11.071208ms
+    live_presence_mysql_test.go:235: 1000-heartbeat-state count=1000 elapsed=92.068541ms p95=5.162ms p99=7.610583ms
+    live_presence_mysql_test.go:235: online-list-100-per-page-serial count=10 elapsed=0s p95=14.3435ms p99=14.3435ms
+    live_presence_mysql_test.go:235: 1000-like-burst-32-workers count=1000 elapsed=71.203875ms p95=4.296416ms p99=6.649833ms
+    live_presence_mysql_test.go:205: like accepted=4 rejected=996
+    live_presence_mysql_test.go:210: mysql checkpoint 1001 visits elapsed=259.564333ms
+    live_presence_mysql_test.go:221: expire 1001 connections in batches100 elapsed=24.310917ms
+    live_presence_mysql_test.go:223: # Memory
+        used_memory:4055240
+        used_memory_human:3.87M
+        used_memory_rss:18984960
+        used_memory_rss_human:18.11M
+        used_memory_peak:5312560
+        used_memory_peak_human:5.07M
+        used_memory_peak_perc:76.33%
+        used_memory_overhead:1938280
+        used_memory_startup:981472
+        used_memory_dataset:2116960
+        used_memory_dataset_perc:68.87%
+        allocator_allocated:8377832
+        allocator_active:20185088
+        allocator_resident:24641536
+        allocator_muzzy:0
+        total_system_memory:8217751552
+        total_system_memory_human:7.65G
+        used_memory_lua:287744
+        used_memory_vm_eval:287744
+        used_memory_lua_human:281.00K
+        used_memory_scripts_eval:34456
+        number_of_cached_scripts:9
+        number_of_functions:0
+        number_of_libraries:0
+        used_memory_vm_functions:33792
+        used_memory_vm_total:321536
+        used_memory_vm_total_human:314.00K
+        used_memory_functions:192
+        used_memory_scripts:34648
+        used_memory_scripts_human:33.84K
+        maxmemory:134217728
+        maxmemory_human:128.00M
+        maxmemory_policy:noeviction
+        allocator_frag_ratio:2.61
+        allocator_frag_bytes:6797912
+        allocator_rss_ratio:1.22
+        allocator_rss_bytes:4456448
+        rss_overhead_ratio:0.77
+        rss_overhead_bytes:-5656576
+        mem_fragmentation_ratio:4.52
+        mem_fragmentation_bytes:14782008
+        mem_not_counted_for_evict:0
+        mem_replication_backlog:0
+        mem_total_replication_buffers:0
+        mem_clients_slaves:0
+        mem_clients_normal:919552
+        mem_cluster_links:0
+        mem_aof_buffer:0
+        mem_allocator:jemalloc-5.3.0
+        mem_overhead_db_hashtable_rehashing:0
+        active_defrag_running:0
+        lazyfree_pending_objects:0
+        lazyfreed_objects:0
+        
+        # Stats
+        total_connections_received:737
+        total_commands_processed:538890
+        instantaneous_ops_per_sec:95122
+        total_net_input_bytes:88504826
+        total_net_output_bytes:8721941
+        total_net_repl_input_bytes:0
+        total_net_repl_output_bytes:0
+        instantaneous_input_kbps:14983.29
+        instantaneous_output_kbps:1789.93
+        instantaneous_input_repl_kbps:0.00
+        instantaneous_output_repl_kbps:0.00
+        rejected_connections:0
+        sync_full:0
+        sync_partial_ok:0
+        sync_partial_err:0
+        expired_subkeys:0
+        expired_keys:286
+        expired_stale_perc:0.00
+        expired_time_cap_reached_count:0
+        expire_cycle_cpu_milliseconds:132
+        evicted_keys:0
+        evicted_clients:0
+        evicted_scripts:0
+        total_eviction_exceeded_time:0
+        current_eviction_exceeded_time:0
+        keyspace_hits:272650
+        keyspace_misses:29789
+        pubsub_channels:0
+        pubsub_patterns:0
+        pubsubshard_channels:0
+        latest_fork_usec:0
+        total_forks:0
+        migrate_cached_sockets:0
+        slave_expires_tracked_keys:0
+        active_defrag_hits:0
+        active_defrag_misses:0
+        active_defrag_key_hits:0
+        active_defrag_key_misses:0
+        total_active_defrag_time:0
+        current_active_defrag_time:0
+        tracking_total_keys:0
+        tracking_total_items:0
+        tracking_total_prefixes:0
+        unexpected_error_replies:0
+        total_error_replies:0
+        dump_payload_sanitizations:0
+        total_reads_processed:18945
+        total_writes_processed:18171
+        io_threaded_reads_processed:0
+        io_threaded_writes_processed:0
+        client_query_buffer_limit_disconnections:0
+        client_output_buffer_limit_disconnections:0
+        reply_buffer_shrinks:73
+        reply_buffer_expands:1
+        eventloop_cycles:36176
+        eventloop_duration_sum:15586913
+        eventloop_duration_cmd_sum:684830
+        instantaneous_eventloop_cycles_per_sec:1008
+        instantaneous_eventloop_duration_usec:377
+        acl_access_denied_auth:0
+        acl_access_denied_cmd:0
+        acl_access_denied_key:0
+        acl_access_denied_channel:0
+        
+        # CPU
+        used_cpu_sys:2.041441
+        used_cpu_user:14.352160
+        used_cpu_sys_children:0.003047
+        used_cpu_user_children:0.000913
+        used_cpu_sys_main_thread:2.039135
+        used_cpu_user_main_thread:14.348424
+        
+--- PASS: TestPresenceLoad1000 (1.12s)
+=== RUN   TestPresenceLoadMultiRoom
+    live_presence_mysql_test.go:235: 16-room-160-open-state-32-workers count=160 elapsed=24.54475ms p95=9.977584ms p99=11.342959ms
+--- PASS: TestPresenceLoadMultiRoom (0.06s)
+PASS
+ok  	tb_live_module/service/live	2.929s

@@ -1,0 +1,189 @@
+Command: env -u MCP_TEST_URL go test -race ./mcp/... ./cmd/mcp -count=1 -v
+Local httptest fixtures only; no external MCP endpoint.
+
+=== RUN   TestMCPToolBackendRedirectDoesNotLeakAdminToken
+=== RUN   TestMCPToolBackendRedirectDoesNotLeakAdminToken/other_host/301
+=== RUN   TestMCPToolBackendRedirectDoesNotLeakAdminToken/other_host/302
+=== RUN   TestMCPToolBackendRedirectDoesNotLeakAdminToken/other_host/303
+=== RUN   TestMCPToolBackendRedirectDoesNotLeakAdminToken/other_host/307
+=== RUN   TestMCPToolBackendRedirectDoesNotLeakAdminToken/other_host/308
+=== RUN   TestMCPToolBackendRedirectDoesNotLeakAdminToken/same_host_other_port/301
+=== RUN   TestMCPToolBackendRedirectDoesNotLeakAdminToken/same_host_other_port/302
+=== RUN   TestMCPToolBackendRedirectDoesNotLeakAdminToken/same_host_other_port/303
+=== RUN   TestMCPToolBackendRedirectDoesNotLeakAdminToken/same_host_other_port/307
+=== RUN   TestMCPToolBackendRedirectDoesNotLeakAdminToken/same_host_other_port/308
+--- PASS: TestMCPToolBackendRedirectDoesNotLeakAdminToken (0.02s)
+    --- PASS: TestMCPToolBackendRedirectDoesNotLeakAdminToken/other_host/301 (0.01s)
+    --- PASS: TestMCPToolBackendRedirectDoesNotLeakAdminToken/other_host/302 (0.00s)
+    --- PASS: TestMCPToolBackendRedirectDoesNotLeakAdminToken/other_host/303 (0.00s)
+    --- PASS: TestMCPToolBackendRedirectDoesNotLeakAdminToken/other_host/307 (0.00s)
+    --- PASS: TestMCPToolBackendRedirectDoesNotLeakAdminToken/other_host/308 (0.00s)
+    --- PASS: TestMCPToolBackendRedirectDoesNotLeakAdminToken/same_host_other_port/301 (0.00s)
+    --- PASS: TestMCPToolBackendRedirectDoesNotLeakAdminToken/same_host_other_port/302 (0.00s)
+    --- PASS: TestMCPToolBackendRedirectDoesNotLeakAdminToken/same_host_other_port/303 (0.00s)
+    --- PASS: TestMCPToolBackendRedirectDoesNotLeakAdminToken/same_host_other_port/307 (0.00s)
+    --- PASS: TestMCPToolBackendRedirectDoesNotLeakAdminToken/same_host_other_port/308 (0.00s)
+=== RUN   TestMCPToolBackendNormalRequestRemainsCompatible
+--- PASS: TestMCPToolBackendNormalRequestRemainsCompatible (0.00s)
+=== RUN   TestMCPHealthDoesNotFollowCrossOriginLocation
+--- PASS: TestMCPHealthDoesNotFollowCrossOriginLocation (0.00s)
+=== RUN   TestMCPListenAddressDefaultsToLoopback
+=== RUN   TestMCPListenAddressDefaultsToLoopback/omitted
+=== RUN   TestMCPListenAddressDefaultsToLoopback/whitespace
+=== RUN   TestMCPListenAddressDefaultsToLoopback/negative_port
+=== RUN   TestMCPListenAddressDefaultsToLoopback/explicit_external
+=== RUN   TestMCPListenAddressDefaultsToLoopback/explicit_address
+=== RUN   TestMCPListenAddressDefaultsToLoopback/ipv6_loopback
+=== RUN   TestMCPListenAddressDefaultsToLoopback/ipv6_external
+--- PASS: TestMCPListenAddressDefaultsToLoopback (0.00s)
+    --- PASS: TestMCPListenAddressDefaultsToLoopback/omitted (0.00s)
+    --- PASS: TestMCPListenAddressDefaultsToLoopback/whitespace (0.00s)
+    --- PASS: TestMCPListenAddressDefaultsToLoopback/negative_port (0.00s)
+    --- PASS: TestMCPListenAddressDefaultsToLoopback/explicit_external (0.00s)
+    --- PASS: TestMCPListenAddressDefaultsToLoopback/explicit_address (0.00s)
+    --- PASS: TestMCPListenAddressDefaultsToLoopback/ipv6_loopback (0.00s)
+    --- PASS: TestMCPListenAddressDefaultsToLoopback/ipv6_external (0.00s)
+=== RUN   TestMCPHealthFallbackRemainsLocalAfterListenChange
+--- PASS: TestMCPHealthFallbackRemainsLocalAfterListenChange (0.00s)
+=== RUN   TestBuildDirectoryStructureReturnsRootRelativePaths
+--- PASS: TestBuildDirectoryStructureReturnsRootRelativePaths (0.00s)
+=== RUN   TestCollectExpectedFilePathsReturnsRootRelativePaths
+--- PASS: TestCollectExpectedFilePathsReturnsRootRelativePaths (0.00s)
+=== RUN   TestScanModulesInDirectoryReturnsRootRelativeFilePaths
+--- PASS: TestScanModulesInDirectoryReturnsRootRelativeFilePaths (0.00s)
+PASS
+ok  	tb_live_module/mcp	2.350s
+=== RUN   TestMcpClientConnection
+    client_test.go:13: set MCP_TEST_URL to run external MCP integration tests
+--- SKIP: TestMcpClientConnection (0.00s)
+=== RUN   TestTools
+=== RUN   TestTools/currentTime
+    client_test.go:22: set MCP_TEST_URL to run external MCP integration tests
+=== RUN   TestTools/getNickname
+    client_test.go:52: set MCP_TEST_URL to run external MCP integration tests
+--- PASS: TestTools (0.00s)
+    --- SKIP: TestTools/currentTime (0.00s)
+    --- SKIP: TestTools/getNickname (0.00s)
+=== RUN   TestGetTools
+    client_test.go:95: set MCP_TEST_URL to run external MCP integration tests
+--- SKIP: TestGetTools (0.00s)
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/other_host/301/request
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/other_host/301/notification
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/other_host/301/close
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/other_host/302/request
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/other_host/302/notification
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/other_host/302/close
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/other_host/303/request
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/other_host/303/notification
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/other_host/303/close
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/other_host/307/request
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/other_host/307/notification
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/other_host/307/close
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/other_host/308/request
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/other_host/308/notification
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/other_host/308/close
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/301/request
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/301/notification
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/301/close
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/302/request
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/302/notification
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/302/close
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/303/request
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/303/notification
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/303/close
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/307/request
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/307/notification
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/307/close
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/308/request
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/308/notification
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/308/close
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/https_to_http/301/request
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/https_to_http/301/notification
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/https_to_http/301/close
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/https_to_http/302/request
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/https_to_http/302/notification
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/https_to_http/302/close
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/https_to_http/303/request
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/https_to_http/303/notification
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/https_to_http/303/close
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/https_to_http/307/request
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/https_to_http/307/notification
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/https_to_http/307/close
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/https_to_http/308/request
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/https_to_http/308/notification
+=== RUN   TestRealMCPTransportRejectsMaliciousLocation/https_to_http/308/close
+--- PASS: TestRealMCPTransportRejectsMaliciousLocation (0.25s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/other_host/301/request (0.05s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/other_host/301/notification (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/other_host/301/close (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/other_host/302/request (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/other_host/302/notification (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/other_host/302/close (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/other_host/303/request (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/other_host/303/notification (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/other_host/303/close (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/other_host/307/request (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/other_host/307/notification (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/other_host/307/close (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/other_host/308/request (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/other_host/308/notification (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/other_host/308/close (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/301/request (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/301/notification (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/301/close (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/302/request (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/302/notification (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/302/close (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/303/request (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/303/notification (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/303/close (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/307/request (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/307/notification (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/307/close (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/308/request (0.01s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/308/notification (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/same_host_other_port/308/close (0.00s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/https_to_http/301/request (0.07s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/https_to_http/301/notification (0.01s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/https_to_http/301/close (0.01s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/https_to_http/302/request (0.01s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/https_to_http/302/notification (0.01s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/https_to_http/302/close (0.01s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/https_to_http/303/request (0.01s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/https_to_http/303/notification (0.01s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/https_to_http/303/close (0.01s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/https_to_http/307/request (0.01s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/https_to_http/307/notification (0.01s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/https_to_http/307/close (0.01s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/https_to_http/308/request (0.01s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/https_to_http/308/notification (0.01s)
+    --- PASS: TestRealMCPTransportRejectsMaliciousLocation/https_to_http/308/close (0.01s)
+=== RUN   TestMCPConstructorRejectsRedirectButNormalRPCStillWorks
+--- PASS: TestMCPConstructorRejectsRedirectButNormalRPCStillWorks (0.02s)
+=== RUN   TestMCPOriginGuardWorksWithoutRedirectPolicy
+--- PASS: TestMCPOriginGuardWorksWithoutRedirectPolicy (0.00s)
+=== RUN   TestMCPRejectsRedirectAndLocationCredentialExfiltration
+--- PASS: TestMCPRejectsRedirectAndLocationCredentialExfiltration (0.00s)
+PASS
+ok  	tb_live_module/mcp/client	2.850s
+2026/11/14 01:44:42 maxprocs: Leaving GOMAXPROCS=12: CPU quota undefined
+=== RUN   TestStandaloneMCPListenDefaultsAndExplicitConfig
+=== RUN   TestStandaloneMCPListenDefaultsAndExplicitConfig/omitted
+=== RUN   TestStandaloneMCPListenDefaultsAndExplicitConfig/empty
+=== RUN   TestStandaloneMCPListenDefaultsAndExplicitConfig/whitespace
+=== RUN   TestStandaloneMCPListenDefaultsAndExplicitConfig/explicit_external
+=== RUN   TestStandaloneMCPListenDefaultsAndExplicitConfig/explicit_ipv6
+--- PASS: TestStandaloneMCPListenDefaultsAndExplicitConfig (0.00s)
+    --- PASS: TestStandaloneMCPListenDefaultsAndExplicitConfig/omitted (0.00s)
+    --- PASS: TestStandaloneMCPListenDefaultsAndExplicitConfig/empty (0.00s)
+    --- PASS: TestStandaloneMCPListenDefaultsAndExplicitConfig/whitespace (0.00s)
+    --- PASS: TestStandaloneMCPListenDefaultsAndExplicitConfig/explicit_external (0.00s)
+    --- PASS: TestStandaloneMCPListenDefaultsAndExplicitConfig/explicit_ipv6 (0.00s)
+PASS
+ok  	tb_live_module/cmd/mcp	3.257s
+
+Race test command exit code: 0
+
+Command: go vet ./mcp/... ./cmd/mcp
+go vet exit code: 0

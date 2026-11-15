@@ -1,0 +1,5 @@
+{"stage":"preflight"}
+{"stage":"financial_preflight"}
+{"stage":"schema_verification"}
+{"stage":"financial_postflight"}
+{"stage":"complete"}

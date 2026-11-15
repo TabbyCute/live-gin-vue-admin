@@ -1,0 +1,6 @@
+ Container gift-delivery-test-mysql-1  Stopping
+ Container gift-delivery-test-mysql-1  Stopped
+ Container gift-delivery-test-mysql-1  Removing
+ Container gift-delivery-test-mysql-1  Removed
+ Network gift-delivery-test_default  Removing
+ Network gift-delivery-test_default  Removed

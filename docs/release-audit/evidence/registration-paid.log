@@ -1,0 +1,320 @@
+=== RUN   TestRegistrationToManualPaid
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.389ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("wallet_account")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.051ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("wallet_ledger")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.039ms] [34;1m[rows:7][0m SELECT * FROM PRAGMA_index_list("wallet_adjustment_order")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.046ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("wallet_daily_quota")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.024ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("wallet_audit_log")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.029ms] [34;1m[rows:5][0m SELECT * FROM PRAGMA_index_list("wallet_transaction")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.034ms] [34;1m[rows:0][0m SELECT * FROM PRAGMA_index_list("anchor_income_lock")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.046ms] [34;1m[rows:5][0m SELECT * FROM PRAGMA_index_list("anchor_income_fact")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.025ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("gift_admin_permission")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.016ms] [34;1m[rows:0][0m SELECT * FROM PRAGMA_index_list("gift_control")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.023ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("gift_category")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.022ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("gift_item")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.084ms] [34;1m[rows:15][0m SELECT * FROM PRAGMA_index_list("gift_order")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.052ms] [34;1m[rows:5][0m SELECT * FROM PRAGMA_index_list("gift_refund_order")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.048ms] [34;1m[rows:4][0m SELECT * FROM PRAGMA_index_list("gift_revenue_ledger")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.025ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("gift_benefit_grant")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.024ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("gift_benefit_compensation")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.198ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("gift_event_outbox")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.095ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("gift_audit_log")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.025ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("anchor_revenue_rule")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.054ms] [34;1m[rows:4][0m SELECT * FROM PRAGMA_index_list("anchor_earning_ledger")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.027ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("anchor_rule_termination")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.031ms] [34;1m[rows:0][0m SELECT * FROM PRAGMA_index_list("anchor_income_lock")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.042ms] [34;1m[rows:5][0m SELECT * FROM PRAGMA_index_list("anchor_income_fact")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.022ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("gift_admin_permission")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.016ms] [34;1m[rows:0][0m SELECT * FROM PRAGMA_index_list("gift_control")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.024ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("gift_category")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.023ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("gift_item")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.083ms] [34;1m[rows:15][0m SELECT * FROM PRAGMA_index_list("gift_order")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.033ms] [34;1m[rows:5][0m SELECT * FROM PRAGMA_index_list("gift_refund_order")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.027ms] [34;1m[rows:4][0m SELECT * FROM PRAGMA_index_list("gift_revenue_ledger")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.022ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("gift_benefit_grant")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.026ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("gift_benefit_compensation")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.028ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("gift_event_outbox")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.020ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("gift_audit_log")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.022ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("anchor_revenue_rule")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.036ms] [34;1m[rows:4][0m SELECT * FROM PRAGMA_index_list("anchor_earning_ledger")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.025ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("anchor_rule_termination")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.068ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("anchor_settlement_rounding")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.020ms] [34;1m[rows:0][0m SELECT * FROM PRAGMA_index_list("anchor_income_lock")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.062ms] [34;1m[rows:5][0m SELECT * FROM PRAGMA_index_list("anchor_income_fact")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.018ms] [34;1m[rows:0][0m SELECT * FROM PRAGMA_index_list("anchor_finance_control")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.053ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("anchor_settlement_rule")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.064ms] [34;1m[rows:4][0m SELECT * FROM PRAGMA_index_list("anchor_settlement")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.055ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("anchor_settlement_item")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.026ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("anchor_settlement_allocation")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.027ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("anchor_withdrawable_account")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.225ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("anchor_withdrawable_ledger")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.060ms] [34;1m[rows:6][0m SELECT * FROM PRAGMA_index_list("anchor_withdrawal_order")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.030ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("anchor_reconciliation")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.025ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("anchor_finance_audit")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.025ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("anchor_finance_permission")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.062ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("anchor_settlement_rounding")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.021ms] [34;1m[rows:0][0m SELECT * FROM PRAGMA_index_list("anchor_income_lock")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.044ms] [34;1m[rows:5][0m SELECT * FROM PRAGMA_index_list("anchor_income_fact")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.025ms] [34;1m[rows:0][0m SELECT * FROM PRAGMA_index_list("anchor_finance_control")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.058ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("anchor_settlement_rule")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.043ms] [34;1m[rows:4][0m SELECT * FROM PRAGMA_index_list("anchor_settlement")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.056ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("anchor_settlement_item")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.026ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("anchor_settlement_allocation")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.025ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("anchor_withdrawable_account")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.037ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("anchor_withdrawable_ledger")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.054ms] [34;1m[rows:6][0m SELECT * FROM PRAGMA_index_list("anchor_withdrawal_order")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.068ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("anchor_reconciliation")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.025ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("anchor_finance_audit")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.021ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("anchor_finance_permission")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.178ms] [34;1m[rows:6][0m SELECT * FROM PRAGMA_index_list("anchor_withdrawal_order")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.049ms] [34;1m[rows:6][0m SELECT * FROM PRAGMA_index_list("anchor_withdrawal_order")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.103ms] [34;1m[rows:6][0m SELECT * FROM PRAGMA_index_list("payout_payee_account")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.050ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("payout_owner_lock")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.023ms] [34;1m[rows:4][0m SELECT * FROM PRAGMA_index_list("payout_payee_audit")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.130ms] [34;1m[rows:10][0m SELECT * FROM PRAGMA_index_list("payout_order")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.041ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("payout_order_request")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.033ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("payout_status_history")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.055ms] [34;1m[rows:6][0m SELECT * FROM PRAGMA_index_list("payout_audit_log")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.023ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("payout_channel")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.057ms] [34;1m[rows:6][0m SELECT * FROM PRAGMA_index_list("payout_channel_account")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.137ms] [34;1m[rows:11][0m SELECT * FROM PRAGMA_index_list("payout_attempt")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.063ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("payout_attempt_event")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.095ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("payout_manual_request")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.067ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("payout_channel_daily_usage")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.059ms] [34;1m[rows:7][0m SELECT * FROM PRAGMA_index_list("payout_evidence")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.093ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("payout_reveal_grant")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.098ms] [34;1m[rows:5][0m SELECT * FROM PRAGMA_index_list("payout_terminal_event")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.040ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("payout_reconciliation")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.018ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("payout_investigation")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.042ms] [34;1m[rows:6][0m SELECT * FROM PRAGMA_index_list("anchor_withdrawal_order")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.129ms] [34;1m[rows:6][0m SELECT * FROM PRAGMA_index_list("payout_payee_account")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.073ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("payout_owner_lock")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.067ms] [34;1m[rows:4][0m SELECT * FROM PRAGMA_index_list("payout_payee_audit")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.073ms] [34;1m[rows:10][0m SELECT * FROM PRAGMA_index_list("payout_order")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.035ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("payout_order_request")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.095ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("payout_status_history")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.048ms] [34;1m[rows:6][0m SELECT * FROM PRAGMA_index_list("payout_audit_log")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.015ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("payout_channel")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.030ms] [34;1m[rows:6][0m SELECT * FROM PRAGMA_index_list("payout_channel_account")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.116ms] [34;1m[rows:11][0m SELECT * FROM PRAGMA_index_list("payout_attempt")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.036ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("payout_attempt_event")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.124ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("payout_manual_request")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.082ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("payout_channel_daily_usage")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.051ms] [34;1m[rows:7][0m SELECT * FROM PRAGMA_index_list("payout_evidence")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.021ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("payout_reveal_grant")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.097ms] [34;1m[rows:5][0m SELECT * FROM PRAGMA_index_list("payout_terminal_event")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.048ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("payout_reconciliation")
+
+2026/11/09 00:39:23 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.025ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("payout_investigation")
+    registration_paid_test.go:128: new registration/login → anchor application/approval → recharge → gift/idempotent replay → settlement → own payee → withdrawal → independent manual confirmation → paid once; external bank calls=0
+--- PASS: TestRegistrationToManualPaid (1.00s)
+PASS
+ok  	tb_live_module/service/earning	9.054s

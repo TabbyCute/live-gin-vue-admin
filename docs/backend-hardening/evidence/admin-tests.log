@@ -1,0 +1,94 @@
+(node:30784) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ bank file selection ignores a late previous file and clears on logout (150.3395ms)
+✔ operations/event-delivery/index.vue drops stale and previous-account responses (117.585708ms)
+✔ live/earning/audit/index.vue drops stale and previous-account responses (15.100583ms)
+✔ payout/reconciliation/index.vue drops stale and previous-account responses (21.129375ms)
+✔ audit queue retries the original request after a lost response (11.096ms)
+✔ operations token change cannot restore the previous session snapshot (9.754041ms)
+(node:30785) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ settlement review targets the settlement, not its exchange rule (169.236167ms)
+✔ review freezes the confirmed target and rejects concurrent submissions (7.551ms)
+✔ lost create response retries identical parameters and permanent key (4.759833ms)
+✔ invalid ratios never reach an API write (8.199833ms)
+✔ exchange page explains the ratio to operations without presenting it as a default (4.769167ms)
+✔ exchange preview uses integer arithmetic and updates all three sample values (6.173792ms)
+✔ latest query wins and errors do not retain a success state (5.35475ms)
+✔ payout entry creates a ready order only for an eligible approved withdrawal (15.37125ms)
+✔ withdrawal destination tracing uses only the public payee reference and masked fields (16.183541ms)
+(node:30786) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ actual refund page freezes confirmed request and reuses key after lost response (144.703959ms)
+✔ actual order page rejects stale list responses (19.087125ms)
+✔ actual rule page rejects out-of-range basis points before HTTP write (39.457667ms)
+✔ termination freezes confirmed request and reuses idempotency key after response loss (12.456417ms)
+✔ termination review cannot switch target or double-submit while confirming (14.568625ms)
+✔ COIN uses exact integers including values beyond Number precision (0.491625ms)
+✔ editor emits only request contract and preserves decimal strings (0.128625ms)
+✔ late responses and disposed page cannot overwrite current results (0.069208ms)
+(node:30788) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ guard plan freezes writes and reuses permanent key after ambiguous response (107.824917ms)
+✔ guard plan form never copies database audit or identity fields (0.116042ms)
+✔ guard pages preserve large totals and bound only the numeric pager (30.846167ms)
+✔ guard member rebuild freezes confirmed target and rejects double submit (91.280708ms)
+✔ ranking ignores stale pages and preserves decimal strings (49.599166ms)
+✔ ranking rebuild retries original key after response loss (58.074ms)
+✔ gift editor fails closed when provider readiness is unavailable (12.889666ms)
+✔ manual requests never accept client money or payee, and preserve integer strings (4.638ms)
+(node:30789) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ manual submit blocks double click, freezes original request, retries ambiguous response (154.204791ms)
+✔ manual operations ignore completion after account switches (90.058167ms)
+✔ reveal consumes a capability once and clears plaintext after 30 seconds (13.088292ms)
+✔ late reveal after logout or target change never restores plaintext (9.67225ms)
+✔ evidence blobs are revoked when dialog closes and on logout (18.410708ms)
+✔ company account creation retries original request and clears plaintext on close (21.536334ms)
+✔ detail refresh retains uploaded evidence but a different order clears it (8.436458ms)
+✔ definitive invalid input can be corrected without locking the form (14.955958ms)
+✔ company picker reaches accounts beyond the first hundred and ignores late pages (6.747667ms)
+(node:30790) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ submission freezes original parameters, blocks double-click, retries lost response (115.936166ms)
+✔ logout discards an in-flight order response and sensitive display state (3.875542ms)
+✔ order lists and details ignore stale responses and support precise filters (26.578417ms)
+✔ business errors use fixed messages and creation excludes non-approved/legacy orders (0.122542ms)
+(node:30791) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ unknown/degraded counts are never displayed as zero; strings keep precision (9.438958ms)
+(node:30792) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ root sees unassigned buttons and role directives; other accounts keep their permissions (5.79375ms)
+✔ recent seven days end at current second; boundary and invalid inputs fail before write (7.690875ms)
+(node:30793) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ anchor selection is pinned; rules paginated; valid selection creates only a settlement request (143.750042ms)
+✔ confirmation prevents duplicate clicks and freezes the chosen anchor and interval (96.278167ms)
+✔ lost response is recovered using original key even after reopening on a different row (14.910083ms)
+✔ old rule request cannot overwrite new row and denied loading never creates a settlement (9.19275ms)
+✔ anchor and finance pages both integrate the same dialog; session shows gross and net quantities (69.303583ms)
+(node:30794) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 钱包真实请求客户端保留鉴权、整数精度和失败重试参数 (42.939375ms)
+(node:30795) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 交易溯源忽略旧响应，退款翻页沿用已查询交易 (158.278667ms)
+✔ 账户乱序返回、重置后旧响应不能恢复旧用户 (31.156458ms)
+✔ 切换账户使旧对账停止，不能拼接另一用户的数据 (9.090041ms)
+✔ 状态确认期间换用户使旧确认失效 (3.138458ms)
+✔ 流水翻页使用已查询账号，编辑搜索框不混用游标 (19.433583ms)
+✔ 新建充值必须按当前手机号重新定位，不能使用旧列表第一行 (19.668083ms)
+✔ 账号和手机号交叉查询不匹配时不打开充值表单 (4.708917ms)
+✔ 审核确认固定订单、决定和原因，双击只提交一次 (5.765708ms)
+✔ 详情乱序返回和离开页面不覆盖新详情 (20.487083ms)
+✔ 充值确认期间字段改变不能替换已确认账号和金额 (7.227958ms)
+✔ 充值提交失败保留原请求编号及表单，可原样重试 (12.769833ms)
+ℹ tests 64
+ℹ suites 0
+ℹ pass 64
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 837.789667

@@ -1,6 +1,7 @@
 package gift
 
 import (
+	"context"
 	"gorm.io/gorm"
 	em "tb_live_module/model/earning"
 	gm "tb_live_module/model/gift"
@@ -10,6 +11,20 @@ import (
 )
 
 const maxProofRows = 20000
+
+type incomeProofCacheKey struct{}
+type incomeProofCache struct{ expected map[string]em.Income }
+
+// WithIncomeProofCache MUST only wrap one repeatable-read read-only transaction.
+// It cannot be reused by another transaction or any mutating financial path.
+// Cache misses still perform the complete gift, wallet, refund and event proof.
+func WithIncomeProofCache(tx *gorm.DB) *gorm.DB {
+	return tx.WithContext(context.WithValue(tx.Statement.Context, incomeProofCacheKey{}, &incomeProofCache{expected: map[string]em.Income{}}))
+}
+
+func sameIncomeSource(f, want em.Income) bool {
+	return f.SourceType == "gift" && f.SourceEntryNo == want.SourceEntryNo && f.OriginalIncomeNo == want.OriginalIncomeNo && f.CreatedAt == want.CreatedAt && f.AnchorID == want.AnchorID && f.SourceNo == want.SourceNo && f.Amount == want.Amount && f.GrossAmount == want.GrossAmount && f.RuleNo == want.RuleNo && f.ShareBPS == want.ShareBPS && f.Unit == want.Unit && f.SourceHash == want.SourceHash && f.EntryType == want.EntryType
+}
 
 type walletProof struct {
 	transactions map[string][]wm.WalletTransaction
@@ -77,6 +92,24 @@ func (s *Service) VerifyIncomeSources(tx *gorm.DB, incomes []em.Income) error {
 	if len(incomes) > maxProofRows {
 		return es.ErrLimit
 	}
+	cache, _ := tx.Statement.Context.Value(incomeProofCacheKey{}).(*incomeProofCache)
+	if cache != nil {
+		missing := make([]em.Income, 0, len(incomes))
+		for _, f := range incomes {
+			want, ok := cache.expected[f.SourceEntryNo]
+			if !ok {
+				missing = append(missing, f)
+				continue
+			}
+			if !sameIncomeSource(f, want) {
+				return es.ErrInvariant
+			}
+		}
+		incomes = missing
+		if len(incomes) == 0 {
+			return nil
+		}
+	}
 	numbers := []string{}
 	for _, f := range incomes {
 		if f.SourceType != "gift" {
@@ -91,10 +124,8 @@ func (s *Service) VerifyIncomeSources(tx *gorm.DB, incomes []em.Income) error {
 	if len(earnings) != len(incomes) {
 		return es.ErrInvariant
 	}
-	byEarning := map[string]em.Ledger{}
 	orderSet := map[string]bool{}
 	for _, l := range earnings {
-		byEarning[l.EarningNo] = l
 		orderSet[l.GiftOrderNo] = true
 	}
 	orders := []string{}
@@ -165,23 +196,31 @@ func (s *Service) VerifyIncomeSources(tx *gorm.DB, incomes []em.Income) error {
 		}
 		originalByOrder[f.SourceNo] = f
 	}
-	for _, f := range incomes {
-		l := byEarning[f.SourceEntryNo]
+	expected := map[string]em.Income{}
+	for _, l := range allEarnings {
 		d := details[l.GiftOrderNo]
-		gross := d.Order.GrossCoinAmount
-		kind := "income"
-		originalNo := ""
+		gross, kind, originalNo := d.Order.GrossCoinAmount, "income", ""
 		if l.EntryType == "reversal" {
-			gross = -refundByNo[l.BusinessNo].RefundCoinAmount
-			kind = "reversal"
+			gross, kind = -refundByNo[l.BusinessNo].RefundCoinAmount, "reversal"
 			original, ok := originalByOrder[l.GiftOrderNo]
-			if !ok || original.AnchorID != f.AnchorID {
+			if !ok || original.AnchorID != l.AnchorID {
 				return es.ErrInvariant
 			}
 			originalNo = original.IncomeNo
 		}
-		if f.OriginalIncomeNo != originalNo || f.CreatedAt != l.CreatedAt || f.AnchorID != l.AnchorID || f.SourceNo != l.GiftOrderNo || f.Amount != l.EarningCoinAmount || f.GrossAmount != gross || f.RuleNo != l.RevenueRuleNo || f.ShareBPS != l.ShareBPS || f.Unit != "COIN" || f.SourceHash != es.GiftSourceHash(l) || f.EntryType != kind {
+		expected[l.EarningNo] = em.Income{SourceType: "gift", SourceEntryNo: l.EarningNo, SourceNo: l.GiftOrderNo, AnchorID: l.AnchorID, OriginalIncomeNo: originalNo, CreatedAt: l.CreatedAt, Amount: l.EarningCoinAmount, GrossAmount: gross, RuleNo: l.RevenueRuleNo, ShareBPS: l.ShareBPS, Unit: "COIN", SourceHash: es.GiftSourceHash(l), EntryType: kind}
+	}
+	for _, f := range incomes {
+		if !sameIncomeSource(f, expected[f.SourceEntryNo]) {
 			return es.ErrInvariant
+		}
+	}
+	if cache != nil {
+		if len(cache.expected)+len(expected) > maxProofRows {
+			cache.expected = map[string]em.Income{}
+		}
+		for no, f := range expected {
+			cache.expected[no] = f
 		}
 	}
 	return nil

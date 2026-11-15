@@ -1,0 +1,69 @@
+ Network social-relationship-tests_default  Creating
+ Network social-relationship-tests_default  Created
+ Container social-relationship-tests-redis-1  Creating
+ Container social-relationship-tests-mysql-1  Creating
+ Container social-relationship-tests-mysql-1  Created
+ Container social-relationship-tests-redis-1  Created
+ Container social-relationship-tests-mysql-1  Starting
+ Container social-relationship-tests-redis-1  Starting
+ Container social-relationship-tests-redis-1  Started
+ Container social-relationship-tests-mysql-1  Started
+ Container social-relationship-tests-redis-1  Waiting
+ Container social-relationship-tests-mysql-1  Waiting
+ Container social-relationship-tests-redis-1  Healthy
+ Container social-relationship-tests-mysql-1  Healthy
+ok  	tb_live_module/service/social	13.391s
+ok  	tb_live_module/service/live	13.659s
+ok  	tb_live_module/api/v1/social	2.020s
+ok  	tb_live_module/api/v1/live	4.693s
+ok  	tb_live_module/router/social	2.930s
+ok  	tb_live_module/initialize	4.001s
+ok  	tb_live_module/initialize/internal	3.754s
+ok  	tb_live_module/model/social	1.873s
+ok  	tb_live_module/middleware	6.025s
+=== RUN   TestMySQLPublicProfilePlansAndBatchLoad
+    social_profile_mysql_test.go:99: live profile EXPLAIN: [{"Extra":"Using where","filtered":10,"id":1,"key":"PRIMARY","key_len":"8","partitions":null,"possible_keys":"PRIMARY,idx_live_account_deleted_at,idx_live_account_status_ban","ref":null,"rows":100,"select_type":"PRIMARY","table":"u","type":"range"},{"Extra":"Using where","filtered":5,"id":1,"key":"uk_user_id","key_len":"8","partitions":null,"possible_keys":"PRIMARY,uk_user_id,idx_live_anchor_deleted_at,idx_apply_created","ref":"social_test_public_profiles.u.id","rows":1,"select_type":"PRIMARY","table":"a","type":"eq_ref"},{"Extra":"Using where; Not exists; Using index","filtered":100,"id":1,"key":"uk_social_block_pair","key_len":"16","partitions":null,"possible_keys":"uk_social_block_pair,idx_social_block_list","ref":"const,social_test_public_profiles.u.id","rows":1,"select_type":"PRIMARY","table":"b","type":"eq_ref"},{"Extra":"Using where; Not exists; Using index","filtered":100,"id":1,"key":"uk_social_block_pair","key_len":"16","partitions":null,"possible_keys":"uk_social_block_pair,idx_social_block_list","ref":"social_test_public_profiles.u.id,const","rows":1,"select_type":"PRIMARY","table":"b","type":"eq_ref"},{"Extra":"Using where","filtered":35.20000076293945,"id":1,"key":"uk_live_room_anchor","key_len":"8","partitions":null,"possible_keys":"PRIMARY,uk_live_room_anchor,idx_live_room_deleted_at,idx_live_room_discovery","ref":"social_test_public_profiles.a.id","rows":1,"select_type":"PRIMARY","table":"r","type":"eq_ref"},{"Extra":"Using where","filtered":5,"id":1,"key":"PRIMARY","key_len":"8","partitions":null,"possible_keys":"PRIMARY","ref":"social_test_public_profiles.r.current_session_id","rows":1,"select_type":"PRIMARY","table":"s","type":"eq_ref"},{"Extra":"Using index","filtered":100,"id":4,"key":"uk_social_follow_pair","key_len":"16","partitions":null,"possible_keys":"uk_social_follow_pair,idx_social_follow_out,idx_social_follow_in","ref":"const,social_test_public_profiles.a.user_id","rows":1,"select_type":"DEPENDENT SUBQUERY","table":"f","type":"eq_ref"}]
+    social_profile_mysql_test.go:137: public user list 100: requests=400 concurrency=16 QPS=822.19 p95=28.16275ms p99=34.187917ms errors=0
+--- PASS: TestMySQLPublicProfilePlansAndBatchLoad (5.51s)
+PASS
+ok  	tb_live_module/service/live	6.980s
+=== RUN   TestMySQLLoadProfile
+    load_integration_test.go:84: hot_anchor_follow: {"concurrency":32,"elapsedSeconds":9.76216525,"errorRate":0,"errors":0,"p95Ms":365.381,"p99Ms":450.757,"qps":102.4362909652651,"requests":1000}
+    load_integration_test.go:84: batch_status_100_no_redis: {"concurrency":16,"elapsedSeconds":0.498582583,"errorRate":0,"errors":0,"p95Ms":24.977,"p99Ms":36.627,"qps":802.2743145040828,"requests":400}
+    load_integration_test.go:84: fans_cursor_page_100: {"concurrency":16,"elapsedSeconds":0.194861667,"errorRate":0,"errors":0,"p95Ms":18.967,"p99Ms":27.439,"qps":1539.5536978547968,"requests":300}
+    load_integration_test.go:84: history_strict_checkpoint: {"concurrency":16,"elapsedSeconds":0.095606875,"errorRate":0,"errors":0,"p95Ms":18.095,"p99Ms":18.707,"qps":1045.9498859260907,"requests":100}
+    load_integration_test.go:84: hot_anchor_unfollow_refollow: {"concurrency":32,"elapsedSeconds":17.313354166,"errorRate":0,"errors":0,"p95Ms":1074.873,"p99Ms":1536.502,"qps":57.75888313795382,"requests":1000}
+    load_integration_test.go:84: notification_fanout_page_20_fake_sink: {"concurrency":1,"elapsedSeconds":0.610057,"errorRate":0,"errors":0,"p95Ms":120.974,"p99Ms":120.974,"qps":8.195955459899649,"requests":5}
+--- PASS: TestMySQLLoadProfile (30.28s)
+=== RUN   TestRedisHeartbeatLoadProfile
+    redis_integration_test.go:192: buffered_heartbeat requests=1000 qps=2843.55 p95_ms=0.770 p99_ms=1.239 errors=0
+--- PASS: TestRedisHeartbeatLoadProfile (0.40s)
+PASS
+ok  	tb_live_module/service/social	32.180s
+ok  	tb_live_module/service/social	(cached)
+ok  	tb_live_module/service/live	58.860s
+ok  	tb_live_module/api/v1/social	4.980s
+ok  	tb_live_module/router/social	5.999s
+ok  	tb_live_module/model/social	(cached)
+ok  	tb_live_module/initialize	13.158s
+ok  	tb_live_module/initialize/internal	(cached)
+ok  	tb_live_module/middleware	8.680s
+goos: darwin
+goarch: amd64
+pkg: tb_live_module/service/social
+cpu: VirtualApple @ 2.50GHz
+BenchmarkFollowUnfollow-12       	    2314	    541063 ns/op	  132679 B/op	    1677 allocs/op
+BenchmarkBatchStatus-12          	    6726	    171214 ns/op	   25169 B/op	     316 allocs/op
+BenchmarkHistoryCheckpoint-12    	   12498	    108871 ns/op	   28947 B/op	     385 allocs/op
+PASS
+ok  	tb_live_module/service/social	7.063s
+ Container social-relationship-tests-redis-1  Stopping
+ Container social-relationship-tests-mysql-1  Stopping
+ Container social-relationship-tests-redis-1  Stopped
+ Container social-relationship-tests-redis-1  Removing
+ Container social-relationship-tests-redis-1  Removed
+ Container social-relationship-tests-mysql-1  Stopped
+ Container social-relationship-tests-mysql-1  Removing
+ Container social-relationship-tests-mysql-1  Removed
+ Network social-relationship-tests_default  Removing
+ Network social-relationship-tests_default  Removed

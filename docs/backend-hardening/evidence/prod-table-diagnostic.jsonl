@@ -1,0 +1,3 @@
+{"check":"migration_connection","columnMetadata":false,"command":"Sleep","holder":2875,"seconds":119,"showCreateTable":false,"state":"","statementLength":0}
+{"check":"announcement_create_table","elapsedMs":8005,"ok":false,"rows":0}
+{"check":"announcement_columns","elapsedMs":8002,"ok":false,"rows":0}

@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"tb_live_module/global"
+	mcpHTTP "tb_live_module/mcp/client"
 )
 
 type upstreamEnvelope[T any] struct {
@@ -117,11 +118,18 @@ func doUpstream[T any](ctx context.Context, method, endpoint string, query url.V
 		req.Header.Set("Content-Type", "application/json")
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	client, err := mcpHTTP.NewOriginBoundHTTPClient(baseURL)
+	if err != nil {
+		return nil, fmt.Errorf("MCP上游地址无效")
+	}
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("请求上游服务失败: %w", err)
 	}
 	defer resp.Body.Close()
+	if resp.StatusCode >= http.StatusMultipleChoices && resp.StatusCode < http.StatusBadRequest {
+		return nil, fmt.Errorf("MCP上游重定向已拒绝")
+	}
 
 	rawBody, err := io.ReadAll(resp.Body)
 	if err != nil {

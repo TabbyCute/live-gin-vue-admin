@@ -3,6 +3,7 @@ package live
 import api "tb_live_module/api/v1"
 
 type RouterGroup struct {
+	PresenceRouter
 	UserRouter
 	AccountAdminRouter
 	AnchorRouter
@@ -15,6 +16,7 @@ type RouterGroup struct {
 }
 
 var (
+	presenceApi      = api.ApiGroupApp.LiveApiGroup.PresenceApi
 	userApi          = api.ApiGroupApp.LiveApiGroup.UserApi
 	accountAdminApi  = api.ApiGroupApp.LiveApiGroup.AccountAdminApi
 	anchorApi        = api.ApiGroupApp.LiveApiGroup.AnchorApi

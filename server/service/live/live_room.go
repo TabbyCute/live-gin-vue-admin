@@ -808,28 +808,8 @@ func hasSRSPublisher(session liveModel.LiveSession) bool {
 }
 
 func (s *RoomService) UpdateSessionStats(req liveReq.LiveSessionStatsReq) error {
-	updates := map[string]interface{}{
-		"view_count": req.ViewCount, "viewer_count": req.ViewerCount, "peak_online_count": req.PeakOnlineCount,
-		"like_count": req.LikeCount, // Gift statistics are owned exclusively by gift facts.
-	}
-	result := global.GVA_DB.Model(&liveModel.LiveSession{}).
-		Where("session_no = ? AND status IN ?", req.SessionNo, []int{int(liveModel.LiveSessionPreparing), int(liveModel.LiveSessionLiving), int(liveModel.LiveSessionEnding)}).
-		Updates(updates)
-	if result.Error != nil {
-		return result.Error
-	}
-	if result.RowsAffected == 0 {
-		var count int64
-		if err := global.GVA_DB.Model(&liveModel.LiveSession{}).
-			Where("session_no = ? AND status IN ?", req.SessionNo, []int{int(liveModel.LiveSessionPreparing), int(liveModel.LiveSessionLiving), int(liveModel.LiveSessionEnding)}).
-			Count(&count).Error; err != nil {
-			return err
-		}
-		if count == 0 {
-			return ErrLiveSessionStateInvalid
-		}
-	}
-	return nil
+	// Media callbacks and external statistics cannot own audience or gift counters.
+	return ErrPresenceStatsOwned
 }
 
 // ProcessPendingSessions 只推进可由数据库事实确定的超时状态，不发起任何SRS网络请求。
@@ -3449,7 +3429,7 @@ func (s *RoomService) finalizeSessionWithStopClaim(
 				Updates(map[string]interface{}{
 					"status": liveModel.LiveSessionCancelled, "prepare_deadline_at": int64(0),
 					"publish_result_ciphertext": "",
-					"reconnect_deadline_at":     int64(0), "stats_finalized_at": now,
+					"reconnect_deadline_at":     int64(0), "stats_finalized_at": int64(0),
 					"stop_next_retry_at": int64(0), "stop_last_error": "",
 					"stop_lease_token": "", "stop_lease_until": int64(0),
 					"media_state": liveModel.LiveMediaStopped, "media_state_changed_at": now,
@@ -3482,7 +3462,7 @@ func (s *RoomService) finalizeSessionWithStopClaim(
 		result := update.
 			Updates(map[string]interface{}{
 				"status": liveModel.LiveSessionEnded, "ended_at": endedAt, "duration_ms": duration,
-				"reconnect_deadline_at": int64(0), "stats_finalized_at": now,
+				"reconnect_deadline_at": int64(0), "stats_finalized_at": int64(0),
 				"stop_next_retry_at": int64(0), "stop_last_error": "",
 				"stop_lease_token": "", "stop_lease_until": int64(0),
 				"media_state": liveModel.LiveMediaStopped, "media_state_changed_at": now,
@@ -3505,8 +3485,6 @@ func (s *RoomService) finalizeSessionWithStopClaim(
 		return tx.Model(&liveModel.LiveAnchor{}).Where("id = ?", session.AnchorId).Updates(map[string]interface{}{
 			"total_live_count":       gorm.Expr("total_live_count + 1"),
 			"total_live_duration_ms": gorm.Expr("total_live_duration_ms + ?", duration),
-			"total_view_count":       gorm.Expr("total_view_count + ?", session.ViewCount),
-			"max_online_count":       gorm.Expr("CASE WHEN max_online_count < ? THEN ? ELSE max_online_count END", session.PeakOnlineCount, session.PeakOnlineCount),
 			"last_live_end_at":       endedAt,
 		}).Error
 	})
@@ -3603,7 +3581,7 @@ func cancelPreparingSession(tx *gorm.DB, session liveModel.LiveSession, endReaso
 	result := tx.Model(&liveModel.LiveSession{}).Where("id = ? AND status = ?", session.ID, liveModel.LiveSessionPreparing).
 		Updates(map[string]interface{}{
 			"status": liveModel.LiveSessionCancelled, "ended_at": endedAt, "end_reason": endReason,
-			"failure_reason": reason, "stats_finalized_at": endedAt, "prepare_deadline_at": int64(0),
+			"failure_reason": reason, "stats_finalized_at": int64(0), "prepare_deadline_at": int64(0),
 			"publish_result_ciphertext": "",
 			"stream_ready_deadline_at":  int64(0), "stream_probe_attempts": uint32(0),
 			"stream_probe_next_at": int64(0), "stream_probe_last_error": "",

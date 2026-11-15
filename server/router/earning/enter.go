@@ -78,4 +78,7 @@ func (RouterGroup) InitEarningAdminRouter(root *gin.RouterGroup) {
 	g.GET("withdrawal/detail", a.WithdrawalDetail)
 	g.GET("account/ledger", a.AccountLedger)
 	g.GET("account/check", a.AccountCheck)
+	g.GET("audit/list", a.AuditList)
+	g.POST("audit/start", a.StartAudit)
+	g.POST("audit/cancel", a.CancelAudit)
 }

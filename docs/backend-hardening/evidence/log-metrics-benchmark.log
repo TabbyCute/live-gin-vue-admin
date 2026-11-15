@@ -1,0 +1,21 @@
+goos: darwin
+goarch: amd64
+pkg: tb_live_module/core/internal
+cpu: VirtualApple @ 2.50GHz
+BenchmarkCutterWrite-12          	  544744	      2211 ns/op	     200 B/op	       4 allocs/op
+BenchmarkCutterWrite-12          	  492489	      2055 ns/op	     200 B/op	       4 allocs/op
+BenchmarkCutterWrite-12          	  522121	      1925 ns/op	     200 B/op	       4 allocs/op
+BenchmarkLegacyCutterWrite-12    	   18054	     89186 ns/op	    4696 B/op	      33 allocs/op
+BenchmarkLegacyCutterWrite-12    	   14839	     99059 ns/op	    4696 B/op	      33 allocs/op
+BenchmarkLegacyCutterWrite-12    	   10000	    342838 ns/op	    4696 B/op	      33 allocs/op
+PASS
+ok  	tb_live_module/core/internal	13.506s
+goos: darwin
+goarch: amd64
+pkg: tb_live_module/internal/telemetry
+cpu: VirtualApple @ 2.50GHz
+BenchmarkHTTPObserve-12    	 8699281	       177.2 ns/op	      16 B/op	       1 allocs/op
+BenchmarkHTTPObserve-12    	 7586763	       154.3 ns/op	      16 B/op	       1 allocs/op
+BenchmarkHTTPObserve-12    	 6669070	       214.2 ns/op	      16 B/op	       1 allocs/op
+PASS
+ok  	tb_live_module/internal/telemetry	5.950s

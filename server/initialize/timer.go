@@ -10,7 +10,9 @@ import (
 
 	"github.com/robfig/cron/v3"
 
+	"go.uber.org/zap"
 	"tb_live_module/global"
+	"tb_live_module/internal/telemetry"
 )
 
 var (
@@ -131,7 +133,9 @@ func runLiveStreamReadiness() {
 	if runErr := runLiveTaskWithLeader("stream-readiness", func() error {
 		return (&liveService.RoomService{}).ProcessStreamReadiness(time.Now().UnixMilli())
 	}); runErr != nil {
-		fmt.Println("live stream readiness timer error:", runErr)
+		if global.GVA_LOG != nil {
+			global.GVA_LOG.Warn("live stream readiness timer error", zap.String("errorKind", telemetry.ErrorKind(runErr)))
+		}
 	}
 }
 
@@ -147,7 +151,9 @@ func runLiveSessionLifecycle() {
 	if runErr := runLiveTaskWithLeader("session-lifecycle", func() error {
 		return (&liveService.RoomService{}).ProcessPendingSessions(time.Now().UnixMilli())
 	}); runErr != nil {
-		fmt.Println("live session timer error:", runErr)
+		if global.GVA_LOG != nil {
+			global.GVA_LOG.Warn("live session timer error", zap.String("errorKind", telemetry.ErrorKind(runErr)))
+		}
 	}
 }
 
@@ -163,7 +169,9 @@ func runLiveSessionStop() {
 	if runErr := runLiveTaskWithLeader("session-stop", func() error {
 		return (&liveService.RoomService{}).ProcessEndingSessions(time.Now().UnixMilli())
 	}); runErr != nil {
-		fmt.Println("live session stop timer error:", runErr)
+		if global.GVA_LOG != nil {
+			global.GVA_LOG.Warn("live session stop timer error", zap.String("errorKind", telemetry.ErrorKind(runErr)))
+		}
 	}
 }
 
@@ -179,6 +187,8 @@ func runLiveStreamReconciliation() {
 	if runErr := runLiveTaskWithLeader("stream-reconciliation", func() error {
 		return (&liveService.RoomService{}).ProcessLiveStreamReconciliation(time.Now().UnixMilli())
 	}); runErr != nil {
-		fmt.Println("live stream reconciliation timer error:", runErr)
+		if global.GVA_LOG != nil {
+			global.GVA_LOG.Warn("live stream reconciliation timer error", zap.String("errorKind", telemetry.ErrorKind(runErr)))
+		}
 	}
 }

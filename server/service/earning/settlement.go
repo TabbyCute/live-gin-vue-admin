@@ -10,7 +10,6 @@ import (
 )
 
 const maxSettlementFacts = 1000
-const maxAuditFacts = 20000
 
 func incomeHash(f model.Income) string {
 	return hash(struct {

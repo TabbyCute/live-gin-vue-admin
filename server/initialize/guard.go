@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap"
 	"sync"
 	"tb_live_module/global"
+	"tb_live_module/internal/telemetry"
 	model "tb_live_module/model/guard"
 	"tb_live_module/service/gift"
 	"tb_live_module/service/guard"
@@ -42,6 +43,11 @@ func InitializeEngagement() error {
 	guard.Default.DB = global.GVA_DB
 	ranking.Default.DB = global.GVA_DB
 	ranking.Default.Timezone = global.GVA_CONFIG.Ranking.Zone()
+	encoding, err := ranking.DiscoverAccountEncoding(global.GVA_DB)
+	if err != nil {
+		return err
+	}
+	ranking.Default.AccountEncoding = encoding
 	gift.Default.Guard = guard.Default
 	// All worker types are installed together in StartEngagementWorkers before listening.
 	if global.GVA_CONFIG.Gift.GuardEnabled {
@@ -92,9 +98,14 @@ func StartEngagementWorkers() func() {
 			ticker := time.NewTicker(2 * time.Second)
 			defer ticker.Stop()
 			for {
+				if ctx.Err() != nil {
+					return
+				}
+				finish := telemetry.Default.StartWorker(task.name, 65*time.Second)
 				call, stop := context.WithTimeout(ctx, 30*time.Second)
 				e := task.run(call)
 				stop()
+				finish(e)
 				if e != nil && ctx.Err() == nil {
 					global.GVA_LOG.Warn("engagement worker failed", zap.String("worker", task.name))
 				}

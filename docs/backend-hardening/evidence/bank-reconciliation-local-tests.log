@@ -1,0 +1,35 @@
+2026-11-12 local-only verification
+Database: Docker MySQL 8.0.46 on 127.0.0.1:13328 / earning_test_bankflow
+No remote database, SSH, real bank call or H5 access.
+
+Command: go test -race ./service/earning -run '^TestMySQL(LocalChannelToBankReconciliation|BankDiscrepancyMatrix)$' -count=1 -v
+--- PASS: TestMySQLLocalChannelToBankReconciliation (9.72s)
+1000 rows: import=186.518875ms, reconcile=101.0775ms
+EXPLAIN tiny fixture optimizer index=uk_attempt_usage rows=1
+possible_keys=uk_attempt_usage,uk_payment_reference,idx_attempt_company_time,idx_payout_attempt_status,idx_bank_attempt_account_status_time
+--- PASS: TestMySQLBankDiscrepancyMatrix (10.75s)
+PASS amount_mismatch, currency_mismatch, recipient_mismatch, bank_pending, bank_failed, bank_reversed
+ok tb_live_module/service/earning 25.561s
+
+Command: go test -race ./api/v1/bankreconcile ./router/bankreconcile ./internal/testpay -count=1
+ok tb_live_module/api/v1/bankreconcile 4.948s
+ok tb_live_module/router/bankreconcile 5.651s
+ok tb_live_module/internal/testpay 3.505s
+
+After adding real TCP slow-body and concurrency rejection regression:
+Command: go test -race ./router/bankreconcile -count=1 -v
+--- PASS: TestBankAdminBoundary (5.01s)
+ok tb_live_module/router/bankreconcile 9.411s
+The test verifies APP JWT rejection, 1MiB limit, two slow readers, third request 429, and response completion after 5s body deadline.
+
+Command: go test ./api/v1/bankreconcile -run '^$' -fuzz FuzzBankStrictJSON -fuzztime=5s -parallel=2
+fuzz: execs=10136; new interesting=38 (total=42)
+PASS
+ok tb_live_module/api/v1/bankreconcile 9.462s
+
+Local CLI additive migration and metadata rerun:
+Command: go run ./cmd/bank-reconcile-migrate -migrate -sync-metadata
+{"financialTablesModified":false,"metadataSynced":true,"migrated":true,"verified":true}
+
+These figures describe an isolated tiny local fixture, not a production throughput claim.
+Whole-database private backup, restoration and before/after financial digest verification belong to the parent migration workflow.

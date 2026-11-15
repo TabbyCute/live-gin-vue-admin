@@ -28,7 +28,7 @@ func (r *UserRouter) InitUserRouter(publicGroup, privateGroup *gin.RouterGroup) 
 	{
 		userPrivateRouter.GET("info", userApi.Info)
 		userPrivateRouter.GET("public-profile", profileLookupLimit, userApi.PublicProfile)
-		userPrivateRouter.PATCH("profile", userApi.UpdateProfile)
-		userPrivateRouter.POST("password/change", userApi.ChangePassword)
+		userPrivateRouter.PATCH("profile", authGuard.PrivateHandler("profile", 30), userApi.UpdateProfile)
+		userPrivateRouter.POST("password/change", authGuard.PrivateHandler("password", 5), userApi.ChangePassword)
 	}
 }

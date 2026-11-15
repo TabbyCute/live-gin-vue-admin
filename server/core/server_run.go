@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"tb_live_module/internal/telemetry"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -22,11 +23,13 @@ type server interface {
 func initServer(address string, router *gin.Engine, readTimeout, writeTimeout time.Duration) {
 	// 创建服务
 	srv := &http.Server{
-		Addr:           address,
-		Handler:        router,
-		ReadTimeout:    readTimeout,
-		WriteTimeout:   writeTimeout,
-		MaxHeaderBytes: 1 << 20,
+		Addr:              address,
+		Handler:           router,
+		ReadTimeout:       readTimeout,
+		ReadHeaderTimeout: 5 * time.Second,
+		IdleTimeout:       60 * time.Second,
+		WriteTimeout:      writeTimeout,
+		MaxHeaderBytes:    1 << 20,
 	}
 
 	// 在goroutine中启动服务
@@ -44,16 +47,19 @@ func initServer(address string, router *gin.Engine, readTimeout, writeTimeout ti
 	// kill -2 发送 syscall.SIGINT
 	// kill -9 发送 syscall.SIGKILL，但是无法被捕获，所以不需要添加
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	defer signal.Stop(quit)
 	<-quit
+	telemetry.Draining.Store(true)
 	zap.L().Info("关闭WEB服务...")
 
-	// 设置5秒的超时时间
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// Finish bounded financial requests before canceling background workers.
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 
 	defer cancel()
 
 	if err := srv.Shutdown(ctx); err != nil {
-		zap.L().Fatal("WEB服务关闭异常", zap.Error(err))
+		zap.L().Warn("WEB服务优雅关闭超时，关闭剩余连接")
+		_ = srv.Close()
 	}
 
 	zap.L().Info("WEB服务已关闭")

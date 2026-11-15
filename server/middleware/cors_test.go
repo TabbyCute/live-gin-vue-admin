@@ -51,13 +51,15 @@ func TestCorsByRulesPreflightAllowsRequiredIdempotencyHeader(t *testing.T) {
 	request := httptest.NewRequest(http.MethodOptions, "/prepare", nil)
 	request.Header.Set("Origin", "https://app.example.com")
 	request.Header.Set("Access-Control-Request-Method", http.MethodPost)
-	request.Header.Set("Access-Control-Request-Headers", "authorization,idempotency-key")
+	request.Header.Set("Access-Control-Request-Headers", "authorization,idempotency-key,x-presence-guest")
 	router.ServeHTTP(recorder, request)
 
 	require.Equal(t, http.StatusNoContent, recorder.Code)
 	require.False(t, called)
 	require.Equal(t, "https://app.example.com", recorder.Header().Get("Access-Control-Allow-Origin"))
 	require.Contains(t, strings.ToLower(recorder.Header().Get("Access-Control-Allow-Headers")), "idempotency-key")
+	require.Contains(t, strings.ToLower(recorder.Header().Get("Access-Control-Allow-Headers")), "x-presence-guest")
+	require.Contains(t, strings.ToLower(recorder.Header().Get("Access-Control-Expose-Headers")), "retry-after")
 	require.Equal(t, "true", recorder.Header().Get("Access-Control-Allow-Credentials"))
 	require.ElementsMatch(t,
 		[]string{"Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"},
@@ -97,6 +99,8 @@ func TestAllowAllCorsIncludesIdempotencyHeader(t *testing.T) {
 
 	require.Equal(t, http.StatusNoContent, recorder.Code)
 	require.Contains(t, strings.ToLower(recorder.Header().Get("Access-Control-Allow-Headers")), "idempotency-key")
+	require.Contains(t, strings.ToLower(recorder.Header().Get("Access-Control-Allow-Headers")), "x-presence-guest")
+	require.Contains(t, strings.ToLower(recorder.Header().Get("Access-Control-Expose-Headers")), "retry-after")
 }
 
 func restoreCorsConfig(t *testing.T) {

@@ -6,15 +6,17 @@
 
 ## 密钥和部署次序
 
-服务启动必须注入三个环境变量，不允许使用示例、测试密钥或仓库常量：
+2026-11-05起按用户要求直接读取启动所选YAML中的`payout`配置，不再读取`PAYOUT_ACTIVE_KEY_ID`、`PAYOUT_ENCRYPTION_KEYS`、`PAYOUT_FINGERPRINT_KEY`。`-c config.prod.yaml`、`-c config.dev.yaml`或Docker配置决定使用哪一组密钥。
 
-| 名称 | 内容 |
+| YAML字段 | 内容 |
 | --- | --- |
-| PAYOUT_ACTIVE_KEY_ID | 当前写入的key ID，1—32位字母/数字/下划线/连字符 |
-| PAYOUT_ENCRYPTION_KEYS | JSON对象：key ID → 标准Base64编码的32字节AES密钥，最多16把 |
-| PAYOUT_FINGERPRINT_KEY | 独立的随机32字节HMAC密钥，标准Base64，与AES密钥不可相同 |
+| payout.active-key-id | 当前写入的key ID，1—32位字母/数字/下划线/连字符，必须在下方JSON中存在 |
+| payout.encryption-keys | JSON字符串：key ID → 标准Base64编码的32字节AES密钥，最多16把；用字符串保留key ID大小写 |
+| payout.fingerprint-key | 独立随机32字节HMAC密钥，标准Base64，与AES密钥不可相同 |
 
-由部署环境的secret manager生成、注入和备份真实密钥；不写入config.prod.yaml、数据库系统配置、SQL、审计、前端、命令行参数或本仓库。不在聊天或终端输出真实密钥。本次没有在远程DB生成任何绑定或测试资金，也没有创建代付能力。环境变量是进程启动时的不可变依赖，不支持后台热修改密钥。
+三个配置文件已分别写入独立随机密钥及中文注释，权限0600。真实密钥不在聊天、日志或前端展示；含密钥的配置和发布包须受控保管，不得公开。后台系统配置接口不返回或接受`payout`字段，保存其他设置会保留原有密钥。启动时由InitializePayout读取并构造不可变加密实例；修改文件后必须重新部署配置并重启进程，不会运行中自动换钥。
+
+真实配置的私有备份目录：`/Users/tabby/.codex/backups/live-gin-vue-admin/payout-keys-20261105/`，目录0700、文件0600。已有加密数据的环境必须沿用原AES历史密钥和稳定HMAC密钥，不可复制另一个环境的新值覆盖。2026-11-05生成正式配置前只读确认正式库四类加密记录均为0；测试库当时无法读取，未对测试库做数据变更，原有启动历史key校验继续保留。
 
 AES-256-GCM每次写入生成随机nonce；`encrypted_payload`保存nonce+ciphertext+认证标签的Base64。AAD包含业务编号、owner、方式、币种、资料版本、key ID、指纹、脱敏值、创建时间、创建幂等键与摘要，防止密文跨行互换或不可变元数据被替换。HMAC防重比裸SHA256更能抵御低熵账号字典枚举，密钥必须与加密密钥分离。
 
@@ -22,7 +24,7 @@ AES-256-GCM每次写入生成随机nonce；`encrypted_payload`保存nonce+cipher
 
 轮换：新增key ID并保留全部历史解密key，将active切到新key，重启后新账户使用新key。旧账户/提现事实不重写；不能直接替换已有key ID的内容或单独更换fingerprint密钥。批量重加密、历史资料失效和HMAC轮换需要后续专门的迁移、双版本索引与复核方案，本次未开放在线接口。丢失密钥无法恢复收款资料；备份恢复应同时演练DB和secret版本。
 
-发布次序：执行本模块远程迁移 → 核验 → 在运行环境注入密钥 → 同步发布新后端与H5/后台 → 重启后确认健康。缺失密钥的新版本会失败关闭；数据库迁移完成不等于运行进程已更新。不要让旧版继续接收无payeeAccountNo的新提现写请求。已有approved占位单保持冻结，不自动转成可出款单。
+发布次序：执行本模块远程迁移 → 核验 → 准备所选YAML中的payout密钥 → 同步发布新后端与H5/后台 → 重启后确认健康。缺失密钥的新版本会失败关闭；数据库迁移完成不等于运行进程已更新。不要让旧版继续接收无payeeAccountNo的新提现写请求。已有approved占位单保持冻结，不自动转成可出款单。
 
 ## 可重入迁移
 

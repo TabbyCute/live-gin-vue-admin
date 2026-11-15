@@ -10,8 +10,8 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"io"
-	"os"
 	"regexp"
+	"tb_live_module/config"
 	model "tb_live_module/model/payout"
 )
 
@@ -26,13 +26,14 @@ type Crypto struct {
 
 var keyIDRE = regexp.MustCompile(`^[A-Za-z0-9_-]{1,32}$`)
 
-// LoadCrypto never accepts keys through database-backed system configuration.
-func LoadCrypto() (*Crypto, error) {
+// LoadCrypto reads only the selected YAML configuration. Environment variables
+// cannot override it; the system configuration API cannot read or modify it.
+func LoadCrypto(cfg config.Payout) (*Crypto, error) {
 	var keys map[string]string
-	if json.Unmarshal([]byte(os.Getenv("PAYOUT_ENCRYPTION_KEYS")), &keys) != nil {
+	if json.Unmarshal([]byte(cfg.EncryptionKeys), &keys) != nil {
 		return nil, ErrCrypto
 	}
-	return NewCrypto(os.Getenv("PAYOUT_ACTIVE_KEY_ID"), keys, os.Getenv("PAYOUT_FINGERPRINT_KEY"))
+	return NewCrypto(cfg.ActiveKeyID, keys, cfg.FingerprintKey)
 }
 func NewCrypto(active string, keys map[string]string, fingerprint string) (*Crypto, error) {
 	if !keyIDRE.MatchString(active) || len(keys) == 0 || len(keys) > 16 {

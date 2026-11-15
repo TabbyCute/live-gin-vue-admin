@@ -1,0 +1,8 @@
+fuzz: elapsed: 0s, gathering baseline coverage: 0/2 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 2/2 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 14205 (4735/sec), new interesting: 37 (total: 39)
+fuzz: elapsed: 6s, execs: 21767 (2519/sec), new interesting: 58 (total: 60)
+fuzz: elapsed: 9s, execs: 21767 (0/sec), new interesting: 58 (total: 60)
+fuzz: elapsed: 11s, execs: 21767 (0/sec), new interesting: 58 (total: 60)
+PASS
+ok  	tb_live_module/api/v1/live	14.238s

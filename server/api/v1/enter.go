@@ -1,7 +1,10 @@
 package v1
 
 import (
+	"tb_live_module/api/v1/anchorhome"
+	"tb_live_module/api/v1/bankreconcile"
 	"tb_live_module/api/v1/earning"
+	"tb_live_module/api/v1/eventdelivery"
 	"tb_live_module/api/v1/example"
 	"tb_live_module/api/v1/gift"
 	"tb_live_module/api/v1/guard"
@@ -16,14 +19,17 @@ import (
 var ApiGroupApp = new(ApiGroup)
 
 type ApiGroup struct {
-	GuardApiGroup   guard.ApiGroup
-	RankingApiGroup ranking.ApiGroup
-	PayoutApiGroup  payout.ApiGroup
-	EarningApiGroup earning.ApiGroup
-	GiftApiGroup    gift.ApiGroup
-	SocialApiGroup  social.ApiGroup
-	WalletApiGroup  wallet.ApiGroup
-	SystemApiGroup  system.ApiGroup
-	ExampleApiGroup example.ApiGroup
-	LiveApiGroup    live.ApiGroup
+	AnchorHomeApiGroup    anchorhome.ApiGroup
+	EventDeliveryApiGroup eventdelivery.ApiGroup
+	BankReconcileApiGroup bankreconcile.ApiGroup
+	GuardApiGroup         guard.ApiGroup
+	RankingApiGroup       ranking.ApiGroup
+	PayoutApiGroup        payout.ApiGroup
+	EarningApiGroup       earning.ApiGroup
+	GiftApiGroup          gift.ApiGroup
+	SocialApiGroup        social.ApiGroup
+	WalletApiGroup        wallet.ApiGroup
+	SystemApiGroup        system.ApiGroup
+	ExampleApiGroup       example.ApiGroup
+	LiveApiGroup          live.ApiGroup
 }

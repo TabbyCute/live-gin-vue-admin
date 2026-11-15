@@ -1,0 +1,16 @@
+ Container anchor-home-tests-mysql-1  Running
+ Container anchor-home-tests-mysql-1  Waiting
+ Container anchor-home-tests-mysql-1  Healthy
+ok  	tb_live_module/service/anchorhome	15.225s
+ok  	tb_live_module/api/v1/anchorhome	4.271s
+ok  	tb_live_module/router/anchorhome	5.684s
+ok  	tb_live_module/internal/anchorhomecli	8.949s
+ok  	tb_live_module/initialize	8.854s
+ok  	tb_live_module/middleware	11.959s
+ok  	tb_live_module/internal/telemetry	1.847s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/14 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 14/14 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 12636 (4209/sec), new interesting: 1 (total: 15)
+fuzz: elapsed: 5s, execs: 23012 (4976/sec), new interesting: 3 (total: 17)
+PASS
+ok  	tb_live_module/service/anchorhome	8.944s

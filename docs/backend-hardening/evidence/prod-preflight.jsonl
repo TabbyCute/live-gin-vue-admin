@@ -1,0 +1,8 @@
+{"check":"base_tables","count":118,"elapsedMs":1130,"error":""}
+{"check":"views","count":0,"elapsedMs":123,"error":""}
+{"check":"routines","count":0,"elapsedMs":138,"error":""}
+{"check":"events","count":0,"elapsedMs":124,"error":""}
+{"check":"cross_database_fk","count":0,"elapsedMs":123,"error":""}
+{"check":"spatial_columns","count":0,"elapsedMs":125,"error":""}
+{"check":"non_innodb","count":0,"elapsedMs":149,"error":""}
+{"check":"new_module_tables","count":0,"elapsedMs":122,"error":""}

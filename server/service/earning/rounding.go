@@ -1,12 +1,10 @@
 package earning
 
 import (
-	"encoding/json"
 	"errors"
 	"gorm.io/gorm"
 	"math"
 	"math/big"
-	"sort"
 	model "tb_live_module/model/earning"
 )
 
@@ -66,89 +64,6 @@ func applyRounding(tx *gorm.DB, st model.Settlement) error {
 		}
 		if result.RowsAffected != 1 {
 			return ErrConflict
-		}
-	}
-	return nil
-}
-func verifyRounding(tx *gorm.DB, account model.Account, settlements []model.Settlement, items []model.SettlementItem, facts []model.Income, byBusiness map[string]model.AccountLedger) error {
-	version := func(st model.Settlement) int64 {
-		kind := "settlement_credit"
-		if st.Amount < 0 {
-			kind = "negative_adjustment"
-		}
-		return byBusiness[kind+":"+st.SettlementNo].Version
-	}
-	sort.Slice(settlements, func(i, j int) bool { return version(settlements[i]) < version(settlements[j]) })
-	byFact := map[string]model.Income{}
-	for _, f := range facts {
-		byFact[f.IncomeNo] = f
-	}
-	byIncome := map[string]model.SettlementItem{}
-	bySettlement := map[string][]model.SettlementItem{}
-	for _, item := range items {
-		byIncome[item.IncomeNo] = item
-		bySettlement[item.SettlementNo] = append(bySettlement[item.SettlementNo], item)
-	}
-	states := map[string]model.RoundingBalance{}
-	for _, st := range settlements {
-		list := bySettlement[st.SettlementNo]
-		sort.Slice(list, func(i, j int) bool { return list[i].Sequence < list[j].Sequence })
-		used := map[string]bool{}
-		var rule model.SettlementRule
-		if json.Unmarshal([]byte(st.RuleSnapshot), &rule) != nil || rule.RuleNo != st.RuleNo || rule.Currency != st.Currency {
-			return ErrInvariant
-		}
-		for i, item := range list {
-			if item.Sequence != int64(i+1) {
-				return ErrInvariant
-			}
-			f := byFact[item.IncomeNo]
-			expected := model.SettlementItem{RuleNo: st.RuleNo, CoinUnits: rule.CoinUnits, MinorUnits: rule.MinorUnits, Currency: rule.Currency}
-			if f.EntryType == "reversal" {
-				var ok bool
-				expected, ok = byIncome[f.OriginalIncomeNo]
-				if !ok {
-					return ErrInvariant
-				}
-			}
-			if expected.RuleNo != item.RuleNo || expected.CoinUnits != item.CoinUnits || expected.MinorUnits != item.MinorUnits || expected.Currency != item.Currency {
-				return ErrInvariant
-			}
-			state := states[item.RuleNo]
-			if state.Version != item.RoundingVersion || state.Remainder != item.RemainderBefore {
-				return ErrInvariant
-			}
-			amount, remainder, e := ConvertWithRemainder(f.Amount, state.Remainder, item.CoinUnits, item.MinorUnits)
-			if e != nil || amount != item.Amount || remainder != item.RemainderAfter {
-				return ErrInvariant
-			}
-			state.RuleNo = item.RuleNo
-			state.Currency = item.Currency
-			state.CoinUnits = item.CoinUnits
-			state.MinorUnits = item.MinorUnits
-			state.Remainder = remainder
-			state.LastSettlementNo = st.SettlementNo
-			state.UpdatedAt = st.ApprovedAt
-			states[item.RuleNo] = state
-			used[item.RuleNo] = true
-		}
-		for no := range used {
-			state := states[no]
-			state.Version++
-			states[no] = state
-		}
-	}
-	var rows []model.RoundingBalance
-	if e := tx.Where("anchor_id=? AND currency=?", account.AnchorID, account.Currency).Find(&rows).Error; e != nil {
-		return e
-	}
-	if len(rows) != len(states) {
-		return ErrInvariant
-	}
-	for _, row := range rows {
-		want, ok := states[row.RuleNo]
-		if !ok || row.Currency != want.Currency || row.CoinUnits != want.CoinUnits || row.MinorUnits != want.MinorUnits || row.Remainder != want.Remainder || row.Version != want.Version || row.LastSettlementNo != want.LastSettlementNo || row.UpdatedAt != want.UpdatedAt {
-			return ErrInvariant
 		}
 	}
 	return nil

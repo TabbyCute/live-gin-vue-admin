@@ -2,6 +2,7 @@ package gift
 
 import (
 	"github.com/gin-gonic/gin"
+	"tb_live_module/middleware"
 	"tb_live_module/model/common/response"
 	earningModel "tb_live_module/model/earning"
 	er "tb_live_module/model/earning/request"
@@ -79,7 +80,7 @@ func (API) Send(c *gin.Context) {
 	if !ok {
 		return
 	}
-	out, e := giftService.Send(c.Request.Context(), user, ip(c), trace(), r)
+	out, e := giftService.Send(c.Request.Context(), user, ip(c), middleware.RequestID(c), r)
 	respond(c, giftResponse.PublicOrder(out), e)
 }
 

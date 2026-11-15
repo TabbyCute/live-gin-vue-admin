@@ -92,6 +92,8 @@ func NewAccountAuthGuard() *AccountAuthGuard {
 func (g *AccountAuthGuard) Handler(action string, ipLimit, phoneLimit int, phoneWindow time.Duration) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Header("Cache-Control", "no-store")
+		controller := http.NewResponseController(c.Writer)
+		_ = controller.SetReadDeadline(time.Now().Add(5 * time.Second))
 		ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
 		defer cancel()
 		c.Request = c.Request.WithContext(ctx)
@@ -115,8 +117,6 @@ func (g *AccountAuthGuard) Handler(action string, ipLimit, phoneLimit int, phone
 		}
 		c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, accountAuthMaxBody)
 		// 认证正文很小，不应继承上传接口的10分钟读取超时并长期占住并发槽。
-		controller := http.NewResponseController(c.Writer)
-		_ = controller.SetReadDeadline(time.Now().Add(5 * time.Second))
 		body, err := io.ReadAll(c.Request.Body)
 		if err != nil {
 			var tooLarge *http.MaxBytesError
@@ -130,7 +130,6 @@ func (g *AccountAuthGuard) Handler(action string, ipLimit, phoneLimit int, phone
 			}
 			return
 		}
-		_ = controller.SetReadDeadline(time.Time{})
 		var input struct {
 			Phone string `json:"phone"`
 		}
@@ -144,6 +143,52 @@ func (g *AccountAuthGuard) Handler(action string, ipLimit, phoneLimit int, phone
 			return
 		}
 		if !g.allow(c, action+":phone", phone, phoneLimit, phoneWindow) {
+			return
+		}
+		c.Request.Body = io.NopCloser(bytes.NewReader(body))
+		c.Next()
+	}
+}
+
+// PrivateHandler shares the bcrypt capacity budget with registration/login.
+// Authentication must precede this guard: its limiter is bound to the account,
+// so changing a forwarded IP cannot bypass password brute-force protection.
+func (g *AccountAuthGuard) PrivateHandler(action string, limit int) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Header("Cache-Control", "no-store")
+		controller := http.NewResponseController(c.Writer)
+		_ = controller.SetReadDeadline(time.Now().Add(5 * time.Second))
+		id, ok := GetAppAccountID(c)
+		if !ok {
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+		ctx, cancel := context.WithTimeout(c.Request.Context(), 10*time.Second)
+		defer cancel()
+		c.Request = c.Request.WithContext(ctx)
+		if !g.allow(c, action+":account", strconv.FormatUint(uint64(id), 10), limit, time.Minute) {
+			return
+		}
+		select {
+		case g.authSlots <- struct{}{}:
+			defer func() { <-g.authSlots }()
+		default:
+			abortAccountAuth(c, http.StatusTooManyRequests, "服务繁忙，请稍后再试", 1)
+			return
+		}
+		if c.Request.ContentLength > accountAuthMaxBody {
+			abortAccountAuth(c, http.StatusRequestEntityTooLarge, "请求体过大", 0)
+			return
+		}
+		c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, accountAuthMaxBody)
+		body, err := io.ReadAll(c.Request.Body)
+		if err != nil {
+			var large *http.MaxBytesError
+			if errors.As(err, &large) {
+				abortAccountAuth(c, http.StatusRequestEntityTooLarge, "请求体过大", 0)
+			} else {
+				abortAccountAuth(c, http.StatusBadRequest, "请求读取失败", 0)
+			}
 			return
 		}
 		c.Request.Body = io.NopCloser(bytes.NewReader(body))
@@ -244,6 +289,9 @@ func (g *AccountAuthGuard) allowLocal(key string, limit int, window time.Duratio
 }
 
 func abortAccountAuth(c *gin.Context, status int, message string, retrySeconds int) {
+	if c.Request.ProtoMajor == 1 && c.Request.ContentLength != 0 {
+		c.Header("Connection", "close")
+	}
 	if retrySeconds > 0 {
 		c.Header("Retry-After", strconv.Itoa(retrySeconds))
 	}

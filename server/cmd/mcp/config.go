@@ -10,9 +10,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"gopkg.in/yaml.v3"
 	"tb_live_module/config"
 	"tb_live_module/global"
-	"gopkg.in/yaml.v3"
 )
 
 type standaloneConfig struct {
@@ -106,8 +106,12 @@ func applyStandaloneDefaults(configPath string, cfg *standaloneConfig) {
 	if cfg.MCP.Path == "" {
 		cfg.MCP.Path = "/mcp"
 	}
-	if cfg.MCP.Addr == 0 {
+	if cfg.MCP.Addr <= 0 {
 		cfg.MCP.Addr = 8889
+	}
+	cfg.MCP.ListenHost = strings.TrimSpace(cfg.MCP.ListenHost)
+	if cfg.MCP.ListenHost == "" {
+		cfg.MCP.ListenHost = "127.0.0.1"
 	}
 	if cfg.MCP.AuthHeader == "" {
 		cfg.MCP.AuthHeader = "x-token"

@@ -139,7 +139,7 @@ func (u *UserApi) Info(c *gin.Context) {
 		response.NoAuth("未获取到客户端登录信息", c)
 		return
 	}
-	account, err := accountService.GetByID(accountID)
+	account, err := accountService.GetByIDWithContext(c.Request.Context(), accountID)
 	if err != nil {
 		global.GVA_LOG.Error("获取客户端账号信息失败", zap.Error(err))
 		response.FailWithMessage("获取账号信息失败", c)
@@ -168,7 +168,7 @@ func (u *UserApi) UpdateProfile(c *gin.Context) {
 		response.FailWithMessage("资料参数错误: "+err.Error(), c)
 		return
 	}
-	if err := accountService.UpdateProfile(accountID, req); err != nil {
+	if err := accountService.UpdateProfileWithContext(c.Request.Context(), accountID, req); err != nil {
 		if errors.Is(err, liveService.ErrInvalidProfile) {
 			response.FailWithMessage(err.Error(), c)
 			return
@@ -200,7 +200,7 @@ func (u *UserApi) ChangePassword(c *gin.Context) {
 		response.FailWithMessage("密码参数错误: "+err.Error(), c)
 		return
 	}
-	account, err := accountService.ChangePassword(accountID, req)
+	account, err := accountService.ChangePasswordWithContext(c.Request.Context(), accountID, req)
 	if err != nil {
 		if errors.Is(err, liveService.ErrInvalidCredentials) || errors.Is(err, liveService.ErrInvalidPassword) {
 			response.FailWithMessage(err.Error(), c)

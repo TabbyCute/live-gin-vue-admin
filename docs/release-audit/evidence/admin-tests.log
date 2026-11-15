@@ -1,0 +1,86 @@
+(node:70472) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ settlement review targets the settlement, not its exchange rule (80.355375ms)
+✔ review freezes the confirmed target and rejects concurrent submissions (10.326291ms)
+✔ lost create response retries identical parameters and permanent key (17.396708ms)
+✔ invalid ratios never reach an API write (4.84775ms)
+✔ exchange page explains the ratio to operations without presenting it as a default (11.856333ms)
+✔ exchange preview uses integer arithmetic and updates all three sample values (7.763ms)
+✔ latest query wins and errors do not retain a success state (6.238958ms)
+✔ payout entry creates a ready order only for an eligible approved withdrawal (9.443916ms)
+✔ withdrawal destination tracing uses only the public payee reference and masked fields (12.435625ms)
+(node:70473) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ actual refund page freezes confirmed request and reuses key after lost response (57.967792ms)
+✔ actual order page rejects stale list responses (4.793083ms)
+✔ actual rule page rejects out-of-range basis points before HTTP write (7.22675ms)
+✔ termination freezes confirmed request and reuses idempotency key after response loss (5.280416ms)
+✔ termination review cannot switch target or double-submit while confirming (26.573375ms)
+✔ COIN uses exact integers including values beyond Number precision (0.545709ms)
+✔ editor emits only request contract and preserves decimal strings (0.16575ms)
+✔ late responses and disposed page cannot overwrite current results (0.082292ms)
+(node:70475) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ guard plan freezes writes and reuses permanent key after ambiguous response (39.027625ms)
+✔ guard plan form never copies database audit or identity fields (0.126416ms)
+✔ guard pages preserve large totals and bound only the numeric pager (3.433333ms)
+✔ guard member rebuild freezes confirmed target and rejects double submit (10.805708ms)
+✔ ranking ignores stale pages and preserves decimal strings (5.970666ms)
+✔ ranking rebuild retries original key after response loss (4.087542ms)
+✔ gift editor fails closed when provider readiness is unavailable (5.666166ms)
+✔ manual requests never accept client money or payee, and preserve integer strings (1.170417ms)
+(node:70476) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ manual submit blocks double click, freezes original request, retries ambiguous response (85.706292ms)
+✔ manual operations ignore completion after account switches (14.390625ms)
+✔ reveal consumes a capability once and clears plaintext after 30 seconds (4.209ms)
+✔ late reveal after logout or target change never restores plaintext (4.502625ms)
+✔ evidence blobs are revoked when dialog closes and on logout (7.858625ms)
+✔ company account creation retries original request and clears plaintext on close (23.831625ms)
+✔ detail refresh retains uploaded evidence but a different order clears it (9.599875ms)
+✔ definitive invalid input can be corrected without locking the form (11.573209ms)
+✔ company picker reaches accounts beyond the first hundred and ignores late pages (10.306708ms)
+(node:70477) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ submission freezes original parameters, blocks double-click, retries lost response (42.508042ms)
+✔ logout discards an in-flight order response and sensitive display state (26.656166ms)
+✔ order lists and details ignore stale responses and support precise filters (42.998916ms)
+✔ business errors use fixed messages and creation excludes non-approved/legacy orders (0.214375ms)
+(node:70478) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ unknown/degraded counts are never displayed as zero; strings keep precision (8.73925ms)
+(node:70479) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ root sees unassigned buttons and role directives; other accounts keep their permissions (28.118167ms)
+✔ recent seven days end at current second; boundary and invalid inputs fail before write (2.834292ms)
+(node:70480) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ anchor selection is pinned; rules paginated; valid selection creates only a settlement request (128.298583ms)
+✔ confirmation prevents duplicate clicks and freezes the chosen anchor and interval (17.45725ms)
+✔ lost response is recovered using original key even after reopening on a different row (12.334625ms)
+✔ old rule request cannot overwrite new row and denied loading never creates a settlement (8.388791ms)
+✔ anchor and finance pages both integrate the same dialog; session shows gross and net quantities (78.232541ms)
+(node:70481) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 钱包真实请求客户端保留鉴权、整数精度和失败重试参数 (32.720375ms)
+(node:70482) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 交易溯源忽略旧响应，退款翻页沿用已查询交易 (95.861708ms)
+✔ 账户乱序返回、重置后旧响应不能恢复旧用户 (10.4875ms)
+✔ 切换账户使旧对账停止，不能拼接另一用户的数据 (37.333125ms)
+✔ 状态确认期间换用户使旧确认失效 (7.397459ms)
+✔ 流水翻页使用已查询账号，编辑搜索框不混用游标 (7.671625ms)
+✔ 新建充值必须按当前手机号重新定位，不能使用旧列表第一行 (21.991084ms)
+✔ 账号和手机号交叉查询不匹配时不打开充值表单 (5.987334ms)
+✔ 审核确认固定订单、决定和原因，双击只提交一次 (5.906708ms)
+✔ 详情乱序返回和离开页面不覆盖新详情 (7.126209ms)
+✔ 充值确认期间字段改变不能替换已确认账号和金额 (9.707ms)
+✔ 充值提交失败保留原请求编号及表单，可原样重试 (4.213458ms)
+ℹ tests 58
+ℹ suites 0
+ℹ pass 58
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 701.645833

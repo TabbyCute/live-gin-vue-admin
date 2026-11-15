@@ -1,0 +1,4 @@
+=== RUN   TestSIGTERMDrainsInFlightHTTP
+--- PASS: TestSIGTERMDrainsInFlightHTTP (1.76s)
+PASS
+ok  	tb_live_module/core	6.717s

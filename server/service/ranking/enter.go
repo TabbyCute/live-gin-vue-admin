@@ -10,9 +10,10 @@ import (
 )
 
 type Service struct {
-	DB       *gorm.DB
-	Now      func() time.Time
-	Timezone string
+	AccountEncoding *AccountEncoding
+	DB              *gorm.DB
+	Now             func() time.Time
+	Timezone        string
 }
 
 var Default = &Service{Timezone: "Asia/Kuala_Lumpur"}

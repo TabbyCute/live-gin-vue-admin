@@ -1,4 +1,137 @@
 definitions:
+  bankreconcile.Batch:
+    properties:
+      batchNo:
+        type: string
+      channelAccountNo:
+        type: string
+      companyMasked:
+        type: string
+      createdAt:
+        type: integer
+      createdBy:
+        example: "0"
+        type: string
+      currency:
+        type: string
+      declaredComplete:
+        type: boolean
+      periodFrom:
+        type: integer
+      periodTo:
+        type: integer
+      rowCount:
+        type: integer
+      sourceHash:
+        type: string
+    type: object
+  bankreconcile.Check:
+    properties:
+      attemptNo:
+        type: string
+      attemptVersion:
+        example: "0"
+        type: string
+      checkNo:
+        type: string
+      lineNo:
+        type: string
+      payoutNo:
+        type: string
+      result:
+        type: string
+      runNo:
+        type: string
+    type: object
+  bankreconcile.Detail:
+    properties:
+      batch:
+        $ref: '#/definitions/bankreconcile.Batch'
+      checks:
+        items:
+          $ref: '#/definitions/bankreconcile.Check'
+        type: array
+      lines:
+        items:
+          $ref: '#/definitions/bankreconcile.Line'
+        type: array
+      reviews:
+        items:
+          $ref: '#/definitions/bankreconcile.Review'
+        type: array
+      run:
+        $ref: '#/definitions/bankreconcile.Run'
+    type: object
+  bankreconcile.Line:
+    properties:
+      amount:
+        example: "0"
+        type: string
+      bankStatus:
+        type: string
+      bookedAt:
+        type: integer
+      channelAccountNo:
+        type: string
+      currency:
+        type: string
+      lineNo:
+        type: string
+      referenceMasked:
+        type: string
+    type: object
+  bankreconcile.Page:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/bankreconcile.Batch'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  bankreconcile.Result:
+    properties:
+      "no":
+        type: string
+    type: object
+  bankreconcile.Review:
+    properties:
+      actorId:
+        example: "0"
+        type: string
+      checkNo:
+        type: string
+      createdAt:
+        type: integer
+      decision:
+        type: string
+      reason:
+        type: string
+      reviewNo:
+        type: string
+      rootException:
+        type: boolean
+    type: object
+  bankreconcile.Run:
+    properties:
+      batchNo:
+        type: string
+      checkCount:
+        type: integer
+      createdAt:
+        type: integer
+      createdBy:
+        example: "0"
+        type: string
+      issueCount:
+        type: integer
+      runNo:
+        type: string
+    type: object
   common.JSONMap:
     additionalProperties: {}
     type: object
@@ -16,6 +149,21 @@ definitions:
         type: string
       endpoint:
         type: string
+    type: object
+  config.AnchorHome:
+    properties:
+      disabled:
+        type: boolean
+      imageConcurrency:
+        type: integer
+      maxPhotos:
+        type: integer
+      maxUploadsPerDay:
+        type: integer
+      mediaReadPerMinute:
+        type: integer
+      publicReadPerMinute:
+        type: integer
     type: object
   config.Autocode:
     properties:
@@ -231,6 +379,25 @@ definitions:
       task-leader-fail-open:
         type: boolean
       task-leader-lease-seconds:
+        type: integer
+    type: object
+  config.LivePresence:
+    properties:
+      global-connections:
+        type: integer
+      heartbeat-seconds:
+        type: integer
+      ip-connections:
+        type: integer
+      like-minute:
+        type: integer
+      like-second:
+        type: integer
+      recheck-seconds:
+        type: integer
+      room-connections:
+        type: integer
+      ttl-seconds:
         type: integer
     type: object
   config.Local:
@@ -599,6 +766,8 @@ definitions:
     properties:
       aliyun-oss:
         $ref: '#/definitions/config.AliyunOSS'
+      anchorHome:
+        $ref: '#/definitions/config.AnchorHome'
       autocode:
         allOf:
         - $ref: '#/definitions/config.Autocode'
@@ -657,6 +826,8 @@ definitions:
         $ref: '#/definitions/config.Oracle'
       pgsql:
         $ref: '#/definitions/config.Pgsql'
+      presence:
+        $ref: '#/definitions/config.LivePresence'
       qiniu:
         $ref: '#/definitions/config.Qiniu'
       ranking:
@@ -939,6 +1110,43 @@ definitions:
       version:
         example: "0"
         type: string
+    type: object
+  earning.AuditJob:
+    properties:
+      accountSnapshot:
+        type: string
+      anchorNo:
+        type: string
+      cancelledBy:
+        example: "0"
+        type: string
+      createdAt:
+        type: integer
+      createdBy:
+        example: "0"
+        type: string
+      currency:
+        type: string
+      finishedAt:
+        type: integer
+      issueCode:
+        type: string
+      jobNo:
+        type: string
+      progress:
+        type: string
+      requestId:
+        type: string
+      retryOf:
+        type: string
+      snapshotHash:
+        type: string
+      startedAt:
+        type: integer
+      status:
+        type: string
+      updatedAt:
+        type: integer
     type: object
   earning.FinanceAudit:
     properties:
@@ -1226,6 +1434,135 @@ definitions:
       status:
         type: string
       withdrawalNo:
+        type: string
+    type: object
+  eventdelivery.Attempt:
+    properties:
+      deliveryId:
+        example: "0"
+        type: string
+      finishedAt:
+        type: integer
+      id:
+        example: "0"
+        type: string
+      number:
+        type: integer
+      outcome:
+        type: string
+      startedAt:
+        type: integer
+    type: object
+  eventdelivery.Delivery:
+    properties:
+      attempts:
+        type: integer
+      consumer:
+        type: string
+      createdAt:
+        type: integer
+      cycleAttempts:
+        type: integer
+      deliveredAt:
+        type: integer
+      eventId:
+        type: string
+      id:
+        example: "0"
+        type: string
+      lastCode:
+        type: string
+      leaseUntil:
+        type: integer
+      nextAttemptAt:
+        type: integer
+      retryGeneration:
+        type: integer
+      status:
+        type: string
+      updatedAt:
+        type: integer
+    type: object
+  eventdelivery.Detail:
+    properties:
+      attempts:
+        items:
+          $ref: '#/definitions/eventdelivery.Attempt'
+        type: array
+      delivery:
+        $ref: '#/definitions/eventdelivery.Delivery'
+      event:
+        $ref: '#/definitions/eventdelivery.Event'
+      payload:
+        items:
+          type: integer
+        type: array
+      retries:
+        items:
+          $ref: '#/definitions/eventdelivery.RetryAudit'
+        type: array
+    type: object
+  eventdelivery.Event:
+    properties:
+      audience:
+        type: string
+      createdAt:
+        type: integer
+      eventId:
+        type: string
+      eventType:
+        type: string
+      occurredAt:
+        type: integer
+      payloadHash:
+        type: string
+      schemaVersion:
+        type: integer
+      source:
+        type: string
+      sourceId:
+        type: string
+    type: object
+  eventdelivery.Page:
+    properties:
+      list:
+        items:
+          $ref: '#/definitions/eventdelivery.Delivery'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  eventdelivery.RetryAudit:
+    properties:
+      actorId:
+        example: "0"
+        type: string
+      createdAt:
+        type: integer
+      deliveryId:
+        example: "0"
+        type: string
+      generation:
+        type: integer
+      reason:
+        type: string
+      requestId:
+        type: string
+    type: object
+  eventdelivery.RetryRequest:
+    properties:
+      deliveryId:
+        example: "0"
+        type: string
+      generation:
+        type: integer
+      reason:
+        type: string
+      requestId:
         type: string
     type: object
   example.ExaAttachmentCategory:
@@ -2019,6 +2356,17 @@ definitions:
           $ref: '#/definitions/system.SysBaseMenu'
         type: array
     type: object
+  request.AlbumSearch:
+    properties:
+      anchorNo:
+        type: string
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      status:
+        type: string
+    type: object
   request.AnchorAdminProfileUpdateReq:
     properties:
       anchorId:
@@ -2523,6 +2871,11 @@ definitions:
         description: 是否前端表格列
         type: boolean
     type: object
+  request.CancelAudit:
+    properties:
+      jobNo:
+        type: string
+    type: object
   request.CancelOrder:
     properties:
       confirmNoTransfer:
@@ -2700,6 +3053,15 @@ definitions:
         type: string
       version:
         type: string
+    type: object
+  request.DeletePhoto:
+    properties:
+      photoNo:
+        type: string
+      requestId:
+        type: string
+      version:
+        type: integer
     type: object
   request.Empty:
     type: object
@@ -2898,6 +3260,21 @@ definitions:
         items:
           type: integer
         type: array
+    type: object
+  request.Import:
+    properties:
+      channelAccountNo:
+        type: string
+      csv:
+        type: string
+      declaredComplete:
+        type: boolean
+      periodFrom:
+        type: integer
+      periodTo:
+        type: integer
+      requestId:
+        type: string
     type: object
   request.ImportSysDictionaryRequest:
     properties:
@@ -3209,28 +3586,6 @@ definitions:
     - title
     - visibility
     type: object
-  request.LiveSessionStatsReq:
-    properties:
-      giftCoinAmount:
-        type: integer
-      giftCount:
-        type: integer
-      giftUserCount:
-        type: integer
-      likeCount:
-        type: integer
-      peakOnlineCount:
-        type: integer
-      sessionNo:
-        maxLength: 96
-        type: string
-      viewCount:
-        type: integer
-      viewerCount:
-        type: integer
-    required:
-    - sessionNo
-    type: object
   request.Mute:
     properties:
       accountNo:
@@ -3302,6 +3657,55 @@ definitions:
       version:
         type: string
     type: object
+  request.PresenceAdminBatch:
+    properties:
+      roomNos:
+        items:
+          type: string
+        type: array
+      sessionNos:
+        items:
+          type: string
+        type: array
+    type: object
+  request.PresenceHeartbeat:
+    properties:
+      playing:
+        type: boolean
+      presenceToken:
+        type: string
+      sequence:
+        type: string
+      visible:
+        type: boolean
+    type: object
+  request.PresenceLeave:
+    properties:
+      presenceToken:
+        type: string
+      reason:
+        type: string
+      sequence:
+        type: string
+    type: object
+  request.PresenceLike:
+    properties:
+      count:
+        type: string
+      presenceToken:
+        type: string
+      requestId:
+        type: string
+      sequence:
+        type: string
+    type: object
+  request.PresenceOpen:
+    properties:
+      requestId:
+        type: string
+      roomNo:
+        type: string
+    type: object
   request.ReadEvidence:
     properties:
       evidenceNo:
@@ -3326,6 +3730,17 @@ definitions:
         type: string
       requestId:
         type: string
+    type: object
+  request.ReorderPhotos:
+    properties:
+      photoNos:
+        items:
+          type: string
+        type: array
+      requestId:
+        type: string
+      version:
+        type: integer
     type: object
   request.ResolveAttempt:
     properties:
@@ -3404,13 +3819,6 @@ definitions:
     - reason
     - requestId
     type: object
-  request.Review:
-    properties:
-      approve:
-        type: boolean
-      ruleNo:
-        type: string
-    type: object
   request.ReviewAdjustment:
     properties:
       orderNo:
@@ -3431,6 +3839,19 @@ definitions:
         type: string
       requestId:
         type: string
+    type: object
+  request.ReviewPhoto:
+    properties:
+      decision:
+        type: string
+      photoNo:
+        type: string
+      reason:
+        type: string
+      requestId:
+        type: string
+      version:
+        type: integer
     type: object
   request.ReviewTermination:
     properties:
@@ -3454,6 +3875,13 @@ definitions:
       scopeNo:
         type: string
       scopeType:
+        type: string
+    type: object
+  request.Run:
+    properties:
+      batchNo:
+        type: string
+      requestId:
         type: string
     type: object
   request.SRSHookReq:
@@ -3499,6 +3927,15 @@ definitions:
     required:
     - action
     - stream
+    type: object
+  request.SaveSettings:
+    properties:
+      categoryId:
+        type: integer
+      signature:
+        type: string
+      version:
+        type: string
     type: object
   request.Send:
     properties:
@@ -3560,6 +3997,17 @@ definitions:
           type: string
         type: array
       version:
+        type: string
+    type: object
+  request.StartAudit:
+    properties:
+      anchorNo:
+        type: string
+      currency:
+        type: string
+      requestId:
+        type: string
+      retryOf:
         type: string
     type: object
   request.StartOrder:
@@ -4287,6 +4735,48 @@ definitions:
       reason:
         type: string
     type: object
+  response.Board:
+    properties:
+      dataAsOf:
+        type: integer
+      generatedAt:
+        type: integer
+      giftNo:
+        type: string
+      lagCount:
+        type: string
+      list:
+        items:
+          $ref: '#/definitions/response.Entry'
+        type: array
+      myRank:
+        $ref: '#/definitions/response.Entry'
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      period:
+        type: string
+      periodKey:
+        type: string
+      rankType:
+        type: string
+      scopeNo:
+        type: string
+      scopeType:
+        type: string
+      timezone:
+        type: string
+      total:
+        type: string
+    type: object
+  response.Category:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   response.Change:
     properties:
       changed:
@@ -4448,6 +4938,21 @@ definitions:
       to:
         description: 邮件发送给谁
         type: string
+    type: object
+  response.Entry:
+    properties:
+      quantity:
+        type: string
+      rank:
+        type: string
+      score:
+        type: string
+      subjectNo:
+        type: string
+      subjectType:
+        type: string
+      user:
+        $ref: '#/definitions/response.UserPublicProfile'
     type: object
   response.Event:
     properties:
@@ -4644,6 +5149,17 @@ definitions:
           $ref: '#/definitions/response.Ledger'
         type: array
       nextCursor:
+        type: string
+    type: object
+  response.LiveCard:
+    properties:
+      coverUrl:
+        type: string
+      roomNo:
+        type: string
+      sessionNo:
+        type: string
+      title:
         type: string
     type: object
   response.LiveCategoryAdminItem:
@@ -5322,6 +5838,45 @@ definitions:
       title:
         type: string
     type: object
+  response.OperationAlert:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+      severity:
+        type: string
+    type: object
+  response.OperationBacklog:
+    properties:
+      count:
+        type: integer
+      name:
+        type: string
+      oldestAt:
+        type: integer
+      state:
+        type: string
+      truncated:
+        type: boolean
+    type: object
+  response.OperationPool:
+    properties:
+      idle:
+        type: integer
+      inUse:
+        type: integer
+      maxOpen:
+        type: integer
+      open:
+        type: integer
+      waitCount:
+        example: "0"
+        type: string
+      waitMillis:
+        example: "0"
+        type: string
+    type: object
   response.PageResult:
     properties:
       list: {}
@@ -5381,6 +5936,240 @@ definitions:
         description: web, server, full
         type: string
     type: object
+  response.PresenceGuest:
+    properties:
+      expiresInSeconds:
+        type: integer
+      guestToken:
+        type: string
+    type: object
+  response.PresenceSession:
+    properties:
+      acceptedCount:
+        type: string
+      checkpointAt:
+        type: integer
+      cleanupLagMs:
+        type: string
+      closed:
+        type: boolean
+      connectionCount:
+        type: string
+      connectionDurationMs:
+        type: string
+      connectionNo:
+        type: string
+      dataLost:
+        type: boolean
+      expiresInSeconds:
+        type: integer
+      finalizedAt:
+        type: integer
+      guestCount:
+        description: signed guest sessions, not physical people
+        type: string
+      heartbeatIntervalSeconds:
+        type: integer
+      likeCount:
+        type: string
+      memberCount:
+        type: string
+      onlineCount:
+        description: logged-in unique accounts
+        type: string
+      peakOnlineCount:
+        description: member + guest peak
+        type: string
+      pendingCount:
+        type: string
+      presenceToken:
+        type: string
+      roomNo:
+        type: string
+      sessionNo:
+        type: string
+      stale:
+        type: boolean
+      totalOnlineCount:
+        type: string
+      totalWatchDurationMs:
+        type: string
+      updatedAt:
+        type: integer
+      viewCount:
+        type: string
+      viewerCount:
+        type: string
+      viewerSessionDurationMs:
+        type: string
+      workerHealthy:
+        type: boolean
+    type: object
+  response.PresenceStats:
+    properties:
+      checkpointAt:
+        type: integer
+      cleanupLagMs:
+        type: string
+      connectionCount:
+        type: string
+      dataLost:
+        type: boolean
+      finalizedAt:
+        type: integer
+      guestCount:
+        description: signed guest sessions, not physical people
+        type: string
+      likeCount:
+        type: string
+      memberCount:
+        type: string
+      onlineCount:
+        description: logged-in unique accounts
+        type: string
+      peakOnlineCount:
+        description: member + guest peak
+        type: string
+      pendingCount:
+        type: string
+      roomNo:
+        type: string
+      sessionNo:
+        type: string
+      stale:
+        type: boolean
+      totalOnlineCount:
+        type: string
+      totalWatchDurationMs:
+        type: string
+      updatedAt:
+        type: integer
+      viewCount:
+        type: string
+      viewerCount:
+        type: string
+      workerHealthy:
+        type: boolean
+    type: object
+  response.PresenceViewer:
+    properties:
+      lastActiveAt:
+        type: integer
+      lastActivityType:
+        type: string
+      user:
+        $ref: '#/definitions/response.UserPublicProfile'
+    type: object
+  response.PresenceViewers:
+    properties:
+      hasMore:
+        type: boolean
+      list:
+        items:
+          $ref: '#/definitions/response.PresenceViewer'
+        type: array
+      nextCursor:
+        type: string
+    type: object
+  response.Profile:
+    properties:
+      accountNo:
+        type: string
+      anchorNo:
+        type: string
+      avatar:
+        type: string
+      certified:
+        type: boolean
+      countryCode:
+        type: string
+      fansCount:
+        type: string
+      followingCount:
+        type: string
+      gender:
+        type: integer
+      generatedAt:
+        type: integer
+      isSelf:
+        type: boolean
+      language:
+        type: string
+      level:
+        type: integer
+      live:
+        $ref: '#/definitions/response.LiveCard'
+      nickname:
+        type: string
+      photos:
+        items:
+          $ref: '#/definitions/response.PublicPhoto'
+        type: array
+      relationship:
+        $ref: '#/definitions/tb_live_module_model_anchorhome_response.Relationship'
+      signature:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+    type: object
+  response.PublicMember:
+    properties:
+      plan:
+        $ref: '#/definitions/response.PublicPlan'
+      user:
+        $ref: '#/definitions/response.UserPublicProfile'
+    type: object
+  response.PublicMembers:
+    properties:
+      enabled:
+        type: boolean
+      generatedAt:
+        type: integer
+      list:
+        items:
+          $ref: '#/definitions/response.PublicMember'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      plans:
+        items:
+          $ref: '#/definitions/response.PublicPlan'
+        type: array
+      total:
+        type: string
+    type: object
+  response.PublicPhoto:
+    properties:
+      height:
+        type: integer
+      photoNo:
+        type: string
+      thumbnailUrl:
+        type: string
+      url:
+        type: string
+      width:
+        type: integer
+    type: object
+  response.PublicPlan:
+    properties:
+      benefits:
+        items:
+          type: string
+        type: array
+      level:
+        type: integer
+      name:
+        type: string
+      planNo:
+        type: string
+      priority:
+        type: integer
+    type: object
   response.Reconciliation:
     properties:
       checkedAt:
@@ -5400,45 +6189,6 @@ definitions:
     properties:
       account:
         $ref: '#/definitions/response.Account'
-    type: object
-  response.Relationship:
-    properties:
-      accountNo:
-        type: string
-      anchorNo:
-        type: string
-      avatar:
-        type: string
-      blocked:
-        type: boolean
-      blockedByMe:
-        type: boolean
-      countryCode:
-        type: string
-      following:
-        type: boolean
-      followsYou:
-        type: boolean
-      gender:
-        type: integer
-      isLive:
-        type: boolean
-      mutedScopes:
-        items:
-          $ref: '#/definitions/social.MuteScope'
-        type: array
-      mutual:
-        type: boolean
-      nickname:
-        type: string
-      roomNo:
-        type: string
-      sessionNo:
-        type: string
-      signature:
-        type: string
-      subscribed:
-        type: boolean
     type: object
   response.ResourceItem:
     properties:
@@ -5510,6 +6260,19 @@ definitions:
       method:
         type: string
       targetNo:
+        type: string
+    type: object
+  response.Settings:
+    properties:
+      categories:
+        items:
+          $ref: '#/definitions/response.Category'
+        type: array
+      categoryId:
+        type: integer
+      signature:
+        type: string
+      version:
         type: string
     type: object
   response.SettlementDetail:
@@ -5682,6 +6445,29 @@ definitions:
           $ref: '#/definitions/response.UserItem'
         type: array
       nextCursor:
+        type: string
+    type: object
+  response.UserPublicProfile:
+    properties:
+      accountNo:
+        type: string
+      anchorNo:
+        type: string
+      avatar:
+        type: string
+      countryCode:
+        type: string
+      gender:
+        type: integer
+      isLive:
+        type: boolean
+      nickname:
+        type: string
+      roomNo:
+        type: string
+      sessionNo:
+        type: string
+      signature:
         type: string
     type: object
   response.WatchAccepted:
@@ -6335,6 +7121,32 @@ definitions:
       config:
         $ref: '#/definitions/config.Server'
     type: object
+  system.operationsResult:
+    properties:
+      alerts:
+        items:
+          $ref: '#/definitions/response.OperationAlert'
+        type: array
+      at:
+        type: integer
+      backlogs:
+        items:
+          $ref: '#/definitions/response.OperationBacklog'
+        type: array
+      database:
+        type: string
+      databasePool:
+        $ref: '#/definitions/response.OperationPool'
+      goroutines:
+        type: integer
+      heapBytes:
+        example: "0"
+        type: string
+      metrics:
+        $ref: '#/definitions/telemetry.Snapshot'
+      redis:
+        type: string
+    type: object
   tb_live_module_config.Email:
     properties:
       from:
@@ -6360,6 +7172,37 @@ definitions:
         type: string
       to:
         description: 收件人:多个以英文逗号分隔 例：a@qq.com b@qq.com 正式开发中请把此项目作为参数使用
+        type: string
+    type: object
+  tb_live_module_model_anchorhome_response.Relationship:
+    properties:
+      blocked:
+        type: boolean
+      blockedByMe:
+        type: boolean
+      following:
+        type: boolean
+      followsYou:
+        type: boolean
+      mutual:
+        type: boolean
+    type: object
+  tb_live_module_model_bankreconcile_request.Review:
+    properties:
+      checkNo:
+        type: string
+      decision:
+        type: string
+      reason:
+        type: string
+      requestId:
+        type: string
+    type: object
+  tb_live_module_model_earning_request.Review:
+    properties:
+      approve:
+        type: boolean
+      ruleNo:
         type: string
     type: object
   tb_live_module_model_earning_response.Balance:
@@ -6515,6 +7358,45 @@ definitions:
       scope:
         type: string
     type: object
+  tb_live_module_model_social_response.Relationship:
+    properties:
+      accountNo:
+        type: string
+      anchorNo:
+        type: string
+      avatar:
+        type: string
+      blocked:
+        type: boolean
+      blockedByMe:
+        type: boolean
+      countryCode:
+        type: string
+      following:
+        type: boolean
+      followsYou:
+        type: boolean
+      gender:
+        type: integer
+      isLive:
+        type: boolean
+      mutedScopes:
+        items:
+          $ref: '#/definitions/social.MuteScope'
+        type: array
+      mutual:
+        type: boolean
+      nickname:
+        type: string
+      roomNo:
+        type: string
+      sessionNo:
+        type: string
+      signature:
+        type: string
+      subscribed:
+        type: boolean
+    type: object
   tb_live_module_model_system_request.Login:
     properties:
       captcha:
@@ -6664,6 +7546,78 @@ definitions:
         $ref: '#/definitions/response.Ledger'
       order:
         $ref: '#/definitions/tb_live_module_model_wallet_response.Order'
+    type: object
+  telemetry.HTTP:
+    properties:
+      buckets:
+        description: Buckets are disjoint; the last bucket contains durations over
+          10 seconds.
+        items:
+          type: integer
+        type: array
+      calls:
+        example: "0"
+        type: string
+      durationMicros:
+        example: "0"
+        type: string
+      errors:
+        example: "0"
+        type: string
+      method:
+        type: string
+      rejected:
+        example: "0"
+        type: string
+      route:
+        type: string
+    type: object
+  telemetry.Snapshot:
+    properties:
+      boundsMs:
+        items:
+          type: integer
+        type: array
+      http:
+        items:
+          $ref: '#/definitions/telemetry.HTTP'
+        type: array
+      inFlight:
+        type: integer
+      startedAt:
+        type: integer
+      workers:
+        items:
+          $ref: '#/definitions/telemetry.Worker'
+        type: array
+    type: object
+  telemetry.Worker:
+    properties:
+      consecutiveFailures:
+        example: "0"
+        type: string
+      errorKind:
+        type: string
+      failures:
+        example: "0"
+        type: string
+      lastDurationMs:
+        type: integer
+      lastFinishedAt:
+        type: integer
+      lastStartedAt:
+        type: integer
+      lastSuccessAt:
+        type: integer
+      name:
+        type: string
+      running:
+        type: integer
+      runs:
+        example: "0"
+        type: string
+      stale:
+        type: boolean
     type: object
 info:
   contact: {}
@@ -9058,6 +10012,36 @@ paths:
       summary: 修改直播分类资料
       tags:
       - LiveCategoryAdmin
+  /live/presence/stats:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: roomNos和sessionNos合计最多100个
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.PresenceAdminBatch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/response.PresenceStats'
+                  type: array
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 批量查询当前或历史场次，Redis故障返回stale及空在线字段
+      tags:
+      - LivePresenceAdmin
   /live/room/detail:
     get:
       description: 直播间有当前活动场次时，currentSession 返回该场次的内容、状态、时间和统计快照。
@@ -11894,6 +12878,77 @@ paths:
       summary: 设置用户信息
       tags:
       - SysUser
+  /v1/admin/anchor-home/album/list:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: page/pageSize/status/anchorNo
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.AlbumSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 当前有效root或888管理员分页查询照片审核队列
+      tags:
+      - AnchorHomeAdmin
+  /v1/admin/anchor-home/album/preview:
+    get:
+      parameters:
+      - description: 照片公开编号
+        in: query
+        name: photoNo
+        required: true
+        type: string
+      - description: full|thumb
+        in: query
+        name: variant
+        required: true
+        type: string
+      produces:
+      - image/jpeg
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      security:
+      - ApiKeyAuth: []
+      summary: 当前有权限的管理员携带x-token读取照片Blob
+      tags:
+      - AnchorHomeAdmin
+  /v1/admin/anchor-home/album/review:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId、照片version；reject/takedown必须提供reason
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ReviewPhoto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 审批/拒绝/下架照片，保存不可变审计记录
+      tags:
+      - AnchorHomeAdmin
   /v1/admin/earning/account/check:
     get:
       consumes:
@@ -12084,6 +13139,126 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 分页查询可提现账户
+      tags:
+      - Earning
+  /v1/admin/earning/audit/cancel:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 作业号
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.CancelAudit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/earning.AuditJob'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 取消排队或执行中核验，不改变资金及终态报告
+      tags:
+      - Earning
+  /v1/admin/earning/audit/list:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: anchorNo
+        type: string
+      - in: query
+        name: currency
+        type: string
+      - in: query
+        name: desc
+        type: boolean
+      - in: query
+        name: from
+        type: integer
+      - description: 关键字
+        in: query
+        name: keyword
+        type: string
+      - in: query
+        name: "no"
+        type: string
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页大小
+        in: query
+        name: pageSize
+        type: integer
+      - in: query
+        name: payeeAccountNo
+        type: string
+      - in: query
+        name: sort
+        type: string
+      - in: query
+        name: sourceType
+        type: string
+      - in: query
+        name: status
+        type: string
+      - in: query
+        name: to
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/tb_live_module_model_earning_response.Page'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查看后台核验状态、进度及历史快照
+      tags:
+      - Earning
+  /v1/admin/earning/audit/start:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 主播、币种、幂等键和可选失败原作业号
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.StartAudit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/earning.AuditJob'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 排队后台深度核验；报告不能作为放款凭据，失败重试须新幂等键
       tags:
       - Earning
   /v1/admin/earning/exchange/create:
@@ -12766,6 +13941,95 @@ paths:
       summary: 自动对账后审核；通过保持冻结，驳回释放
       tags:
       - Earning
+  /v1/admin/event-delivery/detail:
+    get:
+      parameters:
+      - description: 投递记录ID（十进制字符串）
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/eventdelivery.Detail'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: root查询事件白名单负载、投递尝试和重试审计
+      tags:
+      - EventDelivery
+  /v1/admin/event-delivery/list:
+    get:
+      parameters:
+      - description: 页码，最多1000
+        in: query
+        name: page
+        type: integer
+      - description: 每页1..100
+        in: query
+        name: pageSize
+        type: integer
+      - description: pending|leased|blocked|delivered|dead
+        in: query
+        name: status
+        type: string
+      - description: 稳定事件ID
+        in: query
+        name: eventId
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/eventdelivery.Page'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: root分页查询可靠事件投递状态（未配置通道不会标记送达）
+      tags:
+      - EventDelivery
+  /v1/admin/event-delivery/retry:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 重试命令
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/eventdelivery.RetryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: root受控重试dead/blocked事件（固定requestId、版本、原因；保持事件幂等键）
+      tags:
+      - EventDelivery
   /v1/admin/gift/category/list:
     get:
       consumes:
@@ -13457,7 +14721,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/request.Review'
+          $ref: '#/definitions/tb_live_module_model_earning_request.Review'
       produces:
       - application/json
       responses:
@@ -14073,6 +15337,147 @@ paths:
       summary: 提交真实流水及私有凭证待独立复核
       tags:
       - PayoutAdmin
+  /v1/admin/payout/bank-reconciliation/detail:
+    get:
+      parameters:
+      - description: 导入批次编号
+        in: query
+        name: batchNo
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/bankreconcile.Detail'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 查看批次脱敏明细与最新核对结果
+      tags:
+      - BankReconciliation
+  /v1/admin/payout/bank-reconciliation/import:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: CSV≤512KiB，≤1000行；固定requestId
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Import'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/bankreconcile.Result'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 导入银行账单声明（不自动付款或确认到账）
+      tags:
+      - BankReconciliation
+  /v1/admin/payout/bank-reconciliation/list:
+    get:
+      parameters:
+      - description: 页码
+        in: query
+        name: page
+        type: integer
+      - description: 每页1—100
+        in: query
+        name: pageSize
+        type: integer
+      - description: 公司账户编号
+        in: query
+        name: channelAccountNo
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/bankreconcile.Page'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 分页查看脱敏导入批次
+      tags:
+      - BankReconciliation
+  /v1/admin/payout/bank-reconciliation/review:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: acknowledge仅用于matched；investigate用于调查
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/tb_live_module_model_bankreconcile_request.Review'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/bankreconcile.Result'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 独立复核核对记录或记录待调查差异
+      tags:
+      - BankReconciliation
+  /v1/admin/payout/bank-reconciliation/run:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 批次和固定requestId
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.Run'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/bankreconcile.Result'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: 对指定账期运行双向核对
+      tags:
+      - BankReconciliation
   /v1/admin/payout/capabilities:
     get:
       produces:
@@ -15081,6 +16486,33 @@ paths:
       summary: 扫描拉黑与关注并存的异常关系
       tags:
       - SocialAdmin
+  /v1/admin/system/operations:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/system.operationsResult'
+              type: object
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/response.Response'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: 单机运行指标与出款积压（仅当前有效root）
+      tags:
+      - System
   /v1/admin/wallet/account/check:
     get:
       description: 校验当前管理员及钱包读权限，默认888；accountNo和phone至少提供一个，两者同时提供时必须属于同一用户。金额和版本字符串，时间毫秒。业务错误47001至47015。
@@ -15516,6 +16948,283 @@ paths:
       summary: 查询交易及原扣款、消费退款和审计
       tags:
       - WalletAdmin
+  /v1/app/anchor-home/album:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 主播自己的相册及排序版本（所有未删除审核状态）
+      tags:
+      - AnchorHome
+  /v1/app/anchor-home/album/delete:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId、相册version、photoNo
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.DeletePhoto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 删除自己的照片，立即撤销公开读取权限
+      tags:
+      - AnchorHome
+  /v1/app/anchor-home/album/preview:
+    get:
+      parameters:
+      - description: 照片公开编号
+        in: query
+        name: photoNo
+        required: true
+        type: string
+      - description: full|thumb
+        in: query
+        name: variant
+        required: true
+        type: string
+      produces:
+      - image/jpeg
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      security:
+      - AppBearerAuth: []
+      summary: 主播私有照片预览，客户端携带Bearer读取Blob
+      tags:
+      - AnchorHome
+  /v1/app/anchor-home/album/reorder:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 固定requestId、相册version和完整photoNos
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.ReorderPhotos'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 按完整照片集合重排，第一张为公开封面候选
+      tags:
+      - AnchorHome
+  /v1/app/anchor-home/album/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: JPEG/PNG/WebP
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: 8至64位幂等请求编号
+        in: formData
+        name: requestId
+        required: true
+        type: string
+      - description: 当前相册版本
+        in: formData
+        name: version
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - AppBearerAuth: []
+      summary: 上传待审核的主页照片（8MiB、20MP，服务端重新编码）
+      tags:
+      - AnchorHome
+  /v1/app/anchor-home/guards:
+    get:
+      parameters:
+      - description: 主播公开编号
+        in: query
+        name: anchorNo
+        required: true
+        type: string
+      - description: 1..100
+        in: query
+        name: page
+        type: integer
+      - description: 1..50
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PublicMembers'
+              type: object
+      summary: 主播当前有效守护公开列表，不返回购买与到期明细
+      tags:
+      - AnchorHome
+  /v1/app/anchor-home/photo:
+    get:
+      parameters:
+      - description: 照片公开编号
+        in: query
+        name: photoNo
+        required: true
+        type: string
+      - description: full|thumb
+        in: query
+        name: variant
+        required: true
+        type: string
+      produces:
+      - image/jpeg
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      summary: 读取当前公开照片，重新检查主播、账号和双向拉黑事实
+      tags:
+      - AnchorHome
+  /v1/app/anchor-home/profile:
+    get:
+      description: 仅返回已审核相册和公开字段；直播入口遵循双向拉黑和房间权限。所有读取使用同一只读快照。
+      parameters:
+      - description: 主播公开编号
+        in: query
+        name: anchorNo
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Profile'
+              type: object
+      summary: 主播公开主页（游客可读，提供Bearer时必须有效）
+      tags:
+      - AnchorHome
+  /v1/app/anchor-home/settings:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Settings'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 本人主播简介与内容分类编辑快照
+      tags:
+      - AnchorHome
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 完整的窄字段命令，version来自GET settings
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.SaveSettings'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Settings'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 仅修改本人主播简介与分类，版本冲突拒绝覆盖
+      tags:
+      - AnchorHome
+  /v1/app/anchor-home/supporters:
+    get:
+      description: day/month/all使用业务时区；dataAsOf展示投影时间，lagCount空表示公开请求不计算全站投影积压。
+      parameters:
+      - description: 主播公开编号
+        in: query
+        name: anchorNo
+        required: true
+        type: string
+      - description: day|month|all
+        in: query
+        name: period
+        type: string
+      - description: 1..100
+        in: query
+        name: page
+        type: integer
+      - description: 1..50
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Board'
+              type: object
+      summary: 主播贡献榜，来自退款抵减后的礼物投影
+      tags:
+      - AnchorHome
   /v1/app/earning/balance:
     get:
       consumes:
@@ -16575,7 +18284,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 请求先通过启动时冻结的 SRS Hook 共享密钥认证，并由部署层 IP 白名单提供第二层保护，供可信统计服务写入；礼物流水仍应由独立账本保存，本接口只更新场次汇总。
+      description: 请求先通过启动时冻结的 SRS Hook 共享密钥认证，并由部署层 IP 白名单提供第二层保护，此接口已停用并返回HTTP 410；观众字段归presence，礼物字段归gift。
       parameters:
       - description: SRS Hook共享密钥；与hook_token二选一且禁止同时传递
         in: header
@@ -16585,21 +18294,11 @@ paths:
         in: query
         name: hook_token
         type: string
-      - description: 场次统计
-        in: body
-        name: data
-        required: true
-        schema:
-          $ref: '#/definitions/request.LiveSessionStatsReq'
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "413":
-          description: 请求体超过上限
+        "410":
+          description: 旧统计写入口已停用，不读取统计正文
           schema:
             $ref: '#/definitions/response.Response'
       summary: 写入直播场次实时统计快照
@@ -16640,6 +18339,233 @@ paths:
       summary: SRS停止发布流回调
       tags:
       - LiveHook
+  /v1/app/live/presence/active-viewers:
+    get:
+      parameters:
+      - description: 房间编号
+        in: query
+        name: roomNo
+        required: true
+        type: string
+      - description: 不透明游标，更新中的列表允许最终一致
+        in: query
+        name: cursor
+        type: string
+      - description: 每页1至100，默认20
+        in: query
+        name: limit
+        type: integer
+      - description: 签名游客凭证
+        in: header
+        name: X-Presence-Guest
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PresenceViewers'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 当前会员最近活动列表，不含礼物金额
+      tags:
+      - LivePresence
+  /v1/app/live/presence/guest:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PresenceGuest'
+              type: object
+      summary: 签发24小时游客身份，仅可访问公开直播；不代表物理去重人数
+      tags:
+      - LivePresence
+  /v1/app/live/presence/heartbeat:
+    post:
+      consumes:
+      - application/json
+      description: 数量为十进制字符串；错误49501参数，49502过期，49503权限，49504序号，49505限流，49506依赖，49507背压，49508状态异常。无WebSocket。
+      parameters:
+      - description: 游客签名凭证；与APP JWT身份分离
+        in: header
+        name: X-Presence-Guest
+        type: string
+      - description: 请求
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.PresenceHeartbeat'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PresenceSession'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 观众心跳，服务端时间与递增sequence
+      tags:
+      - LivePresence
+  /v1/app/live/presence/leave:
+    post:
+      consumes:
+      - application/json
+      description: 数量为十进制字符串；错误49501参数，49502过期，49503权限，49504序号，49505限流，49506依赖，49507背压，49508状态异常。无WebSocket。
+      parameters:
+      - description: 游客签名凭证；与APP JWT身份分离
+        in: header
+        name: X-Presence-Guest
+        type: string
+      - description: 请求
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.PresenceLeave'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PresenceSession'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 幂等退房，浏览器关闭时最佳努力
+      tags:
+      - LivePresence
+  /v1/app/live/presence/open:
+    post:
+      consumes:
+      - application/json
+      description: 数量为十进制字符串；错误49501参数，49502过期，49503权限，49504序号，49505限流，49506依赖，49507背压，49508状态异常。无WebSocket。
+      parameters:
+      - description: 游客签名凭证；与APP JWT身份分离
+        in: header
+        name: X-Presence-Guest
+        type: string
+      - description: 请求
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.PresenceOpen'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PresenceSession'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 观众进房，会员或签名游客，requestId幂等
+      tags:
+      - LivePresence
+  /v1/app/live/presence/stats:
+    get:
+      parameters:
+      - description: 房间编号
+        in: query
+        name: roomNo
+        required: true
+        type: string
+      - description: 不透明游标，更新中的列表允许最终一致
+        in: query
+        name: cursor
+        type: string
+      - description: 每页1至100，默认20
+        in: query
+        name: limit
+        type: integer
+      - description: 签名游客凭证
+        in: header
+        name: X-Presence-Guest
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PresenceStats'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 查询近实时游客与会员在线统计
+      tags:
+      - LivePresence
+  /v1/app/live/presence/viewers:
+    get:
+      parameters:
+      - description: 房间编号
+        in: query
+        name: roomNo
+        required: true
+        type: string
+      - description: 不透明游标，更新中的列表允许最终一致
+        in: query
+        name: cursor
+        type: string
+      - description: 每页1至100，默认20
+        in: query
+        name: limit
+        type: integer
+      - description: 签名游客凭证
+        in: header
+        name: X-Presence-Guest
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PresenceViewers'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 当前在线会员公开资料游标列表
+      tags:
+      - LivePresence
   /v1/app/live/room/detail:
     get:
       description: 未开播也可以查询；只返回当前观众有权访问、关联用户与主播状态正常且主播审核通过的房间。userInfo 只包含用户公开资料，userInfo.accountNo
@@ -16686,6 +18612,39 @@ paths:
       summary: 获取当前主播的直播间
       tags:
       - LiveRoomApp
+  /v1/app/live/room/like:
+    post:
+      consumes:
+      - application/json
+      description: 数量为十进制字符串；错误49501参数，49502过期，49503权限，49504序号，49505限流，49506依赖，49507背压，49508状态异常。无WebSocket。
+      parameters:
+      - description: 游客签名凭证；与APP JWT身份分离
+        in: header
+        name: X-Presence-Guest
+        type: string
+      - description: 请求
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/request.PresenceLike'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.PresenceSession'
+              type: object
+      security:
+      - AppBearerAuth: []
+      summary: 登录观众批量点赞，原子幂等与限流
+      tags:
+      - LivePresence
   /v1/app/live/room/list:
     get:
       description: nickname、avatar 返回主播关联账户的最新昵称和头像，与直播间详情的 userInfo 一致。
@@ -17427,7 +19386,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/response.Relationship'
+                    $ref: '#/definitions/tb_live_module_model_social_response.Relationship'
                   type: array
               type: object
         "401":
@@ -17602,7 +19561,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/response.Relationship'
+                    $ref: '#/definitions/tb_live_module_model_social_response.Relationship'
                   type: array
               type: object
         "401":
@@ -17760,7 +19719,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/response.Relationship'
+                    $ref: '#/definitions/tb_live_module_model_social_response.Relationship'
                   type: array
               type: object
         "401":
@@ -18146,7 +20105,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/response.Relationship'
+                    $ref: '#/definitions/tb_live_module_model_social_response.Relationship'
                   type: array
               type: object
         "401":
@@ -18286,7 +20245,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/response.Relationship'
+                    $ref: '#/definitions/tb_live_module_model_social_response.Relationship'
                   type: array
               type: object
         "401":

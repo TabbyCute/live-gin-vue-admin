@@ -38,6 +38,9 @@ func MigrateEarning(db *gorm.DB) error {
 		if e := prepareManualChecks(conn, true); e != nil {
 			return e
 		}
+		if e := MigrateEarningAudit(target); e != nil {
+			return e
+		}
 		if e := target.AutoMigrate(earningModels()...); e != nil {
 			return e
 		}
@@ -193,6 +196,9 @@ func earningTriggersVersion(db *gorm.DB, manual bool) ([]giftTrigger, error) {
 	return all, nil
 }
 func ValidateEarningSchema(db *gorm.DB) error {
+	if e := ValidateEarningAuditSchema(db); e != nil {
+		return e
+	}
 	if db == nil {
 		return fmt.Errorf("earning database unavailable")
 	}
@@ -260,7 +266,7 @@ func ValidateEarningSchema(db *gorm.DB) error {
 }
 
 var earningOperations = []struct{ Method, Path string }{
-	{"GET", "overview"}, {"GET", "income/list"}, {"GET", "account/list"}, {"GET", "account/ledger"}, {"GET", "account/check"}, {"GET", "exchange/list"}, {"POST", "exchange/create"}, {"POST", "exchange/review"}, {"GET", "settlement/list"}, {"GET", "settlement/detail"}, {"POST", "settlement/create"}, {"POST", "settlement/review"}, {"GET", "withdrawal/list"}, {"GET", "withdrawal/detail"}, {"POST", "withdrawal/review"}, {"GET", "reconciliation/list"}, {"POST", "reconciliation/run"},
+	{"POST", "audit/start"}, {"POST", "audit/cancel"}, {"GET", "audit/list"}, {"GET", "overview"}, {"GET", "income/list"}, {"GET", "account/list"}, {"GET", "account/ledger"}, {"GET", "account/check"}, {"GET", "exchange/list"}, {"POST", "exchange/create"}, {"POST", "exchange/review"}, {"GET", "settlement/list"}, {"GET", "settlement/detail"}, {"POST", "settlement/create"}, {"POST", "settlement/review"}, {"GET", "withdrawal/list"}, {"GET", "withdrawal/detail"}, {"POST", "withdrawal/review"}, {"GET", "reconciliation/list"}, {"POST", "reconciliation/run"},
 }
 
 func SyncEarningMetadata(db *gorm.DB) error {
@@ -273,7 +279,7 @@ func SyncEarningMetadata(db *gorm.DB) error {
 			return e
 		}
 		ids := []uint{parent.ID}
-		for i, item := range []struct{ Name, Title string }{{"overview", "直播收益"}, {"exchange", "结算兑换规则"}, {"settlement", "收益结算"}, {"account", "主播可提现账户"}, {"withdrawal", "提现审核"}, {"reconciliation", "收益对账"}} {
+		for i, item := range []struct{ Name, Title string }{{"overview", "直播收益"}, {"exchange", "结算兑换规则"}, {"settlement", "收益结算"}, {"account", "主播可提现账户"}, {"withdrawal", "提现审核"}, {"reconciliation", "收益对账"}, {"audit", "收益深度核验"}} {
 			m := system.SysBaseMenu{MenuLevel: 1, ParentId: parent.ID, Path: "earning-" + item.Name, Name: "earning-" + item.Name, Component: "view/live/earning/" + item.Name + "/index.vue", Sort: 25 + i, Meta: system.Meta{Title: item.Title, Icon: "coin", KeepAlive: true}}
 			if e := tx.Where("name=?", m.Name).FirstOrCreate(&m).Error; e != nil {
 				return e
@@ -312,6 +318,7 @@ func InitializeEarning() error {
 	es.Default.DB = global.GVA_DB
 	es.Default.Payees = es.DatabasePayeeProvider{Accounts: ps.Default}
 	es.Default.Sources = map[string]es.SourceVerifier{"gift": gs.Default.VerifyIncomeSources}
+	es.Default.SourceAuditScope = gs.WithIncomeProofCache
 	ps.Default.FinancialGuard = es.Default.ValidatePayoutInTx
 	ps.Default.FinancialLock = es.Default.LockPayoutFinanceInTx
 	ps.Default.FinancialCheck = es.Default.CheckPayoutFinanceInTx

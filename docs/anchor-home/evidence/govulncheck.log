@@ -1,0 +1,23 @@
+go: golang.org/x/vuln@v1.9.0 requires go >= 1.26.0; switching to go1.26.11
+=== Symbol Results ===
+
+Vulnerability #1: GO-2026-6911
+    SSRF and credential leak via unvalidated Location header in
+    github.com/mark3labs/mcp-go
+  More info: https://pkg.go.dev/vuln/GO-2026-6911
+  Module: github.com/mark3labs/mcp-go
+    Found in: github.com/mark3labs/mcp-go@v0.41.1
+    Fixed in: N/A
+    Example traces found:
+      #1: mcp/client/client.go:26:50: client.NewClient calls client.NewStreamableHttpClient, which calls transport.NewStreamableHTTP
+      #2: api/v1/system/auto_code_mcp.go:120:2: system.AutoCodeTemplateApi.MCPTest calls client.Client.Close, which calls transport.StreamableHTTP.Close
+      #3: mcp/client/client.go:46:34: client.NewClient calls client.Client.Initialize, which calls transport.StreamableHTTP.SendNotification
+      #4: api/v1/system/auto_code_mcp.go:126:36: system.AutoCodeTemplateApi.MCPTest calls client.Client.CallTool, which eventually calls transport.StreamableHTTP.SendRequest
+      #5: mcp/client/client.go:32:24: client.NewClient calls client.Client.Start, which calls transport.StreamableHTTP.SetRequestHandler
+
+Your code is affected by 1 vulnerability from 1 module.
+This scan also found 6 vulnerabilities in packages you import and 1
+vulnerability in modules you require, but your code doesn't appear to call these
+vulnerabilities.
+Use '-show verbose' for more details.
+exit status 3

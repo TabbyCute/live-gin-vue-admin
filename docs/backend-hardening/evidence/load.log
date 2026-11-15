@@ -1,0 +1,204 @@
+=== RUN   TestMySQLWalletSealLoad
+    mysql_load_test.go:95: single_wallet_debit: 116.7 ops/s, p95 461.65 ms, p99 564.85 ms, errors 0
+    mysql_load_test.go:95: sixteen_wallet_debit: 602.2 ops/s, p95 74.37 ms, p99 90.02 ms, errors 0
+    mysql_load_test.go:95: same_original_partial_refund: 78.8 ops/s, p95 561.32 ms, p99 693.79 ms, errors 0
+    mysql_load_test.go:95: single_wallet_idempotent_replay: 216.1 ops/s, p95 212.28 ms, p99 268.63 ms, errors 0
+    mysql_load_test.go:95: balance_and_ledger: 1552.6 ops/s, p95 28.82 ms, p99 31.59 ms, errors 0
+--- PASS: TestMySQLWalletSealLoad (9.87s)
+=== RUN   TestMySQLWalletPlansAndLoad
+    mysql_test.go:264: EXPLAIN SELECT * FROM wallet_ledger WHERE wallet_account_id=1 AND wallet_version<70 ORDER BY wallet_version DESC LIMIT 21 => [map[Extra:Using index condition; Backward index scan filtered:100 id:1 key:uk_wallet_ledger_version key_len:16 partitions:<nil> possible_keys:uk_wallet_ledger_version ref:<nil> rows:69 select_type:SIMPLE table:wallet_ledger type:range]]
+    mysql_test.go:264: EXPLAIN SELECT * FROM wallet_ledger WHERE wallet_account_id=1 ORDER BY wallet_version DESC LIMIT 21 => [map[Extra:Backward index scan filtered:100 id:1 key:uk_wallet_ledger_version key_len:8 partitions:<nil> possible_keys:uk_wallet_ledger_version ref:const rows:80 select_type:SIMPLE table:wallet_ledger type:ref]]
+    mysql_test.go:264: EXPLAIN SELECT * FROM wallet_ledger WHERE wallet_account_id=1 AND wallet_version>20 ORDER BY wallet_version LIMIT 101 => [map[Extra:Using index condition filtered:100 id:1 key:uk_wallet_ledger_version key_len:16 partitions:<nil> possible_keys:uk_wallet_ledger_version ref:<nil> rows:60 select_type:SIMPLE table:wallet_ledger type:range]]
+    mysql_test.go:264: EXPLAIN SELECT id FROM wallet_adjustment_order WHERE created_by=1 AND status='pending' LIMIT 100 => [map[Extra:Using where filtered:100 id:1 key:idx_wallet_order_status key_len:66 partitions:<nil> possible_keys:uk_wallet_order_request,idx_wallet_order_status,idx_wallet_order_pending ref:const rows:1 select_type:SIMPLE table:wallet_adjustment_order type:ref]]
+    mysql_test.go:264: EXPLAIN SELECT * FROM wallet_account WHERE account_id=10 AND currency_code='COIN' => [map[Extra:<nil> filtered:100 id:1 key:uk_wallet_account_currency key_len:74 partitions:<nil> possible_keys:uk_wallet_account_currency ref:const,const rows:1 select_type:SIMPLE table:wallet_account type:const]]
+    mysql_test.go:264: EXPLAIN SELECT * FROM wallet_adjustment_order WHERE source_type='manual' AND external_order_no='LOAD_0001' => [map[Extra:<nil> filtered:100 id:1 key:uk_wallet_order_source key_len:580 partitions:<nil> possible_keys:uk_wallet_order_source ref:const,const rows:1 select_type:SIMPLE table:wallet_adjustment_order type:const]]
+    mysql_test.go:296: wallet ledger read requests=400 concurrency=16 QPS=1878.37 p95=13.373041ms p99=15.048458ms errors=0
+--- PASS: TestMySQLWalletPlansAndLoad (3.18s)
+=== RUN   TestMySQLMovementQueryPlans
+    mysql_transaction_test.go:311: EXPLAIN SELECT * FROM wallet_transaction WHERE kind='refund' AND business_type='test_shop' AND business_no='plan_order_50' => [map[Extra:<nil> filtered:100 id:1 key:uk_wallet_transaction_business key_len:710 partitions:<nil> possible_keys:uk_wallet_transaction_business ref:const,const,const rows:1 select_type:SIMPLE table:wallet_transaction type:const]]
+    mysql_transaction_test.go:311: EXPLAIN SELECT * FROM wallet_transaction WHERE original_no='parent_50' AND id>100 ORDER BY id LIMIT 51 => [map[Extra:Using index condition filtered:100 id:1 key:idx_wallet_transaction_original key_len:170 partitions:<nil> possible_keys:PRIMARY,idx_wallet_transaction_original ref:<nil> rows:99 select_type:SIMPLE table:wallet_transaction type:range]]
+    mysql_transaction_test.go:311: EXPLAIN SELECT * FROM wallet_transaction WHERE account_id=70 AND currency_code='COIN' AND id>100 ORDER BY id LIMIT 101 => [map[Extra:Using index condition; Using where filtered:10 id:1 key:idx_wallet_transaction_account key_len:16 partitions:<nil> possible_keys:PRIMARY,idx_wallet_transaction_account ref:<nil> rows:99 select_type:SIMPLE table:wallet_transaction type:range]]
+    mysql_transaction_test.go:311: EXPLAIN SELECT SUM(amount),COUNT(*) FROM wallet_transaction WHERE original_no='parent_50' => [map[Extra:<nil> filtered:100 id:1 key:idx_wallet_transaction_original key_len:162 partitions:<nil> possible_keys:idx_wallet_transaction_original ref:const rows:100 select_type:SIMPLE table:wallet_transaction type:ref]]
+--- PASS: TestMySQLMovementQueryPlans (0.76s)
+PASS
+ok  	tb_live_module/service/wallet	16.470s
+=== RUN   TestMySQLGiftLoad
+    gift_test.go:412: hot-wallet writes=100 elapsed=2.620111083s throughput=38.17/s p50=1.34727675s p95=2.480139083s p99=2.581358791s
+    gift_test.go:417: idempotent replay=100 elapsed=737.507917ms
+--- PASS: TestMySQLGiftLoad (4.43s)
+=== RUN   TestMySQLGuardRankingLoad
+    guard_load_test.go:53: guard load real MySQL: orders=100 concurrency=100 send_ms=2722 p50_ms=1422.659 p95_ms=2590.669 p99_ms=2695.482 fulfill_4_workers_ms=1539 ranking_4_workers_ms=99
+    guard_load_test.go:54: ranking EXPLAIN: [map[Extra:<nil> filtered:100 id:1 key:idx_ranking_board key_len:484 partitions:<nil> possible_keys:uk_ranking_bucket,idx_ranking_board ref:const,const,const,const,const,const,const rows:1 select_type:SIMPLE table:ranking_score_bucket type:ref]]
+--- PASS: TestMySQLGuardRankingLoad (6.19s)
+PASS
+ok  	tb_live_module/service/gift	13.268s
+=== RUN   TestMySQLFinanceLoad
+    finance_integration_test.go:623: EARNING_LOAD_RESULT {"allMoneyChecksPassed":true,"concurrency":16,"databasePayee":true,"elapsedMs":6478,"incomeFacts":500,"maxMs":1956,"p50Ms":1521,"p95Ms":1832,"settlementCreateAndApproveMs":296,"withdrawals":64}
+    finance_integration_test.go:625: PAYOUT_LOAD_RESULT {"concurrency":16,"elapsedMs":5802,"incomeFacts":500,"maxMs":1616,"p50Ms":1403,"p95Ms":1571,"readyOrders":64,"unchangedBalances":true}
+--- PASS: TestMySQLFinanceLoad (42.08s)
+=== RUN   TestMySQLManualPayoutLoad
+    manual_payout_safety_test.go:445: PAYOUT_MANUAL_LOAD {"claim":{"max_ms":78.438,"p50_ms":62.163,"p95_ms":75.466},"database":"isolated local MySQL","detail_with_internal_check":{"max_ms":190.061,"p50_ms":60.799,"p95_ms":111.368},"externalBankCalls":0,"frozen":0,"orders":20,"paid":100,"review_and_accounting":{"max_ms":123.151,"p50_ms":93.736,"p95_ms":114.487},"seconds":8.357906792,"upload_and_submit":{"max_ms":55.23,"p50_ms":40.858,"p95_ms":54.162},"withdrawal_and_ready":{"max_ms":177.733,"p50_ms":150.374,"p95_ms":168.701}}
+--- PASS: TestMySQLManualPayoutLoad (11.03s)
+PASS
+ok  	tb_live_module/service/earning	55.723s
+=== RUN   TestMySQLLoadProfile
+    load_integration_test.go:84: hot_anchor_follow: {"concurrency":32,"elapsedSeconds":14.021492542,"errorRate":0,"errors":0,"p95Ms":691.408,"p99Ms":821.573,"qps":71.31908368560612,"requests":1000}
+    load_integration_test.go:84: batch_status_100_no_redis: {"concurrency":16,"elapsedSeconds":0.456996042,"errorRate":0,"errors":0,"p95Ms":25.542,"p99Ms":30.821,"qps":875.2811036380923,"requests":400}
+    load_integration_test.go:84: fans_cursor_page_100: {"concurrency":16,"elapsedSeconds":0.144414292,"errorRate":0,"errors":0,"p95Ms":13.415,"p99Ms":16.433,"qps":2077.3567203445486,"requests":300}
+    load_integration_test.go:84: history_strict_checkpoint: {"concurrency":16,"elapsedSeconds":0.091232834,"errorRate":0,"errors":0,"p95Ms":17.976,"p99Ms":18.06,"qps":1096.0966092536378,"requests":100}
+    load_integration_test.go:84: hot_anchor_unfollow_refollow: {"concurrency":32,"elapsedSeconds":17.831189125,"errorRate":0,"errors":0,"p95Ms":710.611,"p99Ms":752.473,"qps":56.08150937045259,"requests":1000}
+    load_integration_test.go:84: notification_fanout_page_20_fake_sink: {"concurrency":1,"elapsedSeconds":0.713996833,"errorRate":0,"errors":0,"p95Ms":153.828,"p99Ms":153.828,"qps":7.00283218203014,"requests":5}
+--- PASS: TestMySQLLoadProfile (35.38s)
+=== RUN   TestRedisHeartbeatLoadProfile
+    redis_integration_test.go:192: buffered_heartbeat requests=1000 qps=2827.35 p95_ms=0.564 p99_ms=1.135 errors=0
+--- PASS: TestRedisHeartbeatLoadProfile (0.41s)
+PASS
+ok  	tb_live_module/service/social	37.361s
+=== RUN   TestMySQLPublicProfilePlansAndBatchLoad
+    social_profile_mysql_test.go:99: live profile EXPLAIN: [{"Extra":"Using where","filtered":10,"id":1,"key":"PRIMARY","key_len":"8","partitions":null,"possible_keys":"PRIMARY,idx_live_account_deleted_at,idx_live_account_status_ban","ref":null,"rows":100,"select_type":"PRIMARY","table":"u","type":"range"},{"Extra":"Using where","filtered":5,"id":1,"key":"uk_user_id","key_len":"8","partitions":null,"possible_keys":"PRIMARY,uk_user_id,idx_live_anchor_deleted_at,idx_apply_created","ref":"social_test_public_profiles.u.id","rows":1,"select_type":"PRIMARY","table":"a","type":"eq_ref"},{"Extra":"Using where; Not exists; Using index","filtered":100,"id":1,"key":"uk_social_block_pair","key_len":"16","partitions":null,"possible_keys":"uk_social_block_pair,idx_social_block_list","ref":"const,social_test_public_profiles.u.id","rows":1,"select_type":"PRIMARY","table":"b","type":"eq_ref"},{"Extra":"Using where; Not exists; Using index","filtered":100,"id":1,"key":"uk_social_block_pair","key_len":"16","partitions":null,"possible_keys":"uk_social_block_pair,idx_social_block_list","ref":"social_test_public_profiles.u.id,const","rows":1,"select_type":"PRIMARY","table":"b","type":"eq_ref"},{"Extra":"Using where","filtered":35.20000076293945,"id":1,"key":"uk_live_room_anchor","key_len":"8","partitions":null,"possible_keys":"PRIMARY,uk_live_room_anchor,idx_live_room_deleted_at,idx_live_room_discovery","ref":"social_test_public_profiles.a.id","rows":1,"select_type":"PRIMARY","table":"r","type":"eq_ref"},{"Extra":"Using where","filtered":5,"id":1,"key":"PRIMARY","key_len":"8","partitions":null,"possible_keys":"PRIMARY","ref":"social_test_public_profiles.r.current_session_id","rows":1,"select_type":"PRIMARY","table":"s","type":"eq_ref"},{"Extra":"Using index","filtered":100,"id":4,"key":"uk_social_follow_pair","key_len":"16","partitions":null,"possible_keys":"uk_social_follow_pair,idx_social_follow_out,idx_social_follow_in","ref":"const,social_test_public_profiles.a.user_id","rows":1,"select_type":"DEPENDENT SUBQUERY","table":"f","type":"eq_ref"}]
+    social_profile_mysql_test.go:137: public user list 100: requests=400 concurrency=16 QPS=815.53 p95=27.1395ms p99=37.432708ms errors=0
+--- PASS: TestMySQLPublicProfilePlansAndBatchLoad (8.40s)
+PASS
+ok  	tb_live_module/service/live	10.521s
+=== RUN   TestPresenceLoad1000
+    live_presence_mysql_test.go:235: hot-room-open-state count=1000 elapsed=139.8625ms p95=8.13575ms p99=10.860083ms
+    live_presence_mysql_test.go:235: 1000-heartbeat-state count=1000 elapsed=117.764958ms p95=6.921625ms p99=8.191334ms
+    live_presence_mysql_test.go:235: online-list-100-per-page-serial count=10 elapsed=0s p95=16.412708ms p99=16.412708ms
+    live_presence_mysql_test.go:235: 1000-like-burst-32-workers count=1000 elapsed=87.400125ms p95=4.402708ms p99=6.701208ms
+    live_presence_mysql_test.go:205: like accepted=2 rejected=998
+    live_presence_mysql_test.go:210: mysql checkpoint 1001 visits elapsed=305.282125ms
+    live_presence_mysql_test.go:221: expire 1001 connections in batches100 elapsed=27.084375ms
+    live_presence_mysql_test.go:223: # Memory
+        used_memory:3752712
+        used_memory_human:3.58M
+        used_memory_rss:16441344
+        used_memory_rss_human:15.68M
+        used_memory_peak:5399224
+        used_memory_peak_human:5.15M
+        used_memory_peak_perc:69.50%
+        used_memory_overhead:1814768
+        used_memory_startup:981248
+        used_memory_dataset:1937944
+        used_memory_dataset_perc:69.92%
+        allocator_allocated:8348856
+        allocator_active:19333120
+        allocator_resident:24248320
+        allocator_muzzy:0
+        total_system_memory:8217751552
+        total_system_memory_human:7.65G
+        used_memory_lua:196608
+        used_memory_vm_eval:196608
+        used_memory_lua_human:192.00K
+        used_memory_scripts_eval:13672
+        number_of_cached_scripts:7
+        number_of_functions:0
+        number_of_libraries:0
+        used_memory_vm_functions:33792
+        used_memory_vm_total:230400
+        used_memory_vm_total_human:225.00K
+        used_memory_functions:192
+        used_memory_scripts:13864
+        used_memory_scripts_human:13.54K
+        maxmemory:134217728
+        maxmemory_human:128.00M
+        maxmemory_policy:noeviction
+        allocator_frag_ratio:2.42
+        allocator_frag_bytes:6154600
+        allocator_rss_ratio:1.25
+        allocator_rss_bytes:4915200
+        rss_overhead_ratio:0.68
+        rss_overhead_bytes:-7806976
+        mem_fragmentation_ratio:4.20
+        mem_fragmentation_bytes:12523240
+        mem_not_counted_for_evict:0
+        mem_replication_backlog:0
+        mem_total_replication_buffers:0
+        mem_clients_slaves:0
+        mem_clients_normal:817176
+        mem_cluster_links:0
+        mem_aof_buffer:0
+        mem_allocator:jemalloc-5.3.0
+        mem_overhead_db_hashtable_rehashing:0
+        active_defrag_running:0
+        lazyfree_pending_objects:0
+        lazyfreed_objects:0
+        
+        # Stats
+        total_connections_received:901
+        total_commands_processed:217689
+        instantaneous_ops_per_sec:87516
+        total_net_input_bytes:29702908
+        total_net_output_bytes:3437453
+        total_net_repl_input_bytes:0
+        total_net_repl_output_bytes:0
+        instantaneous_input_kbps:14945.19
+        instantaneous_output_kbps:1784.01
+        instantaneous_input_repl_kbps:0.00
+        instantaneous_output_repl_kbps:0.00
+        rejected_connections:0
+        sync_full:0
+        sync_partial_ok:0
+        sync_partial_err:0
+        expired_subkeys:0
+        expired_keys:128
+        expired_stale_perc:0.00
+        expired_time_cap_reached_count:0
+        expire_cycle_cpu_milliseconds:40
+        evicted_keys:0
+        evicted_clients:0
+        evicted_scripts:0
+        total_eviction_exceeded_time:0
+        current_eviction_exceeded_time:0
+        keyspace_hits:92844
+        keyspace_misses:10430
+        pubsub_channels:0
+        pubsub_patterns:0
+        pubsubshard_channels:0
+        latest_fork_usec:0
+        total_forks:0
+        migrate_cached_sockets:0
+        slave_expires_tracked_keys:0
+        active_defrag_hits:0
+        active_defrag_misses:0
+        active_defrag_key_hits:0
+        active_defrag_key_misses:0
+        total_active_defrag_time:0
+        current_active_defrag_time:0
+        tracking_total_keys:0
+        tracking_total_items:0
+        tracking_total_prefixes:0
+        unexpected_error_replies:0
+        total_error_replies:0
+        dump_payload_sanitizations:0
+        total_reads_processed:8690
+        total_writes_processed:7774
+        io_threaded_reads_processed:0
+        io_threaded_writes_processed:0
+        client_query_buffer_limit_disconnections:0
+        client_output_buffer_limit_disconnections:0
+        reply_buffer_shrinks:43
+        reply_buffer_expands:1
+        eventloop_cycles:19885
+        eventloop_duration_sum:6471550
+        eventloop_duration_cmd_sum:341586
+        instantaneous_eventloop_cycles_per_sec:953
+        instantaneous_eventloop_duration_usec:265
+        acl_access_denied_auth:0
+        acl_access_denied_cmd:0
+        acl_access_denied_key:0
+        acl_access_denied_channel:0
+        
+        # CPU
+        used_cpu_sys:0.958804
+        used_cpu_user:5.924039
+        used_cpu_sys_children:0.000878
+        used_cpu_user_children:0.001338
+        used_cpu_sys_main_thread:0.958825
+        used_cpu_user_main_thread:5.921060
+        
+--- PASS: TestPresenceLoad1000 (1.43s)
+=== RUN   TestPresenceLoadMultiRoom
+    live_presence_mysql_test.go:235: 16-room-160-open-state-32-workers count=160 elapsed=39.410167ms p95=19.070667ms p99=21.73425ms
+--- PASS: TestPresenceLoadMultiRoom (0.09s)
+PASS
+ok  	tb_live_module/service/live	3.005s

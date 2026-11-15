@@ -1,19 +1,22 @@
 package config
 
 type Server struct {
-	Ranking   Ranking `mapstructure:"ranking" json:"ranking" yaml:"ranking"`
-	Gift      Gift    `mapstructure:"gift" json:"gift" yaml:"gift"`
-	Wallet    Wallet  `mapstructure:"wallet" json:"wallet" yaml:"wallet"`
-	Social    Social  `mapstructure:"social" json:"social" yaml:"social"`
-	JWT       JWT     `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
-	JWTApp    JWTApp  `mapstructure:"jwt-app" json:"jwt-app" yaml:"jwt-app"`
-	Zap       Zap     `mapstructure:"zap" json:"zap" yaml:"zap"`
-	Redis     Redis   `mapstructure:"redis" json:"redis" yaml:"redis"`
-	RedisList []Redis `mapstructure:"redis-list" json:"redis-list" yaml:"redis-list"`
-	Mongo     Mongo   `mapstructure:"mongo" json:"mongo" yaml:"mongo"`
-	Email     Email   `mapstructure:"email" json:"email" yaml:"email"`
-	System    System  `mapstructure:"system" json:"system" yaml:"system"`
-	Captcha   Captcha `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
+	AnchorHome AnchorHome   `mapstructure:"anchor-home" json:"anchorHome" yaml:"anchor-home"`
+	Presence   LivePresence `mapstructure:"presence" json:"presence" yaml:"presence"`
+	Payout     Payout       `mapstructure:"payout" json:"-" yaml:"payout"`
+	Ranking    Ranking      `mapstructure:"ranking" json:"ranking" yaml:"ranking"`
+	Gift       Gift         `mapstructure:"gift" json:"gift" yaml:"gift"`
+	Wallet     Wallet       `mapstructure:"wallet" json:"wallet" yaml:"wallet"`
+	Social     Social       `mapstructure:"social" json:"social" yaml:"social"`
+	JWT        JWT          `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
+	JWTApp     JWTApp       `mapstructure:"jwt-app" json:"jwt-app" yaml:"jwt-app"`
+	Zap        Zap          `mapstructure:"zap" json:"zap" yaml:"zap"`
+	Redis      Redis        `mapstructure:"redis" json:"redis" yaml:"redis"`
+	RedisList  []Redis      `mapstructure:"redis-list" json:"redis-list" yaml:"redis-list"`
+	Mongo      Mongo        `mapstructure:"mongo" json:"mongo" yaml:"mongo"`
+	Email      Email        `mapstructure:"email" json:"email" yaml:"email"`
+	System     System       `mapstructure:"system" json:"system" yaml:"system"`
+	Captcha    Captcha      `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
 	// auto
 	AutoCode Autocode `mapstructure:"autocode" json:"autocode" yaml:"autocode"`
 	// gorm

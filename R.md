@@ -2,6 +2,8 @@ http://140.210.12.162:8888/api/swagger/index.html
 
 http://140.210.12.162:8888/app/v1/assets/admin
 
+http://140.210.12.162:8888/app/v1/assets/h5/
+
 https://www.itouxiang.com/touxiang/89727144.html
 
 ### 本地打包服务器
@@ -9,6 +11,22 @@ https://www.itouxiang.com/touxiang/89727144.html
 #### 打包
 
 ./deploy/build-prod.sh
+
+正式包会一并构建后台和 H5 客户端，包含 `assets/admin` 和 `assets/h5`。
+H5 源码默认位于 `$HOME/Desktop/IM/H5Player`，换电脑时可指定：
+
+```bash
+H5_SOURCE_DIR=/你的路径/H5Player ./deploy/build-prod.sh
+```
+
+只打包 H5 到 `server/assets/h5`：
+
+```bash
+bash ./deploy/build-h5.sh
+```
+
+H5 使用生产构建，部署前缀为 `/app/v1/assets/h5/`，API 为同源 `/api`。
+支持首页及 history 子路由直接访问、刷新；访问入口和部署前缀不受服务器目录变化影响。
 
 #### 部署
 

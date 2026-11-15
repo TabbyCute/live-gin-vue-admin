@@ -1,7 +1,10 @@
 package router
 
 import (
+	"tb_live_module/router/anchorhome"
+	"tb_live_module/router/bankreconcile"
 	"tb_live_module/router/earning"
+	"tb_live_module/router/eventdelivery"
 	"tb_live_module/router/example"
 	"tb_live_module/router/gift"
 	"tb_live_module/router/guard"
@@ -16,14 +19,17 @@ import (
 var RouterGroupApp = new(RouterGroup)
 
 type RouterGroup struct {
-	Guard   guard.RouterGroup
-	Ranking ranking.RouterGroup
-	Payout  payout.RouterGroup
-	Earning earning.RouterGroup
-	Gift    gift.RouterGroup
-	Social  social.RouterGroup
-	Wallet  wallet.RouterGroup
-	System  system.RouterGroup
-	Example example.RouterGroup
-	Live    live.RouterGroup
+	AnchorHome               anchorhome.RouterGroup
+	EventDelivery            eventdelivery.RouterGroup
+	BankReconcileRouterGroup bankreconcile.RouterGroup
+	Guard                    guard.RouterGroup
+	Ranking                  ranking.RouterGroup
+	Payout                   payout.RouterGroup
+	Earning                  earning.RouterGroup
+	Gift                     gift.RouterGroup
+	Social                   social.RouterGroup
+	Wallet                   wallet.RouterGroup
+	System                   system.RouterGroup
+	Example                  example.RouterGroup
+	Live                     live.RouterGroup
 }

@@ -1,0 +1,180 @@
+=== RUN   TestPublicHomeSQLiteContracts
+=== RUN   TestPublicHomeSQLiteContracts/profile
+
+2026/11/14 01:04:57 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.711ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("ranking_applied_event")
+
+2026/11/14 01:04:57 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.280ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("ranking_generation_receipt")
+
+2026/11/14 01:04:57 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.349ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("ranking_score_bucket")
+
+2026/11/14 01:04:57 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.274ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("ranking_checkpoint")
+
+2026/11/14 01:04:57 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.313ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("ranking_rebuild_job")
+
+2026/11/14 01:04:57 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.263ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("ranking_admin_permission")
+
+2026/11/14 01:04:57 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.252ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("ranking_audit_log")
+=== RUN   TestPublicHomeSQLiteContracts/net_supporters
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.657ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("ranking_applied_event")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.259ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("ranking_generation_receipt")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.322ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("ranking_score_bucket")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.243ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("ranking_checkpoint")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.341ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("ranking_rebuild_job")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.254ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("ranking_admin_permission")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.245ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("ranking_audit_log")
+=== RUN   TestPublicHomeSQLiteContracts/guard_expiry
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.631ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("ranking_applied_event")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.278ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("ranking_generation_receipt")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.359ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("ranking_score_bucket")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.268ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("ranking_checkpoint")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.292ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("ranking_rebuild_job")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.255ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("ranking_admin_permission")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.257ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("ranking_audit_log")
+=== RUN   TestPublicHomeSQLiteContracts/settings_cas
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.636ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("ranking_applied_event")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.418ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("ranking_generation_receipt")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.383ms] [34;1m[rows:3][0m SELECT * FROM PRAGMA_index_list("ranking_score_bucket")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.272ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("ranking_checkpoint")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.298ms] [34;1m[rows:2][0m SELECT * FROM PRAGMA_index_list("ranking_rebuild_job")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.260ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("ranking_admin_permission")
+
+2026/11/14 01:04:58 [32m/Users/tabby/go/pkg/mod/github.com/glebarez/sqlite@v1.11.0/migrator.go:342
+[0m[33m[0.261ms] [34;1m[rows:1][0m SELECT * FROM PRAGMA_index_list("ranking_audit_log")
+--- PASS: TestPublicHomeSQLiteContracts (1.59s)
+    --- PASS: TestPublicHomeSQLiteContracts/profile (0.46s)
+    --- PASS: TestPublicHomeSQLiteContracts/net_supporters (0.43s)
+    --- PASS: TestPublicHomeSQLiteContracts/guard_expiry (0.35s)
+    --- PASS: TestPublicHomeSQLiteContracts/settings_cas (0.35s)
+=== RUN   TestMySQLPublicHomeContracts
+=== RUN   TestMySQLPublicHomeContracts/profile
+=== RUN   TestMySQLPublicHomeContracts/net_supporters
+=== RUN   TestMySQLPublicHomeContracts/guard_expiry
+=== RUN   TestMySQLPublicHomeContracts/settings_cas
+--- PASS: TestMySQLPublicHomeContracts (1.70s)
+    --- PASS: TestMySQLPublicHomeContracts/profile (0.46s)
+    --- PASS: TestMySQLPublicHomeContracts/net_supporters (0.41s)
+    --- PASS: TestMySQLPublicHomeContracts/guard_expiry (0.42s)
+    --- PASS: TestMySQLPublicHomeContracts/settings_cas (0.41s)
+=== RUN   TestMySQLPublicSettingsRaceAndHomeLoad
+    public_test.go:377: profile concurrent=8 reads=160 history=2000 p50=16.420584ms p95=23.099833ms max=24.577458ms SQL/request=10.0
+--- PASS: TestMySQLPublicSettingsRaceAndHomeLoad (1.09s)
+=== RUN   TestMySQLPublicSupporterAndGuardLoad
+=== RUN   TestMySQLPublicSupporterAndGuardLoad/supporters
+    public_test.go:453: supporters concurrent=8 reads=80 members=1000 renewalSegments=32 pageSize=50 p50=469.488791ms p95=553.648333ms max=567.962583ms SQL/request=7.0
+=== RUN   TestMySQLPublicSupporterAndGuardLoad/guards
+    public_test.go:453: guards concurrent=8 reads=80 members=1000 renewalSegments=32 pageSize=50 p50=335.630208ms p95=525.694334ms max=779.978125ms SQL/request=7.0
+=== NAME  TestMySQLPublicSupporterAndGuardLoad
+    public_test.go:461: board explain={
+          "query_block": {
+            "select_id": 1,
+            "cost_info": {
+              "query_cost": "112.75"
+            },
+            "ordering_operation": {
+              "using_filesort": false,
+              "table": {
+                "table_name": "ranking_score_bucket",
+                "access_type": "ref",
+                "possible_keys": [
+                  "uk_ranking_bucket",
+                  "idx_ranking_board"
+                ],
+                "key": "idx_ranking_board",
+                "used_key_parts": [
+                  "generation",
+                  "rank_type",
+                  "period_type",
+                  "period_key",
+                  "scope_type",
+                  "scope_no",
+                  "gift_no"
+                ],
+                "key_length": "484",
+                "ref": [
+                  "const",
+                  "const",
+                  "const",
+                  "const",
+                  "const",
+                  "const",
+                  "const"
+                ],
+                "rows_examined_per_scan": 1000,
+                "rows_produced_per_join": 333,
+                "filtered": "33.33",
+                "using_index": true,
+                "cost_info": {
+                  "read_cost": "12.75",
+                  "eval_cost": "33.33",
+                  "prefix_cost": "112.75",
+                  "data_read_per_join": "567K"
+                },
+                "used_columns": [
+                  "id",
+                  "generation",
+                  "rank_type",
+                  "period_type",
+                  "period_key",
+                  "scope_type",
+                  "scope_no",
+                  "gift_no",
+                  "subject_no",
+                  "score_sort"
+                ],
+                "attached_condition": "(`anchor_home_test_public`.`ranking_score_bucket`.`score_sort` > '00000000000000000000000000000000000000000000000000000000000000000')"
+              }
+            }
+          }
+        }
+--- PASS: TestMySQLPublicSupporterAndGuardLoad (9.28s)
+    --- PASS: TestMySQLPublicSupporterAndGuardLoad/supporters (4.88s)
+    --- PASS: TestMySQLPublicSupporterAndGuardLoad/guards (3.66s)
+PASS
+ok  	tb_live_module/service/anchorhome	18.413s

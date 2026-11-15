@@ -64,6 +64,37 @@ func TestAccountRegisterAndLogin(t *testing.T) {
 	require.Equal(t, registered.ID, loggedIn.ID)
 }
 
+func TestPasswordChangeConcurrentSnapshotAndCancellation(t *testing.T) {
+	setupAccountTestDB(t)
+	s := &AccountService{}
+	a, err := s.Register(liveReq.Register{Phone: "+60123456789", SmsCode: "123456", Password: "password123"})
+	require.NoError(t, err)
+	req := liveReq.AccountPasswordChangeReq{OldPassword: "password123", NewPassword: "new-password456"}
+	cancelled, cancel := context.WithCancel(context.Background())
+	cancel()
+	_, err = s.ChangePasswordWithContext(cancelled, a.ID, req)
+	require.ErrorIs(t, err, context.Canceled)
+	results := make(chan error, 2)
+	for i := 0; i < 2; i++ {
+		go func() { _, e := s.ChangePasswordWithContext(context.Background(), a.ID, req); results <- e }()
+	}
+	succeeded := 0
+	for i := 0; i < 2; i++ {
+		e := <-results
+		if e == nil {
+			succeeded++
+		} else {
+			require.ErrorIs(t, e, ErrInvalidCredentials)
+		}
+	}
+	require.Equal(t, 1, succeeded)
+	updated, err := s.GetByID(a.ID)
+	require.NoError(t, err)
+	require.EqualValues(t, 2, updated.TokenVersion)
+	_, err = s.Login(liveReq.Login{Phone: *a.Phone, Password: req.NewPassword})
+	require.NoError(t, err)
+}
+
 func TestAccountRegisterRejectsDuplicateAndInvalidInput(t *testing.T) {
 	setupAccountTestDB(t)
 	service := AccountService{}

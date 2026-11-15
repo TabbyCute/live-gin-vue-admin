@@ -1,0 +1,73 @@
+=== RUN   TestMySQLPublicSupporterAndGuardLoad
+=== RUN   TestMySQLPublicSupporterAndGuardLoad/supporters
+    public_test.go:453: supporters concurrent=8 reads=80 members=1000 renewalSegments=32 pageSize=50 p50=27.440042ms p95=38.149042ms max=40.103875ms SQL/request=8.0
+=== RUN   TestMySQLPublicSupporterAndGuardLoad/guards
+    public_test.go:453: guards concurrent=8 reads=80 members=1000 renewalSegments=32 pageSize=50 p50=164.602125ms p95=198.269041ms max=210.360708ms SQL/request=7.0
+=== NAME  TestMySQLPublicSupporterAndGuardLoad
+    public_test.go:461: board explain={
+          "query_block": {
+            "select_id": 1,
+            "cost_info": {
+              "query_cost": "112.75"
+            },
+            "ordering_operation": {
+              "using_filesort": false,
+              "table": {
+                "table_name": "ranking_score_bucket",
+                "access_type": "ref",
+                "possible_keys": [
+                  "uk_ranking_bucket",
+                  "idx_ranking_board"
+                ],
+                "key": "idx_ranking_board",
+                "used_key_parts": [
+                  "generation",
+                  "rank_type",
+                  "period_type",
+                  "period_key",
+                  "scope_type",
+                  "scope_no",
+                  "gift_no"
+                ],
+                "key_length": "484",
+                "ref": [
+                  "const",
+                  "const",
+                  "const",
+                  "const",
+                  "const",
+                  "const",
+                  "const"
+                ],
+                "rows_examined_per_scan": 1000,
+                "rows_produced_per_join": 333,
+                "filtered": "33.33",
+                "using_index": true,
+                "cost_info": {
+                  "read_cost": "12.75",
+                  "eval_cost": "33.33",
+                  "prefix_cost": "112.75",
+                  "data_read_per_join": "567K"
+                },
+                "used_columns": [
+                  "id",
+                  "generation",
+                  "rank_type",
+                  "period_type",
+                  "period_key",
+                  "scope_type",
+                  "scope_no",
+                  "gift_no",
+                  "subject_no",
+                  "score_sort"
+                ],
+                "attached_condition": "(`anchor_home_test_public`.`ranking_score_bucket`.`score_sort` > '00000000000000000000000000000000000000000000000000000000000000000')"
+              }
+            }
+          }
+        }
+--- PASS: TestMySQLPublicSupporterAndGuardLoad (2.87s)
+    --- PASS: TestMySQLPublicSupporterAndGuardLoad/supporters (0.30s)
+    --- PASS: TestMySQLPublicSupporterAndGuardLoad/guards (1.73s)
+PASS
+ok  	tb_live_module/service/anchorhome	7.577s

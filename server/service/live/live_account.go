@@ -217,50 +217,84 @@ func (s *AccountService) LoginWithContext(ctx context.Context, input liveReq.Log
 }
 
 func (s *AccountService) GetByID(accountID uint) (*liveModel.LiveAccount, error) {
+	return s.GetByIDWithContext(context.Background(), accountID)
+}
+
+func (s *AccountService) GetByIDWithContext(ctx context.Context, accountID uint) (*liveModel.LiveAccount, error) {
 	if global.GVA_DB == nil {
 		return nil, errors.New("数据库未初始化")
 	}
 	var account liveModel.LiveAccount
-	if err := global.GVA_DB.First(&account, accountID).Error; err != nil {
+	if err := global.GVA_DB.WithContext(ctx).First(&account, accountID).Error; err != nil {
 		return nil, normalizeAccountLookupError(err)
 	}
 	return &account, nil
 }
 
 func (s *AccountService) UpdateProfile(accountID uint, req liveReq.AccountProfileUpdateReq) error {
+	return s.UpdateProfileWithContext(context.Background(), accountID, req)
+}
+
+func (s *AccountService) UpdateProfileWithContext(ctx context.Context, accountID uint, req liveReq.AccountProfileUpdateReq) error {
 	updates, err := accountProfileUpdateValues(req)
 	if err != nil {
 		return err
 	}
-	result := global.GVA_DB.Model(&liveModel.LiveAccount{}).Where("id = ?", accountID).Updates(updates)
+	result := global.GVA_DB.WithContext(ctx).Model(&liveModel.LiveAccount{}).Where("id = ?", accountID).Updates(updates)
 	if result.Error != nil {
 		return result.Error
 	}
 	if result.RowsAffected == 0 {
-		return ensureAccountExists(global.GVA_DB, accountID)
+		return ensureAccountExists(global.GVA_DB.WithContext(ctx), accountID)
 	}
 	return nil
 }
 
 func (s *AccountService) ChangePassword(accountID uint, req liveReq.AccountPasswordChangeReq) (*liveModel.LiveAccount, error) {
+	return s.ChangePasswordWithContext(context.Background(), accountID, req)
+}
+
+func (s *AccountService) ChangePasswordWithContext(ctx context.Context, accountID uint, req liveReq.AccountPasswordChangeReq) (*liveModel.LiveAccount, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
 	if !validPassword(req.OldPassword) || !validPassword(req.NewPassword) {
 		return nil, ErrInvalidPassword
 	}
 	if req.OldPassword == req.NewPassword {
 		return nil, errors.New("新密码不能与旧密码相同")
 	}
+	// Verify the old password before hashing a replacement, outside row locks.
+	snapshot, err := s.GetByIDWithContext(ctx, accountID)
+	if err != nil {
+		return nil, err
+	}
+	if snapshot.Status != liveModel.LiveAccountStatusNormal {
+		return nil, ErrAccountDisabled
+	}
+	if bcrypt.CompareHashAndPassword([]byte(snapshot.Password), []byte(req.OldPassword)) != nil {
+		return nil, ErrInvalidCredentials
+	}
+	if err = ctx.Err(); err != nil {
+		return nil, err
+	}
 	newHash, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, fmt.Errorf("生成密码哈希失败: %w", err)
 	}
 	var updated liveModel.LiveAccount
-	err = global.GVA_DB.Transaction(func(tx *gorm.DB) error {
+	err = global.GVA_DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		account, lookupErr := getAccountByIDForUpdate(tx, accountID)
 		if lookupErr != nil {
 			return normalizeAccountLookupError(lookupErr)
 		}
-		if compareErr := bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(req.OldPassword)); compareErr != nil {
+		// Recheck the verified snapshot after locking: concurrent password changes,
+		// logout, phone changes and bans cannot use a stale credential.
+		if account.Password != snapshot.Password || account.TokenVersion != snapshot.TokenVersion {
 			return ErrInvalidCredentials
+		}
+		if account.Status != liveModel.LiveAccountStatusNormal {
+			return ErrAccountDisabled
 		}
 		now := time.Now().UnixMilli()
 		if updateErr := tx.Model(&liveModel.LiveAccount{}).Where("id = ?", account.ID).Updates(map[string]interface{}{

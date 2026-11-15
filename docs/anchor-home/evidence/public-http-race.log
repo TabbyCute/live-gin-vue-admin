@@ -1,0 +1,12 @@
+=== RUN   TestAnchorHomeReadLimitRejectsSpoofedForwardingAndIsAtomic
+--- PASS: TestAnchorHomeReadLimitRejectsSpoofedForwardingAndIsAtomic (0.01s)
+=== RUN   TestAnchorHomeReadLimitRequiredRedisFailsClosed
+--- PASS: TestAnchorHomeReadLimitRequiredRedisFailsClosed (0.00s)
+PASS
+ok  	tb_live_module/middleware	5.289s
+=== RUN   TestPublicHomeHTTPAuthenticationAndQueryBoundary
+--- PASS: TestPublicHomeHTTPAuthenticationAndQueryBoundary (0.14s)
+=== RUN   TestSettingsHTTPRejectsPartialNullUnknownDuplicateAndAdminToken
+--- PASS: TestSettingsHTTPRejectsPartialNullUnknownDuplicateAndAdminToken (0.18s)
+PASS
+ok  	tb_live_module/router/anchorhome	4.772s

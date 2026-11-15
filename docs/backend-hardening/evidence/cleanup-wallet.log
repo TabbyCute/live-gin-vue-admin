@@ -1,0 +1,6 @@
+ Container wallet-ledger-tests-mysql-1  Stopping
+ Container wallet-ledger-tests-mysql-1  Stopped
+ Container wallet-ledger-tests-mysql-1  Removing
+ Container wallet-ledger-tests-mysql-1  Removed
+ Network wallet-ledger-tests_default  Removing
+ Network wallet-ledger-tests_default  Removed

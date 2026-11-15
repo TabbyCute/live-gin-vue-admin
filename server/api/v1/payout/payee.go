@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"io"
 	"mime"
@@ -60,7 +59,7 @@ func identity(c *gin.Context) (uint64, bool) {
 	if !ok {
 		response.NoAuth("请登录客户端账号", c)
 	}
-	trace := "pt_" + strings.ReplaceAll(uuid.NewString(), "-", "")
+	trace := middleware.RequestID(c)
 	c.Set("payoutTrace", trace)
 	c.Header("X-Request-ID", trace)
 	exposed := c.Writer.Header().Get("Access-Control-Expose-Headers")

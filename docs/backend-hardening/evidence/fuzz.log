@@ -1,0 +1,68 @@
+fuzz: elapsed: 0s, gathering baseline coverage: 0/42 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 42/42 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 2562 (853/sec), new interesting: 12 (total: 54)
+fuzz: elapsed: 6s, execs: 2562 (0/sec), new interesting: 12 (total: 54)
+fuzz: elapsed: 6s, execs: 2562 (0/sec), new interesting: 12 (total: 54)
+PASS
+ok  	tb_live_module/api/v1/bankreconcile	9.478s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/42 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 42/42 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 3988 (1329/sec), new interesting: 16 (total: 58)
+fuzz: elapsed: 6s, execs: 5188 (400/sec), new interesting: 19 (total: 61)
+fuzz: elapsed: 6s, execs: 5188 (0/sec), new interesting: 19 (total: 61)
+PASS
+ok  	tb_live_module/api/v1/eventdelivery	9.472s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/70 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 70/70 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 3853 (1283/sec), new interesting: 6 (total: 76)
+fuzz: elapsed: 6s, execs: 11057 (2402/sec), new interesting: 9 (total: 79)
+fuzz: elapsed: 6s, execs: 11057 (0/sec), new interesting: 9 (total: 79)
+PASS
+ok  	tb_live_module/api/v1/payout	9.292s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/90 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 90/90 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 4273 (1424/sec), new interesting: 1 (total: 91)
+fuzz: elapsed: 6s, execs: 6858 (861/sec), new interesting: 1 (total: 91)
+fuzz: elapsed: 6s, execs: 6858 (0/sec), new interesting: 1 (total: 91)
+PASS
+ok  	tb_live_module/api/v1/earning	9.353s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/84 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 84/84 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 5580 (1859/sec), new interesting: 2 (total: 86)
+fuzz: elapsed: 6s, execs: 5580 (0/sec), new interesting: 2 (total: 86)
+fuzz: elapsed: 6s, execs: 5580 (0/sec), new interesting: 2 (total: 86)
+PASS
+ok  	tb_live_module/api/v1/gift	9.426s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/98 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 98/98 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 2540 (846/sec), new interesting: 1 (total: 99)
+fuzz: elapsed: 6s, execs: 2540 (0/sec), new interesting: 1 (total: 99)
+fuzz: elapsed: 6s, execs: 2540 (0/sec), new interesting: 1 (total: 99)
+PASS
+ok  	tb_live_module/api/v1/wallet	9.423s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/69 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 69/69 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 4404 (1467/sec), new interesting: 11 (total: 80)
+fuzz: elapsed: 6s, execs: 7812 (1136/sec), new interesting: 15 (total: 84)
+fuzz: elapsed: 6s, execs: 7812 (0/sec), new interesting: 15 (total: 84)
+PASS
+ok  	tb_live_module/api/v1/live	10.154s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/18 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 18/18 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 8369 (2789/sec), new interesting: 0 (total: 18)
+fuzz: elapsed: 5s, execs: 16295 (3764/sec), new interesting: 1 (total: 19)
+PASS
+ok  	tb_live_module/service/earning	9.750s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/37 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 37/37 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 8262 (2753/sec), new interesting: 0 (total: 37)
+fuzz: elapsed: 5s, execs: 16283 (3858/sec), new interesting: 1 (total: 38)
+PASS
+ok  	tb_live_module/service/earning	9.106s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/8 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 8/8 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 7461 (2485/sec), new interesting: 2 (total: 10)
+fuzz: elapsed: 6s, execs: 7461 (0/sec), new interesting: 2 (total: 10)
+fuzz: elapsed: 6s, execs: 7461 (0/sec), new interesting: 2 (total: 10)
+PASS
+ok  	tb_live_module/service/live	8.806s

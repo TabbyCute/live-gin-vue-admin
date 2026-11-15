@@ -1,0 +1,16 @@
+name: anchor-home-tests
+services:
+  mysql:
+    image: mysql:8.0.46
+    environment:
+      MYSQL_ROOT_PASSWORD: anchor-home-local-only
+      MYSQL_DATABASE: anchor_home_test_public
+    ports:
+      - '127.0.0.1:13339:3306'
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-panchor-home-local-only']
+      interval: 2s
+      timeout: 2s
+      retries: 60

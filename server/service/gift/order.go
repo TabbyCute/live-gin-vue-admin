@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"strconv"
+	"tb_live_module/internal/eventcapture"
 	model "tb_live_module/model/gift"
 	req "tb_live_module/model/gift/request"
 	guardModel "tb_live_module/model/guard"
@@ -153,7 +154,11 @@ func (s *Service) Send(ctx context.Context, user uint64, ip, trace string, r req
 			}
 		}
 		payload, _ := json.Marshal(map[string]any{"eventId": result.OrderNo, "orderNo": result.OrderNo, "roomNo": room.RoomNo, "sessionNo": session.SessionNo, "sender": map[string]string{"accountNo": u.AccountNo, "nickname": u.Nickname, "avatar": u.Avatar}, "gift": map[string]string{"giftNo": item.GiftNo, "name": item.Name, "iconUrl": item.IconURL, "animationUrl": item.AnimationURL, "animationType": item.AnimationType}, "quantity": r.Quantity})
-		return tx.Create(&model.Event{EventID: result.OrderNo, EventType: "gift.sent", GiftOrderNo: result.OrderNo, RoomNo: room.RoomNo, SessionNo: session.SessionNo, Payload: string(payload), DeliveryStatus: "pending", CreatedAt: now}).Error
+		event := model.Event{EventID: result.OrderNo, EventType: "gift.sent", GiftOrderNo: result.OrderNo, RoomNo: room.RoomNo, SessionNo: session.SessionNo, Payload: string(payload), DeliveryStatus: "pending", CreatedAt: now}
+		if e := tx.Create(&event).Error; e != nil {
+			return e
+		}
+		return eventcapture.Gift(tx, event)
 	})
 	if e != nil {
 		return model.Order{}, e

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/stretchr/testify/require"
 	"strings"
+	"tb_live_module/config"
 	model "tb_live_module/model/payout"
 	req "tb_live_module/model/payout/request"
 	"testing"
@@ -40,7 +41,7 @@ func TestCryptoAuthenticatedEnvelopeAndFailure(t *testing.T) {
 	t.Setenv("PAYOUT_ENCRYPTION_KEYS", "")
 	t.Setenv("PAYOUT_ACTIVE_KEY_ID", "")
 	t.Setenv("PAYOUT_FINGERPRINT_KEY", "")
-	_, e = LoadCrypto()
+	_, e = LoadCrypto(config.Payout{})
 	require.ErrorIs(t, e, ErrCrypto)
 	for _, key := range []string{"", "plain-secret", base64.StdEncoding.EncodeToString([]byte(strings.Repeat("k", 31)))} {
 		_, e = NewCrypto("test", map[string]string{"test": key}, base64.StdEncoding.EncodeToString([]byte(strings.Repeat("f", 32))))

@@ -3,6 +3,7 @@ package earning
 import (
 	"errors"
 	"gorm.io/gorm"
+	"tb_live_module/internal/eventcapture"
 	model "tb_live_module/model/earning"
 	pm "tb_live_module/model/payout"
 	ps "tb_live_module/service/payout"
@@ -99,6 +100,9 @@ func (s *Service) FinalizePayoutInTx(tx *gorm.DB, in pm.FinalizeInput) (pm.Termi
 	}
 	out = pm.TerminalEvent{EventNo: number("pte_"), PayoutNo: o.PayoutNo, WithdrawalNo: w.WithdrawalNo, AttemptNo: in.AttemptNo, TransitionNo: in.TransitionNo, Kind: kind, Amount: w.Amount, Currency: w.Currency, LedgerNo: ledger.LedgerNo, AccountVersion: a.Version, ActorID: in.ActorID, CreatedAt: in.Now}
 	if e = tx.Create(&out).Error; e != nil {
+		return out, e
+	}
+	if e = eventcapture.Payout(tx, out, o.ApplicantUserID); e != nil {
 		return out, e
 	}
 	status := "cancelled"

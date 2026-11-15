@@ -31,6 +31,8 @@ rm_file/
 /server/__debug_bin*
 /server/*.local.yaml
 server/uploads/
+server/private/
+shared/anchor-home/
 
 *.iml
 web/.pnpm-debug.log

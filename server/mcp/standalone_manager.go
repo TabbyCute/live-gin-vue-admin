@@ -5,16 +5,19 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
 	"tb_live_module/global"
+	mcpHTTP "tb_live_module/mcp/client"
 )
 
 const (
@@ -56,11 +59,15 @@ type managedProcessMeta struct {
 }
 
 func ResolveMCPListenAddr() string {
+	host := strings.TrimSpace(global.GVA_CONFIG.MCP.ListenHost)
+	if host == "" {
+		host = "127.0.0.1"
+	}
 	addr := global.GVA_CONFIG.MCP.Addr
 	if addr <= 0 {
 		addr = 8889
 	}
-	return fmt.Sprintf(":%d", addr)
+	return net.JoinHostPort(host, strconv.Itoa(addr))
 }
 
 func ResolveMCPPath() string {
@@ -77,7 +84,11 @@ func ResolveMCPPath() string {
 func ResolveMCPHealthURL() string {
 	baseURL, err := url.Parse(ResolveMCPServiceURL())
 	if err != nil || baseURL.Scheme == "" || baseURL.Host == "" {
-		return fmt.Sprintf("http://127.0.0.1%s/health", ResolveMCPListenAddr())
+		addr := global.GVA_CONFIG.MCP.Addr
+		if addr <= 0 {
+			addr = 8889
+		}
+		return "http://" + net.JoinHostPort("127.0.0.1", strconv.Itoa(addr)) + "/health"
 	}
 	baseURL.Path = "/health"
 	baseURL.RawQuery = ""
@@ -255,7 +266,11 @@ func checkMCPHealth(ctx context.Context) (bool, error) {
 		return false, err
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	client, err := mcpHTTP.NewOriginBoundHTTPClient(req.URL.String())
+	if err != nil {
+		return false, err
+	}
+	resp, err := client.Do(req)
 	if err != nil {
 		return false, err
 	}

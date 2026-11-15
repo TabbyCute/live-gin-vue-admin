@@ -1,0 +1,618 @@
+{
+  "date": "2026-11-09",
+  "timezone": "Asia/Kuala_Lumpur",
+  "go": {
+    "command": "go test ./... -count=1 -json",
+    "exitCode": 0,
+    "testAndSubtestEvents": {
+      "pass": 658,
+      "skip": 129
+    },
+    "packageEvents": {
+      "skip": 93,
+      "pass": 41
+    },
+    "skippedTests": [
+      {
+        "package": "tb_live_module/cmd/payout-migrate",
+        "test": "TestMySQLPrivateBackupAndFinancialProof"
+      },
+      {
+        "package": "tb_live_module/cmd/presence-migrate",
+        "test": "TestPresenceMySQLMigrationAndBackup"
+      },
+      {
+        "package": "tb_live_module/initialize",
+        "test": "TestRedisClientHonorsSocketDeadline"
+      },
+      {
+        "package": "tb_live_module/mcp/client",
+        "test": "TestMcpClientConnection"
+      },
+      {
+        "package": "tb_live_module/mcp/client",
+        "test": "TestTools/currentTime"
+      },
+      {
+        "package": "tb_live_module/mcp/client",
+        "test": "TestTools/getNickname"
+      },
+      {
+        "package": "tb_live_module/mcp/client",
+        "test": "TestGetTools"
+      },
+      {
+        "package": "tb_live_module/internal/engagementcli",
+        "test": "TestMySQLBackupRestoresSchemaDataAndTriggers"
+      },
+      {
+        "package": "tb_live_module/router/live",
+        "test": "TestPresenceHTTPAuthenticationAndBudgets"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestMySQLGiftSummaryExactAmountsAndScope"
+      },
+      {
+        "package": "tb_live_module/service/gift",
+        "test": "TestMySQLGiftLifecycle"
+      },
+      {
+        "package": "tb_live_module/service/gift",
+        "test": "TestMySQLGiftConcurrency"
+      },
+      {
+        "package": "tb_live_module/service/gift",
+        "test": "TestMySQLGiftRollback"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLFinanceConcurrentMoneyAndReview"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestRedisEmptyHistoryFlushLatencyBudget"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestRedisHistoryProbeFailureDoesNotStarveOtherShards"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestRedisHistoryProbeDeadline"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestRedisHistoryColdLeaseReleaseWithNetworkLatency"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestMySQLLoadProfile"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestRedisHistoryDeleteReopenAndLargeSequence"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestPrivacyRevocationRemainsRateLimitedWithoutWorker"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestHistoryFlushRespectsShardLease"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestRedisStaleFillCannotOverwriteNewVersion"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestRedisAggregationClearFenceAndQueueBound"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestRedisHeartbeatLoadProfile"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestWorkerReadinessAndBackpressureFailClosed"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestRedisRequestBudgetsWithColdScriptsAndLatency"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestHistoryAdmissionRejectsForgedSessionsWithoutQueueGrowth"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestHistoryAcknowledgementsBatchAndPreserveNewerReports"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestHistoryShardsMakeProgressAcrossShortBudgets"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestHistoryPartialFailureAcknowledgesOnlyProcessedPrefix"
+      },
+      {
+        "package": "tb_live_module/service/gift",
+        "test": "TestMySQLGiftLoad"
+      },
+      {
+        "package": "tb_live_module/service/gift",
+        "test": "TestMySQLGiftIndependentWallets"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestMySQLConcurrency"
+      },
+      {
+        "package": "tb_live_module/service/social",
+        "test": "TestMySQLUTCTimestampWithProjectLocalDSN"
+      },
+      {
+        "package": "tb_live_module/service/payout",
+        "test": "TestMySQLPayeeIsolationEncryptionAndImmutableHistory"
+      },
+      {
+        "package": "tb_live_module/service/gift",
+        "test": "TestMySQLGuardRechargeThroughExpiry"
+      },
+      {
+        "package": "tb_live_module/service/gift",
+        "test": "TestMySQLGuardRepeatedPartialRefundsAndScopes"
+      },
+      {
+        "package": "tb_live_module/service/payout",
+        "test": "TestMySQLPayeeLockDeadline"
+      },
+      {
+        "package": "tb_live_module/service/payout",
+        "test": "TestMySQLPayeeConcurrentUniqueness"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestPresenceRedisBlackholeHasDeadlineAndFailsClosed"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestPresenceMySQLConcurrentPersistenceAndFinalization"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestPresenceLoad1000"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestPresenceLoadMultiRoom"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestPresenceLifecycleIdempotencyAndGuests"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestPresenceLikeRaceAndAuthorization"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestPresenceExpirationConcurrencyAndBackpressure"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestPresenceViewersAndCorruption"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestPresenceWatchUnionPauseAndCap"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestPresenceRedisLossRecoveryAndClusterTags"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestPresenceSourceEventsReferenceCommittedFacts"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestPresenceMySQLSourceEventsReferenceCommittedFacts"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestPresenceConnectionLimitsAndLikeMinutes"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestPresenceCursorPrivacyAndPermissionChanges"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestPresenceCheckpointVersionsNeverRegress"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestPresenceFullEventQueueDrainsBeforeCleanup"
+      },
+      {
+        "package": "tb_live_module/service/gift",
+        "test": "TestMySQLGuardRankingLoad"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLFinanceLoad"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestMySQLPublicProfilePlansAndBatchLoad"
+      },
+      {
+        "package": "tb_live_module/service/live",
+        "test": "TestRelationshipCacheRefreshesPublicProfileAndLiveState"
+      },
+      {
+        "package": "tb_live_module/service/gift",
+        "test": "TestMySQLGiftReviewFixes/self_gift_no_financial_facts"
+      },
+      {
+        "package": "tb_live_module/service/gift",
+        "test": "TestMySQLGiftReviewFixes/scope_create_review_and_delete"
+      },
+      {
+        "package": "tb_live_module/service/gift",
+        "test": "TestMySQLGiftReviewFixes/dual_review_termination"
+      },
+      {
+        "package": "tb_live_module/service/gift",
+        "test": "TestMySQLGiftReviewFixes/compensation_retry_and_upgrade"
+      },
+      {
+        "package": "tb_live_module/service/gift",
+        "test": "TestMySQLGiftReviewFixes/same_totals_wrong_refund_links"
+      },
+      {
+        "package": "tb_live_module/service/gift",
+        "test": "TestMySQLGiftReviewFixes/catalog_seed_idempotent"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletSealLoad"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLRechargeCrossAdminBusinessDedup"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLRechargeConcurrentFirstOpenAndDisable"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLRechargeImmutableCoreAndLateFailure"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLRechargeUnknownCommitOutcome"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletStrictSchemaValidation/amount62"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletStrictSchemaValidation/created_at56"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletStrictSchemaValidation/version67"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletStrictSchemaValidation/evidence_ref88"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletStrictSchemaValidation/external_order_no142"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletStrictSchemaValidation/created_by69"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletStrictSchemaValidation/ck_wallet_account_balance77"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletStrictSchemaValidation/ck_wallet_account_balance116"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletStrictSchemaValidation/ck_wallet_order_status69"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletStrictSchemaValidation/uk_wallet_order_source134"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletStrictSchemaValidation/uk_wallet_ledger_business133"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletStrictSchemaValidation/uk_wallet_ledger_business137"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletStrictSchemaValidation/uk_wallet_ledger_business73"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletStrictSchemaValidation/wallet_daily_quota72"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletStrictSchemaValidation"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletLegacyMigration"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLRechargeCreationAndAccountCancellationRace"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLRechargeCreationAndStatusAuditRollback"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletReadSnapshotDoesNotBlockCredit/first_open"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletReadSnapshotDoesNotBlockCredit/existing_wallet"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletReadSnapshotDoesNotBlockCredit/order_detail"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletConcurrentMigrationAndValidationCancellation"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletSchemaQueryBudgetAndErrors"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLReviewReplayTailStableDuringConcurrentDebit"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletAdminLookupAndOperatorDisplay"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletConcurrency"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletReviewRaceAndQuota"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletPlansAndLoad"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLWalletRollbackTimeoutAndReconnect"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLMovementConcurrentDebitRefund"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLMovementFailureImmutableAndUnknownCommit"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLMovementCrossWalletAndAtomicity"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLMovementIncrementalMigration"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLMovementInTxOldSnapshot"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLMovementMixedStatusAndCancellation"
+      },
+      {
+        "package": "tb_live_module/service/wallet",
+        "test": "TestMySQLMovementQueryPlans"
+      },
+      {
+        "package": "tb_live_module/service/gift",
+        "test": "TestMySQLRootGiftPermissionsAndSelfReview"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLManualPayoutLegacyMigration"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLManualPayoutBoundaries"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLManualPayoutEveryWriteRollback/cancel_false"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLManualPayoutEveryWriteRollback/cancel_true"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLManualPayoutConcurrent"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLManualPayoutSameRequestRace"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLManualPayoutLoad"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLManualPayoutGiftToPaid"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLRealPayeeWithdrawal"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLPayeeDisableWithdrawalRace"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLPayoutOrderLifecycle"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLPayoutSchemaDrift"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLPayoutOrderConcurrent"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLPayoutDisableRace/0"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLPayoutDisableRace/1"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLPayoutDisableRace/2"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLPayoutDisableRace/3"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLRegistrationToManualPaid"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLRootFinanceSelfReviewAndAccountIntegrity"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLRootReviewOnlyMigration"
+      },
+      {
+        "package": "tb_live_module/service/earning",
+        "test": "TestMySQLSettlementSelectedWindow"
+      }
+    ],
+    "note": "MySQL/Redis and load opt-ins run in separate isolated suites; no skipped test is counted as passed"
+  },
+  "frontend": {
+    "adminPassed": 58,
+    "h5Passed": 57,
+    "h5ProductionDependencyVulnerabilities": 0,
+    "adminProductionDependencyVulnerabilities": {
+      "high": 4,
+      "moderate": 9
+    }
+  },
+  "checks": {
+    "payoutSuiteExit": 0,
+    "registrationToPaidSQLite": true,
+    "registrationToPaidMySQLRace": true,
+    "securityRaceExit": 0,
+    "vetExit": 0,
+    "buildExit": 0,
+    "releaseBuildExit": 0,
+    "walletSocialPresence": {
+      "walletExit": 0,
+      "socialExit": 0,
+      "presenceExit": 0
+    },
+    "giftGuardRankingSupplement": {
+      "exitCode": 0,
+      "racePassed": true,
+      "mysqlGiftAndGuardLoadPassed": true,
+      "fuzzTargets": [
+        "FuzzReplay",
+        "FuzzGiftJSON"
+      ]
+    },
+    "allExecutedTestSuitesPassed": true,
+    "fuzzTargetsCount": 13,
+    "fuzzSecondsPerTarget": 10
+  },
+  "remote": {
+    "applicationDeployed": false,
+    "bankTransferVerified": false,
+    "checkedAt": "2026-11-08T16:41:18Z",
+    "configuration": {
+      "automaticMigrationDisabled": true,
+      "configuredDBAccountHasDirectDDL": true,
+      "corsMode": "strict-whitelist",
+      "registrationUsesSharedCode": true,
+      "trustedProxyCount": 0
+    },
+    "durability": {
+      "binlogEnabled": true,
+      "flushAtCommit": 1,
+      "syncBinlog": 1
+    },
+    "readOnly": true,
+    "schema": {
+      "earning": true,
+      "gift": true,
+      "guard": true,
+      "payout": true,
+      "presence": true,
+      "ranking": true,
+      "wallet": true
+    },
+    "schemaPassed": true
+  },
+  "notCompleted": [
+    "application deployment (SSH/deployment access not supplied)",
+    "development DB verification (connection timeout)",
+    "browser interaction (automation timeout)",
+    "real SMS and bank transfer",
+    "production load/failover/backup restore"
+  ],
+  "dependencyScan": {
+    "initialReachable": 3,
+    "finalReachable": 1,
+    "remaining": "GO-2026-6911",
+    "upstreamFixAvailable": false,
+    "originRestrictionRegressionPassed": true,
+    "scanClean": false
+  },
+  "release": {
+    "archive": "release/tb-live-production-linux-2026110901.tar",
+    "sha256": "5bd62fb4cbe95772b2031c59f21d8d912f59afcb2d7bc5f8c953bf7a76f4e1d9",
+    "deployed": false
+  }
+}

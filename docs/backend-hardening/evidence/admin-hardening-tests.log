@@ -1,0 +1,16 @@
+(node:18923) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ bank file selection ignores a late previous file and clears on logout (30.597375ms)
+✔ operations/event-delivery/index.vue drops stale and previous-account responses (11.74ms)
+✔ live/earning/audit/index.vue drops stale and previous-account responses (8.76225ms)
+✔ payout/reconciliation/index.vue drops stale and previous-account responses (6.396084ms)
+✔ audit queue retries the original request after a lost response (6.686458ms)
+✔ operations token change cannot restore the previous session snapshot (4.002084ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 217.194209

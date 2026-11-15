@@ -5,6 +5,7 @@ set -Eeuo pipefail
 usage() {
   echo "用法: $0 <production|test>"
   echo "环境变量: TARGET_ARCH=amd64|arm64 SKIP_PNPM_INSTALL=1 BUILD_TIMEZONE=Asia/Kuala_Lumpur"
+  echo "H5 源码: H5_SOURCE_DIR（默认 \$HOME/Desktop/IM/H5Player）"
 }
 
 if [[ $# -ne 1 ]]; then
@@ -158,6 +159,8 @@ if [[ ! -f "$server_dir/assets/admin/index.html" ]]; then
   exit 1
 fi
 
+bash "$script_dir/build-h5.sh"
+
 mkdir -p \
   "$package_dir/assets" \
   "$package_dir/resource" \
@@ -173,6 +176,7 @@ echo "==> 编译 Linux 后端"
 
 cp "$server_dir/$config_name" "$package_dir/$config_name"
 cp -R "$server_dir/assets/admin" "$package_dir/assets/"
+cp -R "$server_dir/assets/h5" "$package_dir/assets/"
 cp -R "$server_dir/resource/." "$package_dir/resource/"
 chmod 700 "$package_dir/tb-live-server"
 chmod 600 "$package_dir/$config_name"

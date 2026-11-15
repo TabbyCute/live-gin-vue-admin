@@ -51,6 +51,7 @@ func registerSystemRoutesV1(apiRoot *gin.RouterGroup, engine *gin.Engine) {
 	liveRouter.InitAnchorAdminRouter(adminPrivateGroup)
 	liveRouter.InitCategoryAdminRouter(adminPrivateGroup)
 	liveRouter.InitRoomAdminRouter(adminPrivateGroup)
+	liveRouter.InitPresenceAdminRouter(adminPrivateGroup)
 	router.RouterGroupApp.Social.InitSocialAdminRouter(adminPrivateGroup)
 	router.RouterGroupApp.Wallet.InitWalletAdminRouter(adminPrivateGroup)
 	router.RouterGroupApp.Gift.InitGiftAdminRouter(adminPrivateGroup)
@@ -59,6 +60,10 @@ func registerSystemRoutesV1(apiRoot *gin.RouterGroup, engine *gin.Engine) {
 	router.RouterGroupApp.Earning.InitEarningAdminRouter(adminPrivateGroup)
 	// Payout applies size/capacity limits before its own administrator JWT check.
 	router.RouterGroupApp.Payout.InitPayoutAdminRouter(apiRoot.Group(adminV1RoutePrefix))
+
+	router.RouterGroupApp.BankReconcileRouterGroup.InitBankReconcileRouter(apiRoot.Group(adminV1RoutePrefix))
+	router.RouterGroupApp.EventDelivery.InitEventDeliveryRouter(apiRoot.Group(adminV1RoutePrefix))
+	router.RouterGroupApp.AnchorHome.InitAlbumAdminRouter(apiRoot.Group(adminV1RoutePrefix))
 
 	//注册：插件路由安装
 	InstallPlugin(adminPrivateGroup, adminPublicGroup, engine)

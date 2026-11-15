@@ -1,0 +1,4 @@
+ok  	tb_live_module/service/anchorhome	11.383s
+ok  	tb_live_module/router/anchorhome	8.529s
+ok  	tb_live_module/api/v1/anchorhome	7.621s
+ok  	tb_live_module/service/payout	12.848s

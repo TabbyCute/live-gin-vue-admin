@@ -8,6 +8,6 @@
 
 COIN不是法币。新结算按显式整数兑换规则入独立账户，余数按主播/原规则跨批保留，退款追加负向调整；不足记debt。source_type/source_entry_no和income_no结算归属永久防重。当前仅gift注册可信来源核验，未来bounty/donation/guard/fan_club/charge可按同事务接入契约扩展。
 
-提现申请无全局配置开关，安装DatabasePayeeProvider并要求本人已绑定的有效payeeAccountNo；提现申请不接收客户端完整收款资料，强制主播审核状态、运营提现权限、风险、余额和账务核验，但不读取或判断用户实名认证、主播认证或收款实名。审核通过status=approved且金额保持冻结；后台可“提交打款中心”创建唯一ready订单。内部ValidatePayoutInTx复用buildReconciliation只读计算与财务锁，payout事务保存创建核验快照，不新写earning对账或修改提现事实。2026-11-03由payout人工出款流程接续；领取前重新核验有效绑定及不可变版本，真实付款后依据固定快照完成独立复核。成功在同一事务frozen减、paid增、withdrawal_paid流水、提现paid及终态事件/审计；取消仅ready或明确未付款failed，解冻优先抵debt。paid纳入move/post/CAS、四余额版本链与深度核验，paid/cancelled不可变。每结算1000事实、同步历史核验20000保护上限，超限禁止放行；高流水账户需要后续核验检查点方案。文档与生产菜单执行记录见docs/earning/README.md。
+提现申请无全局配置开关，安装DatabasePayeeProvider并要求本人已绑定的有效payeeAccountNo；提现申请不接收客户端完整收款资料，强制主播审核状态、运营提现权限、风险、余额和账务核验，但不读取或判断用户实名认证、主播认证或收款实名。审核通过status=approved且金额保持冻结；后台可“提交打款中心”创建唯一ready订单。内部ValidatePayoutInTx复用buildReconciliation只读计算与财务锁，payout事务保存创建核验快照，不新写earning对账或修改提现事实。2026-11-03由payout人工出款流程接续；领取前重新核验有效绑定及不可变版本，真实付款后依据固定快照完成独立复核。成功在同一事务frozen减、paid增、withdrawal_paid流水、提现paid及终态事件/审计；取消仅ready或明确未付款failed，解冻优先抵debt。paid纳入move/post/CAS、四余额版本链与深度核验，paid/cancelled不可变。每结算1000事实；2026-11-12将全历史核验改为128账本版本keyset分页、最多1000收入事实跨结算批读，完整来源/余数/四余额链仍逐批核验。单个只读RR快照可使用有界gift证明缓存，资金写事务不缓存。新增管理员后台核验作业（30秒预算、进度/取消/重试），历史报告不能作为放款凭据。在线总成本仍随历史线性增长且超时禁止放行，真正O(增量)检查点仍需可信变更日志和依赖失效设计，详见docs/backend-hardening/earning-scale.md。文档与生产菜单执行记录见docs/earning/README.md。
 
 2026-11-02收款账户绑定、事务内选账、旧占位单隔离、后台去向筛选及H5对接见docs/payout/README.md。

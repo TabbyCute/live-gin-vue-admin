@@ -1,0 +1,107 @@
+✔ admin template and script compile (721.416ms)
+(node:35650) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ component immediately clears private preview when account or role changes (131.061417ms)
+✔ ordinary mount and keepalive activation load once then clear and reload on return (17.582125ms)
+✔ late list results cannot replace new filters or previous-session data (0.227666ms)
+✔ late previews never recreate revoked private media after close or identity switch (0.1205ms)
+✔ switching photos revokes the previous Blob URL (0.140375ms)
+✔ unknown outcome keeps immutable request and blocks another moderation target (0.332125ms)
+✔ transient business failure preserves original command, known CAS conflict clears stale photo (0.334083ms)
+✔ reason boundaries and state transitions reject accidental commands (0.232792ms)
+✔ double clicks dispatch once and old-session review cannot reload private data (0.136125ms)
+✔ preview API uses authenticated fixed route and rejects JSON, SVG and oversized payloads (46.36625ms)
+(node:35652) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ bank file selection ignores a late previous file and clears on logout (568.896292ms)
+✔ operations/event-delivery/index.vue drops stale and previous-account responses (375.10125ms)
+✔ live/earning/audit/index.vue drops stale and previous-account responses (21.384834ms)
+✔ payout/reconciliation/index.vue drops stale and previous-account responses (7.741375ms)
+✔ audit queue retries the original request after a lost response (23.881291ms)
+✔ operations token change cannot restore the previous session snapshot (16.435125ms)
+(node:35653) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ settlement review targets the settlement, not its exchange rule (659.180416ms)
+✔ review freezes the confirmed target and rejects concurrent submissions (23.366166ms)
+✔ lost create response retries identical parameters and permanent key (218.303208ms)
+✔ invalid ratios never reach an API write (25.675209ms)
+✔ exchange page explains the ratio to operations without presenting it as a default (33.088875ms)
+✔ exchange preview uses integer arithmetic and updates all three sample values (18.139583ms)
+✔ latest query wins and errors do not retain a success state (4.995208ms)
+✔ payout entry creates a ready order only for an eligible approved withdrawal (125.346541ms)
+✔ withdrawal destination tracing uses only the public payee reference and masked fields (79.672083ms)
+(node:35654) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ actual refund page freezes confirmed request and reuses key after lost response (307.54875ms)
+✔ actual order page rejects stale list responses (314.03175ms)
+✔ actual rule page rejects out-of-range basis points before HTTP write (18.686541ms)
+✔ termination freezes confirmed request and reuses idempotency key after response loss (6.394792ms)
+✔ termination review cannot switch target or double-submit while confirming (3.330875ms)
+✔ COIN uses exact integers including values beyond Number precision (0.945041ms)
+✔ editor emits only request contract and preserves decimal strings (0.150083ms)
+✔ late responses and disposed page cannot overwrite current results (0.07325ms)
+(node:35658) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ guard plan freezes writes and reuses permanent key after ambiguous response (357.502375ms)
+✔ guard plan form never copies database audit or identity fields (0.266167ms)
+✔ guard pages preserve large totals and bound only the numeric pager (16.492459ms)
+✔ guard member rebuild freezes confirmed target and rejects double submit (218.442666ms)
+✔ ranking ignores stale pages and preserves decimal strings (77.827292ms)
+✔ ranking rebuild retries original key after response loss (14.342959ms)
+✔ gift editor fails closed when provider readiness is unavailable (8.941125ms)
+✔ manual requests never accept client money or payee, and preserve integer strings (331.10575ms)
+(node:35659) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ manual submit blocks double click, freezes original request, retries ambiguous response (544.391792ms)
+✔ manual operations ignore completion after account switches (241.643583ms)
+✔ reveal consumes a capability once and clears plaintext after 30 seconds (5.921708ms)
+✔ late reveal after logout or target change never restores plaintext (5.057458ms)
+✔ evidence blobs are revoked when dialog closes and on logout (7.189834ms)
+✔ company account creation retries original request and clears plaintext on close (260.480959ms)
+✔ detail refresh retains uploaded evidence but a different order clears it (48.80975ms)
+✔ definitive invalid input can be corrected without locking the form (17.827667ms)
+✔ company picker reaches accounts beyond the first hundred and ignores late pages (102.234625ms)
+(node:35660) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ submission freezes original parameters, blocks double-click, retries lost response (317.692ms)
+✔ logout discards an in-flight order response and sensitive display state (38.33175ms)
+✔ order lists and details ignore stale responses and support precise filters (61.85975ms)
+✔ business errors use fixed messages and creation excludes non-approved/legacy orders (0.12875ms)
+(node:35661) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ unknown/degraded counts are never displayed as zero; strings keep precision (55.74225ms)
+✔ root sees unassigned buttons and role directives; other accounts keep their permissions (6.942042ms)
+(node:35662) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ recent seven days end at current second; boundary and invalid inputs fail before write (48.295541ms)
+(node:35663) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ anchor selection is pinned; rules paginated; valid selection creates only a settlement request (537.59275ms)
+✔ confirmation prevents duplicate clicks and freezes the chosen anchor and interval (33.752875ms)
+✔ lost response is recovered using original key even after reopening on a different row (16.2655ms)
+✔ old rule request cannot overwrite new row and denied loading never creates a settlement (11.869792ms)
+✔ anchor and finance pages both integrate the same dialog; session shows gross and net quantities (333.271708ms)
+(node:35664) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 钱包真实请求客户端保留鉴权、整数精度和失败重试参数 (540.049291ms)
+(node:35670) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ 交易溯源忽略旧响应，退款翻页沿用已查询交易 (370.865125ms)
+✔ 账户乱序返回、重置后旧响应不能恢复旧用户 (92.781083ms)
+✔ 切换账户使旧对账停止，不能拼接另一用户的数据 (9.764667ms)
+✔ 状态确认期间换用户使旧确认失效 (4.662709ms)
+✔ 流水翻页使用已查询账号，编辑搜索框不混用游标 (213.6325ms)
+✔ 新建充值必须按当前手机号重新定位，不能使用旧列表第一行 (27.730209ms)
+✔ 账号和手机号交叉查询不匹配时不打开充值表单 (14.350583ms)
+✔ 审核确认固定订单、决定和原因，双击只提交一次 (12.704709ms)
+✔ 详情乱序返回和离开页面不覆盖新详情 (6.502083ms)
+✔ 充值确认期间字段改变不能替换已确认账号和金额 (12.954416ms)
+✔ 充值提交失败保留原请求编号及表单，可原样重试 (3.742125ms)
+ℹ tests 75
+ℹ suites 0
+ℹ pass 75
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2574.650917

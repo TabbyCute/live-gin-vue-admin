@@ -1,0 +1,1 @@
+{"failureCode":"unknown_error","cleanupFailed":false,"ok":false,"stage":"connection","verified":false,"migrated":false,"metadataSynced":false,"backupScope":"financial-and-metadata","protectedFinancialTables":0,"financialUnchanged":false,"existingMetadataUnchanged":false,"existingAccountAnchorUnchanged":false,"accountAnchorProtection":"","newTables":[],"applicationDeployed":false}

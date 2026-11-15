@@ -1,0 +1,12 @@
+{
+  "http://140.210.12.162:8888": {
+    "status": 200,
+    "allowOrigin": "http://140.210.12.162:8888",
+    "allowCredentials": "true"
+  },
+  "https://audit-untrusted.example": {
+    "status": 200,
+    "allowOrigin": "https://audit-untrusted.example",
+    "allowCredentials": "true"
+  }
+}

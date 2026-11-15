@@ -1,0 +1,140 @@
+{
+  "scope": "local backend and admin only; no H5, no SSH, no remote behavior tests",
+  "finalGo": {
+    "cases": {
+      "pass": 865,
+      "skip": 15
+    },
+    "packages": {
+      "skip": 98,
+      "pass": 53
+    },
+    "skippedCases": [
+      "tb_live_module/cmd/event-delivery-migrate:TestBackupMySQL",
+      "tb_live_module/internal/srs:TestLocalMediaSmoke",
+      "tb_live_module/mcp/client:TestMcpClientConnection",
+      "tb_live_module/mcp/client:TestTools/currentTime",
+      "tb_live_module/mcp/client:TestTools/getNickname",
+      "tb_live_module/mcp/client:TestGetTools",
+      "tb_live_module/service/earning:TestMySQLFinanceLoad",
+      "tb_live_module/service/gift:TestMySQLGiftLoad",
+      "tb_live_module/service/gift:TestMySQLGuardRankingLoad",
+      "tb_live_module/service/live:TestPresenceLoad1000",
+      "tb_live_module/service/live:TestPresenceLoadMultiRoom",
+      "tb_live_module/service/earning:TestMySQLManualPayoutLoad",
+      "tb_live_module/service/social:TestMySQLLoadProfile",
+      "tb_live_module/service/social:TestRedisHeartbeatLoadProfile",
+      "tb_live_module/service/wallet:TestMySQLWalletSealLoad"
+    ],
+    "failures": []
+  },
+  "firstRace": {
+    "cases": {
+      "pass": 763,
+      "skip": 10
+    },
+    "packages": {
+      "pass": 36,
+      "skip": 13,
+      "fail": 1
+    },
+    "skippedCases": [
+      "tb_live_module/service/wallet:TestMySQLWalletSealLoad",
+      "tb_live_module/service/gift:TestMySQLGiftLoad",
+      "tb_live_module/service/gift:TestMySQLGuardRankingLoad",
+      "tb_live_module/service/social:TestMySQLLoadProfile",
+      "tb_live_module/service/social:TestRedisHeartbeatLoadProfile",
+      "tb_live_module/service/live:TestPresenceLoad1000",
+      "tb_live_module/service/live:TestPresenceLoadMultiRoom",
+      "tb_live_module/service/earning:TestMySQLFinanceLoad",
+      "tb_live_module/internal/srs:TestLocalMediaSmoke",
+      "tb_live_module/service/earning:TestMySQLManualPayoutLoad"
+    ],
+    "failures": [
+      {
+        "Time": "2026-11-12T01:16:52.680379+08:00",
+        "Action": "fail",
+        "Package": "tb_live_module/internal/backendcli",
+        "Elapsed": 0,
+        "FailedBuild": "tb_live_module/internal/backendcli [tb_live_module/internal/backendcli.test]"
+      }
+    ]
+  },
+  "finalChangedPackagesRace": {
+    "cases": {
+      "pass": 91
+    },
+    "packages": {
+      "pass": 10
+    },
+    "skippedCases": [],
+    "failures": []
+  },
+  "raceBuildFailureResolved": "firstRace migration package changed while compile graph was running; frozen finalChangedPackagesRace and fullGo both pass; original failure retained",
+  "fuzz": {
+    "targets": 10,
+    "executions": 81636,
+    "passed": true
+  },
+  "loadPassedCases": [
+    "TestMySQLWalletSealLoad",
+    "TestMySQLWalletPlansAndLoad",
+    "TestMySQLMovementQueryPlans",
+    "TestMySQLGiftLoad",
+    "TestMySQLGuardRankingLoad",
+    "TestMySQLFinanceLoad",
+    "TestMySQLManualPayoutLoad",
+    "TestMySQLLoadProfile",
+    "TestRedisHeartbeatLoadProfile",
+    "TestMySQLPublicProfilePlansAndBatchLoad",
+    "TestPresenceLoad1000",
+    "TestPresenceLoadMultiRoom"
+  ],
+  "adminTests": 64,
+  "goVetPassed": true,
+  "goBuildPassed": true,
+  "linuxAmd64BuildPassed": true,
+  "adminBuildPassed": true,
+  "externalMCPTests": "not run; no external MCP server",
+  "paymentChannels": "local signed simulator only; real WeChat/Alipay/bank not integrated",
+  "realtimeAdapter": "unconfigured; blocked, no fake delivered",
+  "migrationDiagnosticPatch": {
+    "racePassed": true,
+    "vetPassed": true,
+    "evidence": "migration-diagnostics-race.log",
+    "tests": "local backup connection kill, cleanup primary-error preservation, safe codes/progress, repeated migration and full restore"
+  },
+  "migrationScopedBackup": {
+    "racePassed": true,
+    "vetPassed": true,
+    "evidence": "migration-scope-race.log",
+    "defaultFullUnchanged": true,
+    "fixedScope": "financial-and-metadata",
+    "localRealFinancialProofTables": 45,
+    "localRealFinancialTriggers": 83,
+    "sourceUnchanged": true,
+    "scopeFailureCases": "selected-table read failure, missing proof coverage, out-of-scope trigger dependencies and unsupported syntax stop before DDL; unrelated legacy table is not read"
+  },
+  "productionDatabase": {
+    "migrationPassed": true,
+    "independentReadOnlyVerificationPassed": true,
+    "existingFinancialFactsUnchanged": true,
+    "existingPermissionsPreserved": true,
+    "allowedNewPermissions": "three root earning audit permissions only",
+    "preMigrationProtectedTables": 44,
+    "postMigrationProtectedTables": 53,
+    "newTables": 14,
+    "scopedBackupTables": 47,
+    "backupScope": "financial-and-metadata",
+    "backupHashIndependentlyVerified": true,
+    "wholeDatabaseBackup": false,
+    "unresolvedLegacyTableRead": "gva_announcements_info structure queries time out; unrelated and outside migration scope, cause unproven",
+    "applicationDeployed": false,
+    "remoteBehaviorTestsRun": false,
+    "sshUsed": false
+  },
+  "localTestResources": {
+    "ownedComposeProjectsRemoved": 6,
+    "existingUserSRSUntouched": true
+  }
+}

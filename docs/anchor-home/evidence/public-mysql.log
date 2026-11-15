@@ -1,0 +1,22 @@
+=== RUN   TestMySQLPublicHomeContracts
+=== RUN   TestMySQLPublicHomeContracts/profile
+=== RUN   TestMySQLPublicHomeContracts/net_supporters
+=== RUN   TestMySQLPublicHomeContracts/guard_expiry
+    public_test.go:262: 
+        	Error Trace:	/Users/tabby/codes/go/live-gin-vue-admin/server/service/anchorhome/public_test.go:262
+        	            				/Users/tabby/codes/go/live-gin-vue-admin/server/service/anchorhome/public_test.go:316
+        	Error:      	Received unexpected error:
+        	            	Error 3141 (22032): Invalid JSON text in argument 1 to function json_table: "The document is empty." at position 0.
+        	Test:       	TestMySQLPublicHomeContracts/guard_expiry
+=== RUN   TestMySQLPublicHomeContracts/settings_cas
+--- FAIL: TestMySQLPublicHomeContracts (1.30s)
+    --- PASS: TestMySQLPublicHomeContracts/profile (0.40s)
+    --- PASS: TestMySQLPublicHomeContracts/net_supporters (0.34s)
+    --- FAIL: TestMySQLPublicHomeContracts/guard_expiry (0.28s)
+    --- PASS: TestMySQLPublicHomeContracts/settings_cas (0.28s)
+=== RUN   TestMySQLPublicSettingsRaceAndHomeLoad
+    public_test.go:376: profile concurrent=8 reads=160 history=2000 p50=15.974958ms p95=20.475333ms max=21.160042ms SQL/request=10.0
+--- PASS: TestMySQLPublicSettingsRaceAndHomeLoad (0.74s)
+FAIL
+FAIL	tb_live_module/service/anchorhome	4.606s
+FAIL

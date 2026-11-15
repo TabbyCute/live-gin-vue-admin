@@ -10,7 +10,10 @@ import (
 // query/path. Financial routes never log bodies, raw errors or headers.
 func FinancialSafeLogger() gin.HandlerFunc {
 	return gin.LoggerWithFormatter(func(p gin.LogFormatterParams) string {
-		path := p.Path
+		path := "[redacted]"
+		if strings.Contains(p.Request.URL.Path, "/presence/") || strings.HasSuffix(p.Request.URL.Path, "/room/like") {
+			path = "/live/presence/[redacted]"
+		}
 		if strings.Contains(p.Request.URL.Path, "/payout/") {
 			path = "/payout/[redacted]"
 		}

@@ -1,0 +1,310 @@
+ Network presence-verify-95128_default  Creating
+ Network presence-verify-95128_default  Created
+ Container presence-verify-95128-redis-1  Creating
+ Container presence-verify-95128-mysql-1  Creating
+ Container presence-verify-95128-mysql-1  Created
+ Container presence-verify-95128-redis-1  Created
+ Container presence-verify-95128-redis-1  Starting
+ Container presence-verify-95128-mysql-1  Starting
+ Container presence-verify-95128-redis-1  Started
+ Container presence-verify-95128-mysql-1  Started
+ Container presence-verify-95128-redis-1  Waiting
+ Container presence-verify-95128-mysql-1  Waiting
+ Container presence-verify-95128-redis-1  Healthy
+ Container presence-verify-95128-mysql-1  Healthy
+?   	tb_live_module	[no test files]
+?   	tb_live_module/api/v1	[no test files]
+ok  	tb_live_module/api/v1/earning	2.944s
+?   	tb_live_module/api/v1/example	[no test files]
+ok  	tb_live_module/api/v1/gift	2.806s
+?   	tb_live_module/api/v1/guard	[no test files]
+ok  	tb_live_module/api/v1/live	5.036s
+ok  	tb_live_module/api/v1/payout	2.549s
+?   	tb_live_module/api/v1/ranking	[no test files]
+ok  	tb_live_module/api/v1/social	3.436s
+?   	tb_live_module/api/v1/system	[no test files]
+ok  	tb_live_module/api/v1/wallet	3.067s
+?   	tb_live_module/assets	[no test files]
+?   	tb_live_module/cmd/delivery-check	[no test files]
+?   	tb_live_module/cmd/earning-migrate	[no test files]
+?   	tb_live_module/cmd/gift-migrate	[no test files]
+?   	tb_live_module/cmd/guard-migrate	[no test files]
+?   	tb_live_module/cmd/mcp	[no test files]
+ok  	tb_live_module/cmd/payout-migrate	3.566s
+ok  	tb_live_module/cmd/presence-migrate	3.817s
+?   	tb_live_module/cmd/ranking-migrate	[no test files]
+?   	tb_live_module/cmd/root-admin-migrate	[no test files]
+?   	tb_live_module/cmd/social-check	[no test files]
+?   	tb_live_module/cmd/wallet-migrate	[no test files]
+ok  	tb_live_module/config	2.562s
+ok  	tb_live_module/core	4.193s
+?   	tb_live_module/core/internal	[no test files]
+?   	tb_live_module/docs	[no test files]
+?   	tb_live_module/global	[no test files]
+ok  	tb_live_module/initialize	5.503s
+ok  	tb_live_module/initialize/internal	3.831s
+ok  	tb_live_module/internal/engagementcli	5.039s
+?   	tb_live_module/internal/httpkit	[no test files]
+?   	tb_live_module/internal/modulekit	[no test files]
+ok  	tb_live_module/internal/srs	4.228s
+ok  	tb_live_module/mcp	4.500s
+ok  	tb_live_module/mcp/client	3.779s
+ok  	tb_live_module/middleware	8.506s
+?   	tb_live_module/model/common	[no test files]
+?   	tb_live_module/model/common/request	[no test files]
+?   	tb_live_module/model/common/response	[no test files]
+?   	tb_live_module/model/earning	[no test files]
+?   	tb_live_module/model/earning/request	[no test files]
+ok  	tb_live_module/model/earning/response	4.430s
+?   	tb_live_module/model/example	[no test files]
+?   	tb_live_module/model/example/request	[no test files]
+?   	tb_live_module/model/example/response	[no test files]
+?   	tb_live_module/model/gift	[no test files]
+?   	tb_live_module/model/gift/request	[no test files]
+?   	tb_live_module/model/gift/response	[no test files]
+?   	tb_live_module/model/guard	[no test files]
+?   	tb_live_module/model/guard/request	[no test files]
+?   	tb_live_module/model/guard/response	[no test files]
+ok  	tb_live_module/model/live	5.258s
+ok  	tb_live_module/model/live/request	4.580s
+?   	tb_live_module/model/live/response	[no test files]
+?   	tb_live_module/model/payout	[no test files]
+?   	tb_live_module/model/payout/request	[no test files]
+?   	tb_live_module/model/payout/response	[no test files]
+?   	tb_live_module/model/ranking	[no test files]
+?   	tb_live_module/model/ranking/request	[no test files]
+?   	tb_live_module/model/ranking/response	[no test files]
+ok  	tb_live_module/model/social	4.204s
+?   	tb_live_module/model/social/request	[no test files]
+?   	tb_live_module/model/social/response	[no test files]
+?   	tb_live_module/model/system	[no test files]
+?   	tb_live_module/model/system/request	[no test files]
+?   	tb_live_module/model/system/response	[no test files]
+?   	tb_live_module/model/wallet	[no test files]
+?   	tb_live_module/model/wallet/request	[no test files]
+?   	tb_live_module/model/wallet/response	[no test files]
+?   	tb_live_module/plugin	[no test files]
+?   	tb_live_module/plugin/announcement	[no test files]
+?   	tb_live_module/plugin/announcement/api	[no test files]
+?   	tb_live_module/plugin/announcement/config	[no test files]
+?   	tb_live_module/plugin/announcement/gen	[no test files]
+?   	tb_live_module/plugin/announcement/initialize	[no test files]
+?   	tb_live_module/plugin/announcement/model	[no test files]
+?   	tb_live_module/plugin/announcement/model/request	[no test files]
+?   	tb_live_module/plugin/announcement/plugin	[no test files]
+?   	tb_live_module/plugin/announcement/router	[no test files]
+?   	tb_live_module/plugin/announcement/service	[no test files]
+?   	tb_live_module/plugin/auto	[no test files]
+?   	tb_live_module/plugin/auto/api	[no test files]
+ok  	tb_live_module/plugin/auto/initialize	3.516s
+?   	tb_live_module/plugin/auto/model	[no test files]
+?   	tb_live_module/plugin/auto/router	[no test files]
+ok  	tb_live_module/plugin/auto/service	1.588s
+?   	tb_live_module/plugin/email	[no test files]
+?   	tb_live_module/plugin/email/api	[no test files]
+?   	tb_live_module/plugin/email/config	[no test files]
+?   	tb_live_module/plugin/email/global	[no test files]
+?   	tb_live_module/plugin/email/model/response	[no test files]
+?   	tb_live_module/plugin/email/router	[no test files]
+?   	tb_live_module/plugin/email/service	[no test files]
+?   	tb_live_module/plugin/email/utils	[no test files]
+?   	tb_live_module/plugin/plugin-tool/utils	[no test files]
+?   	tb_live_module/repository/social	[no test files]
+?   	tb_live_module/router	[no test files]
+ok  	tb_live_module/router/earning	3.255s
+?   	tb_live_module/router/example	[no test files]
+ok  	tb_live_module/router/gift	3.476s
+?   	tb_live_module/router/guard	[no test files]
+ok  	tb_live_module/router/live	4.271s
+ok  	tb_live_module/router/payout	4.289s
+?   	tb_live_module/router/ranking	[no test files]
+ok  	tb_live_module/router/social	4.066s
+?   	tb_live_module/router/system	[no test files]
+ok  	tb_live_module/router/wallet	4.358s
+?   	tb_live_module/service	[no test files]
+ok  	tb_live_module/service/earning	23.688s
+?   	tb_live_module/service/example	[no test files]
+ok  	tb_live_module/service/gift	10.109s
+ok  	tb_live_module/service/guard	2.093s
+ok  	tb_live_module/service/live	11.155s
+ok  	tb_live_module/service/payout	5.292s
+ok  	tb_live_module/service/ranking	3.412s
+ok  	tb_live_module/service/social	3.413s
+ok  	tb_live_module/service/system	3.481s
+ok  	tb_live_module/service/wallet	6.590s
+?   	tb_live_module/source/example	[no test files]
+?   	tb_live_module/source/system	[no test files]
+?   	tb_live_module/task	[no test files]
+?   	tb_live_module/tmp	[no test files]
+ok  	tb_live_module/utils	2.923s
+ok  	tb_live_module/utils/ast	3.386s
+?   	tb_live_module/utils/autocode	[no test files]
+?   	tb_live_module/utils/captcha	[no test files]
+?   	tb_live_module/utils/plugin	[no test files]
+?   	tb_live_module/utils/plugin/v2	[no test files]
+?   	tb_live_module/utils/request	[no test files]
+?   	tb_live_module/utils/stacktrace	[no test files]
+ok  	tb_live_module/utils/timer	3.541s
+?   	tb_live_module/utils/upload	[no test files]
+ok  	tb_live_module/service/live	57.944s
+ok  	tb_live_module/api/v1/live	8.657s
+ok  	tb_live_module/router/live	6.290s
+ok  	tb_live_module/middleware	8.841s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/6 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 6/6 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 10373 (3455/sec), new interesting: 0 (total: 6)
+fuzz: elapsed: 6s, execs: 21384 (3671/sec), new interesting: 1 (total: 7)
+fuzz: elapsed: 9s, execs: 22607 (408/sec), new interesting: 2 (total: 8)
+fuzz: elapsed: 11s, execs: 22607 (0/sec), new interesting: 2 (total: 8)
+PASS
+ok  	tb_live_module/service/live	13.573s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/60 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 60/60 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 3371 (1123/sec), new interesting: 9 (total: 69)
+fuzz: elapsed: 6s, execs: 3371 (0/sec), new interesting: 9 (total: 69)
+fuzz: elapsed: 9s, execs: 3371 (0/sec), new interesting: 9 (total: 69)
+fuzz: elapsed: 11s, execs: 3371 (0/sec), new interesting: 9 (total: 69)
+PASS
+ok  	tb_live_module/api/v1/live	14.219s
+=== RUN   TestPresenceLoad1000
+    live_presence_mysql_test.go:235: hot-room-open-state count=1000 elapsed=139.805333ms p95=8.637583ms p99=12.992709ms
+    live_presence_mysql_test.go:235: 1000-heartbeat-state count=1000 elapsed=113.364541ms p95=7.1845ms p99=8.366458ms
+    live_presence_mysql_test.go:235: online-list-100-per-page-serial count=10 elapsed=0s p95=24.872667ms p99=24.872667ms
+    live_presence_mysql_test.go:235: 1000-like-burst-32-workers count=1000 elapsed=108.05ms p95=9.054833ms p99=16.760792ms
+    live_presence_mysql_test.go:205: like accepted=3 rejected=997
+    live_presence_mysql_test.go:210: mysql checkpoint 1001 visits elapsed=256.456791ms
+    live_presence_mysql_test.go:221: expire 1001 connections in batches100 elapsed=27.430542ms
+    live_presence_mysql_test.go:223: # Memory
+        used_memory:3919984
+        used_memory_human:3.74M
+        used_memory_rss:16670720
+        used_memory_rss_human:15.90M
+        used_memory_peak:5234168
+        used_memory_peak_human:4.99M
+        used_memory_peak_perc:74.89%
+        used_memory_overhead:1887672
+        used_memory_startup:981344
+        used_memory_dataset:2032312
+        used_memory_dataset_perc:69.16%
+        allocator_allocated:8418496
+        allocator_active:19267584
+        allocator_resident:24313856
+        allocator_muzzy:0
+        total_system_memory:8217751552
+        total_system_memory_human:7.65G
+        used_memory_lua:215040
+        used_memory_vm_eval:215040
+        used_memory_lua_human:210.00K
+        used_memory_scripts_eval:13672
+        number_of_cached_scripts:7
+        number_of_functions:0
+        number_of_libraries:0
+        used_memory_vm_functions:33792
+        used_memory_vm_total:248832
+        used_memory_vm_total_human:243.00K
+        used_memory_functions:192
+        used_memory_scripts:13864
+        used_memory_scripts_human:13.54K
+        maxmemory:134217728
+        maxmemory_human:128.00M
+        maxmemory_policy:noeviction
+        allocator_frag_ratio:2.37
+        allocator_frag_bytes:6019424
+        allocator_rss_ratio:1.26
+        allocator_rss_bytes:5046272
+        rss_overhead_ratio:0.69
+        rss_overhead_bytes:-7643136
+        mem_fragmentation_ratio:4.10
+        mem_fragmentation_bytes:12605400
+        mem_not_counted_for_evict:0
+        mem_replication_backlog:0
+        mem_total_replication_buffers:0
+        mem_clients_slaves:0
+        mem_clients_normal:881664
+        mem_cluster_links:0
+        mem_aof_buffer:0
+        mem_allocator:jemalloc-5.3.0
+        mem_overhead_db_hashtable_rehashing:0
+        active_defrag_running:0
+        lazyfree_pending_objects:0
+        lazyfreed_objects:0
+        
+        # Stats
+        total_connections_received:250
+        total_commands_processed:217088
+        instantaneous_ops_per_sec:87727
+        total_net_input_bytes:29694711
+        total_net_output_bytes:3433342
+        total_net_repl_input_bytes:0
+        total_net_repl_output_bytes:0
+        instantaneous_input_kbps:14980.08
+        instantaneous_output_kbps:1786.15
+        instantaneous_input_repl_kbps:0.00
+        instantaneous_output_repl_kbps:0.00
+        rejected_connections:0
+        sync_full:0
+        sync_partial_ok:0
+        sync_partial_err:0
+        expired_subkeys:0
+        expired_keys:50
+        expired_stale_perc:0.01
+        expired_time_cap_reached_count:0
+        expire_cycle_cpu_milliseconds:7
+        evicted_keys:0
+        evicted_clients:0
+        evicted_scripts:0
+        total_eviction_exceeded_time:0
+        current_eviction_exceeded_time:0
+        keyspace_hits:92859
+        keyspace_misses:10433
+        pubsub_channels:0
+        pubsub_patterns:0
+        pubsubshard_channels:0
+        latest_fork_usec:0
+        total_forks:0
+        migrate_cached_sockets:0
+        slave_expires_tracked_keys:0
+        active_defrag_hits:0
+        active_defrag_misses:0
+        active_defrag_key_hits:0
+        active_defrag_key_misses:0
+        total_active_defrag_time:0
+        current_active_defrag_time:0
+        tracking_total_keys:0
+        tracking_total_items:0
+        tracking_total_prefixes:0
+        unexpected_error_replies:0
+        total_error_replies:0
+        dump_payload_sanitizations:0
+        total_reads_processed:7371
+        total_writes_processed:7131
+        io_threaded_reads_processed:0
+        io_threaded_writes_processed:0
+        client_query_buffer_limit_disconnections:0
+        client_output_buffer_limit_disconnections:0
+        reply_buffer_shrinks:33
+        reply_buffer_expands:0
+        eventloop_cycles:4725
+        eventloop_duration_sum:1109452
+        eventloop_duration_cmd_sum:340507
+        instantaneous_eventloop_cycles_per_sec:895
+        instantaneous_eventloop_duration_usec:341
+        acl_access_denied_auth:0
+        acl_access_denied_cmd:0
+        acl_access_denied_key:0
+        acl_access_denied_channel:0
+        
+        # CPU
+        used_cpu_sys:0.247128
+        used_cpu_user:0.952094
+        used_cpu_sys_children:0.001077
+        used_cpu_user_children:0.000801
+        used_cpu_sys_main_thread:0.242422
+        used_cpu_user_main_thread:0.954050
+        
+--- PASS: TestPresenceLoad1000 (1.43s)
+=== RUN   TestPresenceLoadMultiRoom
+    live_presence_mysql_test.go:235: 16-room-160-open-state-32-workers count=160 elapsed=30.849708ms p95=11.103458ms p99=11.512958ms
+--- PASS: TestPresenceLoadMultiRoom (0.07s)
+PASS
+ok  	tb_live_module/service/live	3.242s

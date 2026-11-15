@@ -81,6 +81,18 @@ func initializeSystem() {
 		if err := initialize.InitializeSocial(); err != nil {
 			panic(err)
 		}
+		if err := initialize.InitializeAnchorHomeAlbum(global.GVA_DB); err != nil {
+			panic(err)
+		}
+		if err := initialize.InitializePresence(); err != nil {
+			panic(err)
+		}
+		if err := initialize.InitializeBankReconcile(); err != nil {
+			panic(err)
+		}
+		if err := initialize.InitializeEventDelivery(global.GVA_DB, nil); err != nil {
+			panic(err)
+		}
 		initialize.Timer() // 表结构就绪后注册任务并立即执行一次直播生命周期扫描
 	}
 }

@@ -1,0 +1,3 @@
+[mysql] 2026/11/09 00:44:12 packets.go:58 read tcp 192.0.2.1:61783->47.236.98.206:13306: i/o timeout
+cannot connect to configured database
+exit status 1

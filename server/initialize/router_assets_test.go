@@ -76,3 +76,57 @@ func TestRegisterPublicAdmin(t *testing.T) {
 	require.Equal(t, http.StatusNotFound, directoryRecorder.Code)
 
 }
+
+func TestRegisterPublicH5(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
+	registerPublicAdmin(router, http.FS(fstest.MapFS{
+		"index.html": {Data: []byte("<title>Admin</title>")},
+	}))
+	registerPublicH5(router, http.FS(fstest.MapFS{
+		"index.html":         {Data: []byte("<title>H5</title>")},
+		"assets/js/app.js":   {Data: []byte("console.log('h5')")},
+		"cdn_scripts/hls.js": {Data: []byte("window.Hls = {}")},
+		".env":               {Data: []byte("private config")},
+	}))
+
+	for _, tt := range []struct {
+		name, method, target string
+		status               int
+		content, cache       string
+	}{
+		{"home", http.MethodGet, publicH5Route, 200, "<title>H5</title>", "no-cache"},
+		{"trailing slash", http.MethodGet, publicH5Route + "/", 200, "<title>H5</title>", "no-cache"},
+		{"entry", http.MethodGet, publicH5Route + "/index.html", 200, "<title>H5</title>", "no-cache"},
+		{"refresh page", http.MethodGet, publicH5Route + "/home", 200, "<title>H5</title>", "no-cache"},
+		{"refresh room", http.MethodGet, publicH5Route + "/live/room/1145781?from=share", 200, "<title>H5</title>", "no-cache"},
+		{"head page", http.MethodHead, publicH5Route + "/login", 200, "", "no-cache"},
+		{"asset", http.MethodGet, publicH5Route + "/assets/js/app.js", 200, "console.log('h5')", "public, max-age=31536000, immutable"},
+		{"unhashed script", http.MethodGet, publicH5Route + "/cdn_scripts/hls.js", 200, "window.Hls = {}", "no-cache"},
+		{"missing asset", http.MethodGet, publicH5Route + "/assets/js/missing.js", 404, "", ""},
+		{"asset path without extension", http.MethodGet, publicH5Route + "/assets/missing", 404, "", ""},
+		{"missing script", http.MethodGet, publicH5Route + "/cdn_scripts/missing", 404, "", ""},
+		{"directory listing", http.MethodGet, publicH5Route + "/assets/", 404, "", ""},
+		{"hidden file", http.MethodGet, publicH5Route + "/.env", 404, "", ""},
+		{"traversal", http.MethodGet, publicH5Route + "/../admin/index.html", 404, "", ""},
+		{"encoded traversal", http.MethodGet, publicH5Route + "/%2e%2e/admin/index.html", 404, "", ""},
+		{"admin still isolated", http.MethodGet, publicAdminRoute, 200, "<title>Admin</title>", "no-cache"},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			recorder := httptest.NewRecorder()
+			router.ServeHTTP(recorder, httptest.NewRequest(tt.method, tt.target, nil))
+			require.Equal(t, tt.status, recorder.Code)
+			require.Equal(t, tt.content, recorder.Body.String())
+			require.Equal(t, tt.cache, recorder.Header().Get("Cache-Control"))
+		})
+	}
+}
+
+func TestRegisterPublicH5WithoutBuild(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
+	registerPublicH5(router, http.FS(fstest.MapFS{}))
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, publicH5Route+"/login", nil))
+	require.Equal(t, http.StatusNotFound, recorder.Code)
+}

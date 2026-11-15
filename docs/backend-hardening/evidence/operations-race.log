@@ -1,0 +1,4 @@
+go: downloading go1.26.11 (darwin/amd64)
+ok  	tb_live_module/core/internal	9.375s
+ok  	tb_live_module/internal/telemetry	2.998s
+ok  	tb_live_module/initialize	8.590s

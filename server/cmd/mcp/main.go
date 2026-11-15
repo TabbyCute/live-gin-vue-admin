@@ -1,12 +1,10 @@
 package main
 
 import (
-	"fmt"
-
-	"tb_live_module/global"
-	mcpTool "tb_live_module/mcp"
 	_ "go.uber.org/automaxprocs"
 	"go.uber.org/zap"
+	"tb_live_module/global"
+	mcpTool "tb_live_module/mcp"
 )
 
 func main() {
@@ -19,7 +17,7 @@ func main() {
 		panic(err)
 	}
 
-	addr := fmt.Sprintf(":%d", global.GVA_CONFIG.MCP.Addr)
+	addr := mcpTool.ResolveMCPListenAddr()
 	server := mcpTool.NewStreamableHTTPServer()
 
 	global.GVA_LOG.Info("mcp独立服务启动",

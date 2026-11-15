@@ -1,0 +1,195 @@
+ Network wallet-ledger-tests_default  Creating
+ Network wallet-ledger-tests_default  Created
+ Container wallet-ledger-tests-mysql-1  Creating
+ Container wallet-ledger-tests-mysql-1  Created
+ Container wallet-ledger-tests-mysql-1  Starting
+ Container wallet-ledger-tests-mysql-1  Started
+ Container wallet-ledger-tests-mysql-1  Waiting
+ Container wallet-ledger-tests-mysql-1  Healthy
+?   	tb_live_module	[no test files]
+?   	tb_live_module/api/v1	[no test files]
+ok  	tb_live_module/api/v1/earning	4.028s
+?   	tb_live_module/api/v1/example	[no test files]
+ok  	tb_live_module/api/v1/gift	3.838s
+?   	tb_live_module/api/v1/guard	[no test files]
+ok  	tb_live_module/api/v1/live	6.344s
+ok  	tb_live_module/api/v1/payout	4.505s
+?   	tb_live_module/api/v1/ranking	[no test files]
+ok  	tb_live_module/api/v1/social	5.074s
+?   	tb_live_module/api/v1/system	[no test files]
+ok  	tb_live_module/api/v1/wallet	4.300s
+?   	tb_live_module/assets	[no test files]
+?   	tb_live_module/cmd/delivery-check	[no test files]
+?   	tb_live_module/cmd/earning-migrate	[no test files]
+?   	tb_live_module/cmd/gift-migrate	[no test files]
+?   	tb_live_module/cmd/guard-migrate	[no test files]
+?   	tb_live_module/cmd/mcp	[no test files]
+ok  	tb_live_module/cmd/payout-migrate	4.730s
+ok  	tb_live_module/cmd/presence-migrate	5.411s
+?   	tb_live_module/cmd/ranking-migrate	[no test files]
+?   	tb_live_module/cmd/root-admin-migrate	[no test files]
+?   	tb_live_module/cmd/social-check	[no test files]
+?   	tb_live_module/cmd/wallet-migrate	[no test files]
+ok  	tb_live_module/config	4.334s
+ok  	tb_live_module/core	5.088s
+?   	tb_live_module/core/internal	[no test files]
+?   	tb_live_module/docs	[no test files]
+?   	tb_live_module/global	[no test files]
+ok  	tb_live_module/initialize	7.159s
+ok  	tb_live_module/initialize/internal	5.462s
+ok  	tb_live_module/internal/engagementcli	8.127s
+?   	tb_live_module/internal/httpkit	[no test files]
+?   	tb_live_module/internal/modulekit	[no test files]
+ok  	tb_live_module/internal/srs	5.278s
+ok  	tb_live_module/mcp	5.395s
+ok  	tb_live_module/mcp/client	5.029s
+ok  	tb_live_module/middleware	12.218s
+?   	tb_live_module/model/common	[no test files]
+?   	tb_live_module/model/common/request	[no test files]
+?   	tb_live_module/model/common/response	[no test files]
+?   	tb_live_module/model/earning	[no test files]
+?   	tb_live_module/model/earning/request	[no test files]
+ok  	tb_live_module/model/earning/response	4.914s
+?   	tb_live_module/model/example	[no test files]
+?   	tb_live_module/model/example/request	[no test files]
+?   	tb_live_module/model/example/response	[no test files]
+?   	tb_live_module/model/gift	[no test files]
+?   	tb_live_module/model/gift/request	[no test files]
+?   	tb_live_module/model/gift/response	[no test files]
+?   	tb_live_module/model/guard	[no test files]
+?   	tb_live_module/model/guard/request	[no test files]
+?   	tb_live_module/model/guard/response	[no test files]
+ok  	tb_live_module/model/live	5.755s
+ok  	tb_live_module/model/live/request	5.371s
+?   	tb_live_module/model/live/response	[no test files]
+?   	tb_live_module/model/payout	[no test files]
+?   	tb_live_module/model/payout/request	[no test files]
+?   	tb_live_module/model/payout/response	[no test files]
+?   	tb_live_module/model/ranking	[no test files]
+?   	tb_live_module/model/ranking/request	[no test files]
+?   	tb_live_module/model/ranking/response	[no test files]
+ok  	tb_live_module/model/social	5.473s
+?   	tb_live_module/model/social/request	[no test files]
+?   	tb_live_module/model/social/response	[no test files]
+?   	tb_live_module/model/system	[no test files]
+?   	tb_live_module/model/system/request	[no test files]
+?   	tb_live_module/model/system/response	[no test files]
+?   	tb_live_module/model/wallet	[no test files]
+?   	tb_live_module/model/wallet/request	[no test files]
+?   	tb_live_module/model/wallet/response	[no test files]
+?   	tb_live_module/plugin	[no test files]
+?   	tb_live_module/plugin/announcement	[no test files]
+?   	tb_live_module/plugin/announcement/api	[no test files]
+?   	tb_live_module/plugin/announcement/config	[no test files]
+?   	tb_live_module/plugin/announcement/gen	[no test files]
+?   	tb_live_module/plugin/announcement/initialize	[no test files]
+?   	tb_live_module/plugin/announcement/model	[no test files]
+?   	tb_live_module/plugin/announcement/model/request	[no test files]
+?   	tb_live_module/plugin/announcement/plugin	[no test files]
+?   	tb_live_module/plugin/announcement/router	[no test files]
+?   	tb_live_module/plugin/announcement/service	[no test files]
+?   	tb_live_module/plugin/auto	[no test files]
+?   	tb_live_module/plugin/auto/api	[no test files]
+ok  	tb_live_module/plugin/auto/initialize	6.212s
+?   	tb_live_module/plugin/auto/model	[no test files]
+?   	tb_live_module/plugin/auto/router	[no test files]
+ok  	tb_live_module/plugin/auto/service	2.150s
+?   	tb_live_module/plugin/email	[no test files]
+?   	tb_live_module/plugin/email/api	[no test files]
+?   	tb_live_module/plugin/email/config	[no test files]
+?   	tb_live_module/plugin/email/global	[no test files]
+?   	tb_live_module/plugin/email/model/response	[no test files]
+?   	tb_live_module/plugin/email/router	[no test files]
+?   	tb_live_module/plugin/email/service	[no test files]
+?   	tb_live_module/plugin/email/utils	[no test files]
+?   	tb_live_module/plugin/plugin-tool/utils	[no test files]
+?   	tb_live_module/repository/social	[no test files]
+?   	tb_live_module/router	[no test files]
+ok  	tb_live_module/router/earning	3.869s
+?   	tb_live_module/router/example	[no test files]
+ok  	tb_live_module/router/gift	3.679s
+?   	tb_live_module/router/guard	[no test files]
+ok  	tb_live_module/router/live	3.805s
+ok  	tb_live_module/router/payout	8.628s
+?   	tb_live_module/router/ranking	[no test files]
+ok  	tb_live_module/router/social	8.648s
+?   	tb_live_module/router/system	[no test files]
+ok  	tb_live_module/router/wallet	8.555s
+?   	tb_live_module/service	[no test files]
+ok  	tb_live_module/service/earning	26.637s
+?   	tb_live_module/service/example	[no test files]
+ok  	tb_live_module/service/gift	10.412s
+ok  	tb_live_module/service/guard	2.004s
+ok  	tb_live_module/service/live	8.824s
+ok  	tb_live_module/service/payout	4.898s
+ok  	tb_live_module/service/ranking	4.921s
+ok  	tb_live_module/service/social	4.996s
+ok  	tb_live_module/service/system	4.720s
+ok  	tb_live_module/service/wallet	49.479s
+?   	tb_live_module/source/example	[no test files]
+?   	tb_live_module/source/system	[no test files]
+?   	tb_live_module/task	[no test files]
+?   	tb_live_module/tmp	[no test files]
+ok  	tb_live_module/utils	3.877s
+ok  	tb_live_module/utils/ast	4.281s
+?   	tb_live_module/utils/autocode	[no test files]
+?   	tb_live_module/utils/captcha	[no test files]
+?   	tb_live_module/utils/plugin	[no test files]
+?   	tb_live_module/utils/plugin/v2	[no test files]
+?   	tb_live_module/utils/request	[no test files]
+?   	tb_live_module/utils/stacktrace	[no test files]
+ok  	tb_live_module/utils/timer	4.336s
+?   	tb_live_module/utils/upload	[no test files]
+ok  	tb_live_module/service/wallet	87.903s
+ok  	tb_live_module/api/v1/wallet	4.709s
+ok  	tb_live_module/router/wallet	7.941s
+ok  	tb_live_module/initialize	14.874s
+ok  	tb_live_module/config	3.826s
+ok  	tb_live_module/middleware	11.466s
+ok  	tb_live_module/service/wallet	32.507s
+=== RUN   TestMySQLWalletSealLoad
+    mysql_load_test.go:95: single_wallet_debit: 114.6 ops/s, p95 425.71 ms, p99 501.86 ms, errors 0
+    mysql_load_test.go:95: sixteen_wallet_debit: 624.5 ops/s, p95 70.97 ms, p99 91.14 ms, errors 0
+    mysql_load_test.go:95: same_original_partial_refund: 85.1 ops/s, p95 499.77 ms, p99 616.39 ms, errors 0
+    mysql_load_test.go:95: single_wallet_idempotent_replay: 226.7 ops/s, p95 199.81 ms, p99 234.40 ms, errors 0
+    mysql_load_test.go:95: balance_and_ledger: 1596.1 ops/s, p95 28.58 ms, p99 35.48 ms, errors 0
+--- PASS: TestMySQLWalletSealLoad (9.55s)
+=== RUN   TestMySQLWalletPlansAndLoad
+    mysql_test.go:264: EXPLAIN SELECT * FROM wallet_ledger WHERE wallet_account_id=1 AND wallet_version<70 ORDER BY wallet_version DESC LIMIT 21 => [map[Extra:Using index condition; Backward index scan filtered:100 id:1 key:uk_wallet_ledger_version key_len:16 partitions:<nil> possible_keys:uk_wallet_ledger_version ref:<nil> rows:69 select_type:SIMPLE table:wallet_ledger type:range]]
+    mysql_test.go:264: EXPLAIN SELECT * FROM wallet_ledger WHERE wallet_account_id=1 ORDER BY wallet_version DESC LIMIT 21 => [map[Extra:Backward index scan filtered:100 id:1 key:uk_wallet_ledger_version key_len:8 partitions:<nil> possible_keys:uk_wallet_ledger_version ref:const rows:80 select_type:SIMPLE table:wallet_ledger type:ref]]
+    mysql_test.go:264: EXPLAIN SELECT * FROM wallet_ledger WHERE wallet_account_id=1 AND wallet_version>20 ORDER BY wallet_version LIMIT 101 => [map[Extra:Using index condition filtered:100 id:1 key:uk_wallet_ledger_version key_len:16 partitions:<nil> possible_keys:uk_wallet_ledger_version ref:<nil> rows:60 select_type:SIMPLE table:wallet_ledger type:range]]
+    mysql_test.go:264: EXPLAIN SELECT id FROM wallet_adjustment_order WHERE created_by=1 AND status='pending' LIMIT 100 => [map[Extra:Using where filtered:100 id:1 key:idx_wallet_order_status key_len:66 partitions:<nil> possible_keys:uk_wallet_order_request,idx_wallet_order_status,idx_wallet_order_pending ref:const rows:1 select_type:SIMPLE table:wallet_adjustment_order type:ref]]
+    mysql_test.go:264: EXPLAIN SELECT * FROM wallet_account WHERE account_id=10 AND currency_code='COIN' => [map[Extra:<nil> filtered:100 id:1 key:uk_wallet_account_currency key_len:74 partitions:<nil> possible_keys:uk_wallet_account_currency ref:const,const rows:1 select_type:SIMPLE table:wallet_account type:const]]
+    mysql_test.go:264: EXPLAIN SELECT * FROM wallet_adjustment_order WHERE source_type='manual' AND external_order_no='LOAD_0001' => [map[Extra:<nil> filtered:100 id:1 key:uk_wallet_order_source key_len:580 partitions:<nil> possible_keys:uk_wallet_order_source ref:const,const rows:1 select_type:SIMPLE table:wallet_adjustment_order type:const]]
+    mysql_test.go:296: wallet ledger read requests=400 concurrency=16 QPS=2296.55 p95=10.131792ms p99=11.620625ms errors=0
+--- PASS: TestMySQLWalletPlansAndLoad (2.76s)
+=== RUN   TestMySQLMovementQueryPlans
+    mysql_transaction_test.go:311: EXPLAIN SELECT * FROM wallet_transaction WHERE kind='refund' AND business_type='test_shop' AND business_no='plan_order_50' => [map[Extra:<nil> filtered:100 id:1 key:uk_wallet_transaction_business key_len:710 partitions:<nil> possible_keys:uk_wallet_transaction_business ref:const,const,const rows:1 select_type:SIMPLE table:wallet_transaction type:const]]
+    mysql_transaction_test.go:311: EXPLAIN SELECT * FROM wallet_transaction WHERE original_no='parent_50' AND id>100 ORDER BY id LIMIT 51 => [map[Extra:Using index condition filtered:100 id:1 key:idx_wallet_transaction_original key_len:170 partitions:<nil> possible_keys:PRIMARY,idx_wallet_transaction_original ref:<nil> rows:99 select_type:SIMPLE table:wallet_transaction type:range]]
+    mysql_transaction_test.go:311: EXPLAIN SELECT * FROM wallet_transaction WHERE account_id=70 AND currency_code='COIN' AND id>100 ORDER BY id LIMIT 101 => [map[Extra:Using index condition; Using where filtered:10 id:1 key:idx_wallet_transaction_account key_len:16 partitions:<nil> possible_keys:PRIMARY,idx_wallet_transaction_account ref:<nil> rows:99 select_type:SIMPLE table:wallet_transaction type:range]]
+    mysql_transaction_test.go:311: EXPLAIN SELECT SUM(amount),COUNT(*) FROM wallet_transaction WHERE original_no='parent_50' => [map[Extra:<nil> filtered:100 id:1 key:idx_wallet_transaction_original key_len:162 partitions:<nil> possible_keys:idx_wallet_transaction_original ref:const rows:100 select_type:SIMPLE table:wallet_transaction type:ref]]
+--- PASS: TestMySQLMovementQueryPlans (0.62s)
+PASS
+ok  	tb_live_module/service/wallet	15.480s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/29 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 29/29 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 1989 (663/sec), new interesting: 0 (total: 29)
+fuzz: elapsed: 6s, execs: 6012 (1341/sec), new interesting: 0 (total: 29)
+fuzz: elapsed: 9s, execs: 12816 (2268/sec), new interesting: 0 (total: 29)
+fuzz: elapsed: 10s, execs: 15356 (2206/sec), new interesting: 0 (total: 29)
+PASS
+ok  	tb_live_module/service/wallet	20.398s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/92 completed
+fuzz: elapsed: 2s, gathering baseline coverage: 92/92 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 3788 (1262/sec), new interesting: 6 (total: 98)
+fuzz: elapsed: 6s, execs: 3788 (0/sec), new interesting: 6 (total: 98)
+fuzz: elapsed: 9s, execs: 3788 (0/sec), new interesting: 6 (total: 98)
+fuzz: elapsed: 11s, execs: 3788 (0/sec), new interesting: 6 (total: 98)
+PASS
+ok  	tb_live_module/api/v1/wallet	14.481s
+ Container wallet-ledger-tests-mysql-1  Stopping
+ Container wallet-ledger-tests-mysql-1  Stopped
+ Container wallet-ledger-tests-mysql-1  Removing
+ Container wallet-ledger-tests-mysql-1  Removed
+ Network wallet-ledger-tests_default  Removing
+ Network wallet-ledger-tests_default  Removed

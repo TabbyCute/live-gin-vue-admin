@@ -1,0 +1,4 @@
+{"interface":"utun8","literalIP":true,"port":3306,"stage":"route","tunnel":true}
+{"attempt":1,"bytes":0,"connectMs":3,"connected":true,"elapsedMs":10007,"protocol":0,"stage":"handshake","timeout":true}
+{"attempt":2,"bytes":0,"connectMs":1,"connected":true,"elapsedMs":10002,"protocol":0,"stage":"handshake","timeout":true}
+{"attempt":3,"bytes":0,"connectMs":1,"connected":true,"elapsedMs":10004,"protocol":0,"stage":"handshake","timeout":true}

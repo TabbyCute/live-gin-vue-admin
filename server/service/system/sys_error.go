@@ -3,6 +3,8 @@ package system
 import (
 	"context"
 	"fmt"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"tb_live_module/global"
 	"tb_live_module/model/common"
 	"tb_live_module/model/system"
@@ -17,7 +19,8 @@ func (sysErrorService *SysErrorService) CreateSysError(ctx context.Context, sysE
 	if global.GVA_DB == nil {
 		return nil
 	}
-	err = global.GVA_DB.Create(sysError).Error
+	// Avoid recursively invoking application logging when the database fails.
+	err = global.GVA_DB.Session(&gorm.Session{Logger: logger.Default.LogMode(logger.Silent)}).WithContext(ctx).Create(sysError).Error
 	return err
 }
 

@@ -1,0 +1,6 @@
+ Container payout-delivery-test-mysql-1  Stopping
+ Container payout-delivery-test-mysql-1  Stopped
+ Container payout-delivery-test-mysql-1  Removing
+ Container payout-delivery-test-mysql-1  Removed
+ Network payout-delivery-test_default  Removing
+ Network payout-delivery-test_default  Removed

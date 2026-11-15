@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"gorm.io/gorm"
-	"math/big"
 	"strconv"
 	"strings"
 	model "tb_live_module/model/earning"
@@ -210,29 +209,26 @@ func (s *Service) buildReconciliation(tx *gorm.DB, a Actor, w model.Withdrawal, 
 	snapshot.Debt = strconv.FormatInt(account.Debt, 10)
 	snapshot.Paid = strconv.FormatInt(account.Paid, 10)
 	snapshot.Version = strconv.FormatInt(account.Version, 10)
-	if e = s.verifyAccount(tx, account, true); e != nil {
+	var progress AuditProgress
+	if e = s.verifyAccountProgress(tx, account, true, func(p AuditProgress) error { progress = p; return nil }); e != nil {
 		if !errors.Is(e, ErrInvariant) && !errors.Is(e, ErrSource) && !errors.Is(e, ErrLimit) {
 			return model.Reconciliation{}, e
 		}
 		snapshot.Issues = append(snapshot.Issues, e.Error())
-	}
-	var st []model.Settlement
-	if e = tx.Where("anchor_id=? AND currency=? AND status='approved'", w.AnchorID, w.Currency).Limit(maxAuditFacts + 1).Find(&st).Error; e != nil {
-		return model.Reconciliation{}, e
-	}
-	if len(st) > maxAuditFacts {
-		return model.Reconciliation{}, ErrLimit
-	}
-	credits, negative := new(big.Int), new(big.Int)
-	for _, v := range st {
-		if v.Amount >= 0 {
-			credits.Add(credits, big.NewInt(v.Amount))
-		} else {
-			negative.Add(negative, big.NewInt(v.Amount))
+		var totalsError error
+		progress.Credits, progress.Negative, totalsError = recordedSettlementTotals(tx, account)
+		if totalsError != nil {
+			return model.Reconciliation{}, totalsError
 		}
 	}
-	snapshot.SettlementIncome = credits.String()
-	snapshot.NegativeAdjustments = negative.String()
+	snapshot.SettlementIncome = progress.Credits
+	snapshot.NegativeAdjustments = progress.Negative
+	if snapshot.SettlementIncome == "" {
+		snapshot.SettlementIncome = "0"
+	}
+	if snapshot.NegativeAdjustments == "" {
+		snapshot.NegativeAdjustments = "0"
+	}
 
 	anchor, e := anchorByNo(tx, w.AnchorNo)
 	if e != nil {

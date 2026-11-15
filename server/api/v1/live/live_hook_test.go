@@ -123,7 +123,7 @@ func TestSRSHookRejectsOversizedBodyWithHTTP413(t *testing.T) {
 	require.Equal(t, "回调请求体过大", result.Msg)
 }
 
-func TestLiveStatsHookRejectsOversizedBodyWithHTTP413(t *testing.T) {
+func TestLiveStatsHookGoneWithoutReadingUntrustedBody(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	previousLive := global.GVA_CONFIG.Live
 	global.GVA_CONFIG.Live.SRSHookMaxBodyBytes = 128
@@ -140,7 +140,7 @@ func TestLiveStatsHookRejectsOversizedBodyWithHTTP413(t *testing.T) {
 	request.Header.Set(middleware.SRSHookTokenHeader, testAPIHookToken)
 	router.ServeHTTP(recorder, request)
 
-	require.Equal(t, http.StatusRequestEntityTooLarge, recorder.Code)
+	require.Equal(t, http.StatusGone, recorder.Code)
 }
 
 func TestBindAndLogSRSHookTruncatesRawLogIndependently(t *testing.T) {

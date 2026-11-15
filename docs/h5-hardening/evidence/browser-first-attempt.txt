@@ -1,0 +1,27 @@
+locator.waitFor: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('heading', { name: '结算记录', exact: true }) to be visible[22m
+
+    at /private/tmp/h5-browser-smoke-20261113.mjs:17:59
+K
+KPlayer
+
+随时随地，发现好内容
+
+欢迎回来
+
+登录后可同步个人资料、观看记录和专属内容。
+
+登录后才能访问刚才的页面。
+登录
+注册
+手机号
+密码
+记住手机号
+注册或登录即表示你已阅读并同意用户协议 和 隐私政策
+
+请先阅读并同意用户协议和隐私政策
+
+登录
+
+还没有账号？ 立即注册

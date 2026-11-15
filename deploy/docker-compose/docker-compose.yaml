@@ -12,6 +12,7 @@ networks:
 volumes:
   mysql:
   redis:
+  anchor_media:
   
 services:
   web:
@@ -35,6 +36,11 @@ services:
       dockerfile: ./Dockerfile
     container_name: gva-server
     restart: always
+    # HTTP drain and bounded worker joins may together take up to 48 seconds.
+    stop_grace_period: 60s
+    volumes:
+      # Mount the parent; the application creates its private child with mode 0700.
+      - anchor_media:/var/lib/tb-live
     environment:
       # 与SRS使用同一个至少32字节的高熵密钥；未提供时Compose直接拒绝启动。
       SRS_HOOK_TOKEN: "${SRS_HOOK_TOKEN:?SRS_HOOK_TOKEN must be set}"

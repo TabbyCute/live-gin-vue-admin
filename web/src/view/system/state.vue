@@ -1,5 +1,6 @@
 <template>
   <div>
+	<OperationsPanel />
     <el-row :gutter="15" class="py-1">
       <el-col :span="12">
         <el-card v-if="state.os" class="card_item">
@@ -154,6 +155,7 @@
   </div>
 </template>
 <script setup>
+	import OperationsPanel from './OperationsPanel.vue'
   import { getSystemState } from '@/api/system'
   import { onUnmounted, ref } from 'vue'
 

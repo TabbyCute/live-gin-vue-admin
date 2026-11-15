@@ -51,3 +51,12 @@
 
 - [guard 主播守护](guard.md)：独立来源权益、续期、退款补偿、到期、永久幂等和租约任务；通过 gift 命令附赠，无直购 API。
 - [ranking 直播榜单](ranking.md)：礼物原始净 COIN 投影、Asia/Kuala_Lumpur 日周月总榜、影子代际重建与核验；不修改财务事实。
+
+- [presence 观众与在线状态](live-presence.md)：签名游客与会员去重、后台房间/场次统计、H5心跳与点赞、检查点、恢复审计及资金事实关联。
+
+- [bank-reconciliation 银行账单核对](bank-reconciliation.md)：外部流水声明、双向差异与独立复核，不直接付款。
+- [event-delivery 可靠通知](event-delivery.md)：持久事件、租约重试、未来实时通讯Adapter。
+- [single-node-operations 单机运维](single-node-operations.md)：有界HTTP/worker指标、日志轮转、健康与排障。
+
+- [主播公开主页一期](anchor-home.md)：多图相册、公开聚合、主播编辑、审核、私有媒体、并发幂等与独立迁移。
+- [MCP 独立开发辅助服务](mcp.md)：回环监听、外部启用边界、同源出站限制与未修复依赖告警。

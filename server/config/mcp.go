@@ -5,6 +5,7 @@ type MCP struct {
 	Version         string `mapstructure:"version" json:"version" yaml:"version"`
 	Path            string `mapstructure:"path" json:"path" yaml:"path"`
 	Addr            int    `mapstructure:"addr" json:"addr" yaml:"addr"`
+	ListenHost      string `mapstructure:"listen-host" json:"listen-host" yaml:"listen-host"`
 	BaseURL         string `mapstructure:"base_url" json:"base_url" yaml:"base_url"`
 	UpstreamBaseURL string `mapstructure:"upstream_base_url" json:"upstream_base_url" yaml:"upstream_base_url"`
 	AuthHeader      string `mapstructure:"auth_header" json:"auth_header" yaml:"auth_header"`

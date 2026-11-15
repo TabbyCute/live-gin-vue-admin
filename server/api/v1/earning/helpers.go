@@ -26,7 +26,7 @@ func invalid(c *gin.Context) bool { respond(c, nil, svc.ErrInvalid); return fals
 func respond(c *gin.Context, data any, err error) {
 	requestTrace := c.GetString("earningTrace")
 	if requestTrace == "" {
-		requestTrace = trace()
+		requestTrace = middleware.RequestID(c)
 		c.Set("earningTrace", requestTrace)
 	}
 	c.Header("X-Request-ID", requestTrace)

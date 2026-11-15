@@ -17,3 +17,7 @@
 后台独立“打款中心 / 出款订单、公司出款账户”，包含领取/凭证/独立复核/调查/重试/取消/对账。H5保持本人DTO与提现四参数协议，新增paid/cancelled和paid余额；不展示公司银行账户或回单。旧payoutEnabled=false仅保留自动外部支付能力语义，不能隐藏人工操作或把已有paid误判无效。
 
 当前契约、部署、可追溯查询和实测边界见 `docs/payout/manual-frontend-integration.md`、`manual-operations.md`、`manual-verification-20261103.md`。可复现脚本 `server/tests/payout/run.sh` 只接本机隔离MySQL，严禁用生产跑故障注入、负载或伪造付款。
+
+2026-11-05密钥配置：按用户明确要求，`InitializePayout`直接使用`global.GVA_CONFIG.Payout`，三个旧加密环境变量不再参与读取或覆盖。prod/dev/docker YAML的payout段包含active-key-id、encryption-keys（JSON字符串保留key ID大小写）、fingerprint-key及中文注释；各环境密钥独立。整个配置字段及成员均json隐藏，系统配置保存跳过payout，禁止后台清空或替换密钥。仍保留历史key验证和启动失败关闭，修改配置需重新启动。
+
+2026-11-12新增外部银行账单核对，入口`service/bankreconcile`及admin银行账单核对页面。八张追加式表与payout_attempt范围索引；绑定公司账户、银行流水、金额币种和收款人，支持完整/部分账单双向差异与独立复核。导入不改paid、余额或旧attempt，不替代真实银行证据；保留root例外。详见[银行核对模块](bank-reconciliation.md)。

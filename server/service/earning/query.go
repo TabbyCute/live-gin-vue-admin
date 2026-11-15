@@ -406,6 +406,9 @@ func (s *Service) CheckAccount(ctx context.Context, a Actor, q req.FinanceQuery)
 		if e != nil {
 			return ErrNotFound
 		}
+		if s.SourceAuditScope != nil {
+			tx = s.SourceAuditScope(tx)
+		}
 		e = s.verifyAccount(tx, account, true)
 		out["consistent"] = e == nil
 		out["account"] = account

@@ -1,125 +1,193 @@
 package internal
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 )
 
-// Cutter 实现 io.Writer 接口
-// 用于日志切割, strings.Join([]string{director,layout, formats..., level+".log"}, os.PathSeparator)
+// Cutter reuses its open file. Routine writes never scan the log directory.
 type Cutter struct {
-	level        string        // 日志级别(debug, info, warn, error, dpanic, panic, fatal)
-	layout       string        // 时间格式 2006-01-02 15:04:05
-	formats      []string      // 自定义参数([]string{Director,"2006-01-02", "business"(此参数可不写), level+".log"}
-	director     string        // 日志文件夹
-	retentionDay int           //日志保留天数
-	file         *os.File      // 文件句柄
-	mutex        *sync.RWMutex // 读写锁
+	level        string
+	layout       string
+	formats      []string
+	director     string
+	retentionDay int
+	file         *os.File
+	mutex        *sync.RWMutex
+	filename     string
+	size         int64
+	maxBytes     int64
+	backups      int
+	lastCleanup  time.Time
 }
-
 type CutterOption func(*Cutter)
 
-// CutterWithLayout 时间格式
-func CutterWithLayout(layout string) CutterOption {
+func CutterWithLayout(layout string) CutterOption { return func(c *Cutter) { c.layout = layout } }
+func CutterWithFormats(formats ...string) CutterOption {
 	return func(c *Cutter) {
-		c.layout = layout
-	}
-}
-
-// CutterWithFormats 格式化参数
-func CutterWithFormats(format ...string) CutterOption {
-	return func(c *Cutter) {
-		if len(format) > 0 {
-			c.formats = format
+		for _, f := range formats {
+			if f != "" && f != "." && f != ".." && !strings.ContainsAny(f, "/\\\x00") {
+				c.formats = append(c.formats, f)
+			}
 		}
 	}
 }
-
-func NewCutter(director string, level string, retentionDay int, options ...CutterOption) *Cutter {
-	rotate := &Cutter{
-		level:        level,
-		director:     director,
-		retentionDay: retentionDay,
-		mutex:        new(sync.RWMutex),
+func NewCutter(director, level string, retentionDay int, options ...CutterOption) *Cutter {
+	c := &Cutter{level: level, director: director, retentionDay: retentionDay, mutex: new(sync.RWMutex), maxBytes: 64 << 20, backups: 3}
+	for _, option := range options {
+		option(c)
 	}
-	for i := 0; i < len(options); i++ {
-		options[i](rotate)
-	}
-	return rotate
+	return c
 }
-
-// Write satisfies the io.Writer interface. It writes to the
-// appropriate file handle that is currently being used.
-// If we have reached rotation time, the target file gets
-// automatically rotated, and also purged if necessary.
-func (c *Cutter) Write(bytes []byte) (n int, err error) {
+func (c *Cutter) Write(b []byte) (int, error) {
 	c.mutex.Lock()
-	defer func() {
-		if c.file != nil {
-			_ = c.file.Close()
-			c.file = nil
-		}
-		c.mutex.Unlock()
-	}()
-	length := len(c.formats)
-	values := make([]string, 0, 3+length)
-	values = append(values, c.director)
+	defer c.mutex.Unlock()
+	if int64(len(b)) > c.maxBytes {
+		return 0, errors.New("log entry exceeds bounded file size")
+	}
+	parts := []string{c.director}
 	if c.layout != "" {
-		values = append(values, time.Now().Format(c.layout))
+		parts = append(parts, time.Now().Format(c.layout))
 	}
-	for i := 0; i < length; i++ {
-		values = append(values, c.formats[i])
-	}
-	values = append(values, c.level+".log")
-	filename := filepath.Join(values...)
-	director := filepath.Dir(filename)
-	err = os.MkdirAll(director, os.ModePerm)
-	if err != nil {
-		return 0, err
-	}
-	defer func() {
-		err := removeNDaysFolders(c.director, c.retentionDay)
-		if err != nil {
-			fmt.Println("清理过期日志失败", err)
+	parts = append(parts, c.formats...)
+	parts = append(parts, c.level+".log")
+	filename := filepath.Join(parts...)
+	if c.file != nil && filename != c.filename {
+		if e := c.close(); e != nil {
+			return 0, e
 		}
-	}()
-
-	c.file, err = os.OpenFile(filename, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
-	if err != nil {
-		return 0, err
 	}
-	return c.file.Write(bytes)
+	if c.file == nil {
+		if c.director == "" {
+			return 0, errors.New("private log directory required")
+		}
+		if e := privateLogDirectory(c.director); e != nil {
+			return 0, e
+		}
+		if e := privateLogDirectory(filepath.Dir(filename)); e != nil {
+			return 0, e
+		}
+		if e := c.open(filename); e != nil {
+			return 0, e
+		}
+	}
+	if c.size+int64(len(b)) > c.maxBytes {
+		if e := c.close(); e != nil {
+			return 0, e
+		}
+		if e := os.Remove(filename + fmt.Sprintf(".%d", c.backups)); e != nil && !os.IsNotExist(e) {
+			return 0, e
+		}
+		for i := c.backups - 1; i >= 1; i-- {
+			if e := os.Rename(filename+fmt.Sprintf(".%d", i), filename+fmt.Sprintf(".%d", i+1)); e != nil && !os.IsNotExist(e) {
+				return 0, e
+			}
+		}
+		if e := os.Rename(filename, filename+".1"); e != nil && !os.IsNotExist(e) {
+			return 0, e
+		}
+		if e := c.open(filename); e != nil {
+			return 0, e
+		}
+	}
+	n, e := c.file.Write(b)
+	c.size += int64(n)
+	if time.Since(c.lastCleanup) > time.Hour {
+		c.lastCleanup = time.Now()
+		if cleanupErr := removeNDaysFolders(c.director, c.retentionDay); cleanupErr != nil {
+			_, _ = fmt.Fprintln(os.Stderr, "log retention cleanup failed")
+		}
+	}
+	return n, e
+}
+func (c *Cutter) open(filename string) error {
+	// Refuse a pre-existing symlink before opening; log directories are private
+	// to the service account. Untrusted users must not have directory write access.
+	if st, e := os.Lstat(filename); e == nil && !st.Mode().IsRegular() {
+		return errors.New("non-regular log target rejected")
+	}
+	f, e := os.OpenFile(filename, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
+	if e != nil {
+		return e
+	}
+	s, e := f.Stat()
+	if e != nil {
+		_ = f.Close()
+		return e
+	}
+	if !s.Mode().IsRegular() {
+		_ = f.Close()
+		return errors.New("log target must be regular file")
+	}
+	// Upgrade an existing 0644 file as well as creating new private files.
+	if e := f.Chmod(0600); e != nil {
+		_ = f.Close()
+		return e
+	}
+	c.file, c.filename, c.size = f, filename, s.Size()
+	return nil
 }
 
+func privateLogDirectory(path string) error {
+	if e := os.MkdirAll(path, 0700); e != nil {
+		return e
+	}
+	st, e := os.Lstat(path)
+	if e != nil {
+		return e
+	}
+	if !st.IsDir() || st.Mode()&os.ModeSymlink != 0 {
+		return errors.New("private log directory must not be a symlink")
+	}
+	// Restrict the root too: historical rotated files from the old writer can
+	// remain readable by mode, but cannot be traversed through this private root.
+	return os.Chmod(path, 0700)
+}
+func (c *Cutter) close() error {
+	if c.file == nil {
+		return nil
+	}
+	e := c.file.Close()
+	c.file = nil
+	return e
+}
+func (c *Cutter) Close() error { c.mutex.Lock(); defer c.mutex.Unlock(); return c.close() }
 func (c *Cutter) Sync() error {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
-
 	if c.file != nil {
 		return c.file.Sync()
 	}
 	return nil
 }
 
-// 增加日志目录文件清理 小于等于零的值默认忽略不再处理
+// Only direct, date-named directories may be removed. Modification time is not
+// a retention timestamp; arbitrary sibling directories and symlinks survive.
 func removeNDaysFolders(dir string, days int) error {
 	if days <= 0 {
 		return nil
 	}
-	cutoff := time.Now().AddDate(0, 0, -days)
-	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
+	entries, e := os.ReadDir(dir)
+	if e != nil {
+		return e
+	}
+	cutoff := time.Now().AddDate(0, 0, -days).Format(time.DateOnly)
+	for _, entry := range entries {
+		if !entry.IsDir() || entry.Type()&os.ModeSymlink != 0 {
+			continue
 		}
-		if info.IsDir() && info.ModTime().Before(cutoff) && path != dir {
-			err = os.RemoveAll(path)
-			if err != nil {
-				return err
-			}
+		name := entry.Name()
+		if _, e := time.Parse(time.DateOnly, name); e != nil || name >= cutoff {
+			continue
 		}
-		return nil
-	})
+		if e := os.RemoveAll(filepath.Join(dir, name)); e != nil {
+			return e
+		}
+	}
+	return nil
 }

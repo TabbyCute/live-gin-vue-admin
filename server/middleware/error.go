@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"net/http/httputil"
 	"os"
 	"runtime/debug"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -24,7 +24,7 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 			if err := recover(); err != nil {
 				if strings.Contains(c.Request.URL.Path, "/payout/") || strings.Contains(c.Request.URL.Path, "/earning/") {
 					if global.GVA_LOG != nil {
-						global.GVA_LOG.Error("financial request panic", zap.String("path", c.FullPath()), zap.String("traceId", c.GetString("payoutTrace")))
+						global.GVA_LOG.Error("financial request panic", zap.String("path", safeRequestRoute(c)), zap.String("traceId", RequestID(c)))
 					}
 					c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"code": 49103, "data": gin.H{}, "msg": "服务暂不可用，请查询原请求结果"})
 					return
@@ -40,42 +40,44 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 					}
 				}
 
-				httpRequest, _ := httputil.DumpRequest(c.Request, false)
+				httpRequest := fmt.Sprintf("%s %s traceId=%s", safeRequestMethod(c.Request.Method), safeRequestRoute(c), RequestID(c))
+				// Panic values can contain credentials, SQL arguments or entire bodies.
+				panicType := fmt.Sprintf("%T", err)
 				if brokenPipe {
-					global.GVA_LOG.Error(c.Request.URL.Path,
-						zap.Any("error", err),
+					recoveryLogger().Error("request connection closed",
+						zap.String("panicType", panicType),
 						zap.String("request", string(httpRequest)),
 					)
 					// If the connection is dead, we can't write a status to it.
-					_ = c.Error(err.(error)) // nolint: errcheck
+					// Do not put the original panic in gin.Errors: other loggers may serialize it.
 					c.Abort()
 					return
 				}
 
 				if stack {
 					form := "后端"
-					info := fmt.Sprintf("Panic: %v\nRequest: %s\nStack: %s", err, string(httpRequest), string(debug.Stack()))
+					info := fmt.Sprintf("Panic type: %s\nRequest: %s\nStack: %s", panicType, httpRequest, string(debug.Stack()))
 					level := "error"
-					_ = service.ServiceGroupApp.SystemServiceGroup.SysErrorService.CreateSysError(context.Background(), &system.SysError{
+					persistRecoveryError(&system.SysError{
 						Form:  &form,
 						Info:  &info,
 						Level: level,
 					})
-					global.GVA_LOG.Error("[Recovery from panic]",
-						zap.Any("error", err),
+					recoveryLogger().Error("[Recovery from panic]",
+						zap.String("panicType", panicType),
 						zap.String("request", string(httpRequest)),
 					)
 				} else {
 					form := "后端"
-					info := fmt.Sprintf("Panic: %v\nRequest: %s", err, string(httpRequest))
+					info := fmt.Sprintf("Panic type: %s\nRequest: %s", panicType, httpRequest)
 					level := "error"
-					_ = service.ServiceGroupApp.SystemServiceGroup.SysErrorService.CreateSysError(context.Background(), &system.SysError{
+					persistRecoveryError(&system.SysError{
 						Form:  &form,
 						Info:  &info,
 						Level: level,
 					})
-					global.GVA_LOG.Error("[Recovery from panic]",
-						zap.Any("error", err),
+					recoveryLogger().Error("[Recovery from panic]",
+						zap.String("panicType", panicType),
 						zap.String("request", string(httpRequest)),
 					)
 				}
@@ -84,4 +86,23 @@ func GinRecovery(stack bool) gin.HandlerFunc {
 		}()
 		c.Next()
 	}
+}
+
+// Recovery must still work when the database is unavailable or its error writer
+// itself panics. Persist only sanitized data, within a bounded shutdown budget.
+func persistRecoveryError(record *system.SysError) {
+	defer func() { _ = recover() }()
+	if global.GVA_DB == nil {
+		return
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	_ = service.ServiceGroupApp.SystemServiceGroup.SysErrorService.CreateSysError(ctx, record)
+}
+
+func recoveryLogger() *zap.Logger {
+	if global.GVA_LOG != nil {
+		return global.GVA_LOG
+	}
+	return zap.NewNop()
 }

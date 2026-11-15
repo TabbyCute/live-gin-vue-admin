@@ -32,7 +32,7 @@ func (systemConfigService *SystemConfigService) GetSystemConfig() (conf config.S
 func (systemConfigService *SystemConfigService) SetSystemConfig(system system.System) (err error) {
 	cs := utils.StructToMap(system.Config)
 	for k, v := range cs {
-		if k == "live-account-auth" {
+		if k == "live-account-auth" || k == "payout" {
 			continue // 该凭证仅由部署配置维护，后台保存其他配置时不能覆盖它。
 		}
 		global.GVA_VP.Set(k, v)

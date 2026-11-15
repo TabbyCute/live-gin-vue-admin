@@ -1,0 +1,133 @@
+?   	tb_live_module	[no test files]
+?   	tb_live_module/api/v1	[no test files]
+ok  	tb_live_module/api/v1/earning	5.215s
+?   	tb_live_module/api/v1/example	[no test files]
+ok  	tb_live_module/api/v1/gift	4.613s
+?   	tb_live_module/api/v1/guard	[no test files]
+ok  	tb_live_module/api/v1/live	7.067s
+ok  	tb_live_module/api/v1/payout	4.082s
+?   	tb_live_module/api/v1/ranking	[no test files]
+ok  	tb_live_module/api/v1/social	6.600s
+?   	tb_live_module/api/v1/system	[no test files]
+ok  	tb_live_module/api/v1/wallet	6.352s
+?   	tb_live_module/assets	[no test files]
+?   	tb_live_module/cmd/earning-migrate	[no test files]
+?   	tb_live_module/cmd/gift-migrate	[no test files]
+?   	tb_live_module/cmd/guard-migrate	[no test files]
+?   	tb_live_module/cmd/mcp	[no test files]
+ok  	tb_live_module/cmd/payout-migrate	4.493s
+ok  	tb_live_module/cmd/presence-migrate	4.158s
+?   	tb_live_module/cmd/ranking-migrate	[no test files]
+?   	tb_live_module/cmd/root-admin-migrate	[no test files]
+?   	tb_live_module/cmd/social-check	[no test files]
+?   	tb_live_module/cmd/wallet-migrate	[no test files]
+ok  	tb_live_module/config	2.949s
+ok  	tb_live_module/core	2.860s
+?   	tb_live_module/core/internal	[no test files]
+?   	tb_live_module/docs	[no test files]
+?   	tb_live_module/global	[no test files]
+ok  	tb_live_module/initialize	4.053s
+ok  	tb_live_module/initialize/internal	2.957s
+ok  	tb_live_module/internal/engagementcli	5.923s
+?   	tb_live_module/internal/httpkit	[no test files]
+?   	tb_live_module/internal/modulekit	[no test files]
+ok  	tb_live_module/internal/srs	3.184s
+ok  	tb_live_module/mcp	3.455s
+ok  	tb_live_module/mcp/client	4.748s
+ok  	tb_live_module/middleware	14.021s
+?   	tb_live_module/model/common	[no test files]
+?   	tb_live_module/model/common/request	[no test files]
+?   	tb_live_module/model/common/response	[no test files]
+?   	tb_live_module/model/earning	[no test files]
+?   	tb_live_module/model/earning/request	[no test files]
+ok  	tb_live_module/model/earning/response	4.908s
+?   	tb_live_module/model/example	[no test files]
+?   	tb_live_module/model/example/request	[no test files]
+?   	tb_live_module/model/example/response	[no test files]
+?   	tb_live_module/model/gift	[no test files]
+?   	tb_live_module/model/gift/request	[no test files]
+?   	tb_live_module/model/gift/response	[no test files]
+?   	tb_live_module/model/guard	[no test files]
+?   	tb_live_module/model/guard/request	[no test files]
+?   	tb_live_module/model/guard/response	[no test files]
+ok  	tb_live_module/model/live	6.576s
+ok  	tb_live_module/model/live/request	5.885s
+?   	tb_live_module/model/live/response	[no test files]
+?   	tb_live_module/model/payout	[no test files]
+?   	tb_live_module/model/payout/request	[no test files]
+?   	tb_live_module/model/payout/response	[no test files]
+?   	tb_live_module/model/ranking	[no test files]
+?   	tb_live_module/model/ranking/request	[no test files]
+?   	tb_live_module/model/ranking/response	[no test files]
+ok  	tb_live_module/model/social	6.041s
+?   	tb_live_module/model/social/request	[no test files]
+?   	tb_live_module/model/social/response	[no test files]
+?   	tb_live_module/model/system	[no test files]
+?   	tb_live_module/model/system/request	[no test files]
+?   	tb_live_module/model/system/response	[no test files]
+?   	tb_live_module/model/wallet	[no test files]
+?   	tb_live_module/model/wallet/request	[no test files]
+?   	tb_live_module/model/wallet/response	[no test files]
+?   	tb_live_module/plugin	[no test files]
+?   	tb_live_module/plugin/announcement	[no test files]
+?   	tb_live_module/plugin/announcement/api	[no test files]
+?   	tb_live_module/plugin/announcement/config	[no test files]
+?   	tb_live_module/plugin/announcement/gen	[no test files]
+?   	tb_live_module/plugin/announcement/initialize	[no test files]
+?   	tb_live_module/plugin/announcement/model	[no test files]
+?   	tb_live_module/plugin/announcement/model/request	[no test files]
+?   	tb_live_module/plugin/announcement/plugin	[no test files]
+?   	tb_live_module/plugin/announcement/router	[no test files]
+?   	tb_live_module/plugin/announcement/service	[no test files]
+?   	tb_live_module/plugin/auto	[no test files]
+?   	tb_live_module/plugin/auto/api	[no test files]
+ok  	tb_live_module/plugin/auto/initialize	7.861s
+?   	tb_live_module/plugin/auto/model	[no test files]
+?   	tb_live_module/plugin/auto/router	[no test files]
+ok  	tb_live_module/plugin/auto/service	6.678s
+?   	tb_live_module/plugin/email	[no test files]
+?   	tb_live_module/plugin/email/api	[no test files]
+?   	tb_live_module/plugin/email/config	[no test files]
+?   	tb_live_module/plugin/email/global	[no test files]
+?   	tb_live_module/plugin/email/model/response	[no test files]
+?   	tb_live_module/plugin/email/router	[no test files]
+?   	tb_live_module/plugin/email/service	[no test files]
+?   	tb_live_module/plugin/email/utils	[no test files]
+?   	tb_live_module/plugin/plugin-tool/utils	[no test files]
+?   	tb_live_module/repository/social	[no test files]
+?   	tb_live_module/router	[no test files]
+ok  	tb_live_module/router/earning	8.093s
+?   	tb_live_module/router/example	[no test files]
+ok  	tb_live_module/router/gift	5.482s
+?   	tb_live_module/router/guard	[no test files]
+ok  	tb_live_module/router/live	8.049s
+ok  	tb_live_module/router/payout	7.679s
+?   	tb_live_module/router/ranking	[no test files]
+ok  	tb_live_module/router/social	7.548s
+?   	tb_live_module/router/system	[no test files]
+ok  	tb_live_module/router/wallet	7.631s
+?   	tb_live_module/service	[no test files]
+ok  	tb_live_module/service/earning	32.342s
+?   	tb_live_module/service/example	[no test files]
+ok  	tb_live_module/service/gift	16.580s
+ok  	tb_live_module/service/guard	5.356s
+ok  	tb_live_module/service/live	17.006s
+ok  	tb_live_module/service/payout	5.129s
+ok  	tb_live_module/service/ranking	5.965s
+ok  	tb_live_module/service/social	4.336s
+ok  	tb_live_module/service/system	4.127s
+ok  	tb_live_module/service/wallet	9.198s
+?   	tb_live_module/source/example	[no test files]
+?   	tb_live_module/source/system	[no test files]
+?   	tb_live_module/task	[no test files]
+?   	tb_live_module/tmp	[no test files]
+ok  	tb_live_module/utils	4.917s
+ok  	tb_live_module/utils/ast	5.798s
+?   	tb_live_module/utils/autocode	[no test files]
+?   	tb_live_module/utils/captcha	[no test files]
+?   	tb_live_module/utils/plugin	[no test files]
+?   	tb_live_module/utils/plugin/v2	[no test files]
+?   	tb_live_module/utils/request	[no test files]
+?   	tb_live_module/utils/stacktrace	[no test files]
+ok  	tb_live_module/utils/timer	4.929s
+?   	tb_live_module/utils/upload	[no test files]

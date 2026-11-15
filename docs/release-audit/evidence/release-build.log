@@ -1,0 +1,358 @@
+==> 构建环境: production
+==> 目标平台: linux/amd64
+==> 发布编号: tb-live-production-linux-2026110901
+==> Go: go version go1.24.5 darwin/amd64
+==> Node: v24.4.1
+==> pnpm: 10.28.0
+==> 跳过前端依赖安装（SKIP_PNPM_INSTALL=1）
+==> 构建管理后台
+
+> tb_live@2.9.2 build /Users/tabby/codes/go/live-gin-vue-admin/web
+> vite build --mode production
+
+vite v8.3.0 building client environment for production...
+transforming...
+✓ 2760 modules transformed.
+rendering chunks...
+computing gzip size...
+../server/assets/admin/index.html                                                        3.01 kB │ gzip:   1.14 kB
+../server/assets/admin/assets/087AC4D233B64EB0noBody.uscRzRXF.png                        4.09 kB
+../server/assets/admin/assets/087AC4D233B64EB0docs.DHdLpnBP.png                          4.70 kB
+../server/assets/admin/assets/087AC4D233B64EB0kefu.DNqTOiJW.png                          6.77 kB
+../server/assets/admin/assets/087AC4D233B64EB0logo.DAivSsrL.png                          8.06 kB
+../server/assets/admin/assets/087AC4D233B64EB0404.Bk63Q-R4.png                          43.98 kB
+../server/assets/admin/assets/087AC4D233B64EB0banner2.CEIAvdoV.jpg                      45.77 kB
+../server/assets/admin/assets/087AC4D233B64EB0login_right_banner.Dgs3yKiB.jpg          719.02 kB
+../server/assets/admin/assets/087AC4D233B64EB0pubPlug.Cq_EgFnB.css                       0.05 kB │ gzip:   0.07 kB
+../server/assets/admin/assets/087AC4D233B64EB0asyncSubmenu.DG2UZagD.css                  0.07 kB │ gzip:   0.08 kB
+../server/assets/admin/assets/087AC4D233B64EB0aiWrokflow.TX5pchio.css                    0.07 kB │ gzip:   0.09 kB
+../server/assets/admin/assets/087AC4D233B64EB0screenfull.CYSY2BXD.css                    0.13 kB │ gzip:   0.13 kB
+../server/assets/admin/assets/087AC4D233B64EB0icon.mwfTl2Aj.css                          0.13 kB │ gzip:   0.13 kB
+../server/assets/admin/assets/087AC4D233B64EB0PresencePanel.l-skDf3n.css                 0.14 kB │ gzip:   0.13 kB
+../server/assets/admin/assets/087AC4D233B64EB0authority.Bl7foHeB.css                     0.16 kB │ gzip:   0.13 kB
+../server/assets/admin/assets/087AC4D233B64EB0customPic.ClpSuBvk.css                     0.16 kB │ gzip:   0.14 kB
+../server/assets/admin/assets/087AC4D233B64EB0autoCode.nc-TitMy.css                      0.22 kB │ gzip:   0.10 kB
+../server/assets/admin/assets/087AC4D233B64EB0user.B9yYj4ma.css                          0.24 kB │ gzip:   0.17 kB
+../server/assets/admin/assets/087AC4D233B64EB0sysOperationRecord.DnCDt2Ko.css            0.29 kB │ gzip:   0.21 kB
+../server/assets/admin/assets/087AC4D233B64EB0headMode.D-eBj0Km.css                      0.33 kB │ gzip:   0.16 kB
+../server/assets/admin/assets/087AC4D233B64EB0layoutModeCard.uT0k3aCe.css                0.33 kB │ gzip:   0.18 kB
+../server/assets/admin/assets/087AC4D233B64EB0QR-code.D6qGBMS2.css                       0.37 kB │ gzip:   0.24 kB
+../server/assets/admin/assets/087AC4D233B64EB0state.bpSK_b73.css                         0.40 kB │ gzip:   0.20 kB
+../server/assets/admin/assets/087AC4D233B64EB0themeColorPicker.BTGzcaWA.css              0.48 kB │ gzip:   0.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0system.JWmmJjEr.css                        0.60 kB │ gzip:   0.27 kB
+../server/assets/admin/assets/087AC4D233B64EB0selectImage.CzH1drpr.css                   0.61 kB │ gzip:   0.29 kB
+../server/assets/admin/assets/087AC4D233B64EB0layout.BpwvfLRL.css                        0.64 kB │ gzip:   0.28 kB
+../server/assets/admin/assets/087AC4D233B64EB0init.BLcG7E2I.css                          0.78 kB │ gzip:   0.29 kB
+../server/assets/admin/assets/087AC4D233B64EB0atom-one-dark.B-oHczHB.css                 0.85 kB │ gzip:   0.40 kB
+../server/assets/admin/assets/087AC4D233B64EB0atom-one-light.DL4hhEUL.css                0.85 kB │ gzip:   0.40 kB
+../server/assets/admin/assets/087AC4D233B64EB0search.Bnfh1Wu4.css                        0.86 kB │ gzip:   0.37 kB
+../server/assets/admin/assets/087AC4D233B64EB0tools.CSiIx0WQ.css                         0.90 kB │ gzip:   0.36 kB
+../server/assets/admin/assets/087AC4D233B64EB0menu.BWQStMth.css                          0.93 kB │ gzip:   0.32 kB
+../server/assets/admin/assets/087AC4D233B64EB0scanUpload.XxMCc_lB.css                    0.96 kB │ gzip:   0.47 kB
+../server/assets/admin/assets/087AC4D233B64EB0wallet.DVuaWDZ9.css                        1.65 kB │ gzip:   0.61 kB
+../server/assets/admin/assets/087AC4D233B64EB0settingItem.s9ceP_M2.css                   1.70 kB │ gzip:   0.34 kB
+../server/assets/admin/assets/087AC4D233B64EB0breakpoint.CE1sJiIf.css                    1.70 kB │ gzip:   0.60 kB
+../server/assets/admin/assets/087AC4D233B64EB0sysDictionary.D3jJHlnl.css                 1.71 kB │ gzip:   0.59 kB
+../server/assets/admin/assets/087AC4D233B64EB0session.BQCyBhdu.css                       1.94 kB │ gzip:   0.64 kB
+../server/assets/admin/assets/087AC4D233B64EB0room.BcvjI0vF.css                          2.00 kB │ gzip:   0.66 kB
+../server/assets/admin/assets/087AC4D233B64EB0tabs.y2CJkCRw.css                          2.07 kB │ gzip:   0.64 kB
+../server/assets/admin/assets/087AC4D233B64EB0category.CqBWXPJg.css                      2.23 kB │ gzip:   0.67 kB
+../server/assets/admin/assets/087AC4D233B64EB0account.DQSC8HLv.css                       2.35 kB │ gzip:   0.68 kB
+../server/assets/admin/assets/087AC4D233B64EB0version.DoN_VkIF.css                       2.42 kB │ gzip:   0.55 kB
+../server/assets/admin/assets/087AC4D233B64EB0introduction.DjgRyqe4.css                  2.87 kB │ gzip:   0.91 kB
+../server/assets/admin/assets/087AC4D233B64EB0vue-cropper.BiGpXayo.css                   3.36 kB │ gzip:   0.99 kB
+../server/assets/admin/assets/087AC4D233B64EB0anchor.BIobJKKy.css                        4.28 kB │ gzip:   1.06 kB
+../server/assets/admin/assets/087AC4D233B64EB0person.Gd1NApYc.css                        5.60 kB │ gzip:   1.10 kB
+../server/assets/admin/assets/087AC4D233B64EB0setting.DebdmHOa.css                       7.25 kB │ gzip:   1.35 kB
+../server/assets/admin/assets/087AC4D233B64EB0info.BdSiwwOp.css                         17.64 kB │ gzip:   3.08 kB
+../server/assets/admin/assets/087AC4D233B64EB0index.B10iOpzS.css                       428.03 kB │ gzip:  61.92 kB
+../server/assets/admin/assets/087AC4D233B64EB0config.D0-abWly.js                         0.08 kB │ gzip:   0.10 kB
+../server/assets/admin/assets/087AC4D233B64EB0_plugin-vue_export-helper.BDNMzG2s.js      0.08 kB │ gzip:   0.09 kB
+../server/assets/admin/assets/087AC4D233B64EB0gift.6T-210AA.js                           0.17 kB │ gzip:   0.16 kB
+../server/assets/admin/assets/087AC4D233B64EB0guard.PWli_VP0.js                          0.18 kB │ gzip:   0.16 kB
+../server/assets/admin/assets/087AC4D233B64EB0earning.Cl2C5dGO.js                        0.18 kB │ gzip:   0.16 kB
+../server/assets/admin/assets/087AC4D233B64EB0bottomInfo.DTFE5Lef.js                     0.20 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0mcp.DPHGlpOh.js                            0.21 kB │ gzip:   0.18 kB
+../server/assets/admin/assets/087AC4D233B64EB0skills.B746Mb4_.js                         0.22 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0autoCode.CR6MJsdN.js                       0.22 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0autoPkg.B1t3-aya.js                        0.22 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0mcpTest.Dph-E-gz.js                        0.22 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0aiWorkflow.DwxOCZQr.js                     0.22 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0about.IXGTqYYO.js                          0.22 kB │ gzip:   0.21 kB
+../server/assets/admin/assets/087AC4D233B64EB0autoCodeAdmin.C_E0i43k.js                  0.22 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0stringFun.B1FamCgm.js                      0.26 kB │ gzip:   0.17 kB
+../server/assets/admin/assets/087AC4D233B64EB0history.XrE2B_h6.js                        0.27 kB │ gzip:   0.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0item.CKrrUVsX.js                           0.27 kB │ gzip:   0.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0task.ZSR3JsZX.js                           0.27 kB │ gzip:   0.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0ledger.YsPZBweP.js                         0.27 kB │ gzip:   0.23 kB
+../server/assets/admin/assets/087AC4D233B64EB0member.lAkEb0E4.js                         0.27 kB │ gzip:   0.23 kB
+../server/assets/admin/assets/087AC4D233B64EB0category.DmRbkMzF.js                       0.27 kB │ gzip:   0.23 kB
+../server/assets/admin/assets/087AC4D233B64EB0initdb.DojzX9hg.js                         0.27 kB │ gzip:   0.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0reload.CACVG1zB.js                         0.27 kB │ gzip:   0.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0settlement.DYwQyV8Y.js                     0.31 kB │ gzip:   0.26 kB
+../server/assets/admin/assets/087AC4D233B64EB0withdrawal.D20eTlB5.js                     0.31 kB │ gzip:   0.26 kB
+../server/assets/admin/assets/087AC4D233B64EB0exchange.BbUQQTSP.js                       0.31 kB │ gzip:   0.27 kB
+../server/assets/admin/assets/087AC4D233B64EB0account.CqHu7SQ8.js                        0.31 kB │ gzip:   0.27 kB
+../server/assets/admin/assets/087AC4D233B64EB0reconciliation.BnLAgaWM.js                 0.31 kB │ gzip:   0.27 kB
+../server/assets/admin/assets/087AC4D233B64EB0bus.CCyuzs33.js                            0.32 kB │ gzip:   0.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0system.DoNSnUSF.js                         0.33 kB │ gzip:   0.20 kB
+../server/assets/admin/assets/087AC4D233B64EB0live-category.DclCscKb.js                  0.46 kB │ gzip:   0.21 kB
+../server/assets/admin/assets/087AC4D233B64EB0lock.CPfKi5di.js                           0.49 kB │ gzip:   0.27 kB
+../server/assets/admin/assets/087AC4D233B64EB0close.I2gbXQk9.js                          0.51 kB │ gzip:   0.27 kB
+../server/assets/admin/assets/087AC4D233B64EB0warn.BYc6zT3H.js                           0.53 kB │ gzip:   0.34 kB
+../server/assets/admin/assets/087AC4D233B64EB0authority.D7afzFTj.js                      0.57 kB │ gzip:   0.24 kB
+../server/assets/admin/assets/087AC4D233B64EB0systemTools.JLFhtWCY.js                    0.58 kB │ gzip:   0.39 kB
+../server/assets/admin/assets/087AC4D233B64EB0example.C-X40bNQ.js                        0.58 kB │ gzip:   0.40 kB
+../server/assets/admin/assets/087AC4D233B64EB0superAdmin.yp0l05Tq.js                     0.58 kB │ gzip:   0.40 kB
+../server/assets/admin/assets/087AC4D233B64EB0live-room.bsPIgsGM.js                      0.59 kB │ gzip:   0.24 kB
+../server/assets/admin/assets/087AC4D233B64EB0routerHolder.DR76FTAY.js                   0.62 kB │ gzip:   0.40 kB
+../server/assets/admin/assets/087AC4D233B64EB0responsive.DD2Mkvbg.js                     0.67 kB │ gzip:   0.38 kB
+../server/assets/admin/assets/087AC4D233B64EB0warningBar.pYIcHjud.js                     0.70 kB │ gzip:   0.46 kB
+../server/assets/admin/assets/087AC4D233B64EB0server.BBUkjkQC.js                         0.72 kB │ gzip:   0.32 kB
+../server/assets/admin/assets/087AC4D233B64EB0idea.Dif1VSir.js                           0.76 kB │ gzip:   0.45 kB
+../server/assets/admin/assets/087AC4D233B64EB0wallet.PBTsD3-B.js                         0.82 kB │ gzip:   0.28 kB
+../server/assets/admin/assets/087AC4D233B64EB0banner.CE66JfBl.js                         0.83 kB │ gzip:   0.53 kB
+../server/assets/admin/assets/087AC4D233B64EB0menuItem.aiOYBonG.js                       0.93 kB │ gzip:   0.54 kB
+../server/assets/admin/assets/087AC4D233B64EB0settingItem.CJaLJRI8.js                    0.95 kB │ gzip:   0.55 kB
+../server/assets/admin/assets/087AC4D233B64EB0asideComponent.CjoPKhTf.js                 0.95 kB │ gzip:   0.51 kB
+../server/assets/admin/assets/087AC4D233B64EB0card.wuEm8cel.js                           0.98 kB │ gzip:   0.57 kB
+../server/assets/admin/assets/087AC4D233B64EB0aside.C6chXuME.js                          1.03 kB │ gzip:   0.47 kB
+../server/assets/admin/assets/087AC4D233B64EB0shared.BiyRkEW-.js                         1.18 kB │ gzip:   0.80 kB
+../server/assets/admin/assets/087AC4D233B64EB0error.W_kU-Eya.js                          1.28 kB │ gzip:   0.87 kB
+../server/assets/admin/assets/087AC4D233B64EB0asyncSubmenu.B7buZBHT.js                   1.28 kB │ gzip:   0.66 kB
+../server/assets/admin/assets/087AC4D233B64EB0customer-gva.kyyneBnn.js                   1.32 kB │ gzip:   0.54 kB
+../server/assets/admin/assets/087AC4D233B64EB0shared.B6YrveRz.js                         1.37 kB │ gzip:   0.78 kB
+../server/assets/admin/assets/087AC4D233B64EB0logo.C_H2AFpc.js                           1.41 kB │ gzip:   0.93 kB
+../server/assets/admin/assets/087AC4D233B64EB0themeModeSelector.5hcV6siP.js              1.41 kB │ gzip:   0.82 kB
+../server/assets/admin/assets/087AC4D233B64EB0search.bxXc4MIr.js                         1.42 kB │ gzip:   0.76 kB
+../server/assets/admin/assets/087AC4D233B64EB0iframe.JG_EK9AF.js                         1.42 kB │ gzip:   0.78 kB
+../server/assets/admin/assets/087AC4D233B64EB0SnapshotPanel.C419UVLQ.js                  1.45 kB │ gzip:   0.88 kB
+../server/assets/admin/assets/087AC4D233B64EB0charts-people-numbers.CWp1IVbw.js          1.50 kB │ gzip:   0.78 kB
+../server/assets/admin/assets/087AC4D233B64EB0charts.B5_SJOxB.js                         1.58 kB │ gzip:   0.81 kB
+../server/assets/admin/assets/087AC4D233B64EB0image.j5EDn94w.js                          1.58 kB │ gzip:   0.82 kB
+../server/assets/admin/assets/087AC4D233B64EB0customPic.XhiQtGcu.js                      1.62 kB │ gzip:   0.75 kB
+../server/assets/admin/assets/087AC4D233B64EB0requestScope.CjOmZA42.js                   1.71 kB │ gzip:   1.05 kB
+../server/assets/admin/assets/087AC4D233B64EB0components-cascader.B5d3CTLt.js            1.82 kB │ gzip:   1.02 kB
+../server/assets/admin/assets/087AC4D233B64EB0dashboard.nZPYcSHw.js                      1.96 kB │ gzip:   1.09 kB
+../server/assets/admin/assets/087AC4D233B64EB0headMode.BLs1m-46.js                       2.20 kB │ gzip:   1.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0normalMode.YgrwliWd.js                     2.25 kB │ gzip:   1.23 kB
+../server/assets/admin/assets/087AC4D233B64EB0ai-gva.B4pDcBLQ.js                         2.29 kB │ gzip:   1.08 kB
+../server/assets/admin/assets/087AC4D233B64EB0charts-content-numbers.DQ5hARj_.js         2.31 kB │ gzip:   1.14 kB
+../server/assets/admin/assets/087AC4D233B64EB0layout.CMczYJPr.js                         2.48 kB │ gzip:   1.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0screenfull.DBz9rqlF.js                     2.59 kB │ gzip:   1.05 kB
+../server/assets/admin/assets/087AC4D233B64EB0SensitiveReveal.SsDt2emd.js                2.92 kB │ gzip:   1.61 kB
+../server/assets/admin/assets/087AC4D233B64EB0combinationMode.BGj05sa0.js                3.11 kB │ gzip:   1.46 kB
+../server/assets/admin/assets/087AC4D233B64EB0setting.CaPaSkFR.js                        3.12 kB │ gzip:   1.62 kB
+../server/assets/admin/assets/087AC4D233B64EB0installPlugin.DOkVOQUd.js                  3.13 kB │ gzip:   1.61 kB
+../server/assets/admin/assets/087AC4D233B64EB0SubmitOrderDialog.B4tppi7L.js              3.30 kB │ gzip:   1.66 kB
+../server/assets/admin/assets/087AC4D233B64EB0header.PipNd3lO.js                         3.48 kB │ gzip:   1.61 kB
+../server/assets/admin/assets/087AC4D233B64EB0layoutModeCard.BhgoJtS0.js                 3.65 kB │ gzip:   1.45 kB
+../server/assets/admin/assets/087AC4D233B64EB0appearance.Ct2PKHre.js                     3.72 kB │ gzip:   1.25 kB
+../server/assets/admin/assets/087AC4D233B64EB0themeColorPicker.C8jMLQ5k.js               3.83 kB │ gzip:   1.71 kB
+../server/assets/admin/assets/087AC4D233B64EB0scanUpload.CGIneVMr.js                     3.95 kB │ gzip:   2.03 kB
+../server/assets/admin/assets/087AC4D233B64EB0ranking.WngRTnj6.js                        4.02 kB │ gzip:   2.04 kB
+../server/assets/admin/assets/087AC4D233B64EB0PresencePanel.DLSrNqZf.js                  4.20 kB │ gzip:   2.15 kB
+../server/assets/admin/assets/087AC4D233B64EB0menus.Cl-cdTX4.js                          4.26 kB │ gzip:   2.03 kB
+../server/assets/admin/assets/087AC4D233B64EB0overview.B-5pPfxA.js                       4.32 kB │ gzip:   2.15 kB
+../server/assets/admin/assets/087AC4D233B64EB0shared.DklGpBlG.js                         4.48 kB │ gzip:   2.28 kB
+../server/assets/admin/assets/087AC4D233B64EB0layout.B72S05Th.js                         4.52 kB │ gzip:   1.44 kB
+../server/assets/admin/assets/087AC4D233B64EB0mcp.BpDucGnc.js                            4.57 kB │ gzip:   1.53 kB
+../server/assets/admin/assets/087AC4D233B64EB0tools.o7SftdlZ.js                          4.57 kB │ gzip:   2.00 kB
+../server/assets/admin/assets/087AC4D233B64EB0pubPlug.BCjEnRmI.js                        4.58 kB │ gzip:   1.88 kB
+../server/assets/admin/assets/087AC4D233B64EB0sidebarMode.CYXveqT2.js                    4.79 kB │ gzip:   1.80 kB
+../server/assets/admin/assets/087AC4D233B64EB0loginLog.CGxxHXwk.js                       4.80 kB │ gzip:   1.94 kB
+../server/assets/admin/assets/087AC4D233B64EB0autoPkg.g1KQBiB6.js                        4.83 kB │ gzip:   2.11 kB
+../server/assets/admin/assets/087AC4D233B64EB0shared.D4ydSbLk.js                         5.10 kB │ gzip:   2.35 kB
+../server/assets/admin/assets/087AC4D233B64EB0sysOperationRecord.VMvvfFRO.js             5.31 kB │ gzip:   1.96 kB
+../server/assets/admin/assets/087AC4D233B64EB0state.Bh_COeN1.js                          5.42 kB │ gzip:   1.24 kB
+../server/assets/admin/assets/087AC4D233B64EB0login.DeWZvj1p.js                          5.45 kB │ gzip:   2.39 kB
+../server/assets/admin/assets/087AC4D233B64EB0plan.DkX2tiuP.js                           5.57 kB │ gzip:   2.34 kB
+../server/assets/admin/assets/087AC4D233B64EB0tabs.CiF7VdjW.js                           5.89 kB │ gzip:   2.29 kB
+../server/assets/admin/assets/087AC4D233B64EB0autoCode.lWEt8-2A.js                       6.35 kB │ gzip:   2.40 kB
+../server/assets/admin/assets/087AC4D233B64EB0pathInfo.CwI_NS_U.js                       6.50 kB │ gzip:   1.40 kB
+../server/assets/admin/assets/087AC4D233B64EB0company.5DwSaOHJ.js                        6.75 kB │ gzip:   2.93 kB
+../server/assets/admin/assets/087AC4D233B64EB0ledger.cvMichpH.js                         7.18 kB │ gzip:   3.05 kB
+../server/assets/admin/assets/087AC4D233B64EB0Records.kTevyZi8.js                        7.44 kB │ gzip:   3.17 kB
+../server/assets/admin/assets/087AC4D233B64EB0sysDictionaryDetail.CBLqCwAC.js            7.48 kB │ gzip:   2.80 kB
+../server/assets/admin/assets/087AC4D233B64EB0ranking.D8ebc1n9.js                        7.57 kB │ gzip:   3.36 kB
+../server/assets/admin/assets/087AC4D233B64EB0init.DByPbms0.js                           7.57 kB │ gzip:   2.88 kB
+../server/assets/admin/assets/087AC4D233B64EB0general.B-ohaGyf.js                        7.78 kB │ gzip:   2.68 kB
+../server/assets/admin/assets/087AC4D233B64EB0SettlementCreateDialog.mNcfWMhT.js         8.05 kB │ gzip:   3.64 kB
+../server/assets/admin/assets/087AC4D233B64EB0sysError.BiF0Wx6y.js                       8.24 kB │ gzip:   3.16 kB
+../server/assets/admin/assets/087AC4D233B64EB0trace.aCVds7sn.js                          8.71 kB │ gzip:   3.19 kB
+../server/assets/admin/assets/087AC4D233B64EB0order.BciRpOYH.js                          8.80 kB │ gzip:   3.63 kB
+../server/assets/admin/assets/087AC4D233B64EB0apiToken.CdP9k3Ss.js                       9.15 kB │ gzip:   3.22 kB
+../server/assets/admin/assets/087AC4D233B64EB0order.COAKSgw3.js                          9.29 kB │ gzip:   3.73 kB
+../server/assets/admin/assets/087AC4D233B64EB0upload.ZxVTHawT.js                         9.54 kB │ gzip:   3.76 kB
+../server/assets/admin/assets/087AC4D233B64EB0rule.r8lxSzR0.js                           9.63 kB │ gzip:   3.63 kB
+../server/assets/admin/assets/087AC4D233B64EB0authority.BGJxf55p.js                     10.58 kB │ gzip:   3.74 kB
+../server/assets/admin/assets/087AC4D233B64EB0account.B1ggDmVX.js                       11.02 kB │ gzip:   4.37 kB
+../server/assets/admin/assets/087AC4D233B64EB0icon.CB7qFkL_.js                          11.18 kB │ gzip:   2.75 kB
+../server/assets/admin/assets/087AC4D233B64EB0Catalog.DjjdiNoR.js                       11.59 kB │ gzip:   4.34 kB
+../server/assets/admin/assets/087AC4D233B64EB0sysParams.UIlguDJ1.js                     11.62 kB │ gzip:   3.91 kB
+../server/assets/admin/assets/087AC4D233B64EB0category.BLtovx0U.js                      11.79 kB │ gzip:   4.50 kB
+../server/assets/admin/assets/087AC4D233B64EB0ManualActions.LDfyAHew.js                 12.06 kB │ gzip:   4.78 kB
+../server/assets/admin/assets/087AC4D233B64EB0mcpTest.jZHvrK_k.js                       12.43 kB │ gzip:   4.44 kB
+../server/assets/admin/assets/087AC4D233B64EB0breakpoint.Fv_3R_--.js                    12.58 kB │ gzip:   4.71 kB
+../server/assets/admin/assets/087AC4D233B64EB0user.CRRMnYVp.js                          12.68 kB │ gzip:   4.16 kB
+../server/assets/admin/assets/087AC4D233B64EB0fieldDialog.cVe2gyq7.js                   12.95 kB │ gzip:   3.80 kB
+../server/assets/admin/assets/087AC4D233B64EB0introduction.BtGdNNx-.js                  13.61 kB │ gzip:   6.11 kB
+../server/assets/admin/assets/087AC4D233B64EB0person.DZ5HN-kQ.js                        13.92 kB │ gzip:   4.25 kB
+../server/assets/admin/assets/087AC4D233B64EB0sysDictionary.BrzPG3q0.js                 14.88 kB │ gzip:   5.51 kB
+../server/assets/admin/assets/087AC4D233B64EB0version.B1yPiTKN.js                       17.51 kB │ gzip:   5.57 kB
+../server/assets/admin/assets/087AC4D233B64EB0menu.DthKWYPb.js                          18.42 kB │ gzip:   5.54 kB
+../server/assets/admin/assets/087AC4D233B64EB0session.Bz-bS-dD.js                       18.58 kB │ gzip:   6.15 kB
+../server/assets/admin/assets/087AC4D233B64EB0room.BQjdhi03.js                          19.87 kB │ gzip:   5.91 kB
+../server/assets/admin/assets/087AC4D233B64EB0FinancePage.DmGyAuke.js                   19.88 kB │ gzip:   6.94 kB
+../server/assets/admin/assets/087AC4D233B64EB0autoCodeAdmin.G5XcmOLE.js                 20.76 kB │ gzip:   6.95 kB
+../server/assets/admin/assets/087AC4D233B64EB0account.CWzWeLWx.js                       21.14 kB │ gzip:   6.46 kB
+../server/assets/admin/assets/087AC4D233B64EB0recharge.D7uZWW9o.js                      24.27 kB │ gzip:   7.49 kB
+../server/assets/admin/assets/087AC4D233B64EB0vue-router.7fen-oIf.js                    24.98 kB │ gzip:   9.66 kB
+../server/assets/admin/assets/087AC4D233B64EB0mode-javascript.BoiD040p.js               27.67 kB │ gzip:   8.97 kB
+../server/assets/admin/assets/087AC4D233B64EB0vue-cropper.es.lV10USxd.js                30.98 kB │ gzip:   8.42 kB
+../server/assets/admin/assets/087AC4D233B64EB0anchor.BzE2zFku.js                        42.74 kB │ gzip:  11.13 kB
+../server/assets/admin/assets/087AC4D233B64EB0system.uWFuRr1j.js                        44.20 kB │ gzip:   7.01 kB
+../server/assets/admin/assets/087AC4D233B64EB0message.2X4H7t7u.js                       52.06 kB │ gzip:  19.88 kB
+../server/assets/admin/assets/087AC4D233B64EB0aiWrokflow.Bw-1Ko04.js                    53.61 kB │ gzip:  14.69 kB
+../server/assets/admin/assets/087AC4D233B64EB0QR-code.BGCAAwSR.js                       62.08 kB │ gzip:  22.84 kB
+../server/assets/admin/assets/087AC4D233B64EB0autoCode.D-opjElD.js                      72.39 kB │ gzip:  22.44 kB
+../server/assets/admin/assets/087AC4D233B64EB0exportTemplate.BSJ_nn2N.js               125.26 kB │ gzip:  36.26 kB
+../server/assets/admin/assets/087AC4D233B64EB0skills.CXlaB7mx.js                       128.66 kB │ gzip:  36.89 kB
+../server/assets/admin/assets/087AC4D233B64EB0vue.runtime.esm-bundler.wiulPJRg.js      129.82 kB │ gzip:  49.58 kB
+../server/assets/admin/assets/087AC4D233B64EB0user.JSA_NeGA.js                         131.38 kB │ gzip:  44.67 kB
+../server/assets/admin/assets/087AC4D233B64EB0dist.CHIlnWmS.js                         170.44 kB │ gzip:  43.35 kB
+../server/assets/admin/assets/087AC4D233B64EB0selectImage.DTHLt6zv.js                  189.68 kB │ gzip:  66.07 kB
+../server/assets/admin/assets/087AC4D233B64EB0theme-github_dark.ByI2wtE9.js            480.14 kB │ gzip: 131.02 kB
+../server/assets/admin/assets/087AC4D233B64EB0info.hjlj-dJP.js                         808.11 kB │ gzip: 276.53 kB
+../server/assets/admin/assets/087AC4D233B64EB0index.D0rhmHd-.js                        910.77 kB │ gzip: 288.66 kB
+../server/assets/admin/assets/087AC4D233B64EB0previewCodeDialog.wZC9I_fr.js            960.48 kB │ gzip: 319.81 kB
+../server/assets/admin/assets/087AC4D233B64EB0echarts.CNP-BZ5k.js                    1,031.81 kB │ gzip: 337.82 kB
+../server/assets/admin/assets/087AC4D233B64EB0formCreate.BnAZToNL.js                 1,269.05 kB │ gzip: 395.62 kB
+../server/assets/admin/assets/087AC4D233B64EB0picture.CSC8dSk4.js                    1,831.18 kB │ gzip: 506.67 kB
+
+[33m[TOLERATED_TRANSFORM] [0mBig integer literals are not available in the configured target environment.
+    [38;5;246m╭[0m[38;5;246m─[0m[38;5;246m[[0m src/view/live/guard/shared.js:10:59 [38;5;246m][0m
+    [38;5;246m│[0m
+ [38;5;246m10 │[0m [38;5;249m [0m[38;5;249m [0m[38;5;249mc[0m[38;5;249mo[0m[38;5;249mn[0m[38;5;249ms[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249mc[0m[38;5;249mo[0m[38;5;249mu[0m[38;5;249mn[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249m=[0m[38;5;249m [0m[38;5;249mB[0m[38;5;249mi[0m[38;5;249mg[0m[38;5;249mI[0m[38;5;249mn[0m[38;5;249mt[0m[38;5;249m([0m[38;5;249mv[0m[38;5;249ma[0m[38;5;249ml[0m[38;5;249mu[0m[38;5;249me[0m[38;5;249m)[0m[38;5;249m,[0m[38;5;249m [0m[38;5;249ml[0m[38;5;249mi[0m[38;5;249mm[0m[38;5;249mi[0m[38;5;249mt[0m[38;5;249m [0m[38;5;249m=[0m[38;5;249m [0m[38;5;249mB[0m[38;5;249mi[0m[38;5;249mg[0m[38;5;249mI[0m[38;5;249mn[0m[38;5;249mt[0m[38;5;249m([0m[38;5;249mp[0m[38;5;249ma[0m[38;5;249mg[0m[38;5;249me[0m[38;5;249mS[0m[38;5;249mi[0m[38;5;249mz[0m[38;5;249me[0m[38;5;249m)[0m[38;5;249m [0m[38;5;249m*[0m[38;5;249m [0m10000n
+ [38;5;240m   │[0m                                                           ───┬──  
+ [38;5;240m   │[0m                                                              ╰──── 
+[38;5;246m────╯[0m
+
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.86s
+==> 构建 H5 客户端：/Users/tabby/Desktop/IM/H5Player
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 529 modules transformed.
+
+(!) outDir /Users/tabby/codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5 is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+rendering chunks...
+computing gzip size...
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/lottie/loading-DY2-ygU2.lottie        4.95 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/index.html                                   5.08 kB │ gzip:   2.14 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/png/hero-CLDdwZDr.png                13.05 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/test-BU2PywDm.css                 0.37 kB │ gzip:   0.22 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/index2-e1VgPjBr.css               0.45 kB │ gzip:   0.22 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/page-B4nwCqkQ.css                 2.65 kB │ gzip:   0.67 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/social_center-D64bc1xa.css        2.83 kB │ gzip:   0.85 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/home-qBfMwPv_.css                 3.40 kB │ gzip:   1.01 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/live_rank-CiEM-5v7.css            3.53 kB │ gzip:   0.99 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/social_profile-Z97YqCYw.css       3.75 kB │ gzip:   0.94 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/user_set-B9Fq4Jhj.css             4.05 kB │ gzip:   1.14 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/vendor-Bdbi0viN.css               4.82 kB │ gzip:   1.13 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/gift_history-D9yGYBt4.css         4.90 kB │ gzip:   1.23 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/user_to_anchor-C2GTCBsx.css       6.14 kB │ gzip:   1.60 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/play-BnzInbND.css                 6.61 kB │ gzip:   1.74 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/test_video-BKhQCNAF.css           6.61 kB │ gzip:   1.74 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/wallet_home-CL3FK2az.css          6.76 kB │ gzip:   1.74 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/login-DmXyujzZ.css                7.09 kB │ gzip:   1.98 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/test_video_swiper-AqmB_dj-.css    8.34 kB │ gzip:   2.19 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/ui-COmU4oUD.css                   8.36 kB │ gzip:   2.09 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/live_home-CFVNhScY.css            9.26 kB │ gzip:   2.17 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/user_live-0ITA3Rg-.css            9.30 kB │ gzip:   2.07 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/earning_home-BnxVU18Z.css         9.55 kB │ gzip:   2.18 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/index-VqV1WGll.css               14.63 kB │ gzip:   3.47 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/live_room-DKn0RxyF.css           16.81 kB │ gzip:   3.50 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/css/vant-DBe6gjvH.css                90.84 kB │ gzip:  37.31 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/loading-Bp_onMC9.js                0.07 kB │ gzip:   0.08 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/about-POzC2k0_.js                  0.20 kB │ gzip:   0.18 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/enums-CrAqIzbA.js                  0.24 kB │ gzip:   0.18 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/not-found-BaLSI-sa.js              0.47 kB │ gzip:   0.31 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/temp_data-C4jtGsER.js              0.91 kB │ gzip:   0.69 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/security-DMXu3k8e.js               1.32 kB │ gzip:   0.81 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/index2-lQeXZmS-.js                 1.56 kB │ gzip:   0.86 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/test-C-UC4FVg.js                   1.79 kB │ gzip:   0.92 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/live_rank-D6geeouy.js              2.13 kB │ gzip:   1.24 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/home-CY9G70QC.js                   2.65 kB │ gzip:   1.35 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/gift_history-CCds6wy9.js           5.25 kB │ gzip:   2.40 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/social_profile-HCxDkwSk.js         6.03 kB │ gzip:   2.71 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/wallet_home-CcAEw2Dz.js            6.69 kB │ gzip:   3.00 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/live_home-Cvj8BOKI.js              7.10 kB │ gzip:   3.20 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/social_center-B3cpoDOV.js          7.42 kB │ gzip:   3.13 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/page-D3Y_22VH.js                   8.44 kB │ gzip:   2.55 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/play-BjtrHH1l.js                   8.60 kB │ gzip:   3.43 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/svg-icon-C4MyRYWG.js               8.61 kB │ gzip:   2.68 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/test_video-zpBvC0pm.js             8.62 kB │ gzip:   3.44 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/login-Do-Kp9fx.js                  9.65 kB │ gzip:   4.07 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/test_video_swiper-t8ITXdDi.js      9.82 kB │ gzip:   4.17 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/user_set-BCMgWWxC.js              10.25 kB │ gzip:   3.88 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/ui-D_AUPAOi.js                    10.97 kB │ gzip:   3.93 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/user_to_anchor-DhYjiEm3.js        13.39 kB │ gzip:   5.42 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/user_live-0mbdTYjJ.js             19.41 kB │ gzip:   7.57 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/earning_home-DnTqgpWJ.js          23.39 kB │ gzip:   8.52 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/live_room-BqMVetZx.js             32.08 kB │ gzip:  11.83 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/lottie-B5Z5U7f3.js                63.01 kB │ gzip:  13.92 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/vue-vendor-Ba81gMJ5.js            82.91 kB │ gzip:  29.13 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/vendor-XuxNUv8G.js                92.02 kB │ gzip:  27.00 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/index-eWrjW-1b.js                139.13 kB │ gzip:  42.33 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/vant-Cc-awwI6.js                 162.44 kB │ gzip:  59.37 kB
+../../../codes/go/live-gin-vue-admin/server/assets/.h5-build.WSdTky/h5/assets/js/moives-DUW6etAo.js               615.45 kB │ gzip: 189.99 kB
+
+✓ built in 5.59s
+
+✨ [vite-plugin-compression]:algorithm=gzip - compressed file successfully: 
+h5/assets/css/index-VqV1WGll.css.gz          14.29kb / gzip: 3.38kb
+h5/assets/css/live_room-DKn0RxyF.css.gz      16.42kb / gzip: 3.40kb
+h5/assets/js/ui-D_AUPAOi.js.gz               10.72kb / gzip: 3.82kb
+h5/assets/js/earning_home-DnTqgpWJ.js.gz     22.84kb / gzip: 8.27kb
+h5/assets/js/live_room-BqMVetZx.js.gz        31.33kb / gzip: 11.48kb
+h5/assets/js/user_set-BCMgWWxC.js.gz         10.01kb / gzip: 3.79kb
+h5/assets/js/user_to_anchor-DhYjiEm3.js.gz   13.08kb / gzip: 5.28kb
+h5/assets/js/user_live-0mbdTYjJ.js.gz        18.96kb / gzip: 7.36kb
+h5/assets/js/lottie-B5Z5U7f3.js.gz           61.54kb / gzip: 13.52kb
+h5/assets/js/vendor-XuxNUv8G.js.gz           89.87kb / gzip: 26.09kb
+h5/assets/js/vue-vendor-Ba81gMJ5.js.gz       80.98kb / gzip: 28.11kb
+h5/assets/css/vant-DBe6gjvH.css.gz           88.72kb / gzip: 36.37kb
+h5/assets/js/index-eWrjW-1b.js.gz            135.87kb / gzip: 41.07kb
+h5/assets/js/vant-Cc-awwI6.js.gz             158.63kb / gzip: 57.39kb
+h5/assets/js/moives-DUW6etAo.js.gz           601.03kb / gzip: 183.33kb
+h5/cdn_scripts/hls.js.gz                     2106.99kb / gzip: 378.03kb
+
+
+[33m[PLUGIN_TIMINGS] [0mJavaScript callbacks ran for 5.6s. The build took 5.6s. Callbacks such as `closeBundle` run after the build ends, so callback time can be more than build time.
+3 callbacks are listed without a time. Their calls overlapped, so the time inside one call includes work from other calls. To find their cost, profile the build with `node --cpu-prof`:
+  - plugin vite:terser renderChunk (33 calls)
+  - plugin vite:css transform (67 calls)
+  - plugin vite:asset load (2 calls)
+See https://rolldown.rs/reference/InputOptions.checks#bundlertimings for more details.
+
+H5 打包完成：/Users/tabby/codes/go/live-gin-vue-admin/server/assets/h5
+访问路径：/app/v1/assets/h5/
+==> 编译 Linux 后端
+==> 生成发布包
+
+打包完成：
+  发布包：/Users/tabby/codes/go/live-gin-vue-admin/release/tb-live-production-linux-2026110901.tar
+  部署脚本：/Users/tabby/codes/go/live-gin-vue-admin/release/tb-live-production-linux-2026110901.sh
+
+将以上两个文件放到服务器的同一个目录，然后复制执行：
+chmod +x ./tb-live-production-linux-2026110901.sh && ./tb-live-production-linux-2026110901.sh
+
+脚本会校验并解压发布包、停止全部旧 tb-live-server 进程，再启动新版本。
+SHA-256：5bd62fb4cbe95772b2031c59f21d8d912f59afcb2d7bc5f8c953bf7a76f4e1d9

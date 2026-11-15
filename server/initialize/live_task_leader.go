@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"tb_live_module/global"
+	"tb_live_module/internal/telemetry"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -75,7 +76,13 @@ return 0`, []string{key}, token).Result()
 // 多个任务仍可并行，但同一任务在所有后端实例中同一时刻只有一个执行者。
 // 任务执行时间超过租约时会自动续期。开启fail-open后，Redis不可用会退回各实例有界执行；
 // 各任务仍依靠数据库租约、条件更新和事务保证幂等，避免直播状态机整体冻结。
-func runLiveTaskWithLeader(taskName string, run func() error) error {
+func runLiveTaskWithLeader(taskName string, run func() error) (result error) {
+	if telemetry.Draining.Load() {
+		return nil
+	}
+	metric := map[string]string{"stream-readiness": "live_readiness", "session-lifecycle": "live_lifecycle", "session-stop": "live_stop", "stream-reconciliation": "live_reconciliation"}[taskName]
+	finish := telemetry.Default.StartWorker(metric, 2*time.Minute)
+	defer func() { finish(result) }()
 	if !global.GVA_CONFIG.Live.TaskLeaderEnabled {
 		return run()
 	}

@@ -1,0 +1,13 @@
+{
+  "localFixtureOnly": true,
+  "externalRequestsBlocked": [],
+  "pageErrors": [],
+  "mobileWidth": 390,
+  "settlementVisible": true,
+  "paidVisible": true,
+  "filtersWorked": true,
+  "withdrawalDetailsMasked": true,
+  "unboundWithdrawalBlocked": true,
+  "accountSwitchAndWallet": true,
+  "horizontalOverflow": false
+}

@@ -61,6 +61,9 @@
         <el-table-column label="推荐权重" prop="recommendWeight" width="105" sortable />
         <el-table-column label="当前场次 ID" width="120"><template #default="scope">{{ scope.row.currentSessionId || '-' }}</template></el-table-column>
         <el-table-column label="开播时间" width="178"><template #default="scope">{{ formatTimestamp(scope.row.liveStartedAt) }}</template></el-table-column>
+        <el-table-column v-if="presenceAllowed" label="游客 / 会员在线" width="160">
+          <template #default="scope"><span>{{ presenceCount(presenceStats[scope.row.roomNo], 'guestCount') }} / {{ presenceCount(presenceStats[scope.row.roomNo], 'memberCount') }}</span></template>
+        </el-table-column>
         <el-table-column label="操作" width="230" fixed="right">
           <template #default="scope">
             <el-button link type="primary" @click="showDetail(scope.row)">详情</el-button>
@@ -122,6 +125,7 @@
 
         <div class="detail-section-title">当前直播快照</div>
         <template v-if="detail.currentSession">
+          <PresencePanel v-if="detailVisible" :session-no="detail.currentSession.sessionNo" />
           <el-descriptions :column="2" border>
             <el-descriptions-item label="场次内部 ID">{{ detail.currentSession.id }}</el-descriptions-item><el-descriptions-item label="场次编号">{{ detail.currentSession.sessionNo }}</el-descriptions-item>
             <el-descriptions-item label="快照标题" :span="2">{{ detail.currentSession.title || '-' }}</el-descriptions-item>
@@ -148,6 +152,8 @@
 </template>
 
 <script setup>
+import PresencePanel from '@/view/live/presence/PresencePanel.vue'
+import { usePresence, presenceCount } from '@/view/live/presence/use-presence'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { formatDate } from '@/utils/format'
@@ -184,6 +190,7 @@ const formatTimestamp = (value) => Number(value) ? (formatDate(Number(value)) ||
 const durationText = (milliseconds) => { const seconds = Math.floor(Number(milliseconds || 0) / 1000); if (seconds < 60) return `${seconds} 秒`; if (seconds < 3600) return `${Math.floor(seconds / 60)} 分 ${seconds % 60} 秒`; return `${Math.floor(seconds / 3600)} 小时 ${Math.floor((seconds % 3600) / 60)} 分` }
 const streamInfoText = (value) => { if (!value || (typeof value === 'object' && Object.keys(value).length === 0)) return '{}'; if (typeof value === 'string') { try { return JSON.stringify(JSON.parse(value), null, 2) } catch { return value } } return JSON.stringify(value, null, 2) }
 const params = () => { const result = { page: page.value, pageSize: pageSize.value }; Object.entries(searchInfo).forEach(([key, value]) => { if (value !== '' && value !== null && value !== undefined) result[key] = value }); return result }
+const { presenceStats, presenceAllowed } = usePresence(tableData, 'roomNo')
 const getTableData = async () => { loading.value = true; try { const res = await getLiveRoomList(params()); if (res.code === 0) { tableData.value = res.data.list || []; total.value = Number(res.data.total || 0) } } finally { loading.value = false } }
 const loadCategories = async () => { const res = await getCategoryTree(); if (res.code === 0) categoryTree.value = res.data || [] }
 const refreshData = () => Promise.all([getTableData(), loadCategories()])

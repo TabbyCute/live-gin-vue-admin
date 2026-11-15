@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"tb_live_module/global"
+	"tb_live_module/middleware"
 	"tb_live_module/model/common/response"
 	model "tb_live_module/model/earning"
 	req "tb_live_module/model/earning/request"
@@ -460,7 +461,7 @@ func (API) AppApplyWithdrawal(c *gin.Context) {
 	}
 	out, e := earningService.ApplyWithdrawal(c.Request.Context(), user, r)
 	if e == nil && global.GVA_LOG != nil {
-		traceID := trace()
+		traceID := middleware.RequestID(c)
 		c.Set("earningTrace", traceID)
 		global.GVA_LOG.Info("withdrawal request resolved", zap.String("traceId", traceID), zap.String("withdrawalNo", out.WithdrawalNo), zap.String("requestId", out.RequestID), zap.String("payeeAccountNo", out.PayeeRef), zap.String("payeeVersion", out.PayeeVersion), zap.String("status", out.Status))
 	}

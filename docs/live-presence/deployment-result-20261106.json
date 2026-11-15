@@ -1,0 +1,372 @@
+{
+  "activeSessions": 0,
+  "applicationDeployed": false,
+  "backupFile": "/Users/tabby/.codex/backups/live-presence-20261106/presence-before-20261105T170854.312178000.jsonl.gz",
+  "backupSHA256": "57b998c609d5cb95b277aa5a786880aaef637f61303dca48e53f40c5a5dc8dcc",
+  "database": "live_prod",
+  "existingTables": [
+    "live_session"
+  ],
+  "financialAfter": {
+    "anchor_earning_ledger": {
+      "rows": 12,
+      "sha256": "08f3fdce1db51555ab1abdd6ed7e336cd7afb1ced71cbb2dc85279dda9ead0b2"
+    },
+    "anchor_finance_audit": {
+      "rows": 8,
+      "sha256": "01d67bba8ce9725159a592e2dbaa52e2619a2a8b2943d47a10bbd016832ec681"
+    },
+    "anchor_finance_control": {
+      "rows": 1,
+      "sha256": "acc07b62f23f458923737c4cd4a66bd05d1e71eb4f384003baaf2dcc760d6349"
+    },
+    "anchor_finance_permission": {
+      "rows": 20,
+      "sha256": "0bec838aa0caea8d35f07d3c098ff1d0f67461fbbcb19356c5071de2f7b3381e"
+    },
+    "anchor_income_fact": {
+      "rows": 12,
+      "sha256": "a689d8af4f8c4b03a75f04fff7e5e491a327ed3a1cf8d2a42e335baf8db68bd2"
+    },
+    "anchor_income_lock": {
+      "rows": 1,
+      "sha256": "b130d086e945005dccde9902a4f20b8c7c70a680a2d019523a5102dd7d031dfa"
+    },
+    "anchor_reconciliation": {
+      "rows": 4,
+      "sha256": "6d926d2b6f599fa8d039ed98e71ec42731356ccda2c89ecbdf600635cc79be86"
+    },
+    "anchor_revenue_rule": {
+      "rows": 1,
+      "sha256": "56acc4495f00df1a49a5a74dfe0730f1dc418c7800940ad28f7d82cbb0e0fd93"
+    },
+    "anchor_rule_termination": {
+      "rows": 1,
+      "sha256": "63bcc396c0b86548ea88fcf946652be5d5868bc097c61f9d2b0370eb0cfc1bab"
+    },
+    "anchor_settlement": {
+      "rows": 1,
+      "sha256": "7595b9e3012e383e065b83e3baa3a3f8ac76497142d85f9c6f0d38f7e8165b6a"
+    },
+    "anchor_settlement_allocation": {
+      "rows": 7,
+      "sha256": "76c53ceabd1da868960cd588db6c1b932a99f0d2e56d83a492b6813d7be26561"
+    },
+    "anchor_settlement_item": {
+      "rows": 7,
+      "sha256": "8e191234723693476e34d2821e7634475f0a599ba6a56e11083733a1b55d7393"
+    },
+    "anchor_settlement_rounding": {
+      "rows": 1,
+      "sha256": "0c74187271c99d5afad7df3ba3cd9604cf27666505ba8e82c0ad3e267ed2f7f4"
+    },
+    "anchor_settlement_rule": {
+      "rows": 2,
+      "sha256": "3379bf41ef185736614ae04a8788c6efeac2a12656ac82e5770f465d11f30823"
+    },
+    "anchor_withdrawable_account": {
+      "rows": 1,
+      "sha256": "eb5404a867dad17e344310604dfeb2e9f56f82dbb5aa4c3b6caacde2d255430e"
+    },
+    "anchor_withdrawable_ledger": {
+      "rows": 2,
+      "sha256": "6bc41524027e7b2675a5b014f3b0928097ed4889218edd6b19a37a8a42d6903b"
+    },
+    "anchor_withdrawal_order": {
+      "rows": 1,
+      "sha256": "b223df4ab9feb0244581d178271c1b2bf9e43fd55a9d3e0d5d110d26a7bfa284"
+    },
+    "gift_order": {
+      "rows": 11,
+      "sha256": "948fe6a50d2f32fae4d44156cad5b7bfd5dba25fc69601b9e350f8a65bdabfbc"
+    },
+    "gift_refund_order": {
+      "rows": 1,
+      "sha256": "42e5c34bfb41835b91aa3dcd44582c0220c3ee4ef8714006256045d1c1a01c88"
+    },
+    "gift_revenue_ledger": {
+      "rows": 12,
+      "sha256": "930270e749270be5bce0c10260251517c0c7ca2914b0d6e3e6496b180650eea3"
+    },
+    "payout_attempt": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_attempt_event": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_audit_log": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_channel": {
+      "rows": 1,
+      "sha256": "684d9d0db027761aa0320924ccc391a4503d5621ff5f3831adb9ff6da2053bb5"
+    },
+    "payout_channel_account": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_channel_daily_usage": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_evidence": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_investigation": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_manual_request": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_order": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_order_request": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_owner_lock": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_payee_account": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_payee_audit": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_reconciliation": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_reveal_grant": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_status_history": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_terminal_event": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "wallet_account": {
+      "rows": 1,
+      "sha256": "24f7e0d4ad8444946158ea3f8aa6b50f911d70ae5095aae126a7c840398b9b85"
+    },
+    "wallet_adjustment_order": {
+      "rows": 3,
+      "sha256": "4880397746dae5295f64a2a18675664160744ff1be8ed4c83274fecd5625df1a"
+    },
+    "wallet_audit_log": {
+      "rows": 19,
+      "sha256": "37a1acb293d59397b2d0624ff9372e00a2a1cbc3fcb3639b6c60b2efbb6a1540"
+    },
+    "wallet_daily_quota": {
+      "rows": 4,
+      "sha256": "f6cb96d7d6ebdbcf945746b46d4599c6a22b19d111c672a494689a8306e4b28c"
+    },
+    "wallet_ledger": {
+      "rows": 14,
+      "sha256": "64076cda202d387c3348783bd792c74c3cb1edc65c98326997c3fc0303702d23"
+    },
+    "wallet_transaction": {
+      "rows": 12,
+      "sha256": "4e704ca59a6652095e328e19263d0925c1cf19d38624aea245eb684ae05105c0"
+    }
+  },
+  "financialBefore": {
+    "anchor_earning_ledger": {
+      "rows": 12,
+      "sha256": "08f3fdce1db51555ab1abdd6ed7e336cd7afb1ced71cbb2dc85279dda9ead0b2"
+    },
+    "anchor_finance_audit": {
+      "rows": 8,
+      "sha256": "01d67bba8ce9725159a592e2dbaa52e2619a2a8b2943d47a10bbd016832ec681"
+    },
+    "anchor_finance_control": {
+      "rows": 1,
+      "sha256": "acc07b62f23f458923737c4cd4a66bd05d1e71eb4f384003baaf2dcc760d6349"
+    },
+    "anchor_finance_permission": {
+      "rows": 20,
+      "sha256": "0bec838aa0caea8d35f07d3c098ff1d0f67461fbbcb19356c5071de2f7b3381e"
+    },
+    "anchor_income_fact": {
+      "rows": 12,
+      "sha256": "a689d8af4f8c4b03a75f04fff7e5e491a327ed3a1cf8d2a42e335baf8db68bd2"
+    },
+    "anchor_income_lock": {
+      "rows": 1,
+      "sha256": "b130d086e945005dccde9902a4f20b8c7c70a680a2d019523a5102dd7d031dfa"
+    },
+    "anchor_reconciliation": {
+      "rows": 4,
+      "sha256": "6d926d2b6f599fa8d039ed98e71ec42731356ccda2c89ecbdf600635cc79be86"
+    },
+    "anchor_revenue_rule": {
+      "rows": 1,
+      "sha256": "56acc4495f00df1a49a5a74dfe0730f1dc418c7800940ad28f7d82cbb0e0fd93"
+    },
+    "anchor_rule_termination": {
+      "rows": 1,
+      "sha256": "63bcc396c0b86548ea88fcf946652be5d5868bc097c61f9d2b0370eb0cfc1bab"
+    },
+    "anchor_settlement": {
+      "rows": 1,
+      "sha256": "7595b9e3012e383e065b83e3baa3a3f8ac76497142d85f9c6f0d38f7e8165b6a"
+    },
+    "anchor_settlement_allocation": {
+      "rows": 7,
+      "sha256": "76c53ceabd1da868960cd588db6c1b932a99f0d2e56d83a492b6813d7be26561"
+    },
+    "anchor_settlement_item": {
+      "rows": 7,
+      "sha256": "8e191234723693476e34d2821e7634475f0a599ba6a56e11083733a1b55d7393"
+    },
+    "anchor_settlement_rounding": {
+      "rows": 1,
+      "sha256": "0c74187271c99d5afad7df3ba3cd9604cf27666505ba8e82c0ad3e267ed2f7f4"
+    },
+    "anchor_settlement_rule": {
+      "rows": 2,
+      "sha256": "3379bf41ef185736614ae04a8788c6efeac2a12656ac82e5770f465d11f30823"
+    },
+    "anchor_withdrawable_account": {
+      "rows": 1,
+      "sha256": "eb5404a867dad17e344310604dfeb2e9f56f82dbb5aa4c3b6caacde2d255430e"
+    },
+    "anchor_withdrawable_ledger": {
+      "rows": 2,
+      "sha256": "6bc41524027e7b2675a5b014f3b0928097ed4889218edd6b19a37a8a42d6903b"
+    },
+    "anchor_withdrawal_order": {
+      "rows": 1,
+      "sha256": "b223df4ab9feb0244581d178271c1b2bf9e43fd55a9d3e0d5d110d26a7bfa284"
+    },
+    "gift_order": {
+      "rows": 11,
+      "sha256": "948fe6a50d2f32fae4d44156cad5b7bfd5dba25fc69601b9e350f8a65bdabfbc"
+    },
+    "gift_refund_order": {
+      "rows": 1,
+      "sha256": "42e5c34bfb41835b91aa3dcd44582c0220c3ee4ef8714006256045d1c1a01c88"
+    },
+    "gift_revenue_ledger": {
+      "rows": 12,
+      "sha256": "930270e749270be5bce0c10260251517c0c7ca2914b0d6e3e6496b180650eea3"
+    },
+    "payout_attempt": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_attempt_event": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_audit_log": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_channel": {
+      "rows": 1,
+      "sha256": "684d9d0db027761aa0320924ccc391a4503d5621ff5f3831adb9ff6da2053bb5"
+    },
+    "payout_channel_account": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_channel_daily_usage": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_evidence": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_investigation": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_manual_request": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_order": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_order_request": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_owner_lock": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_payee_account": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_payee_audit": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_reconciliation": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_reveal_grant": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_status_history": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "payout_terminal_event": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "wallet_account": {
+      "rows": 1,
+      "sha256": "24f7e0d4ad8444946158ea3f8aa6b50f911d70ae5095aae126a7c840398b9b85"
+    },
+    "wallet_adjustment_order": {
+      "rows": 3,
+      "sha256": "4880397746dae5295f64a2a18675664160744ff1be8ed4c83274fecd5625df1a"
+    },
+    "wallet_audit_log": {
+      "rows": 19,
+      "sha256": "37a1acb293d59397b2d0624ff9372e00a2a1cbc3fcb3639b6c60b2efbb6a1540"
+    },
+    "wallet_daily_quota": {
+      "rows": 4,
+      "sha256": "f6cb96d7d6ebdbcf945746b46d4599c6a22b19d111c672a494689a8306e4b28c"
+    },
+    "wallet_ledger": {
+      "rows": 14,
+      "sha256": "64076cda202d387c3348783bd792c74c3cb1edc65c98326997c3fc0303702d23"
+    },
+    "wallet_transaction": {
+      "rows": 12,
+      "sha256": "4e704ca59a6652095e328e19263d0925c1cf19d38624aea245eb684ae05105c0"
+    }
+  },
+  "financialTablesUnchanged": true,
+  "hostFingerprint": "1a33ec8931e5",
+  "migrated": true,
+  "sessions": 35,
+  "verified": true,
+  "version": "8.0.46-0ubuntu0.24.04.4"
+}

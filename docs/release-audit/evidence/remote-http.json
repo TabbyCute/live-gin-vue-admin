@@ -1,0 +1,82 @@
+[
+  {
+    "path": "/api/health",
+    "status": 200,
+    "contentType": "application/json; charset=utf-8",
+    "cache": null,
+    "nosniff": null,
+    "requestId": false,
+    "milliseconds": 236,
+    "bodyRecorded": false
+  },
+  {
+    "path": "/api/swagger/doc.json",
+    "status": 200,
+    "contentType": "application/json; charset=utf-8",
+    "cache": null,
+    "nosniff": null,
+    "requestId": false,
+    "milliseconds": 259,
+    "bodyRecorded": false
+  },
+  {
+    "path": "/api/v1/app/live/user/info",
+    "status": 401,
+    "contentType": "application/json; charset=utf-8",
+    "cache": null,
+    "nosniff": null,
+    "requestId": false,
+    "milliseconds": 375,
+    "bodyRecorded": false
+  },
+  {
+    "path": "/api/v1/app/wallet/balance",
+    "status": 401,
+    "contentType": "application/json; charset=utf-8",
+    "cache": "no-store",
+    "nosniff": null,
+    "requestId": false,
+    "milliseconds": 217,
+    "bodyRecorded": false
+  },
+  {
+    "path": "/debug/pprof/",
+    "status": 404,
+    "contentType": "text/plain",
+    "cache": null,
+    "nosniff": null,
+    "requestId": false,
+    "milliseconds": 225,
+    "bodyRecorded": false
+  },
+  {
+    "path": "/.env",
+    "status": 404,
+    "contentType": "text/plain",
+    "cache": null,
+    "nosniff": null,
+    "requestId": false,
+    "milliseconds": 234,
+    "bodyRecorded": false
+  },
+  {
+    "path": "/config.prod.yaml",
+    "status": 404,
+    "contentType": "text/plain",
+    "cache": null,
+    "nosniff": null,
+    "requestId": false,
+    "milliseconds": 251,
+    "bodyRecorded": false
+  },
+  {
+    "path": "/app/v1/assets/h5/.env",
+    "status": 404,
+    "contentType": null,
+    "cache": null,
+    "nosniff": null,
+    "requestId": false,
+    "milliseconds": 219,
+    "bodyRecorded": false
+  }
+]

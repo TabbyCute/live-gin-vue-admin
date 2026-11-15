@@ -464,10 +464,11 @@ func TestLiveRoomLifecycleReconnectAndFinalize(t *testing.T) {
 	require.Equal(t, prepared.SessionNo, reconnected.SessionNo)
 	require.NoError(t, global.GVA_DB.First(&session, firstSessionID).Error)
 	require.Zero(t, session.ReconnectDeadlineAt)
-	require.NoError(t, service.UpdateSessionStats(liveReq.LiveSessionStatsReq{
-		SessionNo: prepared.SessionNo, ViewCount: 88, ViewerCount: 50, PeakOnlineCount: 23,
-		LikeCount: 120, GiftCount: 9, GiftCoinAmount: 660, GiftUserCount: 4,
-	}))
+	require.ErrorIs(t, service.UpdateSessionStats(liveReq.LiveSessionStatsReq{
+		SessionNo: prepared.SessionNo, ViewCount: 999, GiftCoinAmount: 660,
+	}), ErrPresenceStatsOwned)
+	// Seed the durable audience snapshot directly: external hooks no longer own it.
+	require.NoError(t, global.GVA_DB.Model(&liveModel.LiveSession{}).Where("session_no=?", prepared.SessionNo).Updates(map[string]any{"view_count": 88, "viewer_count": 50, "peak_online_count": 23, "like_count": 120}).Error)
 
 	time.Sleep(2 * time.Millisecond)
 	require.NoError(t, service.OnUnpublish(roomTestUnpublishRequest(prepared, "client-1")))
@@ -483,8 +484,8 @@ func TestLiveRoomLifecycleReconnectAndFinalize(t *testing.T) {
 	require.NoError(t, global.GVA_DB.First(&anchor, anchor.ID).Error)
 	require.Equal(t, uint64(1), anchor.TotalLiveCount)
 	require.Equal(t, session.DurationMs, anchor.TotalLiveDurationMs)
-	require.Equal(t, uint64(88), anchor.TotalViewCount)
-	require.Equal(t, uint32(23), anchor.MaxOnlineCount)
+	require.Zero(t, anchor.TotalViewCount, "观众累计由Presence最终检查点异步写入")
+	require.Zero(t, anchor.MaxOnlineCount, "观众峰值由Presence最终检查点异步写入")
 
 	var room liveModel.LiveRoom
 	require.NoError(t, global.GVA_DB.Where("room_no = ?", prepared.RoomNo).First(&room).Error)
@@ -2060,10 +2061,11 @@ func TestPublicRoomDetailIncludesOfflineRoomButDiscoveryListDoesNot(t *testing.T
 	require.NotContains(t, string(listJSON), "streamInfo", "公开发现列表保持轻量，不携带流信息JSON")
 	require.NotContains(t, string(listJSON), "publishIp")
 
-	require.NoError(t, service.UpdateSessionStats(liveReq.LiveSessionStatsReq{
-		SessionNo: prepared.SessionNo, ViewCount: 88, ViewerCount: 50, PeakOnlineCount: 23,
-		LikeCount: 120, GiftCount: 9, GiftCoinAmount: 660, GiftUserCount: 4,
-	}))
+	require.ErrorIs(t, service.UpdateSessionStats(liveReq.LiveSessionStatsReq{
+		SessionNo: prepared.SessionNo, ViewCount: 999, GiftCoinAmount: 660,
+	}), ErrPresenceStatsOwned)
+	// Seed the durable audience snapshot directly: external hooks no longer own it.
+	require.NoError(t, global.GVA_DB.Model(&liveModel.LiveSession{}).Where("session_no=?", prepared.SessionNo).Updates(map[string]any{"view_count": 88, "viewer_count": 50, "peak_online_count": 23, "like_count": 120}).Error)
 	require.NoError(t, service.RequestOwnerEnd(anchor.UserId))
 	require.NoError(t, service.ProcessPendingSessions(time.Now().UnixMilli()+1))
 	queryCount = 0

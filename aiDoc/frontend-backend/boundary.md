@@ -114,3 +114,39 @@ APP `/api/v1/app/payout/payee`提供list/create/set-default/disable；仅APP本�
 后台`/api/v1/admin/payout/order/create|list|detail`使用x-token和独立金融精确权限。创建只传requestId/withdrawalNo，返回唯一ready订单；同键异提现冲突、同提现异键返回原单并永久占用键。列表分页total/金额/创建人/版本字符串，时间毫秒，详情常规字段脱敏，另以精确权限开放人工操作和一次性明文查看。后台withdrawal投影新增payoutNo/payoutStatus，APP结构不变。二次确认后仍冻结；禁止客户端提交金额/账户/版本/状态；独立复核成功必须走受控人工出款接口，不能修改订单状态字段。独立一级打款中心菜单，当前契约见docs/payout/manual-frontend-integration.md。
 
 2026-11-03人工出款：payout七状态与attempt六状态，23项新增精确能力默认不授予普通角色，ID1同人例外明确审计。公司账户、流水、私有凭证、调查、复核及内部对账由后台操作；APP继续仅本人安全DTO并增加paid/cancelled状态接受与paid余额展示。敏感查看是45秒单次授权，前端30秒清空；证据走授权POST二进制读取，无公共URL。所有写操作requestId永久绑定，未知网络结果原参数重试，49201确定参数失败允许修正后新键重发。历史记录不可覆盖、paid成功与取消释放必须原子入账，unknown不可重试或释放。
+
+2026-11-05：提现加密改为直接读取所选YAML的payout配置，不新增前端参数。系统配置GET不返回payout，系统配置SET忽略该字段并保留原文件密钥；该配置只能由部署文件维护，变更需重启。
+
+## 直播观众与在线状态（2026-11-06）
+
+APP `/api/v1/app/live/presence/guest|open|heartbeat|leave|stats|viewers|active-viewers`、`/room/like`；后台 `/api/v1/admin/live/presence/stats`，后台root或当前有效888角色。会员APP Bearer，游客X-Presence-Guest签名凭证；错误JWT不降级游客，游客只能公开房间且不能点赞。既有Origin白名单不扩展，允许新header并暴露Retry-After。
+
+新增计数/累计时长为十进制字符串；memberCount=onlineCount为登录去重账号、guestCount为签名游客身份、totalOnlineCount为合计。多连接单会员只计1，游客不等于物理自然人；峰值和累计包含游客。stale或空在线字段显示未知，不能按0。心跳/离房sequence与点赞sequence分离，重试原键原参数；默认15秒/45秒TTL，有界退避，token只在内存。后台按页一次批量最多100，两个数组roomNos/sessionNos均必填。
+
+H5Player直播页已接入，取消同页旧social/history心跳；历史接口本身保持不变。presence内部只同步最近观看时间，不复制历史sequence或资金事实。旧hook/session/stats返回410/49509，SRS生命周期Hook保留。没有WebSocket或弹幕，统计故障不由presence强停已获合法地址的播放器。完整字段、错误及兼容策略见docs/live-presence/frontend-integration.md。
+
+
+## 2026-11-09 客户端请求边界与排障
+
+- 全局返回服务端生成的 `X-Request-ID`，供客户端报错反馈和服务日志关联；不是业务幂等键，不能替代钱包/礼物/提现的 `requestId`。
+- APP/hook 普通请求外层正文上限64KiB、context预算10秒；认证与资料/改密更严格，≤4KiB，超限可能返回HTTP 413，容量不足返回429及Retry-After。客户端必须避免盲目更换财务幂等键重试。
+- CORS按配置生效，原生无Origin请求不受CORS限制；同源POST可用；HTTPS反代/独立域名须配置实际Origin。认证响应禁止缓存。
+- `/api/health`为进程存活，`/api/ready`为数据库/必需Redis就绪；release不公开Swagger和HTML联调页面。详见`docs/release-audit/README.md`。
+
+
+## 2026-11-12 P1/P2 后台交互
+
+- 收益新增后台`/api/v1/admin/earning/audit/start|list|cancel`；核验后台报告仅为历史只读快照，不能替代申请/审核/放款时的实时全历史核验。创建使用固定requestId，失败后重试旧请求；新核验重试指定retryOf和新键。
+- 银行核对后台`/api/v1/admin/payout/bank-reconciliation/import|list|detail|run|review`；精确金融权限和即时身份校验，保留root特例。CSV只在内存，不落浏览器持久存储；前端不提交金额变更或paid状态。结果未知保留原参数/键重试，49301确定校验失败可修正重发。
+- 事件投递后台`/api/v1/admin/event-delivery/list|detail|retry`仅有效root；重试沿用稳定事件键和代次CAS。没有真实IM通道时blocked，不伪造delivered；页面不公开私人收件路由。JSON/参数精确校验、预算先于JWT。
+- `/api/v1/admin/system/operations`仅有效root查看进程计数、worker健康、数据库池和有界出款积压，no-store。计数重启清零、积压1000+是下界；页面警告不是已接入外部告警通知。
+- 上述新页面身份变化/离开页面清理内存，丢弃旧请求结果，避免乱序与跨账号残留。本轮不读取、不改动、不测试H5；客户端现有业务DTO保持原契约。
+
+### H5后续接入（2026-11-13用户新授权）
+
+H5Player接入既有本人`/v1/app/earning/settlement/list`，新增结算记录公开DTO白名单/字符串金额/分页；收益与提现状态受控刷新，修复列表筛选与详情旧回包竞态。共享请求层支持X-Request-ID与旧账号401隔离。`src/service/realtime/index.js`预留SDK Adapter，身份变化断开，通知只触发授权HTTP查询，不直接操作资金；暂未配置真实IM。后端无新增API或数据库变更。代码与本地测试交付见`docs/h5-hardening/README.md`；2026-11-14用户确认两个账号仅作身份参考，继续本地隔离测试，不做远程账号验收。
+- APP与认证/presence读取deadline保留至net/http清理结束，超大正文/限流拒绝关闭HTTP/1未读正文连接；合法后续请求由HTTP服务器重置deadline。
+
+## 主播公开主页一期
+
+公开主页采用独立 `/v1/app/anchor-home` 合同，公开DTO与主播本人/后台模型分离；游客可读，附带无效Bearer不得退化匿名。相册、照片版本为JSON安全整数；settings.version为64位十六进制内容CAS；数量和贡献分值为十进制字符串。图片预览必须鉴权读取Blob并在身份切换时撤销。业务幂等requestId与HTTP traceId分开；超时未知结果重用requestId，版本冲突重新读取。完整边界见 `../modules/anchor-home.md` 与 `../../docs/anchor-home/README.md`。

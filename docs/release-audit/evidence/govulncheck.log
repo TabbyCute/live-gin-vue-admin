@@ -1,0 +1,46 @@
+=== Symbol Results ===
+
+Vulnerability #1: GO-2026-6911
+    SSRF and credential leak via unvalidated Location header in
+    github.com/mark3labs/mcp-go
+  More info: https://pkg.go.dev/vuln/GO-2026-6911
+  Module: github.com/mark3labs/mcp-go
+    Found in: github.com/mark3labs/mcp-go@v0.41.1
+    Fixed in: N/A
+    Example traces found:
+      #1: mcp/client/client.go:18:50: client.NewClient calls client.NewStreamableHttpClient, which calls transport.NewStreamableHTTP
+      #2: api/v1/system/auto_code_mcp.go:120:2: system.AutoCodeTemplateApi.MCPTest calls client.Client.Close, which calls transport.StreamableHTTP.Close
+      #3: mcp/client/client.go:35:34: client.NewClient calls client.Client.Initialize, which calls transport.StreamableHTTP.SendNotification
+      #4: api/v1/system/auto_code_mcp.go:126:36: system.AutoCodeTemplateApi.MCPTest calls client.Client.CallTool, which eventually calls transport.StreamableHTTP.SendRequest
+      #5: mcp/client/client.go:24:24: client.NewClient calls client.Client.Start, which calls transport.StreamableHTTP.SetRequestHandler
+
+Vulnerability #2: GO-2026-6888
+    Excessive memory allocation when decompressing crafted streams in
+    github.com/andybalholm/brotli
+  More info: https://pkg.go.dev/vuln/GO-2026-6888
+  Module: github.com/andybalholm/brotli
+    Found in: github.com/andybalholm/brotli@v1.1.1
+    Fixed in: github.com/andybalholm/brotli@v1.2.7
+    Example traces found:
+      #1: service/system/sys_skills.go:418:29: system.SkillsService.DownloadOnlineSkill calls io.ReadAll, which calls brotli.Reader.Read
+      #2: api/v1/system/sys_user.go:506:37: system.BaseApi.ResetPassword calls brotli.decodeError.Error
+
+Vulnerability #3: GO-2026-6865
+    Panic on two-block frames in github.com/klauspost/compress
+  More info: https://pkg.go.dev/vuln/GO-2026-6865
+  Module: github.com/klauspost/compress
+    Found in: github.com/klauspost/compress@v1.18.0
+    Fixed in: github.com/klauspost/compress@v1.20.2
+    Example traces found:
+      #1: service/system/auto_code_plugin.go:269:22: system.autoCodePlugin.PubPlug calls archives.CompressedArchive.Archive, which eventually calls fse.Compress
+      #2: service/system/auto_code_plugin.go:269:22: system.autoCodePlugin.PubPlug calls archives.CompressedArchive.Archive, which eventually calls fse.Decompress
+      #3: service/system/auto_code_plugin.go:269:22: system.autoCodePlugin.PubPlug calls archives.CompressedArchive.Archive, which eventually calls huff0.Compress1X
+      #4: service/system/auto_code_plugin.go:269:22: system.autoCodePlugin.PubPlug calls archives.CompressedArchive.Archive, which eventually calls huff0.Compress4X
+      #5: service/system/auto_code_plugin.go:269:22: system.autoCodePlugin.PubPlug calls archives.CompressedArchive.Archive, which eventually calls huff0.ReadTable
+
+Your code is affected by 3 vulnerabilities from 3 modules.
+This scan also found 7 vulnerabilities in packages you import and 2
+vulnerabilities in modules you require, but your code doesn't appear to call
+these vulnerabilities.
+Use '-show verbose' for more details.
+exit status 3

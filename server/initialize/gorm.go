@@ -108,6 +108,10 @@ func RegisterTables() {
 		global.GVA_LOG.Error("register table failed", zap.Error(err))
 		os.Exit(1)
 	}
+	if err = MigratePresence(db); err != nil {
+		global.GVA_LOG.Error("migrate presence failed", zap.Error(err))
+		os.Exit(1)
+	}
 	if err = MigrateGift(db); err != nil {
 		global.GVA_LOG.Error("migrate gift failed", zap.Error(err))
 		os.Exit(1)

@@ -1,8 +1,8 @@
 package system
 
 import (
-	"tb_live_module/middleware"
 	"github.com/gin-gonic/gin"
+	"tb_live_module/middleware"
 )
 
 type SysRouter struct{}
@@ -16,6 +16,7 @@ func (s *SysRouter) InitSystemRouter(Router *gin.RouterGroup) {
 		sysRouter.POST("reloadSystem", systemApi.ReloadSystem)       // 重启服务
 	}
 	{
+		sysRouterWithoutRecord.GET("operations", systemApi.Operations)
 		sysRouterWithoutRecord.POST("getSystemConfig", systemApi.GetSystemConfig) // 获取配置文件内容
 		sysRouterWithoutRecord.POST("getServerInfo", systemApi.GetServerInfo)     // 获取服务器信息
 	}

@@ -4004,6 +4004,59 @@
                 }
             }
         },
+        "/live/presence/stats": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LivePresenceAdmin"
+                ],
+                "summary": "批量查询当前或历史场次，Redis故障返回stale及空在线字段",
+                "parameters": [
+                    {
+                        "description": "roomNos和sessionNos合计最多100个",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PresenceAdminBatch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/response.PresenceStats"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/live/room/detail": {
             "get": {
                 "security": [
@@ -8868,6 +8921,122 @@
                 }
             }
         },
+        "/v1/admin/anchor-home/album/list": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AnchorHomeAdmin"
+                ],
+                "summary": "当前有效root或888管理员分页查询照片审核队列",
+                "parameters": [
+                    {
+                        "description": "page/pageSize/status/anchorNo",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.AlbumSearch"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/anchor-home/album/preview": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "image/jpeg"
+                ],
+                "tags": [
+                    "AnchorHomeAdmin"
+                ],
+                "summary": "当前有权限的管理员携带x-token读取照片Blob",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "照片公开编号",
+                        "name": "photoNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "full|thumb",
+                        "name": "variant",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/anchor-home/album/review": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AnchorHomeAdmin"
+                ],
+                "summary": "审批/拒绝/下架照片，保存不可变审计记录",
+                "parameters": [
+                    {
+                        "description": "固定requestId、照片version；reject/takedown必须提供reason",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ReviewPhoto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/admin/earning/account/check": {
             "get": {
                 "security": [
@@ -9186,6 +9355,215 @@
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/tb_live_module_model_earning_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/audit/cancel": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "取消排队或执行中核验，不改变资金及终态报告",
+                "parameters": [
+                    {
+                        "description": "作业号",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.CancelAudit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/earning.AuditJob"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/audit/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "分页查看后台核验状态、进度及历史快照",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "anchorNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "currency",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "desc",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "关键字",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "no",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页大小",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "payeeAccountNo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "sourceType",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/tb_live_module_model_earning_response.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/earning/audit/start": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Earning"
+                ],
+                "summary": "排队后台深度核验；报告不能作为放款凭据，失败重试须新幂等键",
+                "parameters": [
+                    {
+                        "description": "主播、币种、幂等键和可选失败原作业号",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.StartAudit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/earning.AuditJob"
                                         }
                                     }
                                 }
@@ -10358,6 +10736,163 @@
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/earning.Withdrawal"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/event-delivery/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "EventDelivery"
+                ],
+                "summary": "root查询事件白名单负载、投递尝试和重试审计",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "投递记录ID（十进制字符串）",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/eventdelivery.Detail"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/event-delivery/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "EventDelivery"
+                ],
+                "summary": "root分页查询可靠事件投递状态（未配置通道不会标记送达）",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码，最多1000",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页1..100",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "pending|leased|blocked|delivered|dead",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "稳定事件ID",
+                        "name": "eventId",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/eventdelivery.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/event-delivery/retry": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "EventDelivery"
+                ],
+                "summary": "root受控重试dead/blocked事件（固定requestId、版本、原因；保持事件幂等键）",
+                "parameters": [
+                    {
+                        "description": "重试命令",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/eventdelivery.RetryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -11553,7 +12088,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.Review"
+                            "$ref": "#/definitions/tb_live_module_model_earning_request.Review"
                         }
                     }
                 ],
@@ -12602,6 +13137,257 @@
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/response.ActionResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/bank-reconciliation/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankReconciliation"
+                ],
+                "summary": "查看批次脱敏明细与最新核对结果",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "导入批次编号",
+                        "name": "batchNo",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/bankreconcile.Detail"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/bank-reconciliation/import": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankReconciliation"
+                ],
+                "summary": "导入银行账单声明（不自动付款或确认到账）",
+                "parameters": [
+                    {
+                        "description": "CSV≤512KiB，≤1000行；固定requestId",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Import"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/bankreconcile.Result"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/bank-reconciliation/list": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankReconciliation"
+                ],
+                "summary": "分页查看脱敏导入批次",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页1—100",
+                        "name": "pageSize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "公司账户编号",
+                        "name": "channelAccountNo",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/bankreconcile.Page"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/bank-reconciliation/review": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankReconciliation"
+                ],
+                "summary": "独立复核核对记录或记录待调查差异",
+                "parameters": [
+                    {
+                        "description": "acknowledge仅用于matched；investigate用于调查",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tb_live_module_model_bankreconcile_request.Review"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/bankreconcile.Result"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/payout/bank-reconciliation/run": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "BankReconciliation"
+                ],
+                "summary": "对指定账期运行双向核对",
+                "parameters": [
+                    {
+                        "description": "批次和固定requestId",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Run"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/bankreconcile.Result"
                                         }
                                     }
                                 }
@@ -14355,6 +15141,54 @@
                 }
             }
         },
+        "/v1/admin/system/operations": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "System"
+                ],
+                "summary": "单机运行指标与出款积压（仅当前有效root）",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/system.operationsResult"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/admin/wallet/account/check": {
             "get": {
                 "security": [
@@ -15075,6 +15909,467 @@
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/response.Trace"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/anchor-home/album": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AnchorHome"
+                ],
+                "summary": "主播自己的相册及排序版本（所有未删除审核状态）",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/anchor-home/album/delete": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AnchorHome"
+                ],
+                "summary": "删除自己的照片，立即撤销公开读取权限",
+                "parameters": [
+                    {
+                        "description": "固定requestId、相册version、photoNo",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.DeletePhoto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/anchor-home/album/preview": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "image/jpeg"
+                ],
+                "tags": [
+                    "AnchorHome"
+                ],
+                "summary": "主播私有照片预览，客户端携带Bearer读取Blob",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "照片公开编号",
+                        "name": "photoNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "full|thumb",
+                        "name": "variant",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/anchor-home/album/reorder": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AnchorHome"
+                ],
+                "summary": "按完整照片集合重排，第一张为公开封面候选",
+                "parameters": [
+                    {
+                        "description": "固定requestId、相册version和完整photoNos",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ReorderPhotos"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/anchor-home/album/upload": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AnchorHome"
+                ],
+                "summary": "上传待审核的主页照片（8MiB、20MP，服务端重新编码）",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "JPEG/PNG/WebP",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "8至64位幂等请求编号",
+                        "name": "requestId",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "当前相册版本",
+                        "name": "version",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/anchor-home/guards": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AnchorHome"
+                ],
+                "summary": "主播当前有效守护公开列表，不返回购买与到期明细",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "主播公开编号",
+                        "name": "anchorNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1..100",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1..50",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.PublicMembers"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/anchor-home/photo": {
+            "get": {
+                "produces": [
+                    "image/jpeg"
+                ],
+                "tags": [
+                    "AnchorHome"
+                ],
+                "summary": "读取当前公开照片，重新检查主播、账号和双向拉黑事实",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "照片公开编号",
+                        "name": "photoNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "full|thumb",
+                        "name": "variant",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/anchor-home/profile": {
+            "get": {
+                "description": "仅返回已审核相册和公开字段；直播入口遵循双向拉黑和房间权限。所有读取使用同一只读快照。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AnchorHome"
+                ],
+                "summary": "主播公开主页（游客可读，提供Bearer时必须有效）",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "主播公开编号",
+                        "name": "anchorNo",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Profile"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/anchor-home/settings": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AnchorHome"
+                ],
+                "summary": "本人主播简介与内容分类编辑快照",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Settings"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AnchorHome"
+                ],
+                "summary": "仅修改本人主播简介与分类，版本冲突拒绝覆盖",
+                "parameters": [
+                    {
+                        "description": "完整的窄字段命令，version来自GET settings",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.SaveSettings"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Settings"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/anchor-home/supporters": {
+            "get": {
+                "description": "day/month/all使用业务时区；dataAsOf展示投影时间，lagCount空表示公开请求不计算全站投影积压。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AnchorHome"
+                ],
+                "summary": "主播贡献榜，来自退款抵减后的礼物投影",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "主播公开编号",
+                        "name": "anchorNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "day|month|all",
+                        "name": "period",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1..100",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "1..50",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Board"
                                         }
                                     }
                                 }
@@ -16828,7 +18123,7 @@
         },
         "/v1/app/live/hook/session/stats": {
             "post": {
-                "description": "请求先通过启动时冻结的 SRS Hook 共享密钥认证，并由部署层 IP 白名单提供第二层保护，供可信统计服务写入；礼物流水仍应由独立账本保存，本接口只更新场次汇总。",
+                "description": "请求先通过启动时冻结的 SRS Hook 共享密钥认证，并由部署层 IP 白名单提供第二层保护，此接口已停用并返回HTTP 410；观众字段归presence，礼物字段归gift。",
                 "consumes": [
                     "application/json"
                 ],
@@ -16851,26 +18146,11 @@
                         "description": "SRS原生HTTP Hook使用的共享密钥；与Header二选一且禁止同时传递",
                         "name": "hook_token",
                         "in": "query"
-                    },
-                    {
-                        "description": "场次统计",
-                        "name": "data",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.LiveSessionStatsReq"
-                        }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "413": {
-                        "description": "请求体超过上限",
+                    "410": {
+                        "description": "旧统计写入口已停用，不读取统计正文",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -16925,6 +18205,397 @@
                         "description": "请求体超过上限",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/presence/active-viewers": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LivePresence"
+                ],
+                "summary": "当前会员最近活动列表，不含礼物金额",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "房间编号",
+                        "name": "roomNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "不透明游标，更新中的列表允许最终一致",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页1至100，默认20",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "签名游客凭证",
+                        "name": "X-Presence-Guest",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.PresenceViewers"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/presence/guest": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LivePresence"
+                ],
+                "summary": "签发24小时游客身份，仅可访问公开直播；不代表物理去重人数",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.PresenceGuest"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/presence/heartbeat": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "数量为十进制字符串；错误49501参数，49502过期，49503权限，49504序号，49505限流，49506依赖，49507背压，49508状态异常。无WebSocket。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LivePresence"
+                ],
+                "summary": "观众心跳，服务端时间与递增sequence",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "游客签名凭证；与APP JWT身份分离",
+                        "name": "X-Presence-Guest",
+                        "in": "header"
+                    },
+                    {
+                        "description": "请求",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PresenceHeartbeat"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.PresenceSession"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/presence/leave": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "数量为十进制字符串；错误49501参数，49502过期，49503权限，49504序号，49505限流，49506依赖，49507背压，49508状态异常。无WebSocket。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LivePresence"
+                ],
+                "summary": "幂等退房，浏览器关闭时最佳努力",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "游客签名凭证；与APP JWT身份分离",
+                        "name": "X-Presence-Guest",
+                        "in": "header"
+                    },
+                    {
+                        "description": "请求",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PresenceLeave"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.PresenceSession"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/presence/open": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "数量为十进制字符串；错误49501参数，49502过期，49503权限，49504序号，49505限流，49506依赖，49507背压，49508状态异常。无WebSocket。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LivePresence"
+                ],
+                "summary": "观众进房，会员或签名游客，requestId幂等",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "游客签名凭证；与APP JWT身份分离",
+                        "name": "X-Presence-Guest",
+                        "in": "header"
+                    },
+                    {
+                        "description": "请求",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PresenceOpen"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.PresenceSession"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/presence/stats": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LivePresence"
+                ],
+                "summary": "查询近实时游客与会员在线统计",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "房间编号",
+                        "name": "roomNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "不透明游标，更新中的列表允许最终一致",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页1至100，默认20",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "签名游客凭证",
+                        "name": "X-Presence-Guest",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.PresenceStats"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/presence/viewers": {
+            "get": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LivePresence"
+                ],
+                "summary": "当前在线会员公开资料游标列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "房间编号",
+                        "name": "roomNo",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "不透明游标，更新中的列表允许最终一致",
+                        "name": "cursor",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页1至100，默认20",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "签名游客凭证",
+                        "name": "X-Presence-Guest",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.PresenceViewers"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -16999,6 +18670,63 @@
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/response.LiveRoomOwnerInfoResp"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/app/live/room/like": {
+            "post": {
+                "security": [
+                    {
+                        "AppBearerAuth": []
+                    }
+                ],
+                "description": "数量为十进制字符串；错误49501参数，49502过期，49503权限，49504序号，49505限流，49506依赖，49507背压，49508状态异常。无WebSocket。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "LivePresence"
+                ],
+                "summary": "登录观众批量点赞，原子幂等与限流",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "游客签名凭证；与APP JWT身份分离",
+                        "name": "X-Presence-Guest",
+                        "in": "header"
+                    },
+                    {
+                        "description": "请求",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.PresenceLike"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.PresenceSession"
                                         }
                                     }
                                 }
@@ -18266,7 +19994,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/response.Relationship"
+                                                "$ref": "#/definitions/tb_live_module_model_social_response.Relationship"
                                             }
                                         }
                                     }
@@ -18566,7 +20294,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/response.Relationship"
+                                                "$ref": "#/definitions/tb_live_module_model_social_response.Relationship"
                                             }
                                         }
                                     }
@@ -18833,7 +20561,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/response.Relationship"
+                                                "$ref": "#/definitions/tb_live_module_model_social_response.Relationship"
                                             }
                                         }
                                     }
@@ -19488,7 +21216,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/response.Relationship"
+                                                "$ref": "#/definitions/tb_live_module_model_social_response.Relationship"
                                             }
                                         }
                                     }
@@ -19728,7 +21456,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/response.Relationship"
+                                                "$ref": "#/definitions/tb_live_module_model_social_response.Relationship"
                                             }
                                         }
                                     }
@@ -20155,6 +21883,207 @@
         }
     },
     "definitions": {
+        "bankreconcile.Batch": {
+            "type": "object",
+            "properties": {
+                "batchNo": {
+                    "type": "string"
+                },
+                "channelAccountNo": {
+                    "type": "string"
+                },
+                "companyMasked": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "declaredComplete": {
+                    "type": "boolean"
+                },
+                "periodFrom": {
+                    "type": "integer"
+                },
+                "periodTo": {
+                    "type": "integer"
+                },
+                "rowCount": {
+                    "type": "integer"
+                },
+                "sourceHash": {
+                    "type": "string"
+                }
+            }
+        },
+        "bankreconcile.Check": {
+            "type": "object",
+            "properties": {
+                "attemptNo": {
+                    "type": "string"
+                },
+                "attemptVersion": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "checkNo": {
+                    "type": "string"
+                },
+                "lineNo": {
+                    "type": "string"
+                },
+                "payoutNo": {
+                    "type": "string"
+                },
+                "result": {
+                    "type": "string"
+                },
+                "runNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "bankreconcile.Detail": {
+            "type": "object",
+            "properties": {
+                "batch": {
+                    "$ref": "#/definitions/bankreconcile.Batch"
+                },
+                "checks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/bankreconcile.Check"
+                    }
+                },
+                "lines": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/bankreconcile.Line"
+                    }
+                },
+                "reviews": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/bankreconcile.Review"
+                    }
+                },
+                "run": {
+                    "$ref": "#/definitions/bankreconcile.Run"
+                }
+            }
+        },
+        "bankreconcile.Line": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "bankStatus": {
+                    "type": "string"
+                },
+                "bookedAt": {
+                    "type": "integer"
+                },
+                "channelAccountNo": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "lineNo": {
+                    "type": "string"
+                },
+                "referenceMasked": {
+                    "type": "string"
+                }
+            }
+        },
+        "bankreconcile.Page": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/bankreconcile.Batch"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "bankreconcile.Result": {
+            "type": "object",
+            "properties": {
+                "no": {
+                    "type": "string"
+                }
+            }
+        },
+        "bankreconcile.Review": {
+            "type": "object",
+            "properties": {
+                "actorId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "checkNo": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "decision": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "reviewNo": {
+                    "type": "string"
+                },
+                "rootException": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "bankreconcile.Run": {
+            "type": "object",
+            "properties": {
+                "batchNo": {
+                    "type": "string"
+                },
+                "checkCount": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "issueCount": {
+                    "type": "integer"
+                },
+                "runNo": {
+                    "type": "string"
+                }
+            }
+        },
         "common.JSONMap": {
             "type": "object",
             "additionalProperties": {}
@@ -20179,6 +22108,29 @@
                 },
                 "endpoint": {
                     "type": "string"
+                }
+            }
+        },
+        "config.AnchorHome": {
+            "type": "object",
+            "properties": {
+                "disabled": {
+                    "type": "boolean"
+                },
+                "imageConcurrency": {
+                    "type": "integer"
+                },
+                "maxPhotos": {
+                    "type": "integer"
+                },
+                "maxUploadsPerDay": {
+                    "type": "integer"
+                },
+                "mediaReadPerMinute": {
+                    "type": "integer"
+                },
+                "publicReadPerMinute": {
+                    "type": "integer"
                 }
             }
         },
@@ -20504,6 +22456,35 @@
                     "type": "boolean"
                 },
                 "task-leader-lease-seconds": {
+                    "type": "integer"
+                }
+            }
+        },
+        "config.LivePresence": {
+            "type": "object",
+            "properties": {
+                "global-connections": {
+                    "type": "integer"
+                },
+                "heartbeat-seconds": {
+                    "type": "integer"
+                },
+                "ip-connections": {
+                    "type": "integer"
+                },
+                "like-minute": {
+                    "type": "integer"
+                },
+                "like-second": {
+                    "type": "integer"
+                },
+                "recheck-seconds": {
+                    "type": "integer"
+                },
+                "room-connections": {
+                    "type": "integer"
+                },
+                "ttl-seconds": {
                     "type": "integer"
                 }
             }
@@ -21017,6 +22998,9 @@
                 "aliyun-oss": {
                     "$ref": "#/definitions/config.AliyunOSS"
                 },
+                "anchorHome": {
+                    "$ref": "#/definitions/config.AnchorHome"
+                },
                 "autocode": {
                     "description": "auto",
                     "allOf": [
@@ -21113,6 +23097,9 @@
                 },
                 "pgsql": {
                     "$ref": "#/definitions/config.Pgsql"
+                },
+                "presence": {
+                    "$ref": "#/definitions/config.LivePresence"
                 },
                 "qiniu": {
                     "$ref": "#/definitions/config.Qiniu"
@@ -21511,6 +23498,61 @@
                 "version": {
                     "type": "string",
                     "example": "0"
+                }
+            }
+        },
+        "earning.AuditJob": {
+            "type": "object",
+            "properties": {
+                "accountSnapshot": {
+                    "type": "string"
+                },
+                "anchorNo": {
+                    "type": "string"
+                },
+                "cancelledBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "createdBy": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "finishedAt": {
+                    "type": "integer"
+                },
+                "issueCode": {
+                    "type": "string"
+                },
+                "jobNo": {
+                    "type": "string"
+                },
+                "progress": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "retryOf": {
+                    "type": "string"
+                },
+                "snapshotHash": {
+                    "type": "string"
+                },
+                "startedAt": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
                 }
             }
         },
@@ -21931,6 +23973,200 @@
                     "type": "string"
                 },
                 "withdrawalNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "eventdelivery.Attempt": {
+            "type": "object",
+            "properties": {
+                "deliveryId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "finishedAt": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "number": {
+                    "type": "integer"
+                },
+                "outcome": {
+                    "type": "string"
+                },
+                "startedAt": {
+                    "type": "integer"
+                }
+            }
+        },
+        "eventdelivery.Delivery": {
+            "type": "object",
+            "properties": {
+                "attempts": {
+                    "type": "integer"
+                },
+                "consumer": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "cycleAttempts": {
+                    "type": "integer"
+                },
+                "deliveredAt": {
+                    "type": "integer"
+                },
+                "eventId": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "lastCode": {
+                    "type": "string"
+                },
+                "leaseUntil": {
+                    "type": "integer"
+                },
+                "nextAttemptAt": {
+                    "type": "integer"
+                },
+                "retryGeneration": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                }
+            }
+        },
+        "eventdelivery.Detail": {
+            "type": "object",
+            "properties": {
+                "attempts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/eventdelivery.Attempt"
+                    }
+                },
+                "delivery": {
+                    "$ref": "#/definitions/eventdelivery.Delivery"
+                },
+                "event": {
+                    "$ref": "#/definitions/eventdelivery.Event"
+                },
+                "payload": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "retries": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/eventdelivery.RetryAudit"
+                    }
+                }
+            }
+        },
+        "eventdelivery.Event": {
+            "type": "object",
+            "properties": {
+                "audience": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "eventId": {
+                    "type": "string"
+                },
+                "eventType": {
+                    "type": "string"
+                },
+                "occurredAt": {
+                    "type": "integer"
+                },
+                "payloadHash": {
+                    "type": "string"
+                },
+                "schemaVersion": {
+                    "type": "integer"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "sourceId": {
+                    "type": "string"
+                }
+            }
+        },
+        "eventdelivery.Page": {
+            "type": "object",
+            "properties": {
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/eventdelivery.Delivery"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "eventdelivery.RetryAudit": {
+            "type": "object",
+            "properties": {
+                "actorId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "createdAt": {
+                    "type": "integer"
+                },
+                "deliveryId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "generation": {
+                    "type": "integer"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "eventdelivery.RetryRequest": {
+            "type": "object",
+            "properties": {
+                "deliveryId": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "generation": {
+                    "type": "integer"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
                     "type": "string"
                 }
             }
@@ -23091,6 +25327,23 @@
                 }
             }
         },
+        "request.AlbumSearch": {
+            "type": "object",
+            "properties": {
+                "anchorNo": {
+                    "type": "string"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
         "request.AnchorAdminProfileUpdateReq": {
             "type": "object",
             "required": [
@@ -23782,6 +26035,14 @@
                 }
             }
         },
+        "request.CancelAudit": {
+            "type": "object",
+            "properties": {
+                "jobNo": {
+                    "type": "string"
+                }
+            }
+        },
         "request.CancelOrder": {
             "type": "object",
             "properties": {
@@ -24043,6 +26304,20 @@
                 },
                 "version": {
                     "type": "string"
+                }
+            }
+        },
+        "request.DeletePhoto": {
+            "type": "object",
+            "properties": {
+                "photoNo": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "integer"
                 }
             }
         },
@@ -24327,6 +26602,29 @@
                     "items": {
                         "type": "integer"
                     }
+                }
+            }
+        },
+        "request.Import": {
+            "type": "object",
+            "properties": {
+                "channelAccountNo": {
+                    "type": "string"
+                },
+                "csv": {
+                    "type": "string"
+                },
+                "declaredComplete": {
+                    "type": "boolean"
+                },
+                "periodFrom": {
+                    "type": "integer"
+                },
+                "periodTo": {
+                    "type": "integer"
+                },
+                "requestId": {
+                    "type": "string"
                 }
             }
         },
@@ -24775,39 +27073,6 @@
                 }
             }
         },
-        "request.LiveSessionStatsReq": {
-            "type": "object",
-            "required": [
-                "sessionNo"
-            ],
-            "properties": {
-                "giftCoinAmount": {
-                    "type": "integer"
-                },
-                "giftCount": {
-                    "type": "integer"
-                },
-                "giftUserCount": {
-                    "type": "integer"
-                },
-                "likeCount": {
-                    "type": "integer"
-                },
-                "peakOnlineCount": {
-                    "type": "integer"
-                },
-                "sessionNo": {
-                    "type": "string",
-                    "maxLength": 96
-                },
-                "viewCount": {
-                    "type": "integer"
-                },
-                "viewerCount": {
-                    "type": "integer"
-                }
-            }
-        },
         "request.Mute": {
             "type": "object",
             "required": [
@@ -24914,6 +27179,82 @@
                 }
             }
         },
+        "request.PresenceAdminBatch": {
+            "type": "object",
+            "properties": {
+                "roomNos": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "sessionNos": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "request.PresenceHeartbeat": {
+            "type": "object",
+            "properties": {
+                "playing": {
+                    "type": "boolean"
+                },
+                "presenceToken": {
+                    "type": "string"
+                },
+                "sequence": {
+                    "type": "string"
+                },
+                "visible": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "request.PresenceLeave": {
+            "type": "object",
+            "properties": {
+                "presenceToken": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "sequence": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.PresenceLike": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "string"
+                },
+                "presenceToken": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "sequence": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.PresenceOpen": {
+            "type": "object",
+            "properties": {
+                "requestId": {
+                    "type": "string"
+                },
+                "roomNo": {
+                    "type": "string"
+                }
+            }
+        },
         "request.ReadEvidence": {
             "type": "object",
             "properties": {
@@ -24950,6 +27291,23 @@
                 },
                 "requestId": {
                     "type": "string"
+                }
+            }
+        },
+        "request.ReorderPhotos": {
+            "type": "object",
+            "properties": {
+                "photoNos": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "integer"
                 }
             }
         },
@@ -25069,17 +27427,6 @@
                 }
             }
         },
-        "request.Review": {
-            "type": "object",
-            "properties": {
-                "approve": {
-                    "type": "boolean"
-                },
-                "ruleNo": {
-                    "type": "string"
-                }
-            }
-        },
         "request.ReviewAdjustment": {
             "type": "object",
             "required": [
@@ -25109,6 +27456,26 @@
                 },
                 "requestId": {
                     "type": "string"
+                }
+            }
+        },
+        "request.ReviewPhoto": {
+            "type": "object",
+            "properties": {
+                "decision": {
+                    "type": "string"
+                },
+                "photoNo": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "integer"
                 }
             }
         },
@@ -25145,6 +27512,17 @@
                     "type": "string"
                 },
                 "scopeType": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.Run": {
+            "type": "object",
+            "properties": {
+                "batchNo": {
+                    "type": "string"
+                },
+                "requestId": {
                     "type": "string"
                 }
             }
@@ -25206,6 +27584,20 @@
                 "vhost": {
                     "type": "string",
                     "maxLength": 255
+                }
+            }
+        },
+        "request.SaveSettings": {
+            "type": "object",
+            "properties": {
+                "categoryId": {
+                    "type": "integer"
+                },
+                "signature": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
                 }
             }
         },
@@ -25298,6 +27690,23 @@
                     }
                 },
                 "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.StartAudit": {
+            "type": "object",
+            "properties": {
+                "anchorNo": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                },
+                "retryOf": {
                     "type": "string"
                 }
             }
@@ -26389,6 +28798,70 @@
                 }
             }
         },
+        "response.Board": {
+            "type": "object",
+            "properties": {
+                "dataAsOf": {
+                    "type": "integer"
+                },
+                "generatedAt": {
+                    "type": "integer"
+                },
+                "giftNo": {
+                    "type": "string"
+                },
+                "lagCount": {
+                    "type": "string"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.Entry"
+                    }
+                },
+                "myRank": {
+                    "$ref": "#/definitions/response.Entry"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "period": {
+                    "type": "string"
+                },
+                "periodKey": {
+                    "type": "string"
+                },
+                "rankType": {
+                    "type": "string"
+                },
+                "scopeNo": {
+                    "type": "string"
+                },
+                "scopeType": {
+                    "type": "string"
+                },
+                "timezone": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Category": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "response.Change": {
             "type": "object",
             "properties": {
@@ -26630,6 +29103,29 @@
                 "to": {
                     "description": "邮件发送给谁",
                     "type": "string"
+                }
+            }
+        },
+        "response.Entry": {
+            "type": "object",
+            "properties": {
+                "quantity": {
+                    "type": "string"
+                },
+                "rank": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "string"
+                },
+                "subjectNo": {
+                    "type": "string"
+                },
+                "subjectType": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/response.UserPublicProfile"
                 }
             }
         },
@@ -26930,6 +29426,23 @@
                     }
                 },
                 "nextCursor": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.LiveCard": {
+            "type": "object",
+            "properties": {
+                "coverUrl": {
+                    "type": "string"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "sessionNo": {
+                    "type": "string"
+                },
+                "title": {
                     "type": "string"
                 }
             }
@@ -27938,6 +30451,65 @@
                 }
             }
         },
+        "response.OperationAlert": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "severity": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.OperationBacklog": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "oldestAt": {
+                    "type": "integer"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "truncated": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.OperationPool": {
+            "type": "object",
+            "properties": {
+                "idle": {
+                    "type": "integer"
+                },
+                "inUse": {
+                    "type": "integer"
+                },
+                "maxOpen": {
+                    "type": "integer"
+                },
+                "open": {
+                    "type": "integer"
+                },
+                "waitCount": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "waitMillis": {
+                    "type": "string",
+                    "example": "0"
+                }
+            }
+        },
         "response.PageResult": {
             "type": "object",
             "properties": {
@@ -28027,6 +30599,359 @@
                 }
             }
         },
+        "response.PresenceGuest": {
+            "type": "object",
+            "properties": {
+                "expiresInSeconds": {
+                    "type": "integer"
+                },
+                "guestToken": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.PresenceSession": {
+            "type": "object",
+            "properties": {
+                "acceptedCount": {
+                    "type": "string"
+                },
+                "checkpointAt": {
+                    "type": "integer"
+                },
+                "cleanupLagMs": {
+                    "type": "string"
+                },
+                "closed": {
+                    "type": "boolean"
+                },
+                "connectionCount": {
+                    "type": "string"
+                },
+                "connectionDurationMs": {
+                    "type": "string"
+                },
+                "connectionNo": {
+                    "type": "string"
+                },
+                "dataLost": {
+                    "type": "boolean"
+                },
+                "expiresInSeconds": {
+                    "type": "integer"
+                },
+                "finalizedAt": {
+                    "type": "integer"
+                },
+                "guestCount": {
+                    "description": "signed guest sessions, not physical people",
+                    "type": "string"
+                },
+                "heartbeatIntervalSeconds": {
+                    "type": "integer"
+                },
+                "likeCount": {
+                    "type": "string"
+                },
+                "memberCount": {
+                    "type": "string"
+                },
+                "onlineCount": {
+                    "description": "logged-in unique accounts",
+                    "type": "string"
+                },
+                "peakOnlineCount": {
+                    "description": "member + guest peak",
+                    "type": "string"
+                },
+                "pendingCount": {
+                    "type": "string"
+                },
+                "presenceToken": {
+                    "type": "string"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "sessionNo": {
+                    "type": "string"
+                },
+                "stale": {
+                    "type": "boolean"
+                },
+                "totalOnlineCount": {
+                    "type": "string"
+                },
+                "totalWatchDurationMs": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                },
+                "viewCount": {
+                    "type": "string"
+                },
+                "viewerCount": {
+                    "type": "string"
+                },
+                "viewerSessionDurationMs": {
+                    "type": "string"
+                },
+                "workerHealthy": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.PresenceStats": {
+            "type": "object",
+            "properties": {
+                "checkpointAt": {
+                    "type": "integer"
+                },
+                "cleanupLagMs": {
+                    "type": "string"
+                },
+                "connectionCount": {
+                    "type": "string"
+                },
+                "dataLost": {
+                    "type": "boolean"
+                },
+                "finalizedAt": {
+                    "type": "integer"
+                },
+                "guestCount": {
+                    "description": "signed guest sessions, not physical people",
+                    "type": "string"
+                },
+                "likeCount": {
+                    "type": "string"
+                },
+                "memberCount": {
+                    "type": "string"
+                },
+                "onlineCount": {
+                    "description": "logged-in unique accounts",
+                    "type": "string"
+                },
+                "peakOnlineCount": {
+                    "description": "member + guest peak",
+                    "type": "string"
+                },
+                "pendingCount": {
+                    "type": "string"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "sessionNo": {
+                    "type": "string"
+                },
+                "stale": {
+                    "type": "boolean"
+                },
+                "totalOnlineCount": {
+                    "type": "string"
+                },
+                "totalWatchDurationMs": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "integer"
+                },
+                "viewCount": {
+                    "type": "string"
+                },
+                "viewerCount": {
+                    "type": "string"
+                },
+                "workerHealthy": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "response.PresenceViewer": {
+            "type": "object",
+            "properties": {
+                "lastActiveAt": {
+                    "type": "integer"
+                },
+                "lastActivityType": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/response.UserPublicProfile"
+                }
+            }
+        },
+        "response.PresenceViewers": {
+            "type": "object",
+            "properties": {
+                "hasMore": {
+                    "type": "boolean"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.PresenceViewer"
+                    }
+                },
+                "nextCursor": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Profile": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "anchorNo": {
+                    "type": "string"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "certified": {
+                    "type": "boolean"
+                },
+                "countryCode": {
+                    "type": "string"
+                },
+                "fansCount": {
+                    "type": "string"
+                },
+                "followingCount": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "generatedAt": {
+                    "type": "integer"
+                },
+                "isSelf": {
+                    "type": "boolean"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "live": {
+                    "$ref": "#/definitions/response.LiveCard"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.PublicPhoto"
+                    }
+                },
+                "relationship": {
+                    "$ref": "#/definitions/tb_live_module_model_anchorhome_response.Relationship"
+                },
+                "signature": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "response.PublicMember": {
+            "type": "object",
+            "properties": {
+                "plan": {
+                    "$ref": "#/definitions/response.PublicPlan"
+                },
+                "user": {
+                    "$ref": "#/definitions/response.UserPublicProfile"
+                }
+            }
+        },
+        "response.PublicMembers": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "generatedAt": {
+                    "type": "integer"
+                },
+                "list": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.PublicMember"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "plans": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.PublicPlan"
+                    }
+                },
+                "total": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.PublicPhoto": {
+            "type": "object",
+            "properties": {
+                "height": {
+                    "type": "integer"
+                },
+                "photoNo": {
+                    "type": "string"
+                },
+                "thumbnailUrl": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                },
+                "width": {
+                    "type": "integer"
+                }
+            }
+        },
+        "response.PublicPlan": {
+            "type": "object",
+            "properties": {
+                "benefits": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "planNo": {
+                    "type": "string"
+                },
+                "priority": {
+                    "type": "integer"
+                }
+            }
+        },
         "response.Reconciliation": {
             "type": "object",
             "properties": {
@@ -28055,65 +30980,6 @@
             "properties": {
                 "account": {
                     "$ref": "#/definitions/response.Account"
-                }
-            }
-        },
-        "response.Relationship": {
-            "type": "object",
-            "properties": {
-                "accountNo": {
-                    "type": "string"
-                },
-                "anchorNo": {
-                    "type": "string"
-                },
-                "avatar": {
-                    "type": "string"
-                },
-                "blocked": {
-                    "type": "boolean"
-                },
-                "blockedByMe": {
-                    "type": "boolean"
-                },
-                "countryCode": {
-                    "type": "string"
-                },
-                "following": {
-                    "type": "boolean"
-                },
-                "followsYou": {
-                    "type": "boolean"
-                },
-                "gender": {
-                    "type": "integer"
-                },
-                "isLive": {
-                    "type": "boolean"
-                },
-                "mutedScopes": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/social.MuteScope"
-                    }
-                },
-                "mutual": {
-                    "type": "boolean"
-                },
-                "nickname": {
-                    "type": "string"
-                },
-                "roomNo": {
-                    "type": "string"
-                },
-                "sessionNo": {
-                    "type": "string"
-                },
-                "signature": {
-                    "type": "string"
-                },
-                "subscribed": {
-                    "type": "boolean"
                 }
             }
         },
@@ -28223,6 +31089,26 @@
                     "type": "string"
                 },
                 "targetNo": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Settings": {
+            "type": "object",
+            "properties": {
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.Category"
+                    }
+                },
+                "categoryId": {
+                    "type": "integer"
+                },
+                "signature": {
+                    "type": "string"
+                },
+                "version": {
                     "type": "string"
                 }
             }
@@ -28487,6 +31373,41 @@
                     }
                 },
                 "nextCursor": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.UserPublicProfile": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "anchorNo": {
+                    "type": "string"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "countryCode": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "isLive": {
+                    "type": "boolean"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "sessionNo": {
+                    "type": "string"
+                },
+                "signature": {
                     "type": "string"
                 }
             }
@@ -29411,6 +32332,45 @@
                 }
             }
         },
+        "system.operationsResult": {
+            "type": "object",
+            "properties": {
+                "alerts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.OperationAlert"
+                    }
+                },
+                "at": {
+                    "type": "integer"
+                },
+                "backlogs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.OperationBacklog"
+                    }
+                },
+                "database": {
+                    "type": "string"
+                },
+                "databasePool": {
+                    "$ref": "#/definitions/response.OperationPool"
+                },
+                "goroutines": {
+                    "type": "integer"
+                },
+                "heapBytes": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "metrics": {
+                    "$ref": "#/definitions/telemetry.Snapshot"
+                },
+                "redis": {
+                    "type": "string"
+                }
+            }
+        },
         "tb_live_module_config.Email": {
             "type": "object",
             "properties": {
@@ -29444,6 +32404,54 @@
                 },
                 "to": {
                     "description": "收件人:多个以英文逗号分隔 例：a@qq.com b@qq.com 正式开发中请把此项目作为参数使用",
+                    "type": "string"
+                }
+            }
+        },
+        "tb_live_module_model_anchorhome_response.Relationship": {
+            "type": "object",
+            "properties": {
+                "blocked": {
+                    "type": "boolean"
+                },
+                "blockedByMe": {
+                    "type": "boolean"
+                },
+                "following": {
+                    "type": "boolean"
+                },
+                "followsYou": {
+                    "type": "boolean"
+                },
+                "mutual": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "tb_live_module_model_bankreconcile_request.Review": {
+            "type": "object",
+            "properties": {
+                "checkNo": {
+                    "type": "string"
+                },
+                "decision": {
+                    "type": "string"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "tb_live_module_model_earning_request.Review": {
+            "type": "object",
+            "properties": {
+                "approve": {
+                    "type": "boolean"
+                },
+                "ruleNo": {
                     "type": "string"
                 }
             }
@@ -29670,6 +32678,65 @@
                 }
             }
         },
+        "tb_live_module_model_social_response.Relationship": {
+            "type": "object",
+            "properties": {
+                "accountNo": {
+                    "type": "string"
+                },
+                "anchorNo": {
+                    "type": "string"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "blocked": {
+                    "type": "boolean"
+                },
+                "blockedByMe": {
+                    "type": "boolean"
+                },
+                "countryCode": {
+                    "type": "string"
+                },
+                "following": {
+                    "type": "boolean"
+                },
+                "followsYou": {
+                    "type": "boolean"
+                },
+                "gender": {
+                    "type": "integer"
+                },
+                "isLive": {
+                    "type": "boolean"
+                },
+                "mutedScopes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/social.MuteScope"
+                    }
+                },
+                "mutual": {
+                    "type": "boolean"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "roomNo": {
+                    "type": "string"
+                },
+                "sessionNo": {
+                    "type": "string"
+                },
+                "signature": {
+                    "type": "string"
+                },
+                "subscribed": {
+                    "type": "boolean"
+                }
+            }
+        },
         "tb_live_module_model_system_request.Login": {
             "type": "object",
             "properties": {
@@ -29888,6 +32955,110 @@
                 },
                 "order": {
                     "$ref": "#/definitions/tb_live_module_model_wallet_response.Order"
+                }
+            }
+        },
+        "telemetry.HTTP": {
+            "type": "object",
+            "properties": {
+                "buckets": {
+                    "description": "Buckets are disjoint; the last bucket contains durations over 10 seconds.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "calls": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "durationMicros": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "errors": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "rejected": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "route": {
+                    "type": "string"
+                }
+            }
+        },
+        "telemetry.Snapshot": {
+            "type": "object",
+            "properties": {
+                "boundsMs": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "http": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/telemetry.HTTP"
+                    }
+                },
+                "inFlight": {
+                    "type": "integer"
+                },
+                "startedAt": {
+                    "type": "integer"
+                },
+                "workers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/telemetry.Worker"
+                    }
+                }
+            }
+        },
+        "telemetry.Worker": {
+            "type": "object",
+            "properties": {
+                "consecutiveFailures": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "errorKind": {
+                    "type": "string"
+                },
+                "failures": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "lastDurationMs": {
+                    "type": "integer"
+                },
+                "lastFinishedAt": {
+                    "type": "integer"
+                },
+                "lastStartedAt": {
+                    "type": "integer"
+                },
+                "lastSuccessAt": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "running": {
+                    "type": "integer"
+                },
+                "runs": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "stale": {
+                    "type": "boolean"
                 }
             }
         }

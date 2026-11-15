@@ -1,0 +1,62 @@
+{
+  "exitCode": 0,
+  "durationSeconds": 475.98,
+  "testEvents": {
+    "pass": 513,
+    "skip": 9
+  },
+  "topLevelTests": {
+    "pass": 335,
+    "skip": 9
+  },
+  "packages": {
+    "tb_live_module/service/wallet": "pass",
+    "tb_live_module/service/guard": "pass",
+    "tb_live_module/service/ranking": "pass",
+    "tb_live_module/service/gift": "pass",
+    "tb_live_module/service/payout": "pass",
+    "tb_live_module/service/social": "pass",
+    "tb_live_module/service/live": "pass",
+    "tb_live_module/service/eventdelivery": "pass",
+    "tb_live_module/service/bankreconcile": "skip",
+    "tb_live_module/service/earning": "pass"
+  },
+  "skips": [
+    {
+      "package": "tb_live_module/service/wallet",
+      "test": "TestMySQLWalletSealLoad"
+    },
+    {
+      "package": "tb_live_module/service/gift",
+      "test": "TestMySQLGiftLoad"
+    },
+    {
+      "package": "tb_live_module/service/gift",
+      "test": "TestMySQLGuardRankingLoad"
+    },
+    {
+      "package": "tb_live_module/service/social",
+      "test": "TestMySQLLoadProfile"
+    },
+    {
+      "package": "tb_live_module/service/social",
+      "test": "TestRedisHeartbeatLoadProfile"
+    },
+    {
+      "package": "tb_live_module/service/live",
+      "test": "TestPresenceLoad1000"
+    },
+    {
+      "package": "tb_live_module/service/live",
+      "test": "TestPresenceLoadMultiRoom"
+    },
+    {
+      "package": "tb_live_module/service/earning",
+      "test": "TestMySQLFinanceLoad"
+    },
+    {
+      "package": "tb_live_module/service/earning",
+      "test": "TestMySQLManualPayoutLoad"
+    }
+  ]
+}

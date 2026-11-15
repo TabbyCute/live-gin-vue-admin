@@ -1,0 +1,4 @@
+=== RUN   TestBackupMySQL
+--- PASS: TestBackupMySQL (0.05s)
+PASS
+ok  	tb_live_module/cmd/event-delivery-migrate	4.893s

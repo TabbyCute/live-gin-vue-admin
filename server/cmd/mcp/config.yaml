@@ -3,6 +3,8 @@ mcp:
   version: v1.0.0
   path: /mcp
   addr: 8889
+  # 默认仅本机访问；外部启用须明确设为 0.0.0.0，并配置网关鉴权和网络访问控制。
+  listen-host: 127.0.0.1
   base_url: http://127.0.0.1:8889/mcp
   upstream_base_url: http://127.0.0.1:8888
   auth_header: x-token

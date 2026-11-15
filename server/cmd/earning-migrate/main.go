@@ -27,11 +27,15 @@ func main() {
 }
 func run() error {
 	configFile := flag.String("config", "", "服务配置文件，凭证不放入命令行")
+	auditSchema := flag.Bool("audit-schema", false, "仅新增/校验后台核验作业表，不修改财务事实或触发器")
 	migrate := flag.Bool("migrate", false, "创建收益结算/提现审核表及保护约束，不修改钱包内核")
 	backfill := flag.Bool("backfill", false, "按已有礼物事实幂等回填统一收益事实")
 	metadata := flag.Bool("metadata-only", false, "仅补齐直播管理菜单和角色888操作权限")
 	verify := flag.Bool("verify", false, "只读核验结构及历史收益覆盖")
 	flag.Parse()
+	if *auditSchema && (*migrate || *backfill || *metadata || *verify) {
+		return fmt.Errorf("audit-schema cannot be combined with other actions")
+	}
 	if *verify && (*migrate || *backfill || *metadata) {
 		return fmt.Errorf("verify is read-only")
 	}
@@ -72,6 +76,15 @@ func run() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 	defer cancel()
 	db = db.WithContext(ctx)
+	if *auditSchema {
+		if e = initialize.MigrateEarningAudit(db); e != nil {
+			return e
+		}
+		if e = initialize.ValidateEarningAuditSchema(db); e != nil {
+			return e
+		}
+		return json.NewEncoder(os.Stdout).Encode(map[string]any{"auditSchemaMigrated": true, "database": cfg.DBName, "address": cfg.Addr})
+	}
 	if *migrate {
 		if e = initialize.MigrateEarning(db); e != nil {
 			return e
@@ -126,5 +139,5 @@ func run() error {
 			counts[table] = count
 		}
 	}
-	return json.NewEncoder(os.Stdout).Encode(map[string]any{"factCounts": counts, "database": cfg.DBName, "address": cfg.Addr, "menus": menus, "grants": grants, "apis": apis, "permissions": permissions, "migrated": *migrate, "backfilled": *backfill, "metadataSynced": *metadata, "verified": *verify})
+	return json.NewEncoder(os.Stdout).Encode(map[string]any{"factCounts": counts, "database": cfg.DBName, "address": cfg.Addr, "menus": menus, "grants": grants, "apis": apis, "permissions": permissions, "auditSchemaMigrated": *auditSchema, "migrated": *migrate, "backfilled": *backfill, "metadataSynced": *metadata, "verified": *verify})
 }

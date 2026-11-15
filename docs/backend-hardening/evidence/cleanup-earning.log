@@ -1,0 +1,6 @@
+ Container earning-delivery-test-mysql-1  Stopping
+ Container earning-delivery-test-mysql-1  Stopped
+ Container earning-delivery-test-mysql-1  Removing
+ Container earning-delivery-test-mysql-1  Removed
+ Network earning-delivery-test_default  Removing
+ Network earning-delivery-test_default  Removed

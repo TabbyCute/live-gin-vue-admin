@@ -1,0 +1,46 @@
+{
+  "date": "2026-11-06",
+  "timeZone": "Asia/Kuala_Lumpur",
+  "applicationDeployed": false,
+  "remoteSchemaVerified": true,
+  "financialTablesUnchanged": true,
+  "checks": {
+    "goFullSuite": "passed",
+    "realRedisMySQLIntegration": "passed",
+    "race": "passed",
+    "fuzzCredentials10s": "passed",
+    "fuzzStrictJSON10s": "passed",
+    "goVet": "passed",
+    "goBuild": "passed",
+    "swaggerGenerated": true,
+    "h5Tests": {
+      "passed": 57,
+      "failed": 0
+    },
+    "adminPresenceTests": "passed",
+    "adminProductionBuild": "passed",
+    "h5ProductionBuild": "passed",
+    "shellSyntaxAndComposeConfig": "passed"
+  },
+  "limitations": [
+    "Application and frontend deployment not performed",
+    "No production load, Redis Cluster fault test, real media/paid transaction acceptance",
+    "Async Redis-to-MySQL persistence can lose uncheckpointed facts on Redis data loss"
+  ],
+  "evidenceSHA256": {
+    "admin-tests.log": "dfd90968b6652d660e95fa3aed3b692d5737b1652ec534deaa3252c1ab6bbcf9",
+    "cors-race.log": "fb99efc55a636fd42ff163d449117ff0d30c6a1d34b967a7104cd9f9fa8fad1a",
+    "fuzz-credentials.log": "5990911a663cb61e7fe9ff910ec6d82af6b9b10af88b290f78bdeb3aeaec855c",
+    "fuzz-json.log": "3685dad9bc75b2eed1f9a63ca1ce0de5b187f2cea0f744d9b57f187bf883abb2",
+    "go-test-summary.log": "e2c6d5f7b34cfd97ed4bf74b3936febe474c05f427cd1d60ae4477548dc597ae",
+    "h5-tests.log": "9ed9386ecc5b4f09957f327bf66503450fcbda2ae61e6fd9186c0d5b160a2a6b",
+    "load.log": "8eaea8036eb65c93684061cbcdd6353ae5495eeaa18968371fb732a5bd965d20",
+    "race-delta.log": "e93eb04e9800d278b7b403f0145eb10b1b6cee003d84c86a03945283cf6f9809",
+    "race.log": "bf9da5c4a110e969249c28353e59c2b7038cce2f4fa2c8ae8d820164269b7929",
+    "worker-cap-race.log": "c4bd9184d41ba37163fe611368502f9833f722cf30690ccafc3a9961b7db4d42"
+  },
+  "testContainersRemoved": [
+    "live-presence-test-redis",
+    "live-presence-test-mysql"
+  ]
+}

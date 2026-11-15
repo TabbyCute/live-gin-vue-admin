@@ -1,0 +1,28 @@
+Local security patch verification — 2026-11-12
+
+GOTOOLCHAIN=go1.26.11 go version
+  go version go1.26.11 darwin/amd64
+
+GOTOOLCHAIN=go1.26.11 go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...
+  GO-2026-6859 absent after patch.
+  Remaining reachable GO-2026-6911; official database fixed version N/A.
+  6 imported-package and 2 required-module findings have no called-symbol traces.
+  Scanner exit status 3; go run wrapper exits 1. Full output is govulncheck-go1.26.11.log.
+
+GOTOOLCHAIN=go1.26.11 go test -race ./mcp/client -run TestMCPRejectsRedirectAndLocationCredentialExfiltration -count=1 -v
+  --- PASS: TestMCPRejectsRedirectAndLocationCredentialExfiltration (0.37s)
+  ok tb_live_module/mcp/client 7.715s
+
+pnpm --dir web install --frozen-lockfile --ignore-scripts
+  PASS. Only targeted compatible security patches and the Vite dependency closure changed.
+
+qs public API check
+  Normal query encoding and the advisory non-callable toString regression PASS.
+
+pnpm audit --prod --json
+  Remaining: 3 high, 7 moderate, 0 critical. Exit 1.
+pnpm audit --json
+  Remaining: 6 high, 15 moderate, 1 low, 0 critical. Exit 1.
+
+No findings were suppressed. Historical reports and H5 files were not changed.
+Final Go application tests and admin production build are coordinated by the parent task.

@@ -1,0 +1,7 @@
+ok  	tb_live_module/mcp/client	8.258s
+ok  	tb_live_module/middleware	(cached)
+ok  	tb_live_module/initialize	9.196s
+ok  	tb_live_module/api/v1/payout	(cached)
+ok  	tb_live_module/api/v1/earning	(cached)
+ok  	tb_live_module/api/v1/gift	(cached)
+ok  	tb_live_module/core	7.760s

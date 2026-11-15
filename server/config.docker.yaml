@@ -375,6 +375,7 @@ mcp:
     name: GVA_MCP
     version: v1.0.0
     addr: 8889
+    listen-host: 127.0.0.1
     separate: false
 
 # 社交关系默认启用；相关表、索引和约束由GORM在启动时自动迁移。
@@ -386,3 +387,40 @@ social:
   media-gateway-verified: false
   playback-signing-key: ""
   playback-base-url: ""
+
+# 主播收款账户、提现订单、公司出款账户及私有凭证的加密配置。
+# 代码直接读取当前 YAML 的 payout 字段，不再读取三个 PAYOUT_* 加密环境变量。
+# 各环境使用独立随机密钥；保管并备份本节，禁止放到前端、日志或公开仓库。
+# 密钥仅在进程启动时生效，修改后必须重新构建/发布对应配置并重启服务。
+payout:
+  # 当前用于新数据加密的 AES key ID，必须存在于下方 encryption-keys 中。
+  # 轮换时新增 key ID 并切换本项，保留所有历史 key，不能覆盖旧 key 的值。
+  active-key-id: "docker_20261105_v1"
+  # JSON 字符串：key ID -> 标准 Base64 编码的 32 字节 AES-256 密钥，最多16把。
+  # 保持 JSON 字符串格式，不改成 YAML 对象，以保留 key ID 的原始大小写。
+  encryption-keys: '{"docker_20261105_v1":"GMQrcbCKdBRXT8pdsDHBv8q9eov9e4w6L/aAbZm1kLc="}'
+  # 独立的 32 字节 HMAC-SHA256 指纹密钥（标准 Base64），必须与 AES 密钥不同。
+  # 用于收款账户/银行流水防重及请求幂等；有历史数据后不得随意更换或丢失。
+  fingerprint-key: "x1PnS6/FOsb8HZv7F6CLDiIOL/SFh0thpZqWTVBKn3I="
+
+# 直播观众在线统计：近实时HTTP心跳；游客与登录会员分别去重。
+# 运行时仍应用硬上限；Redis故障不会强制停止已授权的播放器。
+presence:
+  heartbeat-seconds: 15
+  ttl-seconds: 45
+  recheck-seconds: 30
+  room-connections: 10000
+  global-connections: 100000
+  ip-connections: 300
+  like-second: 10
+  like-minute: 120
+
+# Private media must remain outside all static/upload roots. Persist across releases.
+anchor-home:
+  disabled: false
+  storage-dir: /var/lib/tb-live/anchor-home
+  max-photos: 9
+  image-concurrency: 2
+  max-uploads-per-day: 50
+  public-read-per-minute: 180
+  media-read-per-minute: 600

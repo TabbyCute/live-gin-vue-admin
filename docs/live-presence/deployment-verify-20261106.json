@@ -1,0 +1,17 @@
+{
+  "activeSessions": 0,
+  "applicationDeployed": false,
+  "database": "live_prod",
+  "existingTables": [
+    "live_presence_checkpoint",
+    "live_room_event",
+    "live_session",
+    "live_viewer_session",
+    "live_viewer_visit"
+  ],
+  "hostFingerprint": "1a33ec8931e5",
+  "migrated": false,
+  "sessions": 35,
+  "verified": true,
+  "version": "8.0.46-0ubuntu0.24.04.4"
+}

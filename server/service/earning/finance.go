@@ -80,6 +80,8 @@ type Service struct {
 	Now     func() time.Time
 	Payees  PayoutPayeeProvider
 	Sources map[string]SourceVerifier
+	// SourceAuditScope installs bounded proof memoization only inside repeatable-read audits.
+	SourceAuditScope func(*gorm.DB) *gorm.DB
 }
 
 var Default = &Service{}

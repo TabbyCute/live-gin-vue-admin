@@ -1,0 +1,40 @@
+Supplemental isolated gift/guard/ranking race, load and fuzz checks.
+ Container gift-delivery-test-mysql-1  Healthy
+ok  	tb_live_module/service/gift	72.520s
+ok  	tb_live_module/service/guard	3.271s
+ok  	tb_live_module/service/ranking	5.917s
+ok  	tb_live_module/api/v1/gift	5.695s
+ok  	tb_live_module/router/gift	6.663s
+=== RUN   TestMySQLGiftLoad
+    gift_test.go:412: hot-wallet writes=100 elapsed=1.96668225s throughput=50.85/s p50=1.02404025s p95=1.875608792s p99=1.944419125s
+    gift_test.go:417: idempotent replay=100 elapsed=520.277375ms
+--- PASS: TestMySQLGiftLoad (3.37s)
+=== RUN   TestMySQLGuardRankingLoad
+    guard_load_test.go:53: guard load real MySQL: orders=100 concurrency=100 send_ms=1985 p50_ms=1043.020 p95_ms=1886.012 p99_ms=1963.516 fulfill_4_workers_ms=1094 ranking_4_workers_ms=87
+    guard_load_test.go:54: ranking EXPLAIN: [map[Extra:<nil> filtered:100 id:1 key:idx_ranking_board key_len:484 partitions:<nil> possible_keys:uk_ranking_bucket,idx_ranking_board ref:const,const,const,const,const,const,const rows:1 select_type:SIMPLE table:ranking_score_bucket type:ref]]
+--- PASS: TestMySQLGuardRankingLoad (4.44s)
+PASS
+ok  	tb_live_module/service/gift	10.311s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/17 completed
+fuzz: elapsed: 0s, gathering baseline coverage: 17/17 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 60694 (20220/sec), new interesting: 1 (total: 18)
+fuzz: elapsed: 6s, execs: 123637 (20979/sec), new interesting: 1 (total: 18)
+fuzz: elapsed: 9s, execs: 185082 (20482/sec), new interesting: 1 (total: 18)
+fuzz: elapsed: 10s, execs: 206575 (20523/sec), new interesting: 1 (total: 18)
+PASS
+ok  	tb_live_module/service/guard	11.316s
+fuzz: elapsed: 0s, gathering baseline coverage: 0/81 completed
+fuzz: elapsed: 1s, gathering baseline coverage: 81/81 completed, now fuzzing with 2 workers
+fuzz: elapsed: 3s, execs: 7900 (2631/sec), new interesting: 3 (total: 84)
+fuzz: elapsed: 6s, execs: 7900 (0/sec), new interesting: 3 (total: 84)
+fuzz: elapsed: 9s, execs: 7900 (0/sec), new interesting: 3 (total: 84)
+fuzz: elapsed: 11s, execs: 7900 (0/sec), new interesting: 3 (total: 84)
+PASS
+ok  	tb_live_module/api/v1/gift	14.107s
+ Container gift-delivery-test-mysql-1  Stopping
+ Container gift-delivery-test-mysql-1  Stopped
+ Container gift-delivery-test-mysql-1  Removing
+ Container gift-delivery-test-mysql-1  Removed
+ Network gift-delivery-test_default  Removing
+ Network gift-delivery-test_default  Removed
+

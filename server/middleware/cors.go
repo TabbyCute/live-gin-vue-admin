@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"net/url"
 	"strings"
 
 	"tb_live_module/config"
@@ -10,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const corsDefaultAllowHeaders = "Content-Type, AccessToken, X-CSRF-Token, Authorization, Token, X-Token, X-User-Id, Idempotency-Key"
+const corsDefaultAllowHeaders = "Content-Type, AccessToken, X-CSRF-Token, Authorization, Token, X-Token, X-User-Id, Idempotency-Key, X-Presence-Guest"
 
 // Cors 直接放行所有跨域请求并放行所有 OPTIONS 方法
 func Cors() gin.HandlerFunc {
@@ -24,8 +25,8 @@ func Cors() gin.HandlerFunc {
 		c.Header("Access-Control-Allow-Origin", origin)
 		c.Header("Access-Control-Allow-Headers", corsDefaultAllowHeaders)
 		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT, PATCH, HEAD")
-		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At")
-		c.Header("Access-Control-Allow-Credentials", "true")
+		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type, New-Token, New-Expires-At, Retry-After, X-Request-ID")
+		// Arbitrary origins must never receive ambient administrator cookies.
 
 		// 放行所有OPTIONS方法
 		if c.Request.Method == http.MethodOptions {
@@ -50,6 +51,12 @@ func CorsByRules() gin.HandlerFunc {
 			c.Next()
 			return
 		}
+		// Browsers send Origin on same-origin POSTs too. Those do not need
+		// cross-origin permission; do not trust forwarded host/scheme headers.
+		if sameRequestOrigin(c, origin) {
+			c.Next()
+			return
+		}
 		addCorsVaryHeaders(c)
 		whitelist := checkCors(origin)
 
@@ -58,7 +65,7 @@ func CorsByRules() gin.HandlerFunc {
 			c.Header("Access-Control-Allow-Origin", whitelist.AllowOrigin)
 			c.Header("Access-Control-Allow-Headers", mergeCorsAllowHeaders(whitelist.AllowHeaders))
 			c.Header("Access-Control-Allow-Methods", whitelist.AllowMethods)
-			c.Header("Access-Control-Expose-Headers", whitelist.ExposeHeaders)
+			c.Header("Access-Control-Expose-Headers", mergeCorsHeaders(whitelist.ExposeHeaders, []string{"Retry-After", "X-Request-ID"}))
 			if whitelist.AllowCredentials {
 				c.Header("Access-Control-Allow-Credentials", "true")
 			}
@@ -78,6 +85,18 @@ func CorsByRules() gin.HandlerFunc {
 	}
 }
 
+func sameRequestOrigin(c *gin.Context, origin string) bool {
+	u, err := url.Parse(origin)
+	if err != nil || u.User != nil || u.Path != "" || u.RawQuery != "" || u.Fragment != "" {
+		return false
+	}
+	scheme := "http"
+	if c.Request.TLS != nil {
+		scheme = "https"
+	}
+	return u.Scheme == scheme && strings.EqualFold(u.Host, c.Request.Host)
+}
+
 func addCorsVaryHeaders(c *gin.Context) {
 	c.Header("Vary", "Origin")
 	c.Writer.Header().Add("Vary", "Access-Control-Request-Method")
@@ -85,7 +104,10 @@ func addCorsVaryHeaders(c *gin.Context) {
 }
 
 func mergeCorsAllowHeaders(configured string) string {
-	required := strings.Split(corsDefaultAllowHeaders, ",")
+	return mergeCorsHeaders(configured, strings.Split(corsDefaultAllowHeaders, ","))
+}
+
+func mergeCorsHeaders(configured string, required []string) string {
 	configuredHeaders := strings.Split(configured, ",")
 	merged := make([]string, 0, len(configuredHeaders)+len(required))
 	seen := make(map[string]struct{}, len(configuredHeaders)+len(required))

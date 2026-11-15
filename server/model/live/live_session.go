@@ -133,14 +133,16 @@ type LiveSession struct {
 	EndReason     uint8  `json:"endReason" gorm:"column:end_reason;type:tinyint unsigned;not null;default:0;comment:结束原因：0未知 1主播结束 2管理员结束 3断流超时 4主播封禁 5系统异常 6准备开播超时"`
 	FailureReason string `json:"failureReason" gorm:"column:failure_reason;type:varchar(500);not null;default:'';comment:取消或失败原因"`
 
-	ViewCount        uint64 `json:"viewCount" gorm:"column:view_count;type:bigint unsigned;not null;default:0;comment:累计进入直播间次数"`
-	ViewerCount      uint64 `json:"viewerCount" gorm:"column:viewer_count;type:bigint unsigned;not null;default:0;comment:累计去重观看人数"`
-	PeakOnlineCount  uint32 `json:"peakOnlineCount" gorm:"column:peak_online_count;type:int unsigned;not null;default:0;comment:最高同时在线人数"`
-	LikeCount        uint64 `json:"likeCount" gorm:"column:like_count;type:bigint unsigned;not null;default:0;comment:本场最终点赞次数"`
-	GiftCount        uint64 `json:"giftCount" gorm:"column:gift_count;type:bigint unsigned;not null;default:0;comment:本场有效礼物总件数"`
-	GiftCoinAmount   uint64 `json:"giftCoinAmount" gorm:"column:gift_coin_amount;type:bigint unsigned;not null;default:0;comment:本场有效礼物金币总额"`
-	GiftUserCount    uint32 `json:"giftUserCount" gorm:"column:gift_user_count;type:int unsigned;not null;default:0;comment:本场去重送礼人数"`
-	StatsFinalizedAt int64  `json:"statsFinalizedAt" gorm:"column:stats_finalized_at;type:bigint;not null;default:0;comment:最终统计汇总完成时间，毫秒时间戳"`
+	ViewCount            uint64 `json:"viewCount" gorm:"column:view_count;type:bigint unsigned;not null;default:0;comment:累计进入直播间次数"`
+	ViewerCount          uint64 `json:"viewerCount" gorm:"column:viewer_count;type:bigint unsigned;not null;default:0;comment:累计去重观看人数"`
+	PeakOnlineCount      uint32 `json:"peakOnlineCount" gorm:"column:peak_online_count;type:int unsigned;not null;default:0;comment:最高同时在线人数"`
+	LikeCount            uint64 `json:"likeCount" gorm:"column:like_count;type:bigint unsigned;not null;default:0;comment:本场最终点赞次数"`
+	GiftCount            uint64 `json:"giftCount" gorm:"column:gift_count;type:bigint unsigned;not null;default:0;comment:本场有效礼物总件数"`
+	GiftCoinAmount       uint64 `json:"giftCoinAmount" gorm:"column:gift_coin_amount;type:bigint unsigned;not null;default:0;comment:本场有效礼物金币总额"`
+	GiftUserCount        uint32 `json:"giftUserCount" gorm:"column:gift_user_count;type:int unsigned;not null;default:0;comment:本场去重送礼人数"`
+	TotalWatchDurationMs uint64 `json:"totalWatchDurationMs,string" gorm:"not null;default:0"`
+	StatsCheckpointAt    int64  `json:"statsCheckpointAt" gorm:"not null;default:0"`
+	StatsFinalizedAt     int64  `json:"statsFinalizedAt" gorm:"column:stats_finalized_at;type:bigint;not null;default:0;index:idx_live_presence_finalize;comment:最终统计汇总完成时间，毫秒时间戳"`
 
 	Extra *string `json:"extra,omitempty" gorm:"column:extra;type:json;serializer:json;default:null;comment:场次低频扩展信息"`
 }

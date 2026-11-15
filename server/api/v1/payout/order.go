@@ -2,10 +2,9 @@ package payout
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"net/url"
 	"reflect"
-	"strings"
+	"tb_live_module/middleware"
 	"tb_live_module/model/common/response"
 	req "tb_live_module/model/payout/request"
 	res "tb_live_module/model/payout/response"
@@ -20,7 +19,7 @@ type orderListResult = res.OrderPage
 type orderDetailResult = res.OrderDetail
 
 func orderActor(c *gin.Context) svc.Actor {
-	trace := "pt_" + strings.ReplaceAll(uuid.NewString(), "-", "")
+	trace := middleware.RequestID(c)
 	c.Set("payoutTrace", trace)
 	c.Header("X-Request-ID", trace)
 	exposed := c.Writer.Header().Get("Access-Control-Expose-Headers")

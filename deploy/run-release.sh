@@ -33,6 +33,7 @@ validate_release_dir() {
   [[ -x "$release_dir/tb-live-server" ]] || fail "发布目录缺少可执行文件 tb-live-server"
   [[ -r "$release_dir/config.prod.yaml" ]] || fail "发布目录缺少 config.prod.yaml"
   [[ -f "$release_dir/assets/admin/index.html" ]] || fail "发布目录缺少管理后台文件"
+  [[ -f "$release_dir/assets/h5/index.html" ]] || fail "发布目录缺少 H5 客户端文件"
   [[ -x "$release_dir/restart-prod.sh" ]] || fail "发布目录缺少可执行的 restart-prod.sh"
 }
 

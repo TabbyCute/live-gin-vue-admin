@@ -9,6 +9,7 @@ import (
 	"gorm.io/gorm/clause"
 	"math/rand/v2"
 	"sync"
+	"tb_live_module/internal/telemetry"
 	model "tb_live_module/model/social"
 	req "tb_live_module/model/social/request"
 	res "tb_live_module/model/social/response"
@@ -213,9 +214,12 @@ func (s *Service) runLoop(ctx context.Context, interval, timeout time.Duration, 
 	defer ticker.Stop()
 	for ctx.Err() == nil {
 		started := time.Now()
+		worker := map[string]string{"AUDIT_HEARTBEAT_FAILED": "social_audit", "HISTORY_FLUSH_FAILED": "social_history", "PRUNE_FAILED": "social_prune", "OUTBOX_FAILED": "social_outbox"}[code]
+		finish := telemetry.Default.StartWorker(worker, 2*(interval+timeout))
 		run, cancel := context.WithTimeout(ctx, timeout)
 		err := fn(run)
 		cancel()
+		finish(err)
 		if err != nil && ctx.Err() == nil && s.Log != nil {
 			fields := append([]zap.Field{zap.String("code", code), zap.Duration("elapsed", time.Since(started))}, workerErrorFields(err)...)
 			s.Log.Warn("social worker iteration failed", fields...)

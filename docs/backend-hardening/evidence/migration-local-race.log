@@ -1,0 +1,13 @@
+=== RUN   TestFinancialProofDeltaRules
+--- PASS: TestFinancialProofDeltaRules (0.00s)
+=== RUN   TestSafeCLIOutputAndPrivateDirectory
+--- PASS: TestSafeCLIOutputAndPrivateDirectory (0.00s)
+=== RUN   TestMySQLUnifiedMigrationAndFullRestore
+    run_test.go:224: two additive migrations and read-only verify passed; newTables=14; restored financial tables=3; binary/zero-ID/generated/timestamp/trigger proof identical
+--- PASS: TestMySQLUnifiedMigrationAndFullRestore (9.86s)
+PASS
+ok  	tb_live_module/internal/backendcli	15.067s
+=== RUN   TestMySQLBackupRestoresSchemaDataAndTriggers
+--- PASS: TestMySQLBackupRestoresSchemaDataAndTriggers (0.61s)
+PASS
+ok  	tb_live_module/internal/engagementcli	6.792s
